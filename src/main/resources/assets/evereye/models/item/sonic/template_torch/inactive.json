@@ -1,0 +1,39 @@
+{
+	"credit": "Made with Blockbench",
+	"ambientocclusion": false,
+	"textures": {
+		"torch": "evereye:item/sonic_tools/template_torch_inactive"
+	},
+	"elements": [
+		{
+			"from": [7, 5, 7],
+			"to": [9, 15, 9],
+			"shade": false,
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 5, 0]},
+			"faces": {
+				"up": {"uv": [7, 6, 9, 8], "texture": "#torch"},
+				"down": {"uv": [7, 13, 9, 15], "texture": "#torch"}
+			}
+		},
+		{
+			"from": [7, 5, 0],
+			"to": [9, 21, 16],
+			"shade": false,
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 5, 0]},
+			"faces": {
+				"east": {"uv": [0, 0, 16, 16], "texture": "#torch"},
+				"west": {"uv": [0, 0, 16, 16], "texture": "#torch"}
+			}
+		},
+		{
+			"from": [0, 5, 7],
+			"to": [16, 21, 9],
+			"shade": false,
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 5, 0]},
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#torch"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#torch"}
+			}
+		}
+	]
+}

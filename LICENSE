@@ -1,0 +1,88 @@
+                    GNU GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+
+                    GNU 通用公共许可证
+                      第三版，2007年6月29日
+
+ Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+ 版权所有 (C) 2007 自由软件基金会 <https://fsf.org/>
+
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+ 允许每个人复制和发布本许可证文件的完整版本，但不允许修改它。
+
+                            Preamble
+                            序言
+
+The GNU General Public License is a free, copyleft license for
+software and other kinds of works.
+GNU 通用公共许可证是一份针对软件和其他类型作品的自由、著佐权许可证。
+
+The licenses for most software and other practical works are designed
+to take away your freedom to share and change the works. By contrast,
+the GNU General Public License is intended to guarantee your freedom
+to share and change all versions of a program--to make sure it remains
+free software for all its users. We, the Free Software Foundation, use
+the GNU General Public License for most of our software; it applies
+also to any other work released this way by its authors. You can apply
+it to your programs, too.
+大多数软件和其他实用作品的许可证旨在剥夺你分享和修改作品的自由。相反，
+GNU 通用公共许可证旨在保障你分享和修改程序所有版本的自由——确保它对所有用户
+保持自由软件的状态。我们，自由软件基金会，在我们的大部分软件中使用GNU通用公共
+许可证；它也适用于作者以这种方式发布的任何其他作品。你也可以将其应用于你的程序。
+
+================================================================================
+                     CONTRIBUTORS AND THEIR ROLES
+                          贡献者及其分工
+
+This mod, DOCTOR M, is the collective work of a dedicated team of developers
+who have contributed their creativity and effort over several years.
+
+本模组，DOCTOR M，是一个专注的开发团队的集体作品，他们在数年间贡献了自己的创造力和努力。
+
+Small Moss: 
+  - Main author / 主要作者
+  - Responsible for Evereye interior & exterior design
+  - 负责永恒之眼内饰&外观设计
+
+白桦树下的赤俄:
+  - Watcher interior concepts & console design
+  - 守望内饰想法&控制台设计
+
+zhujianX_Offical:
+  - Fire and neon interior designs
+  - 烈火和霓虹内饰设计
+
+斯格.尔特:
+  - Mad Evil, Sige, Eternal Decay, and other interior designs
+  - 疯恶、斯格、恒朽等内饰设计
+
+慢跑者:
+  - Author of Redstone Screwdriver
+  - 红石起子作者
+
+================================================================================
+This is a summary of the GNU GPL v3. For the full legal text, please see the
+complete license agreement above.
+
+这是 GNU GPL v3 的概要。完整的法律文本请参阅上方的完整许可证协议。
+
+YOUR FREEDOMS AND OBLIGATIONS / 你的自由与义务:
+
+YOU ARE FREE TO / 你可以自由地:
+- Use the software commercially / 商业性使用本软件
+- Modify and adapt the software / 修改和适配本软件  
+- Distribute the software / 分发本软件
+
+UNDER THESE CONDITIONS / 在以下条件下:
+- You must keep the original copyright notices and this license / 必须保留原始版权声明和本许可证
+- You must disclose the source code of any modifications / 必须披露任何修改的源代码
+- You must license derivative works under the same GPL v3 license / 必须使用相同的 GPL v3 许可证授权衍生作品
+- You must include a copy of this license with any distributions / 必须在任何分发中包含本许可证的副本
+
+NO WARRANTY / 无担保:
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.
+
+本程序按原样分发，希望它有用，但不提供任何担保；甚至没有适销性或特定用途适用性的默示担保。

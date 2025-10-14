@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:jigsaw",
+  "start_pool": "doctorm:tardis_evereye",
+  "size": 1,
+  "max_distance_from_center": 64,
+  "spawn_overrides": {},
+  "step": "surface_structures",
+  "terrain_adaptation": "none",
+  "start_height": {
+    "absolute": 0
+  },
+  "project_start_to_heightmap": "OCEAN_FLOOR_WG",
+  "biomes": [
+    "deep_dark",
+    "ice_spikes",
+    "snowy_beach",
+    "snowy_plains",
+    "snowy_taiga"
+  ],
+  "use_expansion_hack": false
+}

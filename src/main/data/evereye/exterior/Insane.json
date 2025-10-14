@@ -1,0 +1,6 @@
+{
+  "id": "evereye:Insane",
+  "category": "ait:exterior/capsule",
+  "parent": "ait:exterior/capsule/default",
+  "texture": "evereye:textures/exteriors/Insane_default.png"
+}

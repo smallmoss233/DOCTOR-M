@@ -1,0 +1,6 @@
+{
+	"parent": "evereye:item/sonic/evereye",
+	"textures": {
+		"0": "evereye:item/sonic_tools/tardis"
+	}
+}

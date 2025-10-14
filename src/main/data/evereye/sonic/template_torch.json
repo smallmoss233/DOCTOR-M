@@ -1,0 +1,13 @@
+{
+  "id": "evereye:template_torch",
+  "models": {
+    "inactive": "evereye:item/sonic/template_torch/inactive",
+    "interaction": "evereye:item/sonic/template_torch/interaction",
+    "overload": "evereye:item/sonic/template_torch/overload",
+    "scanning": "evereye:item/sonic/template_torch/scanning",
+    "tardis": "evereye:item/sonic/template_torch/tardis"
+  },
+  "loyalty": {
+    "type": "PILOT"
+  }
+}

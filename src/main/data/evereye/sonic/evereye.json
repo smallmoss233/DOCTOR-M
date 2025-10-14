@@ -1,0 +1,13 @@
+{
+  "id": "evereye:evereye",
+  "models": {
+    "inactive": "evereye:item/sonic/evereye/inactive",
+    "interaction": "evereye:item/sonic/evereye/interaction",
+    "overload": "evereye:item/sonic/evereye/overload",
+    "scanning": "evereye:item/sonic/evereye/scanning",
+    "tardis": "evereye:item/sonic/evereye/tardis"
+  },
+  "loyalty": {
+    "type": "PILOT"
+  }
+}

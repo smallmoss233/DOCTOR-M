@@ -1,0 +1,6 @@
+{
+  "id": "everye:evereye",
+  "parent": "ait:console/copper",
+  "texture": "evereye:textures/consoles/evereye.png",
+  "emission": "evereye:textures/consoles/evereye_emission.png"
+}
