@@ -1,19 +1,10 @@
 package doctor_m;
 
+//import doctor_m.init.DOCTORMitems;
 import net.fabricmc.api.ModInitializer;
-
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.Block;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.rmi.registry.Registry;
 
 public class DOCTORM implements ModInitializer {
 	public static final String MOD_ID = "doctor-m";
@@ -23,8 +14,15 @@ public class DOCTORM implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+        LOGGER.info("开始初始化 Doctor M ...");
+
+        //RegistryContainer.register(DOCTORMitems.class, "doctor_m");
 
 
-        LOGGER.info("Doctor M Mod 已加载完成！");
-	}
+        LOGGER.info("Doctor M 已加载完成！");
+    }
+
+    public static Identifier id(String path) {
+        return new Identifier(MOD_ID, path);
+    }
 }
