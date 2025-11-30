@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "doctor-m",
-	"version": "2.0-Alpha",
+	"version": "${version}",
 	"name": "DOCTOR M",
 	"description": "AIT的扩展MOD,至于为啥叫DOCTOR M? 你别管 (An extension MOD of AIT. As for why it's called DOCTOR M? Don't worry about it.)",
 	"authors": [
@@ -13,7 +13,7 @@
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/smallmoss233/doctor-m-template-1.20.1"
 	},
 	"license": "GPL-3.0-only",
 	"icon": "assets/doctor-m/icon.png",
@@ -41,8 +41,18 @@
 		"minecraft": "~1.20.1",
 		"java": ">=17",
 		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
-	}
+    },
+  "suggests": {
+    "ait": "*",
+    "another-mod": "*"
+  },
+  "custom": {
+    "resourcepack": {
+      "ait_zh_cn": {
+        "description": "DOCTOR M 中文汉化包 - BUG大冒险专属",
+        "required": false,
+        "version": 1
+      }
+    }
+  }
 }

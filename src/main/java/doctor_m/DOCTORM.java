@@ -1,6 +1,5 @@
 package doctor_m;
 
-//import doctor_m.init.DOCTORMitems;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -16,7 +15,6 @@ public class DOCTORM implements ModInitializer {
 	public void onInitialize() {
         LOGGER.info("开始初始化 Doctor M ...");
 
-        //RegistryContainer.register(DOCTORMitems.class, "doctor_m");
 
 
         LOGGER.info("Doctor M 已加载完成！");
