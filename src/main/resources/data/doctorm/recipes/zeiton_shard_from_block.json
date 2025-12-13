@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "ait_zeiton",
+  "ingredients": [
+    {
+      "item": "ait:zeiton_block"
+    }
+  ],
+  "result": {
+    "id": "ait:zeiton_shard",
+    "count": 4
+  }
+}
