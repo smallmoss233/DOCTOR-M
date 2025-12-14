@@ -6,21 +6,21 @@
 
 ## **English Introduction**
 
-DOCTOR M is a mod that combines the [**AIT**](https://modrinth.com/mod/ait) mod, [**AIT Extras**](https://modrinth.com/mod/ait-extras), and [**Create**](https://modrinth.com/mod/create-fabric). Of course, I also recommend you install a [**Blue Archive Halo**](https://modrinth.com/mod/blue-archive-halo) mod, as it can make the Evereye interior look even cooler.
+DOCTOR M is a mod that combines the **[AIT](https://modrinth.com/mod/ait)** mod, **[AIT Extras](https://modrinth.com/mod/ait-extras)**, and **[Create](https://modrinth.com/mod/create-fabric)**. Of course, I also recommend installing a **[Blue Archive Halo imitation mod](https://modrinth.com/mod/blue-archive-halo)** to make the Evereye interior look even cooler.
 
-This mod adds some new structures and modifications, **making the AIT progression less tedious** (I don't want to spend hundreds of hours looking for blueprints anymore!!!).
+This mod adds some new structures and modifications, **making the AIT progression much less grindy** (I don't want to spend hundreds of hours searching for blueprints anymore!!!).
 
-Since this mod was actually created for a Doctor Who fan-made modpack with a complete overarching worldview, there's no need to guess who untranslated names like "谨名" refer to—as long as you enjoy playing, that's what matters~
+Since this mod was actually created for a derivative Doctor Who (DW) modpack with a complete established worldview, there's no need to guess who the untranslated names like "谨名" refer to—just enjoy playing~
 
-Watcher console texture author: Smallmoss (me), Красная Россия под белой берёзой.
+**Texture Authors:**
+- Watcher console texture: Smallmoss (me), 白桦下的赤俄.
+- Rainbow and Fire interior: Asnit_PnQing.
+- Sig interior: 斯格.尔特.
+- Way Home interior: 今稍.
+- Redstone Torch Sonic Screwdriver: 慢跑者.
+- Evereye interior, sonic screwdriver, and exterior; Watcher interior; Insane interior and exterior: Smallmoss (me).
 
-Rainbow and Fire interior authors: Asnit_PnQing.
-
-Sig interior author: Sig. Ert.
-
-Evereye interior & Sonic Screwdriver & Exterior, Watcher interior, Insane interior & Exterior author: Smallmoss (me).
-
-You may include the DOCTOR M mod in your modpack, but please be sure to credit the source. Its interiors may not be ported to other mods or redistributed without permission.
+You may include the DOCTOR M mod in your modpack, but please be sure to credit the source. Its interior designs may not be ported to other mods and redistributed without permission.
 
 ---
 

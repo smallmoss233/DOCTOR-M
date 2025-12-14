@@ -2,29 +2,17 @@
 
 ---
 
-## [v2.1-Alpha]
+## [v2.0]
 
 ### 新增内饰 / New interior
 -  **归途 (Way Home)**
     - 那是我们回家的路...她来带我们回家了...
     - That is the way home for us... She came to bring us back home...
--  **回廊 (Coister)**
-    - 隐居在中世纪的时间领主修女...
-    - A time-lord nun secluded in the Middle Ages...
 
 ### 修改 / Edit
 -  **永恒之眼 (Evereye)** 
     - 新增了拓展走廊和功能室。
     - Added extended corridors and functional rooms.
-
-    - 修改了ARS（塔迪斯内部重构系统）的默认位置。
-    - Modified the default location of the ARS (Architectural Reconfiguration System).
-
-    - 对引擎室进行了大规模改造。
-    - The engine room has been extensively overhauled.
-
-    - 修复了控制台顶部信标的显示错误。
-    - Fixed the beacon display bug on top of the console.
 
 ### 移除 / Removed
 - **暂时移除了「戴立克飞船 (Dalek Ship)」结构。**
