@@ -48,14 +48,5 @@
     "ait_extras": "*",
     "Create": "*",
     "another-mod": "*"
-  },
-  "custom": {
-    "resourcepack": {
-      "ait_zh_cn": {
-        "description": "DOCTOR M 中文汉化包 - BUG大冒险专属",
-        "required": false,
-        "version": 1
-      }
-    }
   }
 }
