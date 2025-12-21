@@ -1,5 +1,6 @@
 {
-  "dimension.doctor_m.trenzalore": "Trenzalore",
-  "advancement.doctor_m.enter_trenzalore.title": "Welcome to Trenzalore",
-  "advancement.doctor_m.enter_trenzalore.description": "Enter the planet Trenzalore, the Doctor's final resting place"
+  "advancement.doctor_m.enter_trenzalore.title": "The Time Has Come?",
+  "advancement.doctor_m.enter_trenzalore.description": "In a town of falling snow, an old warrior awaits his final bell, his glorious old body ready for a new chapter.",
+  "block.doctor_m.moment": "The Moment",
+  "dimension.doctor_m.trenzalore": "Trenzalore"
 }
