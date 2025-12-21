@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "doctor-m",
+	"id": "doctor_m",
 	"version": "${version}",
 	"name": "DOCTOR M",
 	"description": "AIT的扩展MOD,至于为啥叫DOCTOR M? 你别管 (An extension MOD of AIT. As for why it's called DOCTOR M? Don't worry about it.)",
@@ -17,7 +17,7 @@
 		"sources": "https://github.com/smallmoss233/doctor-m-template-1.20.1"
 	},
 	"license": "GPL-3.0-only",
-	"icon": "assets/doctor-m/icon.png",
+	"icon": "assets/doctor_m/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
@@ -31,11 +31,7 @@
 		]
 	},
 	"mixins": [
-		"doctor-m.mixins.json",
-		{
-			"config": "doctor-m.client.mixins.json",
-			"environment": "client"
-		}
+		"doctor_m.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.17.3",

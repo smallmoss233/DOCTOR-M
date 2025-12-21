@@ -1,14 +1,14 @@
 {
   "structures": [
     {
-      "structure": "doctorm:tardis_evereye",
+      "structure": "doctor_m:dalekship",
       "weight": 1
     }
   ],
   "placement": {
     "type": "minecraft:random_spread",
-    "spacing": 150,
-    "separation": 90,
-    "salt": 2038103838
+    "spacing": 80,
+    "separation": 60,
+    "salt": 1119807965
   }
 }

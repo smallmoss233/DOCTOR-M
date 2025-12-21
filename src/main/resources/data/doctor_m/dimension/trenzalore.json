@@ -1,0 +1,72 @@
+{
+  "type": "doctor_m:trenzalore",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "minecraft:overworld",
+    "biome_source": {
+      "type": "minecraft:multi_noise",
+      "biomes": [
+        {
+          "biome": "minecraft:snowy_plains",
+          "parameters": {
+            "temperature": -0.7,
+            "humidity": 0.3,
+            "continentalness": 0.2,
+            "erosion": 0.1,
+            "weirdness": 0.0,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "minecraft:snowy_slopes",
+          "parameters": {
+            "temperature": -0.8,
+            "humidity": 0.2,
+            "continentalness": 0.5,
+            "erosion": 0.8,
+            "weirdness": 0.0,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "minecraft:snowy_taiga",
+          "parameters": {
+            "temperature": -0.5,
+            "humidity": 0.4,
+            "continentalness": 0.3,
+            "erosion": 0.2,
+            "weirdness": 0.0,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "minecraft:ice_spikes",
+          "parameters": {
+            "temperature": -0.9,
+            "humidity": 0.3,
+            "continentalness": 0.4,
+            "erosion": 0.2,
+            "weirdness": 0.0,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "minecraft:frozen_peaks",
+          "parameters": {
+            "temperature": -0.9,
+            "humidity": 0.1,
+            "continentalness": 0.9,
+            "erosion": 0.7,
+            "weirdness": 0.0,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        }
+      ]
+    }
+  }
+}

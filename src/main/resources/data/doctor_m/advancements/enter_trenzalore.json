@@ -1,0 +1,34 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:nether_star",  // 进度图标，可以换成你的模组物品
+      "nbt": "{CustomModelData:1}"      // 可选：自定义模型数据
+    },
+    "title": {
+      "translate": "advancement.doctor_m.enter_trenzalore.title"
+    },
+    "description": {
+      "translate": "advancement.doctor_m.enter_trenzalore.description"
+    },
+    "frame": "challenge",  // 可选：task, challenge, goal
+    "show_toast": true,    // 是否显示右上角提示
+    "announce_to_chat": true,  // 是否在聊天栏广播
+    "hidden": false,       // 是否隐藏（true表示未解锁前不显示）
+    "background": "minecraft:textures/gui/advancements/backgrounds/end.png"  // 可选：背景
+  },
+  "criteria": {
+    "entered_trenzalore": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": {
+        "to": "doctor_m:trenzalore"  // 目标维度ID
+      }
+    }
+  },
+  "requirements": [
+    ["entered_trenzalore"]
+  ],
+  "rewards": {
+    "experience": 100  // 奖励经验
+    //"function": "doctor_m:rewards/enter_trenzalore"  可选：执行命令函数
+  }
+}

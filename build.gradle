@@ -30,7 +30,7 @@ loom {
 	splitEnvironmentSourceSets()
 
 	mods {
-		"doctor-m" {
+		"doctor_m" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}

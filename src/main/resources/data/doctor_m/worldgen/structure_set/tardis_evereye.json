@@ -1,14 +1,14 @@
 {
   "structures": [
     {
-      "structure": "doctorm:tardis_sig",
+      "structure": "doctor_m:tardis_evereye",
       "weight": 1
     }
   ],
   "placement": {
     "type": "minecraft:random_spread",
-    "spacing": 135,
-    "separation": 80,
-    "salt": 978583765
+    "spacing": 150,
+    "separation": 90,
+    "salt": 2038103838
   }
 }

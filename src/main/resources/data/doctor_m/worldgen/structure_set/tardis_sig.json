@@ -1,14 +1,14 @@
 {
   "structures": [
     {
-      "structure": "doctorm:dalekship",
+      "structure": "doctor_m:tardis_sig",
       "weight": 1
     }
   ],
   "placement": {
     "type": "minecraft:random_spread",
-    "spacing": 80,
-    "separation": 60,
-    "salt": 1119807965
+    "spacing": 135,
+    "separation": 80,
+    "salt": 978583765
   }
 }
