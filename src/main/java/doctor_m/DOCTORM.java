@@ -1,6 +1,7 @@
 package doctor_m;
 
-import doctor_m.block.MomentBlock;
+import doctor_m.CoffeeMachine.CoffeeMachineBlock;
+import doctor_m.block.entity.DOCTORMBlockEntities;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -17,24 +18,26 @@ public class DOCTORM implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     // 注册的物品和方块
-    public static final Item CONSOLE_FRAGMENT = new Item(new Item.Settings().maxCount(64));
-    public static final Item PRIMORDIAL_RIFT_ITEM = new Item(new Item.Settings().maxCount(64));
-    public static final Block MOMENT_BLOCK = new MomentBlock(AbstractBlock.Settings.create().strength(1.5f, 6.0f));
+    public static final Block COFFEE_MACHINE_BLOCK = new CoffeeMachineBlock(AbstractBlock.Settings.create().strength(1.5f, 6.0f));
+    public static final Block MOMENT_BLOCK = new Block(AbstractBlock.Settings.create().strength(1.5f, 6.0f));
     public static final Item MOMENT_BLOCK_ITEM = new BlockItem(MOMENT_BLOCK, new Item.Settings());
 
     @Override
     public void onInitialize() {
-        LOGGER.info("开始初始化 Doctor M ...");
+        LOGGER.info("注册 Doctor M 物品/方块...");
 
         // 注册物品和方块
-        Registry.register(Registries.ITEM, id("console_fragment"), CONSOLE_FRAGMENT);
-        Registry.register(Registries.ITEM, id("primordial_rift"), PRIMORDIAL_RIFT_ITEM);
+        Registry.register(Registries.BLOCK, id("coffee_machine_block"), COFFEE_MACHINE_BLOCK);
+        Registry.register(Registries.ITEM, id("coffee_machine_block"),
+                new BlockItem(COFFEE_MACHINE_BLOCK, new Item.Settings()));
+
         Registry.register(Registries.BLOCK, id("moment"), MOMENT_BLOCK);
         Registry.register(Registries.ITEM, id("moment"), MOMENT_BLOCK_ITEM);
 
-        doctor_m.worldgen.ChunkEventListener.initialize();
+        // 注册方块实体
+        DOCTORMBlockEntities.registerBlockEntities();
 
-        LOGGER.info("Doctor M 已加载");
+        LOGGER.info("Doctor M 已加载！");
     }
 
     public static Identifier id(String path) {

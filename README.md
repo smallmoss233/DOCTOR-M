@@ -29,8 +29,7 @@ You may include the DOCTOR M mod in your modpack, but please be sure to credit t
 DOCTOR M是一个将[**AIT**](https://modrinth.com/mod/ait)模组和[**AIT Extras**](https://modrinth.com/mod/ait-extras)以及[**Create**](https://modrinth.com/mod/create-fabric)联合起来的模组.当然,我也推荐你们安装一个[**仿碧蓝档案光环**](https://modrinth.com/mod/blue-archive-halo),这样可以让永恒之眼内饰变得更酷炫
 
 模组当中添加了一些新的建筑和修改,**让AIT的流程变得没那么折磨人**(我不想再花上百小时去找蓝图了!!!)
-
-由于此模组实际上是为一个拥有完整世界观的二创DW（Doctor Who/神秘博士）整合包制作的,所以无需猜测"谨名"等没翻译的人名是谁，只要你玩的开心就好~
+不只是装饰，DOCTOR M还添加了一些功能性物品/方块，还拓展了AIT的冒险内容
 
 守望(Watcher)控制台纹理作者：Smallmoss（我），白桦下的赤俄。
 
