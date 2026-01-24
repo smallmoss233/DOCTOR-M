@@ -3,33 +3,33 @@
 
 ---
 
+## **Introduction in English**
 
-## **English Introduction**
+DOCTOR M combines the [**AIT**](https://modrinth.com/mod/ait) mod, [**AIT Extras**](https://modrinth.com/mod/ait-extras), and [**Create**](https://modrinth.com/mod/create-fabric), while also expanding the adventure content of AIT.
 
-DOCTOR M is a mod that combines the **[AIT](https://modrinth.com/mod/ait)** mod, **[AIT Extras](https://modrinth.com/mod/ait-extras)**, and **[Create](https://modrinth.com/mod/create-fabric)**. Of course, I also recommend installing a **[Blue Archive Halo imitation mod](https://modrinth.com/mod/blue-archive-halo)** to make the Evereye interior look even cooler.
+It is recommended to install a [**Blue Archive Halo**](https://modrinth.com/mod/blue-archive-halo) mod to make the Evereye interior look cooler.
 
-This mod adds some new structures and modifications, **making the AIT progression much less grindy** (I don't want to spend hundreds of hours searching for blueprints anymore!!!).
+Watcher console texture author: Smallmoss (me), 白桦下的赤俄.
 
-Since this mod was actually created for a derivative Doctor Who (DW) modpack with a complete established worldview, there's no need to guess who the untranslated names like "谨名" refer to—just enjoy playing~
+Rainbow, Raging Fire interior author: Asnit_PnQing.
 
-**Texture Authors:**
-- Watcher console texture: Smallmoss (me), 白桦下的赤俄.
-- Rainbow and Fire interior: Asnit_PnQing.
-- Sig interior: 斯格.尔特.
-- Way Home interior: 今稍.
-- Redstone Torch Sonic Screwdriver: 慢跑者.
-- Evereye interior, sonic screwdriver, and exterior; Watcher interior; Insane interior and exterior: Smallmoss (me).
+sig interior author: 斯格.尔特.
 
-You may include the DOCTOR M mod in your modpack, but please be sure to credit the source. Its interior designs may not be ported to other mods and redistributed without permission.
+Way Home interior author: 今稍.
+
+Redstone Torch Sonic Screwdriver author: 慢跑者.
+
+Evereye interior & Sonic Screwdriver & Exterior, Watcher interior, Insane interior & Exterior author: Smallmoss (me).
+
+You may include the DOCTOR M mod in your modpack, but please be sure to credit the source. Its interiors may not be ported to other mods and redistributed without permission.
 
 ---
 
 ## **中文介绍**
 
-DOCTOR M是一个将[**AIT**](https://modrinth.com/mod/ait)模组和[**AIT Extras**](https://modrinth.com/mod/ait-extras)以及[**Create**](https://modrinth.com/mod/create-fabric)联合起来的模组.当然,我也推荐你们安装一个[**仿碧蓝档案光环**](https://modrinth.com/mod/blue-archive-halo),这样可以让永恒之眼内饰变得更酷炫
+DOCTOR M将[**AIT**](https://modrinth.com/mod/ait)模组和[**AIT Extras**](https://modrinth.com/mod/ait-extras)以及[**Create**](https://modrinth.com/mod/create-fabric)结合起来，同时拓展了AIT的冒险内容.
 
-模组当中添加了一些新的建筑和修改,**让AIT的流程变得没那么折磨人**(我不想再花上百小时去找蓝图了!!!)
-不只是装饰，DOCTOR M还添加了一些功能性物品/方块，还拓展了AIT的冒险内容
+推荐安装一个[**仿碧蓝档案光环**](https://modrinth.com/mod/blue-archive-halo),这样可以让永恒之眼内饰变得更酷炫
 
 守望(Watcher)控制台纹理作者：Smallmoss（我），白桦下的赤俄。
 
