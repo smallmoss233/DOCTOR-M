@@ -4,7 +4,7 @@
   "desktop.evereye.rainbow": "Rainbow",
   "desktop.evereye.watcher": "Watcher",
   "desktop.evereye.sig": "sig",
-  "desktop.evereye.insane": "Insane",
+  "desktop.evereye.madness": "Madness",
   "desktop.evereye.fire": "Raging Fire",
   "desktop.evereye.eternalbell": "Eternal Bell",
   "desktop.evereye.permanence": "Permanence",
@@ -15,6 +15,6 @@
   "console.everye.evereye": "Evereye",
   "console.everye.copper_dalek": "Dalek",
   "console.everye.watcher": "Watcher",
-  "exterior.evereye.Insane": "Flesh Warehouse: Insane",
-  "exterior.evereye.evereyebox": "Blue box: Evereye"
+  "exterior.evereye.madness": "Madness",
+  "exterior.evereye.evereyebox": "Evereye Police Box"
 }

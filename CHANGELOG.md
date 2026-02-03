@@ -2,7 +2,7 @@
 
 ---
 
-## [v2.0]
+## [ v2.0 beta ]
 
 ### 新增 / New
 -  特兰泽洛 / Trenzalore
@@ -19,3 +19,4 @@
 ### 修复 / Repair
 -  修复全部可以刷全子系统的内饰，现在它们只有基础子系统（变色龙电路，去物质电路，生命维持系统，稳定器） / Fixed all interiors that could be used to obtain all subsystems. They now only contain basic subsystems (Chameleon Circuit, Dematerialization Circuit, Life Support System, Stabilizers)
 -  霓虹内饰修复，移除了原作者（Asnit_PnQing）使用的AIT PLUS方块 / Fixed the Rainbow interior by removing AIT PLUS blocks originally used by the author (Asnit_PnQing)
+-  疯恶的外观与内饰更名为“恶疯”（真正的原名），英文名由“Insane”改为“Madness” / The appearance and interior of "疯恶" have been renamed to "恶疯" (its original true name), with its English name changed from "Insane" to "Madness".

@@ -4,7 +4,7 @@
   "desktop.evereye.rainbow": "霓虹",
   "desktop.evereye.watcher": "守望",
   "desktop.evereye.sig": "斯格",
-  "desktop.evereye.insane": "疯恶",
+  "desktop.evereye.madness": "恶疯",
   "desktop.evereye.fire": "烈火",
   "desktop.evereye.eternalbell": "永恒之钟",
   "desktop.evereye.permanence": "恒朽",
@@ -15,6 +15,6 @@
   "console.everye.evereye": "永恒之眼",
   "console.everye.copper_dalek": "戴立克",
   "console.everye.watcher": "守望",
-  "exterior.evereye.Insane": "血肉仓：疯恶",
-  "exterior.evereye.evereyebox": "蓝盒子：永恒之眼"
+  "exterior.evereye.madness": "恶疯",
+  "exterior.evereye.evereyebox": "永恒之眼警亭"
 }
