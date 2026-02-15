@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/de_mat_gun",
+  "textures": {
+    "layer0": "doctor_m:item/de_mat_gun"
+  },
+  "gui_light": "front"
+}

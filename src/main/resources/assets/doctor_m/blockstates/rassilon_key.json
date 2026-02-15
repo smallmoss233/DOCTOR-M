@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/rassilon_key",
+  "textures": {
+    "layer0": "doctor_m:item/rassilon_key"
+  }
+}

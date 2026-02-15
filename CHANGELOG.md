@@ -6,6 +6,7 @@
 
 ### 新增 / New
 -  50型内饰 / Type 50 interior
+-  克拉拉的塔迪斯内饰 / The Clara TARDIS interior
 
 ### 修改 / Edit
 -  归途内饰重新装修 / The Way Home interior has been refurbished
