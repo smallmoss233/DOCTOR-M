@@ -7,9 +7,13 @@
 ### 新增 / New
 -  50型内饰 / Type 50 interior
 -  克拉拉的塔迪斯内饰 / The Clara TARDIS interior
+-  DOCTOR M创造模式物品栏 / DOCTOR M Creative Mode Inventory
 
 ### 修改 / Edit
--  归途内饰重新装修 / The Way Home interior has been refurbished
+-  更新gradle版本为9.2.1-bin，同时加上了MOD依赖项 / Updated the Gradle version to 9.2.1-bin and added the MOD dependencies.
+-  更新去物质枪贴图和模型 / Update DE MAT GUN textures and model
+-  更新拉斯隆之钥的提示 / Prompt to update Rassilon Key
+-  根成就 / Root achievement
 
 ### 修复 / Repair
--  修复全部可以刷全子系统的内饰，现在它们只有基础子系统（变色龙电路，去物质电路，生命维持系统，稳定器） / Fixed all interiors that could be used to obtain all subsystems. They now only contain basic subsystems (Chameleon Circuit, Dematerialization Circuit, Life Support System, Stabilizers)
+-  进入特兰泽洛可以正确地给予玩家“时候到了？”成就 / Entering Trenzalore can correctly award the player the 'The Time Has Come?' achievement.

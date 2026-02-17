@@ -1,21 +1,17 @@
 {
-  "advancement.doctor_m.enter_trenzalore.title": "时候要到了？",
-  "advancement.doctor_m.enter_trenzalore.description": "在大雪飞扬的城镇，一位年老的战士即将迎来他的钟声，他荣耀的旧躯即将迎来新的篇章。",
+  "advancements.doctor_m.root.title": "DOCTOR M",
+  "advancements.doctor_m.root.description": "为什么叫DOCTOR M？en...DOCTOR MOD，DOCTOR MC，反正就是多重意思啦~",
+  "advancements.doctor_m.enter_trenzalore.title": "时候要到了？",
+  "advancements.doctor_m.enter_trenzalore.description": "在大雪飞扬的城镇，一位年老的战士即将迎来他的钟声，他荣耀的旧躯即将迎来新的篇章。",
 
-  "category.doctor_m.weapons": "Doctor M 武器",
-
+  "itemGroup.doctor_m": "Doctor M 物品",
 
   "item.doctor_m.rassilon_key": "拉斯隆之钥",
-  "item.doctor_m.rassilon_key.tooltip.line1": "时间领主的象征",
-  "item.doctor_m.rassilon_key.tooltip.line2": "右键空气切换自身授权，右键玩家切换目标授权",
+  "item.doctor_m.rassilon_key.tooltip.line1": "时间领主禁忌武器的授权工具",
+  "item.doctor_m.rassilon_key.tooltip.line2": "很少有总统能得到拉斯隆之钥...",
   "item.doctor_m.de_mat_gun": "去物质枪",
   "item.doctor_m.de_mat_gun.tooltip.line1": "来自时间领主的忠告：",
   "item.doctor_m.de_mat_gun.tooltip.line2": "毁了这把枪，毁掉它的所有资料，不要被强大的力量蛊惑心智...",
-
-  "message.doctor_m.de_mat_gun.unauthorized": "你没有授权！无法使用手中的违禁武器：%s",
-  "message.doctor_m.de_mat_gun.authorized": "授权验证通过，去物质枪准备就绪...",
-
-  "key.doctor_m.zoom": "去物质枪缩放",
 
   "block.doctor_m.moment": "时刻",
   "block.doctor_m.coffee_machine_block": "咖啡机",

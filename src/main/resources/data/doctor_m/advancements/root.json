@@ -1,0 +1,24 @@
+{
+  "display": {
+    "icon": {
+      "item": "doctor_m:rassilon_key"
+    },
+    "title": {
+      "translate": "advancements.doctor_m.root.title"
+    },
+    "description": {
+      "translate": "advancements.doctor_m.root.description"
+    },
+    "background": "minecraft:textures/block/netherite_block.png",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "root": {
+      "conditions": {},
+      "trigger": "ait:root"
+    }
+  }
+}
