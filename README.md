@@ -15,7 +15,7 @@ It is recommended to install a [**Blue Archive-style Halo**](https://modrinth.co
 
 *Sig Interior Author*: 斯格.尔特
 
-*Way Home Interior Author*: 今稍
+*Way Home Interior Author*: Time Lord与TARDIS type 90的千年虐恋
 
 *Redstone Torch Sonic Screwdriver Author*: 慢跑者
 
@@ -37,7 +37,7 @@ DOCTOR M将[**AIT**](https://modrinth.com/mod/ait)模组和[**AIT Extras**](http
 
 *斯格(sig)内饰作者*：斯格.尔特
 
-*归途(Way Home)内饰作者*：今稍
+*归途(Way Home)内饰作者*：Time Lord与TARDIS type 90的千年虐恋
 
 *红石火把音速起子作者*：慢跑者
 
