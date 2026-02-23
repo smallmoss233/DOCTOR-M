@@ -11,7 +11,7 @@ It is recommended to install a [**Blue Archive-style Halo**](https://modrinth.co
 
 *Watcher Console Texture Authors*: Smallmoss (me), 白桦下的赤俄
 
-*Rainbow and Fire Interior Authors*: Asnit_PnQing
+*Rainbow and Fire and Crystalline Zeiton Interior Authors*: Asnit_PnQing
 
 *Sig Interior Author*: 斯格.尔特
 
@@ -33,7 +33,7 @@ DOCTOR M将[**AIT**](https://modrinth.com/mod/ait)模组和[**AIT Extras**](http
 
 *守望(Watcher)控制台纹理作者*：Smallmoss（我），白桦下的赤俄
 
-*霓虹(Rainbow)、火焰(Fire)内饰作者*：Asnit_PnQing
+*霓虹(Rainbow)、火焰(Fire)、泽顿水晶（Crystalline Zeiton）内饰作者*：Asnit_PnQing
 
 *斯格(sig)内饰作者*：斯格.尔特
 
