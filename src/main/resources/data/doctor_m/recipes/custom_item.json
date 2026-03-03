@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": "ait:zeiton_block",
-  "result": {
-    "id": "ait:zeiton_shard",
-    "count": 4
-  }
-}
