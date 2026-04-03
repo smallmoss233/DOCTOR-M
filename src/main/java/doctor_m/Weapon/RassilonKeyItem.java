@@ -14,9 +14,7 @@ public class RassilonKeyItem extends Item {
 
     @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
-        // 第一条提示
-        tooltip.add(Text.translatable("item.doctor_m.rassilon_key.tooltip.line1").formatted(net.minecraft.util.Formatting.GREEN));
-        // 第二条提示（带绿色）
+        tooltip.add(Text.translatable("item.doctor_m.rassilon_key.tooltip.line1"));
         tooltip.add(Text.translatable("item.doctor_m.rassilon_key.tooltip.line2"));
     }
 }

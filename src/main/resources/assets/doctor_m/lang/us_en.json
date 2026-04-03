@@ -16,9 +16,5 @@
   "block.doctor_m.moment": "The Moment",
   "block.doctor_m.coffee_machine_block": "Coffee Machine",
 
-  "dimension.doctor_m.trenzalore": "Trenzalore",
-
-  "message.doctor_m.coffee_machine.working": "Coffee machine is working...",
-  "message.doctor_m.coffee_machine.making": "Coffee machine starts making %s...",
-  "message.doctor_m.coffee_machine.switched": "Current drink switched to: %s"
+  "dimension.doctor_m.trenzalore": "Trenzalore"
 }

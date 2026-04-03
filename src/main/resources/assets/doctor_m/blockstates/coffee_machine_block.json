@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "facing=north": { "model": "doctor_m:block/coffee_machine_block", "y": 0 },
-    "facing=east": { "model": "doctor_m:block/coffee_machine_block", "y": 90 },
-    "facing=south": { "model": "doctor_m:block/coffee_machine_block", "y": 180 },
-    "facing=west": { "model": "doctor_m:block/coffee_machine_block", "y": 270 }
-  }
-}

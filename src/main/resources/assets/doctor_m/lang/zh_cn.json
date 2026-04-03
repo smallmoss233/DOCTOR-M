@@ -16,9 +16,5 @@
   "block.doctor_m.moment": "时刻",
   "block.doctor_m.coffee_machine_block": "咖啡机",
 
-  "dimension.doctor_m.trenzalore": "特兰泽洛",
-
-  "message.doctor_m.coffee_machine.working": "咖啡机正在工作...",
-  "message.doctor_m.coffee_machine.making": "咖啡机开始制作%s...",
-  "message.doctor_m.coffee_machine.switched": "当前饮品已切换到: %s"
+  "dimension.doctor_m.trenzalore": "特兰泽洛"
 }
