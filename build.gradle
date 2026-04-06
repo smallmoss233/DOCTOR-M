@@ -38,6 +38,14 @@ repositories {
             includeGroup "dev.amble"
         }
     }
+    maven {
+        name = "Mod Menu"
+        url = "https://maven.terraformersmc.com/releases/"
+    }
+    maven {
+        name = "JEI"
+        url = "https://maven.blamejared.com/"
+    }
 }
 
 dependencies {
@@ -46,6 +54,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation "dev.amble:lib:${project.amblekit_version}"
+    modImplementation "dev.amble:ait:${project.ait_version}"
 }
 
 loom {

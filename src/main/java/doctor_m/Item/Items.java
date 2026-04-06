@@ -7,7 +7,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public class Items {
-    public static final Item PHOTO = new RassilonKeyItem(new Item.Settings());
+    public static final Item PHOTO = new Item(new Item.Settings());
 
     public static void registerItems() {Registry.register(Registries.ITEM, id("photo"), PHOTO);}
 

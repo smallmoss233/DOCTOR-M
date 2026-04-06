@@ -1,0 +1,98 @@
+{
+  "output": {
+    "id": "doctor_m:de_mat_gun",
+    "Count": 1
+  },
+  "inputs": [
+    {
+      "item": "ait:hyperion_core_shaft",
+      "maxCount": 4,
+      "minCount": 4
+    },
+    {
+      "item": "ait:photon_accelerator",
+      "maxCount": 8,
+      "minCount": 6
+    },
+    {
+      "item": "ait:dematerialization_circuit",
+      "maxCount": 1,
+      "minCount": 1
+    },
+    {
+      "item": "ait:artron_fluid_link",
+      "maxCount": 1,
+      "minCount": 1
+    },
+    {
+      "item": "ait:data_fluid_link",
+      "maxCount": 1,
+      "minCount": 1
+    },
+    {
+      "item": "ait:vortex_fluid_link",
+      "maxCount": 1,
+      "minCount": 1
+    },
+    {
+      "item": "ait:artron_mercurial_link",
+      "maxCount": 1,
+      "minCount": 1
+    },
+    {
+      "item": "ait:data_mercurial_link",
+      "maxCount": 1,
+      "minCount": 1
+    },
+    {
+      "item": "ait:vortex_mercurial_link",
+      "maxCount": 1,
+      "minCount": 1
+    },
+    {
+      "item": "ait:artron_collector",
+      "maxCount": 2,
+      "minCount": 1
+    },
+    {
+      "item": "minecraft:netherite_ingot",
+      "maxCount": 8,
+      "minCount": 5
+    },
+    {
+      "item": "minecraft:stone_button",
+      "maxCount": 1,
+      "minCount": 1
+    },
+    {
+      "item": "minecraft:redstone",
+      "maxCount": 12,
+      "minCount": 8
+    },
+    {
+      "item": "ait:charged_zeiton_crystal",
+      "maxCount": 1,
+      "minCount": 1
+    },
+    {
+      "item": "ait:plasmic_material",
+      "maxCount": 20,
+      "minCount": 10
+    },
+    {
+      "item": "ait:cable_block",
+      "maxCount": 18,
+      "minCount": 15
+    },
+    {
+      "item": "ait:transwarp_resonator",
+      "maxCount": 12,
+      "minCount": 10
+    },
+    {
+      "item": "minecraft:beacon",
+      "maxCount": 1,
+      "minCount": 1
+    }
+  ]
+}

@@ -12,11 +12,10 @@ public class TardisEntity extends PathAwareEntity {
         super(entityType, world);
     }
 
-    // 创建默认属性（生命值、移动速度、攻击力等）
     public static DefaultAttributeContainer.Builder createMobAttributes() {
         return MobEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0D)    // 10颗心
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25D) // 移动速度
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 2.0D);  // 攻击力（可选）
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0D)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25D)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 2.0D);
     }
 }

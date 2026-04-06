@@ -9,6 +9,8 @@
 -  克拉拉的塔迪斯内饰 / The Clara TARDIS interior
 -  DOCTOR M创造模式物品栏 / DOCTOR M Creative Mode Inventory
 -  103型塔迪斯与变体NPC / Type 103 Tardis and Variant NPC
+-  2型塔迪斯霁光 / Type2 tardis Claresco
+-  去物质枪配方 / De-mat-Gun recipe
 
 ### 修改 / Edit
 -  更新gradle版本为9.2.1-bin，同时加上了MOD依赖项 / Updated the Gradle version to 9.2.1-bin and added the MOD dependencies.

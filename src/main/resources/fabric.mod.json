@@ -31,17 +31,18 @@
 		]
 	},
 	"mixins": [
-		"doctor_m.mixins.json"
+		"doctor_m.mixins.json",
+        "doctor_m.client.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.17.3",
 		"minecraft": "~1.20.1",
 		"java": ">=17",
 		"fabric-api": "*",
-        "amblekit": ">=1.1.14.79"
+        "ait": "*",
+        "amblekit": "*"
     },
   "suggests": {
-    "ait": "*",
     "ait_extras": "*",
     "Create": "*",
     "another-mod": "*"
