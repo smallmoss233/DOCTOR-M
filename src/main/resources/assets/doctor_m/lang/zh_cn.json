@@ -7,14 +7,13 @@
   "itemGroup.doctor_m": "Doctor M 物品",
 
   "item.doctor_m.rassilon_key": "拉斯隆之钥",
+  "item.doctor_m.de_mat_gun": "去物质枪",
+
+  "doctor_m.tip.not.done": "§c[此项目未完成！]",
   "item.doctor_m.rassilon_key.tooltip.line1": "时间领主禁忌武器的授权工具",
   "item.doctor_m.rassilon_key.tooltip.line2": "很少有总统能得到拉斯隆之钥...",
-  "item.doctor_m.de_mat_gun": "去物质枪",
   "item.doctor_m.de_mat_gun.tooltip.line1": "来自时间领主的忠告：",
   "item.doctor_m.de_mat_gun.tooltip.line2": "毁了这把枪，毁掉它的所有资料，不要被强大的力量蛊惑心智...",
-
-  "block.doctor_m.moment": "时刻",
-  "block.doctor_m.coffee_machine_block": "咖啡机",
 
   "dimension.doctor_m.trenzalore": "特兰泽洛"
 }

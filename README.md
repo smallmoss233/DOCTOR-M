@@ -26,15 +26,15 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 
 **Credits for Custom Content**
 
-*Evereye interior & Sonic Screwdriver & exterior, Watcher interior, Madness interior & exterior, Cloister, Permanence interior*: Smallmoss
+*Evereye interior & Sonic Screwdriver & exterior, Watcher interior & console texture, Madness interior & exterior, Cloister, Permanence interior*: Smallmoss
 
-*Watcher console texture*: Smallmoss, 白桦下的赤俄
+*Watcher console texture*: 白桦下的赤俄
 
 *Rainbow, Fire, Crystalline Zeiton interiors*: Asnit_PnQing
 
 *Sig interior*: 斯格尔特
 
-*Way Home, Clara TARDIS, Type 50/55, Claresco interior*: Siletonight
+*Way Home, Clara’s TARDIS, Type 50/55, Claresco interior*: Siletonight
 
 *Redstone Torch Sonic Screwdriver author*: 慢跑者
 
@@ -67,15 +67,15 @@ DOCTOR M支持一些额外的MOD，同时，DOCTOR M的自定义内饰也有会�
 
 **自定义内容的作者**
 
-*永恒之眼(Evereye) 内饰&音速起子&外观, 守望(Watcher) 内饰, 恶疯(Madness) 内饰&外观, 回廊(Coister), 恒朽(Permanence) 内饰*：Smallmoss
+*永恒之眼(Evereye) 内饰&音速起子&外观, 守望(Watcher) 内饰&控制台纹理, 恶疯(Madness) 内饰&外观, 回廊(Coister), 恒朽(Permanence) 内饰*：Smallmoss
 
-*守望(Watcher) 控制台纹理*：Smallmoss，白桦下的赤俄
+*守望(Watcher) 控制台纹理*：白桦下的赤俄
 
 *霓虹(Rainbow), 火焰(Fire), 泽顿水晶(Crystalline Zeiton) 内饰*：Asnit_PnQing
 
 *斯格(sig)内饰*：斯格尔特
 
-*归途(Way Home)，克拉拉的塔迪斯(Clara Tardis)，50/55型(Type 50/55)，霁光(Claresco) 内饰*：Siletonight
+*归途(Way Home)，克拉拉的塔迪斯(Clara’s Tardis)，50/55型(Type 50/55)，霁光(Claresco) 内饰*：Siletonight
 
 *红石火把音速起子作者*：慢跑者
 

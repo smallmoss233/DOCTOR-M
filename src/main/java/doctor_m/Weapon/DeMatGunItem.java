@@ -1,7 +1,8 @@
 package doctor_m.Weapon;
 
+import dev.amble.ait.module.gun.core.item.BaseGunItem;
+
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
@@ -12,10 +13,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DeMatGunItem extends Item {
+public class DeMatGunItem extends BaseGunItem {
 
     public DeMatGunItem(Settings settings) {
         super(settings);
+        // 如果你需要额外的初始化，可以在这里写
     }
 
     @Override
@@ -28,5 +30,19 @@ public class DeMatGunItem extends Item {
                 .withItalic(true));
         tooltip.add(line2);
         super.appendTooltip(stack, world, tooltip, context);
+        tooltip.add(Text.translatable("doctor_m.tip.not.done"));
+    }
+
+    @Override
+    public double getMaxAmmo() {
+        return 128;
+    }
+    @Override
+    public int getCooldown() {
+        return 5;
+    }
+    @Override
+    public float getAimDeviation(boolean isAds) {
+        return isAds ? 0.15f : 1.2f;
     }
 }

@@ -1,20 +1,19 @@
 {
   "advancements.doctor_m.root.title": "DOCTOR M",
-  "advancements.doctor_m.root.description": "Why call it DOCTOR M? En... DOCTOR MOD, DOCTOR MC, anyway, it has multiple meanings~",
+  "advancements.doctor_m.root.description": "Why is it called DOCTOR M? Well... DOCTOR MOD, DOCTOR MC, anyway it's multi-layered~",
   "advancements.doctor_m.enter_trenzalore.title": "The Time Has Come?",
-  "advancements.doctor_m.enter_trenzalore.description": "In a snow-covered town, an aged warrior is about to hear his bells, and his glorious old body is about to embrace a new chapter.",
+  "advancements.doctor_m.enter_trenzalore.description": "In a snow-swept town, an aged warrior awaits his final bell; his honored old shell is about to turn a new page.",
 
   "itemGroup.doctor_m": "Doctor M Items",
 
   "item.doctor_m.rassilon_key": "Key of Rassilon",
-  "item.doctor_m.rassilon_key.tooltip.line1": "Authorization tool for Time Lord forbidden weapons",
-  "item.doctor_m.rassilon_key.tooltip.line2": "Few presidents have obtained the Key of Rassilon...",
   "item.doctor_m.de_mat_gun": "De-Mat Gun",
-  "item.doctor_m.de_mat_gun.tooltip.line1": "Advice from the Time Lords:",
-  "item.doctor_m.de_mat_gun.tooltip.line2": "Destroy this gun and all its data, do not be tempted by its immense power...",
 
-  "block.doctor_m.moment": "The Moment",
-  "block.doctor_m.coffee_machine_block": "Coffee Machine",
+  "doctor_m.tip.not.done": "§c[This item is not finished!]",
+  "item.doctor_m.rassilon_key.tooltip.line1": "Authorization tool for the Time Lords' forbidden weapon",
+  "item.doctor_m.rassilon_key.tooltip.line2": "Few Presidents have been granted the Key of Rassilon...",
+  "item.doctor_m.de_mat_gun.tooltip.line1": "A warning from the Time Lords:",
+  "item.doctor_m.de_mat_gun.tooltip.line2": "Destroy this gun, erase all its data. Do not let its power corrupt your mind...",
 
   "dimension.doctor_m.trenzalore": "Trenzalore"
 }
