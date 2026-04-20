@@ -17,7 +17,7 @@
 -  去物质枪配方 / De-mat-Gun recipe
 
 ### 修改 / Edit
--  更新gradle版本为9.2.1-bin，同时加上了MOD依赖项 / Updated the Gradle version to 9.2.1-bin and added the MOD dependencies.
+-  加上了AITMOD依赖项 / added the AITMOD dependencies.
 -  更新去物质枪贴图和模型 / Update DE MAT GUN textures and model
 -  更新拉斯隆之钥的提示 / Prompt to update Rassilon Key
 -  根成就 / Root achievement
