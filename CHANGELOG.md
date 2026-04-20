@@ -2,15 +2,18 @@
 
 ---
 
-## [ v2.0 beta ]
+## [ v2.0 ]
 
 ### 新增 / New
+
 -  50型内饰 / Type 50 interior
 -  克拉拉的塔迪斯内饰 / The Clara TARDIS interior
+-  2型霁光内饰 / Type2 Claresco interior
+-  霁光400R型内饰 / Claresco Type 400 model R interior
+-  时隙内饰 / The rift interior
+
 -  DOCTOR M创造模式物品栏 / DOCTOR M Creative Mode Inventory
 -  103型塔迪斯与变体NPC（未完成！） / Type 103 Tardis and Variant NPC（Not Done！）
--  2型霁光 / Type2 Claresco
--  霁光400R型 / Claresco Type 400 model R
 -  去物质枪配方 / De-mat-Gun recipe
 
 ### 修改 / Edit
