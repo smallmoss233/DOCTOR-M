@@ -10,7 +10,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
-public class Entities {
+public class entities {
     public static final EntityType<entity_tardis> TYPE_103_TARDIS = Registry.register(
             Registries.ENTITY_TYPE,
             new Identifier(DOCTORM.MOD_ID, "type_103_tardis"),
