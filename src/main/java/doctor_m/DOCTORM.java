@@ -14,7 +14,7 @@ public class DOCTORM implements ModInitializer {
         weapon_itme.registerItems();
         items.registerItems();
         item_group.registerItems();
-        entities.register();
+        entities.registerAttributes();
         doctor_m.dimension.trenzalore.register();
     }
 }

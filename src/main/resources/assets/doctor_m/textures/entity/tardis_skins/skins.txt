@@ -1,0 +1,6 @@
+020.png|TC020
+default.png|103型塔迪斯
+iris.png|Iris
+maki_qinzez.png|maki (Qinzez)
+omega.png|Омега
+maki.png|纪
