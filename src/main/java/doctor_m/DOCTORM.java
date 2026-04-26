@@ -1,8 +1,9 @@
 package doctor_m;
 
-import doctor_m.Entities.ModEntities;
-import doctor_m.Item.Items;
-import doctor_m.Weapon.Weapon;
+import doctor_m.Item.item_group;
+import doctor_m.entities.Entities;
+import doctor_m.Item.items;
+import doctor_m.weapon.weapon_itme;
 import net.fabricmc.api.ModInitializer;
 
 public class DOCTORM implements ModInitializer {
@@ -10,10 +11,11 @@ public class DOCTORM implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        ModEntities.register();
-        Weapon.registerItems();
-        ModEntities.register();
-        Items.registerItems();
-        DOCTORMItem_group.registerItems();
+        Entities.register();
+        weapon_itme.registerItems();
+        Entities.register();
+        items.registerItems();
+        item_group.registerItems();
+        doctor_m.dimension.trenzalore.register();
     }
 }

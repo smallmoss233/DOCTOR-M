@@ -1,4 +1,4 @@
-package doctor_m.Weapon;
+package doctor_m.weapon;
 
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
@@ -7,8 +7,8 @@ import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import java.util.List;
 
-public class RassilonKeyItem extends Item {
-    public RassilonKeyItem(Settings settings) {
+public class rassilon_key extends Item {
+    public rassilon_key(Settings settings) {
         super(settings);
     }
 

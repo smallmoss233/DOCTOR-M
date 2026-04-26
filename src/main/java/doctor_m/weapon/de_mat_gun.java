@@ -1,4 +1,4 @@
-package doctor_m.Weapon;
+package doctor_m.weapon;
 
 import dev.amble.ait.module.gun.core.item.BaseGunItem;
 
@@ -13,9 +13,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DeMatGunItem extends BaseGunItem {
+public class de_mat_gun extends BaseGunItem {
 
-    public DeMatGunItem(Settings settings) {
+    public de_mat_gun(Settings settings) {
         super(settings);
         // 如果你需要额外的初始化，可以在这里写
     }

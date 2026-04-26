@@ -1,4 +1,4 @@
-package doctor_m.Entities;
+package doctor_m.entities;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -7,8 +7,8 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.world.World;
 
-public class TardisEntity extends PathAwareEntity {
-    public TardisEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
+public class entity_tardis extends PathAwareEntity {
+    public entity_tardis(EntityType<? extends PathAwareEntity> entityType, World world) {
         super(entityType, world);
     }
 

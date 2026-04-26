@@ -1,4 +1,4 @@
-package doctor_m.Weapon;
+package doctor_m.weapon;
 
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -6,11 +6,11 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 
-public class Weapon {
-    public static final Item DE_MAT_GUN = new DeMatGunItem(new Item.Settings()
+public class weapon_itme {
+    public static final Item DE_MAT_GUN = new de_mat_gun(new Item.Settings()
             .maxCount(1)
             .rarity(Rarity.EPIC));
-    public static final Item RASSILON_KEY = new RassilonKeyItem(new Item.Settings()
+    public static final Item RASSILON_KEY = new rassilon_key(new Item.Settings()
             .maxCount(1)
             .rarity(Rarity.EPIC));
 
