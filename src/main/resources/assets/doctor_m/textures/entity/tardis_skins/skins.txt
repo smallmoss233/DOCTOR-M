@@ -1,6 +1,6 @@
-020.png|TC020
-default.png|103型塔迪斯
-iris.png|Iris
-maki_qinzez.png|maki (Qinzez)
-omega.png|Омега
-maki.png|纪
+020.png|TC020|slim
+default.png|103型塔迪斯|slim
+iris.png|Iris|slim
+maki_qinzez.png|maki (Qinzez)|slim
+omega.png|Омега|slim
+maki.png|纪|slim

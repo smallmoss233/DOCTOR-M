@@ -1,5 +1,7 @@
 package doctor_m.entities.data;
 
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -21,9 +23,12 @@ public class entity_103_tardis extends PathAwareEntity {
 
     private static final TrackedData<String> SELECTED_SKIN =
             DataTracker.registerData(entity_103_tardis.class, TrackedDataHandlerRegistry.STRING);
+    private static final TrackedData<String> MODEL_TYPE =
+            DataTracker.registerData(entity_103_tardis.class, TrackedDataHandlerRegistry.STRING);
 
-    private String selectedSkin = "";      // 纹理文件名（安全，如 "omega.png"）
-    private String displayName = "";       // 显示名字（如 "Омега"）
+    private String selectedSkin = "";
+    private String displayName = "";
+    private String modelType = "slim";   // 默认为细手臂
 
     public entity_103_tardis(EntityType<? extends PathAwareEntity> type, World world) {
         super(type, world);
@@ -36,6 +41,7 @@ public class entity_103_tardis extends PathAwareEntity {
     protected void initDataTracker() {
         super.initDataTracker();
         this.dataTracker.startTracking(SELECTED_SKIN, "");
+        this.dataTracker.startTracking(MODEL_TYPE, "slim");
     }
 
     private void chooseRandomSkin() {
@@ -45,11 +51,11 @@ public class entity_103_tardis extends PathAwareEntity {
         SkinEntry chosen = entries.get(rand.nextInt(entries.size()));
         this.selectedSkin = chosen.texture;
         this.displayName = chosen.display;
-        // 设置实体头顶的名字
+        this.modelType = chosen.modelType;
         this.setCustomName(Text.literal(displayName));
         this.setCustomNameVisible(true);
-        // 同步纹理文件名到客户端（用于渲染）
         this.dataTracker.set(SELECTED_SKIN, selectedSkin);
+        this.dataTracker.set(MODEL_TYPE, modelType);
     }
 
     private List<SkinEntry> loadSkinList() {
@@ -67,19 +73,28 @@ public class entity_103_tardis extends PathAwareEntity {
                 String[] parts = line.split("\\|");
                 String textureName;
                 String displayName;
-                if (parts.length == 2) {
+                String modelType = "slim"; // 默认
+                if (parts.length >= 2) {
                     textureName = parts[0].trim();
                     displayName = parts[1].trim();
+                    if (parts.length >= 3) {
+                        String type = parts[2].trim().toLowerCase();
+                        if (type.equals("default") || type.equals("steve")) {
+                            modelType = "default";
+                        } else {
+                            modelType = "slim";
+                        }
+                    }
                 } else {
-                    // 兼容旧格式：整行作为文件名，显示名称为去掉扩展名的文件名（不安全，不推荐）
+                    // 兼容旧格式：整行作为纹理名，显示名为去掉扩展名，模型默认 slim
                     textureName = line;
                     String nameWithoutExt = line.contains(".") ? line.substring(0, line.lastIndexOf('.')) : line;
                     displayName = nameWithoutExt;
                 }
-                // 确保纹理文件名合法（小写字母、数字、下划线、点）
+                // 确保纹理文件名合法
                 textureName = textureName.toLowerCase().replaceAll("[^a-z0-9._-]", "_");
                 if (!textureName.endsWith(".png")) textureName += ".png";
-                list.add(new SkinEntry(textureName, displayName));
+                list.add(new SkinEntry(textureName, displayName, modelType));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,10 +105,10 @@ public class entity_103_tardis extends PathAwareEntity {
     private static class SkinEntry {
         String texture;
         String display;
-        SkinEntry(String t, String d) { texture = t; display = d; }
+        String modelType;
+        SkinEntry(String t, String d, String m) { texture = t; display = d; modelType = m; }
     }
 
-    // 客户端通过此方法获取纹理文件名
     public String getSelectedSkin() {
         if (this.getWorld().isClient) {
             return this.dataTracker.get(SELECTED_SKIN);
@@ -101,11 +116,19 @@ public class entity_103_tardis extends PathAwareEntity {
         return selectedSkin;
     }
 
+    public String getModelType() {
+        if (this.getWorld().isClient) {
+            return this.dataTracker.get(MODEL_TYPE);
+        }
+        return modelType;
+    }
+
     @Override
     public void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
         nbt.putString("SelectedSkin", selectedSkin);
         nbt.putString("DisplayName", displayName);
+        nbt.putString("ModelType", modelType);
     }
 
     @Override
@@ -114,7 +137,9 @@ public class entity_103_tardis extends PathAwareEntity {
         if (nbt.contains("SelectedSkin")) {
             selectedSkin = nbt.getString("SelectedSkin");
             displayName = nbt.getString("DisplayName");
+            modelType = nbt.getString("ModelType");
             this.dataTracker.set(SELECTED_SKIN, selectedSkin);
+            this.dataTracker.set(MODEL_TYPE, modelType);
             this.setCustomName(Text.literal(displayName));
             this.setCustomNameVisible(true);
         }

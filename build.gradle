@@ -111,20 +111,3 @@ publishing {
         }
     }
 }
-tasks.register('generateSkinList') {
-    def skinDir = file("src/main/resources/assets/doctor_m/textures/entity/tardis_skins")
-    def outputFile = file("src/main/resources/assets/doctor_m/textures/entity/tardis_skins/skins.txt")
-    inputs.dir(skinDir)
-    outputs.file(outputFile)
-    doLast {
-        if (skinDir.exists()) {
-            def skins = fileTree(skinDir).matching { include "*.png" }.files.collect { it.name }
-            outputFile.text = skins.join("\n")
-            println "Generated skin list: ${skins}"
-        } else {
-            println "Skin directory not found: ${skinDir}"
-            outputFile.text = ""
-        }
-    }
-}
-processResources.dependsOn(generateSkinList)

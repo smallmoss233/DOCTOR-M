@@ -18,7 +18,7 @@ public class entities {
             Registries.ENTITY_TYPE,
             new Identifier(DOCTORM.MOD_ID, "type_103_tardis"),
             FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, entity_103_tardis::new)
-                    .dimensions(EntityDimensions.fixed(0.75f, 0.75f))
+                    .dimensions(EntityDimensions.fixed(0.6f, 1.8f))
                     .build()
     );
 
@@ -26,7 +26,7 @@ public class entities {
             Registries.ENTITY_TYPE,
             new Identifier(DOCTORM.MOD_ID, "type_103w_evereye"),
             FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, entity_103w_evereye::new)
-                    .dimensions(EntityDimensions.fixed(0.75f, 0.75f))
+                    .dimensions(EntityDimensions.fixed(0.6f, 1.8f))
                     .build()
     );
 
