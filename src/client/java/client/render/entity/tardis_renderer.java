@@ -8,12 +8,12 @@ import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.util.Identifier;
 
-public class TardisRenderer extends MobEntityRenderer<entity_103_tardis, PlayerEntityModel<entity_103_tardis>> {
+public class tardis_renderer extends MobEntityRenderer<entity_103_tardis, PlayerEntityModel<entity_103_tardis>> {
 
     private final PlayerEntityModel<entity_103_tardis> defaultModel;
     private final PlayerEntityModel<entity_103_tardis> slimModel;
 
-    public TardisRenderer(EntityRendererFactory.Context context) {
+    public tardis_renderer(EntityRendererFactory.Context context) {
         super(context, new PlayerEntityModel<>(context.getPart(DOCTORMClient.PLAYER_LAYER), false), 0.5f);
         this.defaultModel = new PlayerEntityModel<>(context.getPart(DOCTORMClient.PLAYER_LAYER), false);
         this.slimModel = new PlayerEntityModel<>(context.getPart(DOCTORMClient.PLAYER_SLIM_LAYER), true);

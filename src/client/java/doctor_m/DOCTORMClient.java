@@ -1,7 +1,7 @@
 package doctor_m;
 
-import client.render.entity.EvereyeRenderer;
-import client.render.entity.TardisRenderer;
+import client.render.entity.evereye_renderer;
+import client.render.entity.tardis_renderer;
 import doctor_m.entities.entities;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -21,7 +21,7 @@ public class DOCTORMClient implements ClientModInitializer {
     public void onInitializeClient() {
 
         // 注册实体渲染器
-        EntityRendererRegistry.register(entities.TYPE_103_TARDIS, TardisRenderer::new);
-        EntityRendererRegistry.register(entities.TYPE_103W_EVEREYE, EvereyeRenderer::new);
+        EntityRendererRegistry.register(entities.TYPE_103_TARDIS, tardis_renderer::new);
+        EntityRendererRegistry.register(entities.TYPE_103W_EVEREYE, evereye_renderer::new);
     }
 }

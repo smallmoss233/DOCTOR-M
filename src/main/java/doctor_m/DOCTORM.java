@@ -3,7 +3,7 @@ package doctor_m;
 import doctor_m.Item.item_group;
 import doctor_m.entities.entities;
 import doctor_m.Item.items;
-import doctor_m.weapon.weapon_itme;
+import doctor_m.Item.itmes_weapon;
 import net.fabricmc.api.ModInitializer;
 
 public class DOCTORM implements ModInitializer {
@@ -11,7 +11,7 @@ public class DOCTORM implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        weapon_itme.registerItems();
+        itmes_weapon.registerItems();
         items.registerItems();
         item_group.registerItems();
         entities.registerAttributes();

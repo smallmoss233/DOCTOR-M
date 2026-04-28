@@ -1,4 +1,4 @@
-package doctor_m.weapon;
+package doctor_m.Item.data_weapon;
 
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;

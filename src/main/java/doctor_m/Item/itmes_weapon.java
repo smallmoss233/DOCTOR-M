@@ -1,12 +1,14 @@
-package doctor_m.weapon;
+package doctor_m.Item;
 
+import doctor_m.Item.data_weapon.de_mat_gun;
+import doctor_m.Item.data_weapon.rassilon_key;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 
-public class weapon_itme {
+public class itmes_weapon {
     public static final Item DE_MAT_GUN = new de_mat_gun(new Item.Settings()
             .maxCount(1)
             .rarity(Rarity.EPIC));

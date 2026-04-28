@@ -8,9 +8,9 @@ import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.util.Identifier;
 
-public class EvereyeRenderer extends MobEntityRenderer<entity_103w_evereye, PlayerEntityModel<entity_103w_evereye>> {
+public class evereye_renderer extends MobEntityRenderer<entity_103w_evereye, PlayerEntityModel<entity_103w_evereye>> {
 
-    public EvereyeRenderer(EntityRendererFactory.Context context) {
+    public evereye_renderer(EntityRendererFactory.Context context) {
         super(context, new PlayerEntityModel<>(context.getPart(DOCTORMClient.PLAYER_SLIM_LAYER), true), 0.5f);
     }
 
