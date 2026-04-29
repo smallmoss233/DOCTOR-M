@@ -12,7 +12,6 @@ public class entity_103w_evereye extends PathAwareEntity {
         super(entityType, world);
     }
 
-    // 属性注册（必须，否则实体无法生成）
     public static DefaultAttributeContainer.Builder createMobAttributes() {
         return PathAwareEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0)

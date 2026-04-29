@@ -1,5 +1,5 @@
 020.png|TC020|slim
-default.png|103型塔迪斯|slim
+default.png|103|steve
 iris.png|Iris|slim
 maki_qinzez.png|maki (Qinzez)|slim
 omega.png|Омега|slim

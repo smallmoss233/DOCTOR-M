@@ -16,6 +16,6 @@ public class evereye_renderer extends MobEntityRenderer<entity_103w_evereye, Pla
 
     @Override
     public Identifier getTexture(entity_103w_evereye entity) {
-        return new Identifier(DOCTORM.MOD_ID, "textures/entity/evereye_skin.png");
+        return new Identifier(DOCTORM.MOD_ID, "textures/entity/evereye.png");
     }
 }

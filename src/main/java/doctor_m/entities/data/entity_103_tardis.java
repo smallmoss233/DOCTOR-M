@@ -1,7 +1,5 @@
 package doctor_m.entities.data;
 
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -28,7 +26,7 @@ public class entity_103_tardis extends PathAwareEntity {
 
     private String selectedSkin = "";
     private String displayName = "";
-    private String modelType = "slim";   // 默认为细手臂
+    private String modelType = "slim";
 
     public entity_103_tardis(EntityType<? extends PathAwareEntity> type, World world) {
         super(type, world);
@@ -60,7 +58,7 @@ public class entity_103_tardis extends PathAwareEntity {
 
     private List<SkinEntry> loadSkinList() {
         List<SkinEntry> list = new ArrayList<>();
-        try (InputStream stream = entity_103_tardis.class.getResourceAsStream("/assets/doctor_m/textures/entity/tardis_skins/skins.txt")) {
+        try (InputStream stream = entity_103_tardis.class.getResourceAsStream("/assets/doctor_m/textures/entity/tardis/skins.txt")) {
             if (stream == null) {
                 System.err.println("Could not find skins.txt");
                 return list;
@@ -86,12 +84,10 @@ public class entity_103_tardis extends PathAwareEntity {
                         }
                     }
                 } else {
-                    // 兼容旧格式：整行作为纹理名，显示名为去掉扩展名，模型默认 slim
                     textureName = line;
                     String nameWithoutExt = line.contains(".") ? line.substring(0, line.lastIndexOf('.')) : line;
                     displayName = nameWithoutExt;
                 }
-                // 确保纹理文件名合法
                 textureName = textureName.toLowerCase().replaceAll("[^a-z0-9._-]", "_");
                 if (!textureName.endsWith(".png")) textureName += ".png";
                 list.add(new SkinEntry(textureName, displayName, modelType));

@@ -23,9 +23,9 @@ public class tardis_renderer extends MobEntityRenderer<entity_103_tardis, Player
     public Identifier getTexture(entity_103_tardis entity) {
         String skin = entity.getSelectedSkin();
         if (skin == null || skin.isEmpty()) {
-            return new Identifier(DOCTORM.MOD_ID, "textures/entity/tardis_skins/default.png");
+            return new Identifier(DOCTORM.MOD_ID, "textures/entity/tardis/default.png");
         }
-        return new Identifier(DOCTORM.MOD_ID, "textures/entity/tardis_skins/" + skin);
+        return new Identifier(DOCTORM.MOD_ID, "textures/entity/tardis/" + skin);
     }
 
     @Override
