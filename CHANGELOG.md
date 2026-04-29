@@ -11,6 +11,7 @@
 -  2型霁光内饰 / Type2 Claresco interior
 -  霁光400R型内饰 / Claresco Type 400 model R interior
 -  时隙内饰 / The rift interior
+-  103型塔迪斯NPC与103W型塔迪斯“永恒之眼”NPC / Type 103 TARDIS NPC and Type 103W TARDIS "Evereye" NPC
 
 -  DOCTOR M创造模式物品栏 / DOCTOR M Creative Mode Inventory
 -  103型塔迪斯与变体NPC（未完成！） / Type 103 Tardis and Variant NPC（Not Done！）
