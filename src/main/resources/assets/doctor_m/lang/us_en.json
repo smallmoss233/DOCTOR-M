@@ -8,7 +8,7 @@
 
   "item.doctor_m.rassilon_key": "Key of Rassilon",
   "item.doctor_m.de_mat_gun": "De-Mat Gun",
-  "item.doctor_m.type_103_tardis_spawn": "Spawn Type 103 TARDIS",
+  "item.doctor_m.type_103_spawn": "Spawn Type 103 TARDIS",
   "item.doctor_m.evereye_spawn": "Spawn Evereye",
 
   "doctor_m.tip.not.done": "§c[This item is not finished!]",
