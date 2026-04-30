@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "doctor_m:item/type_103_tardis_spawn"
+    "layer0": "doctor_m:item/type_103_spawn"
   }
 }
