@@ -5,7 +5,7 @@
 ## [ v2.0 ]
 
 ### 新增 / New
-
+-  新增台湾和香港的翻译 / Add translations for Taiwan and Hong Kong
 -  50型内饰 / Type 50 interior
 -  克拉拉的塔迪斯内饰 / The Clara TARDIS interior
 -  2型霁光内饰 / Type2 Claresco interior
