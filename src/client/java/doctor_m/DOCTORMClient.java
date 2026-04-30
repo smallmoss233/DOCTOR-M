@@ -13,14 +13,12 @@ import net.minecraft.util.Identifier;
 @Environment(EnvType.CLIENT)
 public class DOCTORMClient implements ClientModInitializer {
 
-    // 手动定义玩家模型层（原版实际使用的 ID）
     public static final EntityModelLayer PLAYER_LAYER = new EntityModelLayer(new Identifier("minecraft", "player"), "main");
     public static final EntityModelLayer PLAYER_SLIM_LAYER = new EntityModelLayer(new Identifier("minecraft", "player_slim"), "main");
 
     @Override
     public void onInitializeClient() {
 
-        // 注册实体渲染器
         EntityRendererRegistry.register(entities.TYPE_103_TARDIS, tardis_renderer::new);
         EntityRendererRegistry.register(entities.TYPE_103W_EVEREYE, evereye_renderer::new);
     }
