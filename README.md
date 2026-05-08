@@ -4,6 +4,8 @@
 ---
 ## **English Introduction**
 
+### Version 2.0 official update is about to arrive!
+
 DOCTOR M is an addon for the [**AIT**](https://modrinth.com/mod/ait) mod, adding several TARDIS interiors with unique stylistic designs, as well as brand‑new dimensions, new adventure content, and more.
 
 In DOCTOR M, you can travel to **Trenzalore** to visit the Doctor’s grave, burn the TARDIS’s life force to enter your own timeline, trade with a Type 103 TARDIS that is just like a human, craft the ancient and powerful **De‑mat Gun**, explore new structures around the world, and embark on a brand‑new time adventure with your TARDIS!
@@ -46,6 +48,8 @@ You may include the DOCTOR M mod in your modpack, but please be sure to credit t
 
 ---
 ## **中文介绍**
+
+### 2.0正式版更新正准备到来！
 
 DOCTOR M是[**AIT**](https://modrinth.com/mod/ait)模组的扩展，新增了几个具有独特风格设计的塔迪斯内饰，以及全新的维度，新的冒险内容等
 在DOCTOR M里，你可以前往特兰泽洛（Trenzalore）造访博士的墓地，燃烧塔迪斯的生命进入你的时间线，和人类一样的103型塔迪斯交易，制造古老而强大的去物质枪（De-mat Gun），探寻世界各地的新建筑，和塔迪斯迎来一场新的时间奇遇！
