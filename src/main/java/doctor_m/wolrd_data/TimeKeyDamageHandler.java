@@ -57,36 +57,6 @@ public class TimeKeyDamageHandler {
             }
             return true;
         });
-
-        // 2. 低频率修复任务（每 10 秒检查一次，防止效果丢失）
-        net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(server -> {
-            if (server.getTicks() % FIX_INTERVAL_TICKS != 0) return;
-            for (PlayerEntity player : server.getPlayerManager().getPlayerList()) {
-                boolean hasTimeKey = isTimeKeyEquipped(player);
-                if (hasTimeKey) {
-                    // 修复生命恢复效果
-                    boolean hasRegen = player.hasStatusEffect(StatusEffects.REGENERATION);
-                    if (!hasRegen || player.getStatusEffect(StatusEffects.REGENERATION).getAmplifier() != 1) {
-                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, Integer.MAX_VALUE, 1, true, false));
-                    }
-                    // 修复飞行能力
-                    if (!player.getAbilities().allowFlying) {
-                        player.getAbilities().allowFlying = true;
-                        player.sendAbilitiesUpdate();
-                    }
-                } else {
-                    // 未装备钥匙时，清理可能残留的效果
-                    if (player.hasStatusEffect(StatusEffects.REGENERATION) && player.getStatusEffect(StatusEffects.REGENERATION).getDuration() > 1000000) {
-                        player.removeStatusEffect(StatusEffects.REGENERATION);
-                    }
-                    if (!player.isCreative() && player.getAbilities().allowFlying) {
-                        player.getAbilities().allowFlying = false;
-                        player.getAbilities().flying = false;
-                        player.sendAbilitiesUpdate();
-                    }
-                }
-            }
-        });
     }
 
     private static boolean isTimeKeyEquipped(PlayerEntity player) {

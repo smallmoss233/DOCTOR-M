@@ -35,7 +35,7 @@ public class time_key extends TrinketItem {
         super.onEquip(stack, slot, entity);
         if (entity instanceof PlayerEntity player) {
             // 给予无限生命恢复 II
-            player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, Integer.MAX_VALUE, 1, true, false));
+            player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, Integer.MAX_VALUE, 1, false, false));
             // 开启飞行能力
             if (!player.getAbilities().allowFlying) {
                 player.getAbilities().allowFlying = true;

@@ -12,7 +12,7 @@ import net.minecraft.util.Rarity;
 
 public class items extends ItemContainer {
 
-    public static final Item TIME_KEY = new time_key(new Item.Settings());
+    public static final Item TIME_KEY = new time_key(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
     public static final Item TIME_KEY_FRAGMENT = new time_key_fragment(new Item.Settings());
 
     public static final Item TYPE_103_SPAWN = new SpawnEggItem(
