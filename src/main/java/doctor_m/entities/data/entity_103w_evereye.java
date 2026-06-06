@@ -19,7 +19,6 @@ import net.minecraft.world.World;
 public class entity_103w_evereye extends PathAwareEntity {
 
     private long lastCounterAttackTime = 20;   // 反击冷却（防止连续触发）
-    private int stuckCheckCooldown = 0;       // 困住检测冷却
     private boolean isAngry = false;          // 激怒标志（针对玩家）
     private int angerTimer = 40;               // 激怒持续时间（tick）
 
@@ -41,13 +40,6 @@ public class entity_103w_evereye extends PathAwareEntity {
     public void tick() {
         super.tick();
 
-        // 困住检测与传送（每 40 tick 约 2 秒检测一次）
-        if (!this.getWorld().isClient && this.age % 40 == 0) {
-            if (isStuck()) {
-                teleportToSafeLocation();
-            }
-        }
-
         // 激怒计时器递减
         if (isAngry && !this.getWorld().isClient) {
             if (angerTimer > 40) {
@@ -61,47 +53,6 @@ public class entity_103w_evereye extends PathAwareEntity {
                 this.setTarget(null);
             }
         }
-    }
-
-    /** 检测是否被困在狭小空间 */
-    private boolean isStuck() {
-        BlockPos pos = this.getBlockPos();
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                BlockPos checkPos = pos.add(dx, 0, dz);
-                if (this.getWorld().isSpaceEmpty(this, new Box(checkPos))) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /** 随机传送到附近安全位置 */
-    private void teleportToSafeLocation() {
-        Random rand = this.random;
-        for (int attempt = 0; attempt < 16; attempt++) {
-            int dx = rand.nextInt(17) - 8;
-            int dz = rand.nextInt(17) - 8;
-            int dy = rand.nextInt(7) - 3;
-            BlockPos targetPos = this.getBlockPos().add(dx, dy, dz);
-            if (isSafeTeleportLocation(targetPos)) {
-                this.requestTeleport(targetPos.getX() + 0.5, targetPos.getY(), targetPos.getZ() + 0.5);
-                this.playSound(net.minecraft.sound.SoundEvents.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
-                break;
-            }
-        }
-    }
-
-    private boolean isSafeTeleportLocation(BlockPos pos) {
-        if (!this.getWorld().isAir(pos) && !this.getWorld().getBlockState(pos).canReplace(null)) {
-            return false;
-        }
-        BlockPos below = pos.down();
-        if (!this.getWorld().getBlockState(below).isSolidBlock(this.getWorld(), below)) {
-            return false;
-        }
-        return this.getWorld().isAir(pos.up()) && this.getWorld().isAir(pos.up(2));
     }
 
     @Override

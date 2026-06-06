@@ -46,6 +46,11 @@ repositories {
         name = "JEI"
         url = "https://maven.blamejared.com/"
     }
+    // 新增 Ladysnake Libs 仓库
+    maven {
+        name = "Ladysnake Libs"
+        url = 'https://maven.ladysnake.org/releases'
+    }
 }
 
 dependencies {
@@ -55,6 +60,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation "dev.amble:lib:${project.amblekit_version}"
     modImplementation "dev.amble:ait:${project.ait_version}"
+    modImplementation "dev.emi:trinkets:${trinkets_version}"
 }
 
 loom {

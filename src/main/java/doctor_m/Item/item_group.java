@@ -8,8 +8,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import static doctor_m.Item.items.*;
-import static doctor_m.Item.itmes_weapon.DE_MAT_GUN;
-import static doctor_m.Item.itmes_weapon.RASSILON_KEY;
 
 public class item_group {
 public static void registerItems() {
@@ -18,10 +16,10 @@ public static void registerItems() {
                             .icon(() -> new ItemStack(RASSILON_KEY))
                             .displayName(Text.translatable("itemGroup.doctor_m"))
                             .entries((context, entries) -> {
-                                entries.add(DE_MAT_GUN);
                                 entries.add(RASSILON_KEY);
                                 entries.add(TYPE_103_SPAWN);
                                 entries.add(EVEREYE_SPAWN);
+                                //entries.add(DE_MAT_GUN);
                                 //entries.add(PHOTO);
                             })
                             .build());
