@@ -14,8 +14,8 @@ public class rassilon_key extends Item {
 
     @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
-        tooltip.add(Text.translatable("item.doctor_m.rassilon_key.tooltip.line1"));
-        tooltip.add(Text.translatable("item.doctor_m.rassilon_key.tooltip.line2"));
-        tooltip.add(Text.translatable("doctor_m.tip.not.done"));
+        tooltip.add(Text.translatable("txt.doctor_m.rassilon_key.tooltip.line1"));
+        tooltip.add(Text.translatable("txt.doctor_m.rassilon_key.tooltip.line2"));
+        tooltip.add(Text.translatable("txt.doctor_m.tip.not.done"));
     }
 }

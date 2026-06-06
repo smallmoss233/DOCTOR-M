@@ -13,14 +13,14 @@ public class item_group {
 public static void registerItems() {
             Registry.register(Registries.ITEM_GROUP, id("doctor_m_items"),
                     FabricItemGroup.builder()
-                            .icon(() -> new ItemStack(RASSILON_KEY))
+                            .icon(() -> new ItemStack(TIME_KEY))
                             .displayName(Text.translatable("itemGroup.doctor_m"))
                             .entries((context, entries) -> {
+                                entries.add(TIME_KEY);
+                                entries.add(DE_MAT_GUN);
                                 entries.add(RASSILON_KEY);
                                 entries.add(TYPE_103_SPAWN);
                                 entries.add(EVEREYE_SPAWN);
-                                //entries.add(DE_MAT_GUN);
-                                //entries.add(PHOTO);
                             })
                             .build());
         }

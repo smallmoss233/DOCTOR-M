@@ -1,6 +1,6 @@
 {
-  "dimension": "doctor_m:trenzalore",
+  "dimension_id": "doctor_m:trenzalore",
   "stack": {
-  "item": "ait:trenzalore_painting"
- }
+    "item": "ait:trenzalore_painting"
+  }
 }

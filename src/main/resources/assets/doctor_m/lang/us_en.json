@@ -1,21 +1,26 @@
 {
   "advancements.doctor_m.root.title": "DOCTOR M",
-  "advancements.doctor_m.root.description": "Why is it called DOCTOR M? Well... DOCTOR MOD, DOCTOR MC, anyway it's multi-layered~",
-  "advancements.doctor_m.enter_trenzalore.title": "The Time Has Come?",
-  "advancements.doctor_m.enter_trenzalore.description": "In a snow-swept town, an aged warrior awaits his final bell; his honored old shell is about to turn a new page.",
+  "advancements.doctor_m.root.description": "Why is it called DOCTOR M? En... DOCTOR MOD, DOCTOR MC, anyway, it has multiple meanings~",
+  "advancements.doctor_m.enter_trenzalore.title": "Is the time coming?",
+  "advancements.doctor_m.enter_trenzalore.description": "In a snow-covered town, an aged warrior is about to face his final hour, and his glorious old body is about to begin a new chapter.",
 
   "itemGroup.doctor_m": "Doctor M Items",
 
   "item.doctor_m.rassilon_key": "Key of Rassilon",
   "item.doctor_m.de_mat_gun": "De-Mat Gun",
+  "item.doctor_m.time_key": "§bTime Key",
+  "item.doctor_m.time_key_fragment": "Time Key Fragment",
   "item.doctor_m.type_103_spawn": "Spawn Type 103 TARDIS",
-  "item.doctor_m.evereye_spawn": "Spawn Evereye",
+  "item.doctor_m.evereye_spawn": "Spawn the Eternal Eye",
 
-  "doctor_m.tip.not.done": "§c[This item is not finished!]",
-  "item.doctor_m.rassilon_key.tooltip.line1": "Authorization tool for the Time Lords' forbidden weapon",
-  "item.doctor_m.rassilon_key.tooltip.line2": "Few Presidents have been granted the Key of Rassilon...",
-  "item.doctor_m.de_mat_gun.tooltip.line1": "A warning from the Time Lords:",
-  "item.doctor_m.de_mat_gun.tooltip.line2": "Destroy this gun, erase all its data. Do not let its power corrupt your mind...",
+  "txt.doctor_m.tip.not.done": "§c[This feature is not yet complete!]",
+  "txt.doctor_m.rassilon_key.tooltip.line1": "Authorization tool for the Time Lords' forbidden weapon",
+  "txt.doctor_m.rassilon_key.tooltip.line2": "Very few presidents have ever obtained the Key of Rassilon...",
+  "txt.doctor_m.de_mat_gun.tooltip.line1": "Advice from the Time Lords:",
+  "txt.doctor_m.de_mat_gun.tooltip.line2": "Destroy this gun, destroy all its data, and do not let its immense power corrupt your mind...",
+  "txt.doctor_m.time_key_resurrection": "§bThe power of the Time Key has reversed your death",
+  "txt.doctor_m.time_key.tip": "The complete Time Key... It exists at all points in time, granting its holder access to the 'heart' of the universe.",
+  "txt.doctor_m.time_key_fragment.tip": "Even a fragment of the Time Key still possesses a portion of its power...",
 
   "dimension.doctor_m.trenzalore": "Trenzalore"
 }

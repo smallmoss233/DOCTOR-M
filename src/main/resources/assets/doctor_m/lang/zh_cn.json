@@ -8,14 +8,19 @@
 
   "item.doctor_m.rassilon_key": "拉斯隆之钥",
   "item.doctor_m.de_mat_gun": "去物质枪",
+  "item.doctor_m.time_key": "§b时间钥匙",
+  "item.doctor_m.time_key_fragment": "时间钥匙碎片",
   "item.doctor_m.type_103_spawn": "生成103型塔迪斯",
   "item.doctor_m.evereye_spawn": "生成永恒之眼",
 
-  "doctor_m.tip.not.done": "§c[此项目未完成！]",
-  "item.doctor_m.rassilon_key.tooltip.line1": "时间领主禁忌武器的授权工具",
-  "item.doctor_m.rassilon_key.tooltip.line2": "很少有总统能得到拉斯隆之钥...",
-  "item.doctor_m.de_mat_gun.tooltip.line1": "来自时间领主的忠告：",
-  "item.doctor_m.de_mat_gun.tooltip.line2": "毁了这把枪，毁掉它的所有资料，不要被强大的力量蛊惑心智...",
+  "txt.doctor_m.tip.not.done": "§c[此项目未完成！]",
+  "txt.doctor_m.rassilon_key.tooltip.line1": "时间领主禁忌武器的授权工具",
+  "txt.doctor_m.rassilon_key.tooltip.line2": "很少有总统能得到拉斯隆之钥...",
+  "txt.doctor_m.de_mat_gun.tooltip.line1": "来自时间领主的忠告：",
+  "txt.doctor_m.de_mat_gun.tooltip.line2": "毁了这把枪，毁掉它的所有资料，不要被强大的力量蛊惑心智...",
+  "txt.doctor_m.time_key_resurrection": "§b时间钥匙的力量逆转了你的死亡",
+  "txt.doctor_m.time_key.tip": "完整的时间钥匙...它存在于所有时间点，给予拥有者进入宇宙的“核心”的特权",
+  "txt.doctor_m.time_key_fragment.tip": "哪怕是时间钥匙的碎片也拥有一部分时间钥匙的力量...",
 
   "dimension.doctor_m.trenzalore": "特兰泽洛"
 }

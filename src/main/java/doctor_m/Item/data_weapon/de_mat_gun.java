@@ -22,15 +22,15 @@ public class de_mat_gun extends BaseGunItem {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        tooltip.add(Text.translatable("item.doctor_m.de_mat_gun.tooltip.line1")
+        tooltip.add(Text.translatable("txt.doctor_m.de_mat_gun.tooltip.line1")
                 .formatted(Formatting.WHITE, Formatting.BOLD));
-        MutableText line2 = Text.translatable("item.doctor_m.de_mat_gun.tooltip.line2");
+        MutableText line2 = Text.translatable("txt.doctor_m.de_mat_gun.tooltip.line2");
         line2.setStyle(Style.EMPTY
                 .withColor(Formatting.GRAY)
                 .withItalic(true));
         tooltip.add(line2);
         super.appendTooltip(stack, world, tooltip, context);
-        tooltip.add(Text.translatable("doctor_m.tip.not.done"));
+        tooltip.add(Text.translatable("txt.doctor_m.tip.not.done"));
     }
 
     @Override

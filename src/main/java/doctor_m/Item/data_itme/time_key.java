@@ -1,11 +1,17 @@
 package doctor_m.Item.data_itme;
 
 import dev.emi.trinkets.api.TrinketItem;
+import doctor_m.util.TooltipHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import dev.emi.trinkets.api.SlotReference;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.List;
 
@@ -17,8 +23,39 @@ public class time_key extends TrinketItem {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        tooltip.add(Text.translatable("item.doctor_m.time_key.tooltip.line1"));
-        tooltip.add(Text.translatable("item.doctor_m.time_key.tooltip.line2"));
-        tooltip.add(Text.translatable("doctor_m.tip.not.done"));
+        // 从语言文件读取需要自动换行的长文本
+        Text longDescription = Text.translatable("txt.doctor_m.time_key.tip");
+        TooltipHelper.addWrappedTooltip(tooltip, longDescription, 30);
+        // 可继续添加其他固定行
+        tooltip.add(Text.translatable("txt.doctor_m.tip.not.done"));
+    }
+
+    @Override
+    public void onEquip(ItemStack stack, SlotReference slot, LivingEntity entity) {
+        super.onEquip(stack, slot, entity);
+        if (entity instanceof PlayerEntity player) {
+            // 给予无限生命恢复 II
+            player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, Integer.MAX_VALUE, 1, true, false));
+            // 开启飞行能力
+            if (!player.getAbilities().allowFlying) {
+                player.getAbilities().allowFlying = true;
+                player.sendAbilitiesUpdate();
+            }
+        }
+    }
+
+    @Override
+    public void onUnequip(ItemStack stack, SlotReference slot, LivingEntity entity) {
+        super.onUnequip(stack, slot, entity);
+        if (entity instanceof PlayerEntity player) {
+            // 移除生命恢复 II
+            player.removeStatusEffect(StatusEffects.REGENERATION);
+            // 如果不是创造模式，关闭飞行能力
+            if (!player.isCreative() && player.getAbilities().allowFlying) {
+                player.getAbilities().allowFlying = false;
+                player.getAbilities().flying = false;
+                player.sendAbilitiesUpdate();
+            }
+        }
     }
 }
