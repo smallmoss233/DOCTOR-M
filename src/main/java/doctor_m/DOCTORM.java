@@ -4,7 +4,8 @@ import dev.amble.lib.container.RegistryContainer;
 import doctor_m.Item.item_group;
 import doctor_m.entities.entities;
 import doctor_m.Item.items;
-import doctor_m.wolrd_data.TimeKeyDamageHandler;
+import doctor_m.wolrd_data.PocketWatchFunction;
+import doctor_m.wolrd_data.TimeKeyFunction;
 import net.fabricmc.api.ModInitializer;
 
 public class DOCTORM implements ModInitializer {
@@ -16,6 +17,7 @@ public class DOCTORM implements ModInitializer {
         item_group.registerItems();
         entities.registerAttributes();
         doctor_m.dimension.trenzalore.register();
-        TimeKeyDamageHandler.register();
+        TimeKeyFunction.register();
+        PocketWatchFunction.register();
     }
 }

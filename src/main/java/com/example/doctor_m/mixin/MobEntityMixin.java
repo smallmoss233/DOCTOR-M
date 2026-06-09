@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import doctor_m.Item.data_itme.time_key;
-import doctor_m.wolrd_data.TimeKeyDamageHandler;
+import doctor_m.wolrd_data.TimeKeyFunction;
 
 @Mixin(MobEntity.class)
 public class MobEntityMixin {
@@ -21,7 +21,7 @@ public class MobEntityMixin {
                     .map(component -> component.isEquipped(stack -> stack.getItem() instanceof time_key))
                     .orElse(false);
             // 从我们的 Map 中读取状态
-            boolean neutralEnabled = TimeKeyDamageHandler.neutralMode.getOrDefault(player.getUuid(), false);
+            boolean neutralEnabled = TimeKeyFunction.neutralMode.getOrDefault(player.getUuid(), false);
             if (hasTimeKey && neutralEnabled) {
                 ci.cancel();
             }

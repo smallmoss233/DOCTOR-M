@@ -3,24 +3,24 @@
   "advancements.doctor_m.root.description": "Why is it called DOCTOR M? En... DOCTOR MOD, DOCTOR MC, anyway, it has multiple meanings~",
   "advancements.doctor_m.enter_trenzalore.title": "Is the time coming?",
   "advancements.doctor_m.enter_trenzalore.description": "In a snow-covered town, an aged warrior is about to face his final hour, and his glorious old body is about to begin a new chapter.",
-
   "itemGroup.doctor_m": "Doctor M Items",
-
   "item.doctor_m.rassilon_key": "Key of Rassilon",
   "item.doctor_m.de_mat_gun": "De-Mat Gun",
   "item.doctor_m.time_key": "§bTime Key",
-  "item.doctor_m.time_key_fragment": "Time Key Fragment",
+  "item.doctor_m.pocket_watch": "Pocket Watch",
   "item.doctor_m.type_103_spawn": "Spawn Type 103 TARDIS",
   "item.doctor_m.evereye_spawn": "Spawn the Eternal Eye",
-
-  "txt.doctor_m.tip.not.done": "§c[This feature is not yet complete!]",
-  "txt.doctor_m.rassilon_key.tooltip.line1": "Authorization tool for the Time Lords' forbidden weapon",
-  "txt.doctor_m.rassilon_key.tooltip.line2": "Very few presidents have ever obtained the Key of Rassilon...",
-  "txt.doctor_m.de_mat_gun.tooltip.line1": "Advice from the Time Lords:",
-  "txt.doctor_m.de_mat_gun.tooltip.line2": "Destroy this gun, destroy all its data, and do not let its immense power corrupt your mind...",
-  "txt.doctor_m.time_key_resurrection": "§bThe power of the Time Key has reversed your death",
-  "txt.doctor_m.time_key.tip": "The complete Time Key... It exists at all points in time, granting its holder access to the 'heart' of the universe.",
-  "txt.doctor_m.time_key_fragment.tip": "Even a fragment of the Time Key still possesses a portion of its power...",
-
+  "message.doctor_m.tip.not.done": "§c[This feature is not yet complete!]",
+  "message.doctor_m.rassilon_key.tooltip.line": "Apart from Rassilon himself, no Time Lord President has ever obtained the Key of Rassilon...",
+  "message.doctor_m.de_mat_gun.tooltip.line1": "Advice from the Time Lords:",
+  "message.doctor_m.de_mat_gun.tooltip.line2": "Destroy this gun, destroy all its data, and do not let its immense power corrupt your mind...",
+  "message.doctor_m.time_key_resurrection": "§bThe power of the Time Key has reversed your death",
+  "message.doctor_m.time_key.tip": "The complete Time Key... It exists at all points in time, granting its holder access to the 'heart' of the universe.",
+  "message.doctor_m.pocket_watch.tip": "A golden pocket watch... It possesses a portion of the Time Key's power, capable of reversing the player's death...",
+  "message.doctor_m.time_key.neutral_tip": "§7Sneak + Right Click to enable Forced Neutral Mode",
+  "message.doctor_m.time_key.neutral_mode.on": "§aForced Neutral Mode enabled",
+  "message.doctor_m.time_key.neutral_mode.off": "§cForced Neutral Mode disabled",
+  "message.doctor_m.pocket_watch.revived": "§dAn item on your person has reversed your death..",
+  "message.doctor_m.pocket_watch.cooldown": "§cResurrection Cooldown: %s",
   "dimension.doctor_m.trenzalore": "Trenzalore"
 }

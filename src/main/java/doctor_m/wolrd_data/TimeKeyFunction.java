@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class TimeKeyDamageHandler {
+public class TimeKeyFunction {
 
     public static final Map<UUID, Boolean> neutralMode = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> lastToggleTime = new ConcurrentHashMap<>();

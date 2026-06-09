@@ -3,24 +3,24 @@
   "advancements.doctor_m.root.description": "為什麼叫DOCTOR M？en...DOCTOR MOD，DOCTOR MC，反正就是多重意思啦~",
   "advancements.doctor_m.enter_trenzalore.title": "時候要到了？",
   "advancements.doctor_m.enter_trenzalore.description": "在大雪飛揚的城鎮，一位年老的戰士即將迎來他的鐘聲，他榮耀的舊軀即將迎來新的篇章。",
-
   "itemGroup.doctor_m": "Doctor M 物品",
-
   "item.doctor_m.rassilon_key": "拉斯隆之鑰",
   "item.doctor_m.de_mat_gun": "去物質槍",
   "item.doctor_m.time_key": "§b時間鑰匙",
-  "item.doctor_m.time_key_fragment": "時間鑰匙碎片",
+  "item.doctor_m.pocket_watch": "懷錶",
   "item.doctor_m.type_103_spawn": "生成103型塔迪斯",
   "item.doctor_m.evereye_spawn": "生成永恆之眼",
-
-  "txt.doctor_m.tip.not.done": "§c[此項目未完成！]",
-  "txt.doctor_m.rassilon_key.tooltip.line1": "時間領主禁忌武器的授權工具",
-  "txt.doctor_m.rassilon_key.tooltip.line2": "很少有總統能得到拉斯隆之鑰...",
-  "txt.doctor_m.de_mat_gun.tooltip.line1": "來自時間領主的忠告：",
-  "txt.doctor_m.de_mat_gun.tooltip.line2": "毀了這把槍，毀掉它的所有資料，不要被強大的力量蠱惑心智...",
-  "txt.doctor_m.time_key_resurrection": "§b時間鑰匙的力量逆轉了你的死亡",
-  "txt.doctor_m.time_key.tip": "完整的時間鑰匙...它存在於所有時間點，給予擁有者進入宇宙的「核心」的特權",
-  "txt.doctor_m.time_key_fragment.tip": "哪怕是時間鑰匙的碎片也擁有一部分時間鑰匙的力量...",
-
+  "message.doctor_m.tip.not.done": "§c[此項目未完成！]",
+  "message.doctor_m.rassilon_key.tooltip.line": "除了拉斯隆，從未有時間領主總統能得到過拉斯隆之鑰...",
+  "message.doctor_m.de_mat_gun.tooltip.line1": "來自時間領主的忠告：",
+  "message.doctor_m.de_mat_gun.tooltip.line2": "毀了這把槍，毀掉它的所有資料，不要被強大的力量蠱惑心智...",
+  "message.doctor_m.time_key_resurrection": "§b時間鑰匙的力量逆轉了你的死亡",
+  "message.doctor_m.time_key.tip": "完整的時間鑰匙...它存在於所有時間點，給予擁有者進入宇宙的「核心」的特權",
+  "message.doctor_m.pocket_watch.tip": "一塊金懷錶...擁有一部分時間鑰匙的力量，能將玩家的死亡逆轉...",
+  "message.doctor_m.time_key.neutral_tip": "§7潛行右鍵啟用強制中立模式",
+  "message.doctor_m.time_key.neutral_mode.on": "§a強制中立模式已開啟",
+  "message.doctor_m.time_key.neutral_mode.off": "§c強制中立模式已關閉",
+  "message.doctor_m.pocket_watch.revived": "§d你身上的某件物品將你的死亡逆轉了..",
+  "message.doctor_m.pocket_watch.cooldown": "§c復活冷卻: %s",
   "dimension.doctor_m.trenzalore": "特蘭澤洛"
 }

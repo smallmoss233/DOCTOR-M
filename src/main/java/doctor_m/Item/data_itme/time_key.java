@@ -21,11 +21,11 @@ public class time_key extends TrinketItem {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        // 从语言文件读取需要自动换行的长文本
-        Text longDescription = Text.translatable("txt.doctor_m.time_key.tip");
+        // 从需要自动换行的长文本
+        Text longDescription = Text.translatable("message.doctor_m.time_key.tip");
         TooltipHelper.addWrappedTooltip(tooltip, longDescription, 30);
-        // 可继续添加其他固定行
-        tooltip.add(Text.translatable("txt.doctor_m.tip.not.done"));
+        //无需自动换行的文本
+        tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
     }
 
     @Override
