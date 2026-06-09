@@ -17,6 +17,7 @@ public static void registerItems() {
                             .displayName(Text.translatable("itemGroup.doctor_m"))
                             .entries((context, entries) -> {
                                 entries.add(TIME_KEY);
+                                entries.add(POCKET_WATCH);
                                 entries.add(DE_MAT_GUN);
                                 entries.add(RASSILON_KEY);
                                 entries.add(TYPE_103_SPAWN);
