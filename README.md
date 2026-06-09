@@ -31,15 +31,19 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 
 *Evereye interior & Sonic Screwdriver & exterior, Watcher interior & console texture, Madness interior & exterior, Cloister, Permanence interior*: Smallmoss
 
-*Watcher console texture*: 白桦下的赤俄
+*Watcher console texture*: 白桦下的赤俄(Kilin_Mus)
 
 *Rainbow, Fire, Crystalline Zeiton interiors*: Asnit_PnQing
 
-*Sig interior*: 斯格尔特
+*Sig interior*: 斯格尔特(Sigeerte)
 
 *Way Home, Clara’s TARDIS, Type 50/55, Claresco interior*: Siletonight
 
 *Redstone Torch Sonic Screwdriver author*: 慢跑者
+
+*Partial item models*：Tsinafs-Bcim
+
+*Partial achievement text and item tooltip text*：Sigeerte, asdjdfk
 
 ---
 
