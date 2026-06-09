@@ -9,8 +9,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import dev.emi.trinkets.api.SlotReference;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.List;
@@ -34,8 +32,6 @@ public class time_key extends TrinketItem {
     public void onEquip(ItemStack stack, SlotReference slot, LivingEntity entity) {
         super.onEquip(stack, slot, entity);
         if (entity instanceof PlayerEntity player) {
-            // 给予无限生命恢复 II
-            player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, Integer.MAX_VALUE, 1, false, false));
             // 开启飞行能力
             if (!player.getAbilities().allowFlying) {
                 player.getAbilities().allowFlying = true;
@@ -48,9 +44,7 @@ public class time_key extends TrinketItem {
     public void onUnequip(ItemStack stack, SlotReference slot, LivingEntity entity) {
         super.onUnequip(stack, slot, entity);
         if (entity instanceof PlayerEntity player) {
-            // 移除生命恢复 II
-            player.removeStatusEffect(StatusEffects.REGENERATION);
-            // 如果不是创造模式，关闭飞行能力
+            // 关闭飞行能力（除非是创造模式）
             if (!player.isCreative() && player.getAbilities().allowFlying) {
                 player.getAbilities().allowFlying = false;
                 player.getAbilities().flying = false;

@@ -21,6 +21,9 @@
   "txt.doctor_m.time_key_resurrection": "§b时间钥匙的力量逆转了你的死亡",
   "txt.doctor_m.time_key.tip": "完整的时间钥匙...它存在于所有时间点，给予拥有者进入宇宙的“核心”的特权",
   "txt.doctor_m.time_key_fragment.tip": "哪怕是时间钥匙的碎片也拥有一部分时间钥匙的力量...",
+  "txt.doctor_m.time_key.neutral_tip": "§7潜行右键切换强制中立模式",
+  "message.doctor_m.time_key.neutral_mode.on": "§a强制中立模式已开启",
+  "message.doctor_m.time_key.neutral_mode.off": "§c强制中立模式已关闭",
 
   "dimension.doctor_m.trenzalore": "特兰泽洛"
 }

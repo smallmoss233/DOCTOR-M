@@ -1,4 +1,4 @@
-package com.example.doctor_m.mixin;
+package com.example.doctor_m.mixin;  // 根据你的实际包名调整
 
 import dev.emi.trinkets.api.TrinketsApi;
 import net.minecraft.entity.LivingEntity;
@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import doctor_m.Item.data_itme.time_key;
+import doctor_m.wolrd_data.TimeKeyDamageHandler;
 
 @Mixin(MobEntity.class)
 public class MobEntityMixin {
@@ -20,7 +20,9 @@ public class MobEntityMixin {
             boolean hasTimeKey = TrinketsApi.getTrinketComponent(player)
                     .map(component -> component.isEquipped(stack -> stack.getItem() instanceof time_key))
                     .orElse(false);
-            if (hasTimeKey) {
+            // 从我们的 Map 中读取状态
+            boolean neutralEnabled = TimeKeyDamageHandler.neutralMode.getOrDefault(player.getUuid(), false);
+            if (hasTimeKey && neutralEnabled) {
                 ci.cancel();
             }
         }
