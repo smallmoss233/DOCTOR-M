@@ -5,6 +5,7 @@ import doctor_m.util.TooltipHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import dev.emi.trinkets.api.SlotReference;
@@ -21,10 +22,9 @@ public class time_key extends TrinketItem {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        // 从需要自动换行的长文本
         Text longDescription = Text.translatable("message.doctor_m.time_key.tip");
-        TooltipHelper.addWrappedTooltip(tooltip, longDescription, 30);
-        //无需自动换行的文本
+        TooltipHelper.addWrappedTooltip(tooltip, longDescription);
+        // 未完成提示
         tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
     }
 
@@ -51,5 +51,21 @@ public class time_key extends TrinketItem {
                 player.sendAbilitiesUpdate();
             }
         }
+    }
+
+    @Override
+    public Text getName(ItemStack stack) {
+        long time = System.currentTimeMillis();
+        float period = 8000f; // 完整周期 8 秒（从白到紫再回白）
+        float phase = (time % (long) period) / period * (float) (2 * Math.PI);
+        float r = 0.5f + 0.5f * (float) Math.cos(phase);
+        float g = 0.5f + 0.5f * (float) Math.cos(phase + Math.PI);
+        float b = 0.5f + 0.5f * (float) Math.cos(phase + Math.PI/2);
+
+        // 组合成 RGB 整数
+        int color = ((int)(r * 255) << 16) | ((int)(g * 255) << 8) | (int)(b * 255);
+
+        Text baseName = super.getName(stack);
+        return baseName.copy().styled(style -> style.withColor(TextColor.fromRgb(color)));
     }
 }

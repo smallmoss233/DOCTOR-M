@@ -53,6 +53,12 @@ public class PocketWatchFunction {
         float halfHealth = player.getMaxHealth() / 2;
         player.setHealth(halfHealth);
         player.clearStatusEffects();
+        double radius = 10.0;
+        player.getServerWorld().getEntitiesByClass(net.minecraft.entity.LivingEntity.class,
+                player.getBoundingBox().expand(radius),
+                entity -> entity != player && entity.isAlive()
+        ).forEach(entity -> entity.damage(player.getDamageSources().magic(), 25.0f));
+        player.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 60, 3, false, false));
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.DARKNESS, 300, 1, false, false));
         for (int i = 0; i < 40; i++) {
             double x = player.getX() + (player.getRandom().nextDouble() - 0.5) * 1.5;

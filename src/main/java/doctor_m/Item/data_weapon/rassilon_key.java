@@ -19,7 +19,7 @@ public class rassilon_key extends Item {
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
             // 从需要自动换行的长文本
     Text longDescription = Text.translatable("message.doctor_m.rassilon_key.tooltip.line");
-    TooltipHelper.addWrappedTooltip(tooltip, longDescription, 9);
+    TooltipHelper.addWrappedTooltip(tooltip, longDescription);
     tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
     }
 }

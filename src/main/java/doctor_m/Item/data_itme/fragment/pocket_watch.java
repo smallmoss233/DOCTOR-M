@@ -34,8 +34,6 @@ public class pocket_watch extends TrinketItem {
 
         // 需要自动换行的长文本
         Text longDescription = Text.translatable("message.doctor_m.pocket_watch.tip");
-        TooltipHelper.addWrappedTooltip(tooltip, longDescription, 10);
-        // 未完成提示
-        tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
+        TooltipHelper.addWrappedTooltip(tooltip, longDescription);
     }
 }

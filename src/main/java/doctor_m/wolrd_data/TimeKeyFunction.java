@@ -4,6 +4,9 @@ import dev.emi.trinkets.api.TrinketsApi;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
@@ -55,7 +58,7 @@ public class TimeKeyFunction {
 
                     // 伤害限制 20% 最大生命
                     float maxHealth = player.getMaxHealth();
-                    float maxAllowed = maxHealth * 0.2f;
+                    float maxAllowed = maxHealth * 0.15f;
                     float newAmount = Math.min(amount, maxAllowed);
                     float newHealth = player.getHealth() - newAmount;
 
@@ -124,6 +127,13 @@ public class TimeKeyFunction {
 
     private static void revivePlayer(ServerPlayerEntity player) {
         player.setHealth(player.getMaxHealth());
+        player.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 40, 2, false, false));
+        double radius = 10.0;
+        player.getServerWorld().getEntitiesByClass(
+                LivingEntity.class,
+                player.getBoundingBox().expand(radius),
+                entity -> entity != player && entity.isAlive() && (entity instanceof net.minecraft.entity.mob.HostileEntity)
+        ).forEach(LivingEntity::kill);
         player.clearStatusEffects();
         // 自定义复活粒子
         for (int i = 0; i < 50; i++) {
@@ -134,6 +144,10 @@ public class TimeKeyFunction {
             player.getServerWorld().spawnParticles(ParticleTypes.SOUL_FIRE_FLAME, x, y, z, 1, 0, 0, 0, 0.05);
         }
         player.playSound(SoundEvents.BLOCK_BELL_RESONATE, 1.0F, 1.0F);
-        player.sendMessage(Text.translatable("txt.doctor_m.time_key_resurrection"), true);
+        player.sendMessage(Text.translatable("message.doctor_m.time_key_resurrection"), true);
+        if (!player.getAbilities().allowFlying) {
+            player.getAbilities().allowFlying = true;
+            player.sendAbilitiesUpdate();
+        }
     }
 }
