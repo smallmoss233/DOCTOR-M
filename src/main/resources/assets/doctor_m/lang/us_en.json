@@ -10,6 +10,7 @@
   "item.doctor_m.de_mat_gun": "De-Mat Gun",
   "item.doctor_m.time_key": "§bTime Key",
   "item.doctor_m.pocket_watch": "Pocket Watch",
+  "item.doctor_m.mystery_gem": "Mysterious Gem",
   "item.doctor_m.type_103_spawn": "Spawn Type 103 TARDIS",
   "item.doctor_m.evereye_spawn": "Spawn the Eternal Eye",
   "message.doctor_m.tip.not.done": "§c[This feature is not yet complete!]",
@@ -22,7 +23,8 @@
   "message.doctor_m.time_key.neutral_tip": "§7Sneak + Right Click to enable Forced Neutral Mode",
   "message.doctor_m.time_key.neutral_mode.on": "§aForced Neutral Mode enabled",
   "message.doctor_m.time_key.neutral_mode.off": "§cForced Neutral Mode disabled",
-  "message.doctor_m.pocket_watch.revived": "§dThe fragment's power has prevented death from occurring..",
-  "message.doctor_m.pocket_watch.cooldown": "§cThe fragment cannot protect you forever. You must wait for it to recover. Time remaining: %s",
+  "message.doctor_m.pocket_watch.revived": "§dThe pocket watch Time Key fragment's power has prevented death from occurring..",
+  "message.doctor_m.pocket_watch.cooldown": "§cThe pocket watch cannot protect you forever. You must wait for it to recover. Time remaining: %s",
+  "message.doctor_m.mystery_gem": "§7Grants 40% damage reduction when equipped",
   "dimension.doctor_m.trenzalore": "Trenzalore"
 }

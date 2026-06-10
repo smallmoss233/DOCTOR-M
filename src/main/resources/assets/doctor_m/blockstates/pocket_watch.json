@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/pocket_watch",
+  "textures": {
+    "layer0": "doctor_m:item/pocket_watch"
+  },
+  "gui_light": "front"
+}

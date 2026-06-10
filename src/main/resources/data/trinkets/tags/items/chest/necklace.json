@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "doctor_m:time_key"
+    "doctor_m:time_key",
+    "doctor_m:pocket_watch"
   ]
 }

@@ -10,6 +10,7 @@
   "item.doctor_m.de_mat_gun": "去物質槍",
   "item.doctor_m.time_key": "§b時間鑰匙",
   "item.doctor_m.pocket_watch": "懷錶",
+  "item.doctor_m.mystery_gem": "神秘寶石",
   "item.doctor_m.type_103_spawn": "生成103型塔迪斯",
   "item.doctor_m.evereye_spawn": "生成永恆之眼",
   "message.doctor_m.tip.not.done": "§c[此項目未完成！]",
@@ -22,7 +23,8 @@
   "message.doctor_m.time_key.neutral_tip": "§7潛行右鍵啟用強制中立模式",
   "message.doctor_m.time_key.neutral_mode.on": "§a強制中立模式已開啟",
   "message.doctor_m.time_key.neutral_mode.off": "§c強制中立模式已關閉",
-  "message.doctor_m.pocket_watch.revived": "§d碎片的權能阻止了死亡的發生..",
-  "message.doctor_m.pocket_watch.cooldown": "§c碎片不能一直保護你，你需要等待它的恢復，剩餘時間: %s",
+  "message.doctor_m.pocket_watch.revived": "§d時間鑰匙碎片的權能阻止了死亡的發生..",
+  "message.doctor_m.pocket_watch.cooldown": "§c懷錶不能一直保護你，你需要等待它的恢復，剩餘時間: %s",
+  "message.doctor_m.mystery_gem": "§7裝備時獲得 40% 傷害減免",
   "dimension.doctor_m.trenzalore": "特蘭澤洛"
 }

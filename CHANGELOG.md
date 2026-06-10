@@ -16,6 +16,8 @@
 -  103型塔迪斯与变体NPC（未完成！） / Type 103 Tardis and Variant NPC（Not Done！）
 -  去物质枪配方 / De-mat-Gun recipe
 -  时间钥匙 / Time_Key
+-  怀表 / Pocket Watch
+-  神秘宝石 / Mystery Gem
 
 ### 修改 / Edit
 -  加上了AITMOD依赖项 / added the AITMOD dependencies.

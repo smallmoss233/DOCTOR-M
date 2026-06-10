@@ -1,6 +1,7 @@
 package doctor_m.Item;
 
 import dev.amble.lib.container.impl.ItemContainer;
+import doctor_m.Item.data_itme.fragment.mystery_gem;
 import doctor_m.Item.data_itme.time_key;
 import doctor_m.Item.data_itme.fragment.pocket_watch;
 import doctor_m.Item.data_weapon.de_mat_gun;
@@ -14,6 +15,7 @@ public class items extends ItemContainer {
 
     public static final Item TIME_KEY = new time_key(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
     public static final Item POCKET_WATCH = new pocket_watch(new Item.Settings());
+    public static final Item MYSTERY_GEM = new mystery_gem(new Item.Settings());
 
     public static final Item TYPE_103_SPAWN = new SpawnEggItem(
             entities.TYPE_103_TARDIS,

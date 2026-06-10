@@ -18,6 +18,7 @@ public static void registerItems() {
                             .entries((context, entries) -> {
                                 entries.add(TIME_KEY);
                                 entries.add(POCKET_WATCH);
+                                entries.add(MYSTERY_GEM);
                                 entries.add(DE_MAT_GUN);
                                 entries.add(RASSILON_KEY);
                                 entries.add(TYPE_103_SPAWN);
