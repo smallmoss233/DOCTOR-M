@@ -4,6 +4,9 @@ import dev.emi.trinkets.api.TrinketsApi;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -16,6 +19,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.world.GameMode;
 
 import java.util.Map;
@@ -28,12 +33,12 @@ public class TimeKeyFunction {
 
     private static final ThreadLocal<Boolean> isCustomDamage = ThreadLocal.withInitial(() -> false);
     private static final Map<UUID, Long> revivalCooldown = new ConcurrentHashMap<>();
-    private static final long COOLDOWN_TICKS = 24000; // 1游戏日
+    private static final long COOLDOWN_TICKS = 24000;
     private static final Map<UUID, GameMode> lastGameMode = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> lastHealTime = new ConcurrentHashMap<>();
 
     public static void register() {
-        // 伤害限制 + 复活
+        // ===================== 1. 伤害处理 =====================
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
             if (isCustomDamage.get()) {
                 isCustomDamage.set(false);
@@ -42,13 +47,31 @@ public class TimeKeyFunction {
             if (entity instanceof ServerPlayerEntity player) {
                 boolean hasTimeKey = isTimeKeyEquipped(player);
                 if (hasTimeKey) {
-                    // 伤害限制：不超过最大生命值的15%
+                    // ---------- 免疫各种伤害 ----------
+                    String name = source.getName();
+                    // 魔法、药水、负面效果、环境伤害、怪物特殊攻击等
+                    if (name.equals("inFire") || name.equals("onFire") || name.equals("lava")
+                            || name.equals("magic") || name.equals("indirectMagic")
+                            || name.equals("wither") || name.equals("drown")
+                            || name.equals("starve") || name.equals("fall")
+                            || name.equals("cactus") || name.equals("hotFloor")
+                            || name.equals("sweetBerryBush") || name.equals("freeze")
+                            || name.equals("inWall") || name.equals("lightningBolt")
+                            || name.equals("thorns") || name.equals("sonic_boom")
+                            || name.equals("outOfWorld") || name.equals("dryout")
+                            || name.equals("stalagmite") || name.equals("fallingStalactite")
+                            || name.equals("cramming") || name.equals("flyIntoWall")
+                            || name.equals("generic")) { // 备用
+                        return false;
+                    }
+
+                    // ---------- 伤害限制 ----------
                     float maxHealth = player.getMaxHealth();
                     float maxAllowed = maxHealth * 0.15f;
                     float newAmount = Math.min(amount, maxAllowed);
                     float newHealth = player.getHealth() - newAmount;
 
-                    // 复活
+                    // 致命伤害复活
                     if (newHealth <= 0 && !isInCooldown(player)) {
                         revivePlayer(player);
                         revivalCooldown.put(player.getUuid(), player.getServerWorld().getTime() + COOLDOWN_TICKS);
@@ -65,7 +88,7 @@ public class TimeKeyFunction {
             return true;
         });
 
-        // 2. 潜行右键切换强制中立模式（状态存储在时间钥匙物品的NBT中）
+        // ===================== 2. 强制中立切换 =====================
         UseItemCallback.EVENT.register((player, world, hand) -> {
             ItemStack stack = player.getStackInHand(hand);
             if (player.isSneaking() && stack.getItem() instanceof time_key) {
@@ -78,21 +101,24 @@ public class TimeKeyFunction {
             return TypedActionResult.pass(stack);
         });
 
-        // 3. 每秒恢复10%生命值
+        // ===================== 3. 生命恢复+自动灭火 =====================
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             long now = server.getTicks();
             for (PlayerEntity player : server.getPlayerManager().getPlayerList()) {
                 if (!isTimeKeyEquipped(player)) continue;
                 Long last = lastHealTime.get(player.getUuid());
                 if (last == null || now - last >= 20) {
-                    float healAmount = player.getMaxHealth() * 0.1f;
-                    player.heal(healAmount);
+                    player.heal(player.getMaxHealth() * 0.1f);
                     lastHealTime.put(player.getUuid(), now);
+                if (player.isOnFire()) {
+                        player.setFireTicks(0);
+                        player.setOnFire(false);
+                    }
                 }
             }
         });
 
-        // 4. 游戏模式切换检测，确保从创造/旁观切换回生存时恢复飞行
+        // ===================== 4. 模式切换恢复飞行 =====================
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
                 GameMode current = player.interactionManager.getGameMode();
@@ -100,11 +126,9 @@ public class TimeKeyFunction {
                 if (previous != null && previous != current) {
                     if ((previous == GameMode.CREATIVE || previous == GameMode.SPECTATOR) &&
                             (current == GameMode.SURVIVAL || current == GameMode.ADVENTURE)) {
-                        if (isTimeKeyEquipped(player)) {
-                            if (!player.getAbilities().allowFlying) {
-                                player.getAbilities().allowFlying = true;
-                                player.sendAbilitiesUpdate();
-                            }
+                        if (isTimeKeyEquipped(player) && !player.getAbilities().allowFlying) {
+                            player.getAbilities().allowFlying = true;
+                            player.sendAbilitiesUpdate();
                         }
                     }
                 }
@@ -121,8 +145,7 @@ public class TimeKeyFunction {
 
     private static boolean isInCooldown(ServerPlayerEntity player) {
         Long cooldownUntil = revivalCooldown.get(player.getUuid());
-        if (cooldownUntil == null) return false;
-        return player.getServerWorld().getTime() < cooldownUntil;
+        return cooldownUntil != null && player.getServerWorld().getTime() < cooldownUntil;
     }
 
     private static void revivePlayer(ServerPlayerEntity player) {
@@ -130,7 +153,6 @@ public class TimeKeyFunction {
         player.clearStatusEffects();
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 40, 2, false, false));
 
-        // 复活时清除周围敌对生物（半径10格）
         double radius = 10.0;
         player.getServerWorld().getEntitiesByClass(
                 net.minecraft.entity.LivingEntity.class,
@@ -138,7 +160,6 @@ public class TimeKeyFunction {
                 entity -> entity != player && entity.isAlive() && (entity instanceof HostileEntity)
         ).forEach(net.minecraft.entity.LivingEntity::kill);
 
-        // 复活的粒子效果
         for (int i = 0; i < 50; i++) {
             double x = player.getX() + (player.getRandom().nextDouble() - 0.5) * 2.0;
             double y = player.getY() + player.getRandom().nextDouble() * 2.0;
@@ -148,7 +169,7 @@ public class TimeKeyFunction {
         }
         player.playSound(SoundEvents.BLOCK_BELL_RESONATE, 1.0F, 1.0F);
         player.sendMessage(Text.translatable("message.doctor_m.time_key_resurrection"), true);
-        // 复活重新开启飞行能力
+
         if (!player.getAbilities().allowFlying) {
             player.getAbilities().allowFlying = true;
             player.sendAbilitiesUpdate();

@@ -28,9 +28,8 @@ public class time_key extends TrinketItem {
         // 未完成提示
         tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
         // 潜行详情提示
-        ShiftTooltipHelper.addShiftTooltip(tooltip,null,
-                Text.translatable("item.doctor_m.time_key.detail1"),
-                Text.translatable("item.doctor_m.time_key.detail2")
+        ShiftTooltipHelper.addShiftTooltip(tooltip,
+                Text.translatable("message.doctor_m.time_key.detail")
         );
     }
 

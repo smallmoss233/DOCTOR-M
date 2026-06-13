@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ShiftTooltipHelper {
 
-    public static void addShiftTooltip(List<Text> tooltip, Text shortText, Text... detailedLines) {
+    public static void addShiftTooltip(List<Text> tooltip, Text longText) {
         boolean shiftPressed = false;
         if (MinecraftClient.getInstance().getWindow() != null) {
             long handle = MinecraftClient.getInstance().getWindow().getHandle();
@@ -17,13 +17,9 @@ public class ShiftTooltipHelper {
                     GLFW.glfwGetKey(handle, GLFW.GLFW_KEY_RIGHT_SHIFT) == GLFW.GLFW_PRESS;
         }
         if (shiftPressed) {
-            for (Text line : detailedLines) {
-                tooltip.add(line);
-            }
+            // 使用 TooltipHelper 将长文本按 * 拆分成多行
+            TooltipHelper.addWrappedTooltip(tooltip, longText);
         } else {
-            if (shortText != null && !shortText.getString().isEmpty()) {
-                tooltip.add(shortText);
-            }
             tooltip.add(Text.translatable("tooltip.doctor_m.hold_shift").formatted(Formatting.GRAY, Formatting.ITALIC));
         }
     }
