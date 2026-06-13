@@ -13,6 +13,7 @@
   "item.doctor_m.mystery_gem": "神秘宝石",
   "item.doctor_m.type_103_spawn": "生成103型塔迪斯",
   "item.doctor_m.evereye_spawn": "生成永恒之眼",
+  "tooltip.doctor_m.hold_shift": "按住 Shift 查看详情",
   "message.doctor_m.tip.not.done": "§c[此项目未完成！]",
   "message.doctor_m.rassilon_key.tooltip.line": "除了拉斯隆，从未有时间领主总统能得到过拉斯隆之钥...",
   "message.doctor_m.de_mat_gun.tooltip.line1": "来自时间领主的忠告：",
@@ -23,7 +24,7 @@
   "message.doctor_m.time_key.neutral_tip": "§7潜行右键启用强制中立模式",
   "message.doctor_m.time_key.neutral_mode.on": "§a强制中立模式已开启",
   "message.doctor_m.time_key.neutral_mode.off": "§c强制中立模式已关闭",
-  "message.doctor_m.pocket_watch.revived": "§d时间钥匙碎片的权能阻止了死亡的发生..",
+  "message.doctor_m.pocket_watch.revived": "§d你的旅途尚未到达终点，六重神注视着你，期待着你的旅途最终通往何方...",
   "message.doctor_m.pocket_watch.cooldown": "§c怀表不能一直保护你，你需要等待它的恢复，剩余时间: %s",
   "message.doctor_m.mystery_gem": "§7装备时获得 40% 伤害减免",
   "dimension.doctor_m.trenzalore": "特兰泽洛"

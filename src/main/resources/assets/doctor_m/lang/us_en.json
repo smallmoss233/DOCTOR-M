@@ -23,7 +23,7 @@
   "message.doctor_m.time_key.neutral_tip": "§7Sneak + right-click to enable forced neutral mode",
   "message.doctor_m.time_key.neutral_mode.on": "§aForced neutral mode enabled",
   "message.doctor_m.time_key.neutral_mode.off": "§cForced neutral mode disabled",
-  "message.doctor_m.pocket_watch.revived": "§dThe authority of the Time Key fragment prevented death from occurring..",
+  "message.doctor_m.pocket_watch.revived": "§dYour journey has not yet reached its end. The Six-Fold God watches over you, eagerly awaiting where your path will ultimately lead...",
   "message.doctor_m.pocket_watch.cooldown": "§cThe pocket watch cannot protect you forever; you must wait for its recovery. Remaining time: %s",
   "message.doctor_m.mystery_gem": "§7Grants 40% damage reduction while equipped",
   "dimension.doctor_m.trenzalore": "Trenzalore"

@@ -2,7 +2,6 @@ package doctor_m.Item.data_itme;
 
 import dev.emi.trinkets.api.TrinketItem;
 import doctor_m.util.TooltipHelper;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
@@ -12,6 +11,8 @@ import dev.emi.trinkets.api.SlotReference;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 
+import net.minecraft.client.item.TooltipContext;
+import doctor_m.util.ShiftTooltipHelper;
 import java.util.List;
 
 public class time_key extends TrinketItem {
@@ -26,6 +27,11 @@ public class time_key extends TrinketItem {
         TooltipHelper.addWrappedTooltip(tooltip, longDescription);
         // 未完成提示
         tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
+        // 潜行详情提示
+        ShiftTooltipHelper.addShiftTooltip(tooltip,null,
+                Text.translatable("item.doctor_m.time_key.detail1"),
+                Text.translatable("item.doctor_m.time_key.detail2")
+        );
     }
 
     @Override

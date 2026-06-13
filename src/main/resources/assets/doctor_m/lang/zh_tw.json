@@ -23,7 +23,7 @@
   "message.doctor_m.time_key.neutral_tip": "§7潛行右鍵啟用強制中立模式",
   "message.doctor_m.time_key.neutral_mode.on": "§a強制中立模式已開啟",
   "message.doctor_m.time_key.neutral_mode.off": "§c強制中立模式已關閉",
-  "message.doctor_m.pocket_watch.revived": "§d時間鑰匙碎片的權能阻止了死亡的發生..",
+  "message.doctor_m.pocket_watch.revived": "§d你的旅途尚未到達終點，六重神注視著你，期待著你的旅途最終通往何方...",
   "message.doctor_m.pocket_watch.cooldown": "§c懷錶不能一直保護你，你需要等待它的恢復，剩餘時間: %s",
   "message.doctor_m.mystery_gem": "§7裝備時獲得 40% 傷害減免",
   "dimension.doctor_m.trenzalore": "特蘭澤洛"
