@@ -1,11 +1,11 @@
 package doctor_m.wolrd_data;
 
+import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketsApi;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -15,12 +15,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Pair;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 import net.minecraft.world.GameMode;
 
 import java.util.Map;
@@ -45,11 +45,20 @@ public class TimeKeyFunction {
                 return true;
             }
             if (entity instanceof ServerPlayerEntity player) {
+                // 检查是否装备时间钥匙
                 boolean hasTimeKey = isTimeKeyEquipped(player);
                 if (hasTimeKey) {
-                    // ---------- 免疫各种伤害 ----------
+                    // 获取时间钥匙物品的 NBT（用于完全免疫开关）
+                    ItemStack timeKeyStack = getTimeKeyStack(player);
+                    boolean godmode = timeKeyStack.getOrCreateNbt().getBoolean("godmode");
+
+                    // 完全免疫模式（免疫一切伤害，包括/kill）
+                    if (godmode) {
+                        return false;
+                    }
+
+                    // ---------- 部分免疫（常规负面伤害）----------
                     String name = source.getName();
-                    // 魔法、药水、负面效果、环境伤害、怪物特殊攻击等
                     if (name.equals("inFire") || name.equals("onFire") || name.equals("lava")
                             || name.equals("magic") || name.equals("indirectMagic")
                             || name.equals("wither") || name.equals("drown")
@@ -61,11 +70,11 @@ public class TimeKeyFunction {
                             || name.equals("outOfWorld") || name.equals("dryout")
                             || name.equals("stalagmite") || name.equals("fallingStalactite")
                             || name.equals("cramming") || name.equals("flyIntoWall")
-                            || name.equals("generic")) { // 备用
+                            || name.equals("generic")) {
                         return false;
                     }
 
-                    // ---------- 伤害限制 ----------
+                    // 伤害限制：不超过最大生命值的 15%
                     float maxHealth = player.getMaxHealth();
                     float maxAllowed = maxHealth * 0.15f;
                     float newAmount = Math.min(amount, maxAllowed);
@@ -88,7 +97,7 @@ public class TimeKeyFunction {
             return true;
         });
 
-        // ===================== 2. 强制中立切换 =====================
+        // ===================== 2. 强制中立切换（潜行右键） =====================
         UseItemCallback.EVENT.register((player, world, hand) -> {
             ItemStack stack = player.getStackInHand(hand);
             if (player.isSneaking() && stack.getItem() instanceof time_key) {
@@ -101,7 +110,29 @@ public class TimeKeyFunction {
             return TypedActionResult.pass(stack);
         });
 
-        // ===================== 3. 生命恢复+自动灭火 =====================
+        // ===================== 3. 完全免疫模式切换命令 =====================
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            dispatcher.register(CommandManager.literal("timekey")
+                    .then(CommandManager.literal("godmode")
+                            .executes(context -> {
+                                PlayerEntity player = context.getSource().getPlayer();
+                                if (player == null) return 0;
+                                ItemStack timeKeyStack = getTimeKeyStack(player);
+                                if (!timeKeyStack.isEmpty()) {
+                                    NbtCompound nbt = timeKeyStack.getOrCreateNbt();
+                                    boolean current = nbt.getBoolean("godmode");
+                                    nbt.putBoolean("godmode", !current);
+                                    player.sendMessage(Text.translatable("message.doctor_m.time_key.godmode." + (!current ? "on" : "off")), true);
+                                } else {
+                                    player.sendMessage(Text.translatable("message.doctor_m.time_key.not_equipped"), true);
+                                }
+                                return 1;
+                            })
+                    )
+            );
+        });
+
+        // ===================== 4. 生命恢复（每秒10%最大生命） =====================
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             long now = server.getTicks();
             for (PlayerEntity player : server.getPlayerManager().getPlayerList()) {
@@ -110,15 +141,11 @@ public class TimeKeyFunction {
                 if (last == null || now - last >= 20) {
                     player.heal(player.getMaxHealth() * 0.1f);
                     lastHealTime.put(player.getUuid(), now);
-                if (player.isOnFire()) {
-                        player.setFireTicks(0);
-                        player.setOnFire(false);
-                    }
                 }
             }
         });
 
-        // ===================== 4. 模式切换恢复飞行 =====================
+        // ===================== 5. 游戏模式切换后恢复飞行 =====================
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
                 GameMode current = player.interactionManager.getGameMode();
@@ -135,6 +162,17 @@ public class TimeKeyFunction {
                 lastGameMode.put(player.getUuid(), current);
             }
         });
+    }
+
+    private static ItemStack getTimeKeyStack(PlayerEntity player) {
+        // 检查主手
+        ItemStack main = player.getMainHandStack();
+        if (main.getItem() instanceof time_key) return main;
+        // 检查饰品栏（Trinkets）
+        return TrinketsApi.getTrinketComponent(player)
+                .flatMap(comp -> comp.getEquipped(stack -> stack.getItem() instanceof time_key).stream().findFirst())
+                .map(Pair::getRight)
+                .orElse(ItemStack.EMPTY);
     }
 
     private static boolean isTimeKeyEquipped(PlayerEntity player) {

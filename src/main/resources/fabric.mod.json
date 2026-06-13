@@ -24,7 +24,8 @@
 			"doctor_m.DOCTORM"
 		],
 		"client": [
-			"doctor_m.DOCTORMClient"
+			"doctor_m.DOCTORMClient",
+            "doctor_m.client.TimeKeyClient"
 		],
 		"fabric-datagen": [
 			"doctor_m.DOCTORMDataGenerator"
