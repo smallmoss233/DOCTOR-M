@@ -15,6 +15,7 @@
     "hidden": false,
     "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png"
   },
+  "parent": "doctor_m:root",
   "criteria": {
     "obtain_time_key": {
       "trigger": "minecraft:inventory_changed",

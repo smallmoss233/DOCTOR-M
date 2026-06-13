@@ -2,21 +2,25 @@ package doctor_m.wolrd_data;
 
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketsApi;
+import doctor_m.DOCTORM;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
@@ -48,6 +52,21 @@ public class TimeKeyFunction {
                 // 检查是否装备时间钥匙
                 boolean hasTimeKey = isTimeKeyEquipped(player);
                 if (hasTimeKey) {
+
+                    //弹开箭矢
+                    if (source.getSource() instanceof PersistentProjectileEntity projectile && projectile.getOwner() != player) {
+                        player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(),
+                                SoundEvents.ENTITY_ARROW_HIT_PLAYER, SoundCategory.PLAYERS, 0.5f, 1.5f);
+                        for (int i = 0; i < 10; i++) {
+                            double x = projectile.getX() + (player.getRandom().nextDouble() - 0.5) * 1.0;
+                            double y = projectile.getY() + player.getRandom().nextDouble() * 1.0;
+                            double z = projectile.getZ() + (player.getRandom().nextDouble() - 0.5) * 1.0;
+                            player.getServerWorld().spawnParticles(ParticleTypes.CLOUD, x, y, z, 1, 0, 0, 0, 0);
+                        }
+                        projectile.discard();
+                        return false;
+                    }
+
                     // 获取时间钥匙物品的 NBT（用于完全免疫开关）
                     ItemStack timeKeyStack = getTimeKeyStack(player);
                     boolean godmode = timeKeyStack.getOrCreateNbt().getBoolean("godmode");
@@ -96,30 +115,32 @@ public class TimeKeyFunction {
             }
             return true;
         });
-
-        // ===================== 2. 强制中立切换（潜行右键） =====================
-        UseItemCallback.EVENT.register((player, world, hand) -> {
-            ItemStack stack = player.getStackInHand(hand);
-            if (player.isSneaking() && stack.getItem() instanceof time_key) {
-                NbtCompound nbt = stack.getOrCreateNbt();
-                boolean current = nbt.getBoolean("neutral_mode");
-                nbt.putBoolean("neutral_mode", !current);
-                player.sendMessage(Text.translatable("message.doctor_m.time_key.neutral_mode." + (!current ? "on" : "off")), true);
-                return TypedActionResult.success(stack);
-            }
-            return TypedActionResult.pass(stack);
-        });
-
-        // ===================== 3. 完全免疫模式切换命令 =====================
+// ===================== 3. 组合键+命令切换完全免疫 + 强制中立 =====================
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            dispatcher.register(CommandManager.literal("timekey")
-                    .then(CommandManager.literal("godmode")
+            dispatcher.register(CommandManager.literal("passive")
+                    .then(CommandManager.literal("a")
                             .executes(context -> {
                                 PlayerEntity player = context.getSource().getPlayer();
                                 if (player == null) return 0;
-                                ItemStack timeKeyStack = getTimeKeyStack(player);
-                                if (!timeKeyStack.isEmpty()) {
-                                    NbtCompound nbt = timeKeyStack.getOrCreateNbt();
+                                ItemStack stack = getTimeKeyStack(player);
+                                if (stack.getItem() instanceof time_key) {
+                                    NbtCompound nbt = stack.getOrCreateNbt();
+                                    boolean current = nbt.getBoolean("neutral_mode");
+                                    nbt.putBoolean("neutral_mode", !current);
+                                    player.sendMessage(Text.translatable("message.doctor_m.time_key.neutral_mode." + (!current ? "on" : "off")), true);
+                                } else {
+                                    player.sendMessage(Text.translatable("message.doctor_m.time_key.not_equipped"), true);
+                                }
+                                return 1;
+                            })
+                    )
+                    .then(CommandManager.literal("b")
+                            .executes(context -> {
+                                PlayerEntity player = context.getSource().getPlayer();
+                                if (player == null) return 0;
+                                ItemStack stack = getTimeKeyStack(player);
+                                if (stack.getItem() instanceof time_key) {
+                                    NbtCompound nbt = stack.getOrCreateNbt();
                                     boolean current = nbt.getBoolean("godmode");
                                     nbt.putBoolean("godmode", !current);
                                     player.sendMessage(Text.translatable("message.doctor_m.time_key.godmode." + (!current ? "on" : "off")), true);
@@ -132,7 +153,7 @@ public class TimeKeyFunction {
             );
         });
 
-        // ===================== 4. 生命恢复（每秒10%最大生命） =====================
+        // ===================== 4. 生命恢复（每秒10%最大生命）+灭火 =====================
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             long now = server.getTicks();
             for (PlayerEntity player : server.getPlayerManager().getPlayerList()) {
@@ -141,6 +162,10 @@ public class TimeKeyFunction {
                 if (last == null || now - last >= 20) {
                     player.heal(player.getMaxHealth() * 0.1f);
                     lastHealTime.put(player.getUuid(), now);
+                }
+                if (player.isOnFire()) {
+                    player.setFireTicks(0);
+                    player.setOnFire(false);
                 }
             }
         });
