@@ -21,7 +21,7 @@
   "category.doctor_m": "Doctor M",
   "tooltip.doctor_m.hold_shift": "按住 Shift 查看详情",
   "message.doctor_m.tip.not.done": "§c[此项目未完成！]",
-  "message.doctor_m.rassilon_key.tooltip.line": "除了拉斯隆，从未有时间领主总统能得到过拉斯隆之钥...",
+  "message.doctor_m.rassilon_key.tooltip.line": "§7除了拉斯隆，从未有时间领主总统能得到过拉斯隆之钥...",
   "message.doctor_m.de_mat_gun.tooltip.line1": "来自时间领主的忠告：",
   "message.doctor_m.de_mat_gun.tooltip.line2": "毁了这把枪，毁掉它的所有资料，不要被强大的力量蛊惑心智...",
   "message.doctor_m.time_key_resurrection": "§b时间钥匙的所有者，你的权力不止于此，你不会被死亡这点小事困扰，六重神依然在注视着你",

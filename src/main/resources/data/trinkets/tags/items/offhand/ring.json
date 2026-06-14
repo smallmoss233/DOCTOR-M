@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "doctor_m:mystery_gem",
     "doctor_m:eternal_crystal"
   ]
 }
