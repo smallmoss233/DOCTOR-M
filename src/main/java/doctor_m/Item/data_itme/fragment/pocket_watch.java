@@ -1,6 +1,7 @@
 package doctor_m.Item.data_itme.fragment;
 
 import dev.emi.trinkets.api.TrinketItem;  // 改为 TrinketItem
+import doctor_m.util.ShiftTooltipInvoker;
 import doctor_m.util.TooltipHelper;
 import doctor_m.wolrd_data.PocketWatchFunction;
 import net.minecraft.client.item.TooltipContext;
@@ -35,5 +36,8 @@ public class pocket_watch extends TrinketItem {
         // 需要自动换行的长文本
         Text longDescription = Text.translatable("message.doctor_m.pocket_watch.tip");
         TooltipHelper.addWrappedTooltip(tooltip, longDescription);
+        ShiftTooltipInvoker.addShiftTooltip(tooltip,
+                Text.translatable("message.doctor_m.pocket_watch.detail")
+        );
     }
 }

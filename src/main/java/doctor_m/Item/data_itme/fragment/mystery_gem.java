@@ -2,6 +2,7 @@ package doctor_m.Item.data_itme.fragment;
 
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketItem;
+import doctor_m.util.ShiftTooltipInvoker;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -44,5 +45,8 @@ public class mystery_gem extends TrinketItem {
     @Override
     public void appendTooltip(ItemStack stack, net.minecraft.world.World world, java.util.List<Text> tooltip, net.minecraft.client.item.TooltipContext context) {
         tooltip.add(Text.translatable("message.doctor_m.mystery_gem").formatted(Formatting.GRAY));
+        ShiftTooltipInvoker.addShiftTooltip(tooltip,
+                Text.translatable("message.doctor_m.mystery_gem.detail")
+        );
     }
 }

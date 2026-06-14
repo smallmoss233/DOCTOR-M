@@ -1,6 +1,7 @@
 package doctor_m.Item;
 
 import dev.amble.lib.container.impl.ItemContainer;
+import doctor_m.Item.data_itme.fragment.eternal_crystal;
 import doctor_m.Item.data_itme.fragment.mystery_gem;
 import doctor_m.Item.data_itme.time_key;
 import doctor_m.Item.data_itme.fragment.pocket_watch;
@@ -10,12 +11,14 @@ import doctor_m.entities.entities;
 import net.minecraft.item.Item;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.util.Rarity;
+import doctor_m.util.PercentageDamageHelper;
 
 public class items extends ItemContainer {
 
     public static final Item TIME_KEY = new time_key(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
-    public static final Item POCKET_WATCH = new pocket_watch(new Item.Settings());
-    public static final Item MYSTERY_GEM = new mystery_gem(new Item.Settings());
+    public static final Item POCKET_WATCH = new pocket_watch(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
+    public static final Item MYSTERY_GEM = new mystery_gem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
+    public static final Item ETERNAL_CRYSTAL = new eternal_crystal(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
 
     public static final Item TYPE_103_SPAWN = new SpawnEggItem(
             entities.TYPE_103_TARDIS,
@@ -36,4 +39,14 @@ public class items extends ItemContainer {
     public static final Item RASSILON_KEY = new rassilon_key(new Item.Settings()
             .maxCount(1)
             .rarity(Rarity.EPIC));
+
+    //应用强制扣血附加伤害
+    public static void registerAbilities() {
+        PercentageDamageHelper.register(new PercentageDamageHelper.Config(
+                20, 1.0, PercentageDamageHelper.hasAnyOfItems(TIME_KEY)
+        ));
+        PercentageDamageHelper.register(new PercentageDamageHelper.Config(
+                100, 0.5, PercentageDamageHelper.hasAnyOfItems(ETERNAL_CRYSTAL)
+        ));
+    }
 }

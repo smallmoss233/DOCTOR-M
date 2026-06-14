@@ -14,42 +14,42 @@ import java.util.function.Predicate;
 
 public class PercentageDamageHelper {
 
-    // 冷却时间映射 (目标UUID -> 上次附加伤害的时间)
+    public static class Config {
+        public final long cooldownTicks;      // 冷却时间（tick）
+        public final double damageFactor;     // 百分比伤害系数（例如 1.0 表示攻击力数值作为百分比，0.5 表示一半）
+        public final Predicate<PlayerEntity> enableCondition;
+
+        public Config(long cooldownTicks, double damageFactor, Predicate<PlayerEntity> enableCondition) {
+            this.cooldownTicks = cooldownTicks;
+            this.damageFactor = damageFactor;
+            this.enableCondition = enableCondition;
+        }
+    }
+
     private static final ConcurrentHashMap<UUID, Long> lastExtraDamageTick = new ConcurrentHashMap<>();
-    private static final long COOLDOWN_TICKS = 20; // 1秒 = 20 ticks
 
-    private static Predicate<PlayerEntity> enablePredicate = player -> false;
-
-    public static void register(Predicate<PlayerEntity> condition) {
-        enablePredicate = condition;
+    public static void register(Config config) {
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
-            // 仅处理玩家攻击
             if (!(source.getSource() instanceof PlayerEntity)) return true;
             PlayerEntity player = (PlayerEntity) source.getSource();
-            if (!enablePredicate.test(player)) return true;
+            if (!config.enableCondition.test(player)) return true;
             if (!(entity instanceof LivingEntity)) return true;
             LivingEntity target = (LivingEntity) entity;
             if (target.isDead() || target.getHealth() <= 0) return true;
 
             UUID targetId = target.getUuid();
             long now = target.getWorld().getTime();
-
-            // 检查冷却
             Long last = lastExtraDamageTick.get(targetId);
-            if (last != null && now - last < COOLDOWN_TICKS) {
-                // 冷却中，不附加额外伤害，仅原版伤害生效
+            if (last != null && now - last < config.cooldownTicks) {
                 return true;
             }
-
-            // 更新冷却时间
             lastExtraDamageTick.put(targetId, now);
 
-            // 计算百分比伤害（基于目标最大生命值）
             double percent = getDamagePercent(player, source);
+            percent *= config.damageFactor; // 应用系数
             float percentDamage = target.getMaxHealth() * (float) (percent / 100.0);
             if (percentDamage <= 0) return true;
 
-            // 直接扣除百分比伤害（不包含原始伤害）
             float newHealth = target.getHealth() - percentDamage;
             if (newHealth <= 0) {
                 target.setHealth(0);
@@ -57,8 +57,6 @@ public class PercentageDamageHelper {
             } else {
                 target.setHealth(newHealth);
             }
-
-            // 原版伤害依然生效（返回 true）
             return true;
         });
     }
