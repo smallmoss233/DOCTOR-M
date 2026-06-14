@@ -62,17 +62,26 @@ public class PercentageDamageHelper {
     }
 
     private static double getDamagePercent(PlayerEntity player, DamageSource source) {
+        // 获取伤害源的名字
         String name = source.getName();
+
+        // 重点在这里，我们把判断条件改一下
+        // 除了我们已经排除的那些特殊伤害，剩下的都认为是物理伤害
         boolean isPhysical = !(name.equals("magic") || name.equals("indirectMagic")
                 || name.equals("wither") || name.equals("thorns")
                 || name.equals("sonic_boom") || name.equals("lava")
                 || name.equals("inFire") || name.equals("onFire")
                 || name.equals("drown") || name.equals("starve")
-                || name.equals("freeze") || name.equals("dragonBreath"));
+                || name.equals("freeze") || name.equals("dragonBreath")
+                // 甚至如果你想，还能把远程投射物也算作物理伤害
+                || name.equals("arrow"));
+
         if (isPhysical) {
+            // 只要名字不在排除名单里，都走这里
             double attack = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).getValue();
             return Math.max(attack, 1);
         } else {
+            // 魔法、火焰这些特殊伤害，则走这里
             return 5.0;
         }
     }
