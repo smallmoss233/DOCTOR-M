@@ -216,7 +216,7 @@ public class TimeKeyFunction {
         player.clearStatusEffects();
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 40, 2, false, false));
 
-        double radius = 10.0;
+        double radius = 35.0;
         player.getServerWorld().getEntitiesByClass(
                 net.minecraft.entity.LivingEntity.class,
                 player.getBoundingBox().expand(radius),
