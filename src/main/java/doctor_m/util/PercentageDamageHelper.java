@@ -14,13 +14,16 @@ import java.util.function.Predicate;
 
 public class PercentageDamageHelper {
 
-    private static final ConcurrentHashMap<UUID, Long> lastApplyTime = new ConcurrentHashMap<>();
-    private static final long COOLDOWN_TICKS = 5;
+    // 冷却时间映射 (目标UUID -> 上次附加伤害的时间)
+    private static final ConcurrentHashMap<UUID, Long> lastExtraDamageTick = new ConcurrentHashMap<>();
+    private static final long COOLDOWN_TICKS = 20; // 1秒 = 20 ticks
+
     private static Predicate<PlayerEntity> enablePredicate = player -> false;
 
     public static void register(Predicate<PlayerEntity> condition) {
         enablePredicate = condition;
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
+            // 仅处理玩家攻击
             if (!(source.getSource() instanceof PlayerEntity)) return true;
             PlayerEntity player = (PlayerEntity) source.getSource();
             if (!enablePredicate.test(player)) return true;
@@ -30,26 +33,32 @@ public class PercentageDamageHelper {
 
             UUID targetId = target.getUuid();
             long now = target.getWorld().getTime();
-            Long lastTime = lastApplyTime.get(targetId);
-            if (lastTime != null && now - lastTime < COOLDOWN_TICKS) {
-                return false;
-            }
-            lastApplyTime.put(targetId, now);
 
+            // 检查冷却
+            Long last = lastExtraDamageTick.get(targetId);
+            if (last != null && now - last < COOLDOWN_TICKS) {
+                // 冷却中，不附加额外伤害，仅原版伤害生效
+                return true;
+            }
+
+            // 更新冷却时间
+            lastExtraDamageTick.put(targetId, now);
+
+            // 计算百分比伤害（基于目标最大生命值）
             double percent = getDamagePercent(player, source);
             float percentDamage = target.getMaxHealth() * (float) (percent / 100.0);
-            float originalDamage = amount;
+            if (percentDamage <= 0) return true;
 
-            float totalDamage = percentDamage + originalDamage;
-            if (totalDamage <= 0) return true;
-
-            float newHealth = target.getHealth() - totalDamage;
+            // 直接扣除百分比伤害（不包含原始伤害）
+            float newHealth = target.getHealth() - percentDamage;
             if (newHealth <= 0) {
                 target.setHealth(0);
                 target.onDeath(source);
             } else {
                 target.setHealth(newHealth);
             }
+
+            // 原版伤害依然生效（返回 true）
             return true;
         });
     }
