@@ -15,8 +15,8 @@ import java.util.function.Predicate;
 public class PercentageDamageHelper {
 
     public static class Config {
-        public final long cooldownTicks;      // 冷却时间（tick）
-        public final double damageFactor;     // 百分比伤害系数（例如 1.0 表示攻击力数值作为百分比，0.5 表示一半）
+        public final long cooldownTicks;
+        public final double damageFactor;
         public final Predicate<PlayerEntity> enableCondition;
 
         public Config(long cooldownTicks, double damageFactor, Predicate<PlayerEntity> enableCondition) {
@@ -26,9 +26,9 @@ public class PercentageDamageHelper {
         }
     }
 
-    private static final ConcurrentHashMap<UUID, Long> lastExtraDamageTick = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, Long> lastExtraDamageTick = new ConcurrentHashMap<>();
 
-    public static void register(Config config) {
+    public PercentageDamageHelper(Config config) {
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
             if (!(source.getSource() instanceof PlayerEntity)) return true;
             PlayerEntity player = (PlayerEntity) source.getSource();
@@ -46,7 +46,7 @@ public class PercentageDamageHelper {
             lastExtraDamageTick.put(targetId, now);
 
             double percent = getDamagePercent(player, source);
-            percent *= config.damageFactor; // 应用系数
+            percent *= config.damageFactor;
             float percentDamage = target.getMaxHealth() * (float) (percent / 100.0);
             if (percentDamage <= 0) return true;
 

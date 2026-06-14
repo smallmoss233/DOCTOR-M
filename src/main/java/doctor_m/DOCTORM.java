@@ -17,6 +17,7 @@ public class DOCTORM implements ModInitializer {
     @Override
     public void onInitialize() {
         RegistryContainer.register(items.class, MOD_ID);
+        items.registerAbilities();
         item_group.registerItems();
         entities.registerAttributes();
         doctor_m.dimension.trenzalore.register();

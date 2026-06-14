@@ -1,5 +1,6 @@
 package doctor_m.Item;
 
+import doctor_m.util.PercentageDamageHelper;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;

@@ -40,12 +40,11 @@ public class items extends ItemContainer {
             .maxCount(1)
             .rarity(Rarity.EPIC));
 
-    //应用强制扣血附加伤害
     public static void registerAbilities() {
-        PercentageDamageHelper.register(new PercentageDamageHelper.Config(
+        new PercentageDamageHelper(new PercentageDamageHelper.Config(
                 20, 1.0, PercentageDamageHelper.hasAnyOfItems(TIME_KEY)
         ));
-        PercentageDamageHelper.register(new PercentageDamageHelper.Config(
+        new PercentageDamageHelper(new PercentageDamageHelper.Config(
                 100, 0.5, PercentageDamageHelper.hasAnyOfItems(ETERNAL_CRYSTAL)
         ));
     }
