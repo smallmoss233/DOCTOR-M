@@ -1,15 +1,9 @@
 package doctor_m.wolrd_data;
 
-import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketsApi;
-import doctor_m.DOCTORM;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.event.player.UseItemCallback;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
@@ -24,7 +18,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.GameMode;
 
 import java.util.Map;
@@ -37,7 +30,7 @@ public class TimeKeyFunction {
 
     private static final ThreadLocal<Boolean> isCustomDamage = ThreadLocal.withInitial(() -> false);
     private static final Map<UUID, Long> revivalCooldown = new ConcurrentHashMap<>();
-    private static final long COOLDOWN_TICKS = 24000;
+    private static final long COOLDOWN_TICKS = 200;
     private static final Map<UUID, GameMode> lastGameMode = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> lastHealTime = new ConcurrentHashMap<>();
 
