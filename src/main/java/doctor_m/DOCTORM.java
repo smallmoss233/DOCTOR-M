@@ -6,6 +6,7 @@ import doctor_m.entities.entities;
 import doctor_m.Item.items;
 import doctor_m.wolrd_data.PocketWatchFunction;
 import doctor_m.wolrd_data.TimeKeyFunction;
+import doctor_m.util.PercentageDamageHelper;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 
@@ -22,5 +23,11 @@ public class DOCTORM implements ModInitializer {
         doctor_m.dimension.trenzalore.register();
         TimeKeyFunction.register();
         PocketWatchFunction.register();
+
+        PercentageDamageHelper.register(
+                PercentageDamageHelper.hasAnyOfItems(
+                        items.TIME_KEY
+                )
+        );
     }
 }

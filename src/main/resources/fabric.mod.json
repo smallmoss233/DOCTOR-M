@@ -25,7 +25,7 @@
 		],
 		"client": [
 			"doctor_m.DOCTORMClient",
-            "doctor_m.client.TimeKeyClient"
+            "doctor_m.client.AccessoryPassiveButton"
 		],
 		"fabric-datagen": [
 			"doctor_m.DOCTORMDataGenerator"
@@ -40,6 +40,7 @@
 		"minecraft": "~1.20.1",
 		"java": ">=17",
 		"fabric-api": "*",
+        "trinkets": "3.7.2",
         "ait": "*",
         "amblekit": "*"
     },
