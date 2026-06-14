@@ -1,5 +1,7 @@
 package doctor_m.util;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -9,6 +11,7 @@ import java.util.List;
 
 public class ShiftTooltipHelper {
 
+    @Environment(EnvType.CLIENT)
     public static void addShiftTooltip(List<Text> tooltip, Text longText) {
         boolean shiftPressed = false;
         if (MinecraftClient.getInstance().getWindow() != null) {

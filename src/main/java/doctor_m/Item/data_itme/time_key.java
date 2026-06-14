@@ -1,6 +1,7 @@
 package doctor_m.Item.data_itme;
 
 import dev.emi.trinkets.api.TrinketItem;
+import doctor_m.util.ShiftTooltipInvoker;
 import doctor_m.util.TooltipHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -14,7 +15,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 
 import net.minecraft.client.item.TooltipContext;
-import doctor_m.util.ShiftTooltipHelper;
 import java.util.List;
 
 public class time_key extends TrinketItem {
@@ -44,7 +44,7 @@ public class time_key extends TrinketItem {
         // 未完成提示
         tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
         // 潜行详情提示
-        ShiftTooltipHelper.addShiftTooltip(tooltip,
+        ShiftTooltipInvoker.addShiftTooltip(tooltip,
                 Text.translatable("message.doctor_m.time_key.detail")
         );
     }
