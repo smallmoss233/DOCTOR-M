@@ -49,10 +49,10 @@ public class MixinOxygenatorBlockEntity {
             // 检查玩家是否真的在封闭空间内（进一步确认）
             if (!room.airBlocks.contains(player.getBlockPos())) continue;
 
-            // 施加 OXYGENATED 效果，持续 1 秒（20 tick）
+            // 施加 OXYGENATED 效果，持续 3 秒（60 tick）
             player.addStatusEffect(new StatusEffectInstance(
                     AITStatusEffects.OXYGENATED,
-                    20,
+                    60,
                     0,
                     false,
                     false

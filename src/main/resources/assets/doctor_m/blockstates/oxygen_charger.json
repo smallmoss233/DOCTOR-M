@@ -1,6 +1,8 @@
 {
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "doctor_m:block/oxygen_charger"
+  "variants": {
+    "facing=north": { "model": "doctor_m:block/oxygen_charger" },
+    "facing=south": { "model": "doctor_m:block/oxygen_charger", "y": 180 },
+    "facing=west": { "model": "doctor_m:block/oxygen_charger", "y": 270 },
+    "facing=east": { "model": "doctor_m:block/oxygen_charger", "y": 90 }
   }
 }

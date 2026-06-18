@@ -1,8 +1,8 @@
 package doctor_m.module.Industry;
 
 import dev.amble.lib.container.impl.ItemContainer;
-import doctor_m.module.Industry.data_Industry.ModBlocks;
-import doctor_m.module.Industry.data_Industry.OxygenTankItem;
+import doctor_m.module.space.ModBlocks;
+import doctor_m.module.space.OxygenTankItem;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;

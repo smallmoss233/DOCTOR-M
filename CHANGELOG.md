@@ -31,6 +31,7 @@
 -  更新拉斯隆之钥的提示 / Updated tooltip of Rassilon Key.
 -  根成就 / Root Achievement
 -  归途 / Way Home
+-  利用mixin重写了AIT的氧气逻辑！ / Rewrote AIT's oxygen logic using mixin!
 
 ### 修复 / Repair
 

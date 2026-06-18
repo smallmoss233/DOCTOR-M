@@ -1,6 +1,5 @@
-package doctor_m.module.Industry.data_Industry;
+package doctor_m.module.space;
 
-import doctor_m.module.space.SpaceOxygenManager;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;

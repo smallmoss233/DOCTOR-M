@@ -1,4 +1,4 @@
-package doctor_m.module.Industry.data_Industry;
+package doctor_m.module.space;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
