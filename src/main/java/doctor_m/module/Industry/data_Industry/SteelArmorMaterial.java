@@ -1,4 +1,4 @@
-package doctor_m.Item.data_Industry_items;
+package doctor_m.module.Industry.data_Industry;
 
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
@@ -6,7 +6,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 
-import static doctor_m.Item.Industry_items.STEEL_INGOT;
+import static doctor_m.module.Industry.Industry_items.STEEL_INGOT;
 
 public class SteelArmorMaterial {
     public static final ArmorMaterial STEEL_ARMOR_MATERIAL = new ArmorMaterial() {

@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "doctor_m:block/oxygen_charger"
+  }
+}

@@ -1,10 +1,12 @@
 package doctor_m;
 
 import dev.amble.lib.container.RegistryContainer;
-import doctor_m.Item.Industry_items;
+import doctor_m.module.Industry.Industry_items;
 import doctor_m.Item.item_group;
 import doctor_m.entities.entities;
 import doctor_m.Item.items;
+import doctor_m.module.Industry.data_Industry.ModBlockEntities;
+import doctor_m.module.Industry.data_Industry.ModBlocks;
 import doctor_m.world_data.PocketWatchFunction;
 import doctor_m.world_data.TimeKeyFunction;
 import net.fabricmc.api.ModInitializer;
@@ -25,6 +27,7 @@ public class DOCTORM implements ModInitializer {
         doctor_m.dimension.trenzalore.register();
         TimeKeyFunction.register();
         PocketWatchFunction.register();
-
+        ModBlocks.register();
+        ModBlockEntities.register();
     }
 }

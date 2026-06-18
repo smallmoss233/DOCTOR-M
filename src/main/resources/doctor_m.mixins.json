@@ -3,7 +3,10 @@
   "package": "com.example.doctor_m.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "MobEntityMixin"
+    "MobEntityMixin",
+    "MixinSpacesuitItem",
+    "MixinOxygenatedEffect",
+    "MixinOxygenatorBlockEntity"
   ],
   "injectors": {
     "defaultRequire": 1
