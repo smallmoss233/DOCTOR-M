@@ -1,4 +1,4 @@
-package doctor_m.wolrd_data;
+package doctor_m.world_data;
 
 import dev.emi.trinkets.api.TrinketsApi;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;

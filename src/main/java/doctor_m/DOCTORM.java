@@ -1,11 +1,12 @@
 package doctor_m;
 
 import dev.amble.lib.container.RegistryContainer;
+import doctor_m.Item.Industry_items;
 import doctor_m.Item.item_group;
 import doctor_m.entities.entities;
 import doctor_m.Item.items;
-import doctor_m.wolrd_data.PocketWatchFunction;
-import doctor_m.wolrd_data.TimeKeyFunction;
+import doctor_m.world_data.PocketWatchFunction;
+import doctor_m.world_data.TimeKeyFunction;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 
@@ -17,6 +18,7 @@ public class DOCTORM implements ModInitializer {
     @Override
     public void onInitialize() {
         RegistryContainer.register(items.class, MOD_ID);
+        RegistryContainer.register(Industry_items.class, MOD_ID);
         items.registerAbilities();
         item_group.registerItems();
         entities.registerAttributes();
