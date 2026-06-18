@@ -3,6 +3,7 @@ package doctor_m.module.space;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 
@@ -29,12 +30,5 @@ public class SpaceOxygenManager {
         setOxygen(stack, current + amount);
     }
 
-    public static void updatePlayerOxygenStatus(LivingEntity entity, ItemStack chestStack) {
-        double oxygen = getOxygen(chestStack);
-        if (oxygen > 0) {
-            entity.removeStatusEffect(StatusEffects.WITHER);
-        } else {
-            entity.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 40, 0, false, false));
-        }
-    }
+    // 移除旧的 updatePlayerOxygenStatus，由调用方直接处理
 }

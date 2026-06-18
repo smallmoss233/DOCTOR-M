@@ -1,7 +1,9 @@
 package doctor_m.mixin.client;
 
 import dev.amble.ait.core.AITStatusEffects;
+import dev.amble.ait.core.world.TardisServerWorld;
 import dev.amble.ait.module.planet.client.SpaceSuitOverlay;
+import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -23,33 +25,43 @@ public class MixinSpaceSuitOverlay {
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.player == null || mc.world == null) return;
 
-        // 只处理第一人称且穿着宇航服头盔
         if (!mc.options.getPerspective().isFirstPerson()) return;
         if (!(mc.player.getEquippedStack(EquipmentSlot.HEAD).getItem() instanceof SpacesuitItem)) return;
 
-        // 完全替换渲染逻辑
         renderCustomHud(drawContext);
-        ci.cancel(); // 取消 AIT 原渲染
+        ci.cancel();
     }
 
     private void renderCustomHud(DrawContext drawContext) {
         MinecraftClient mc = MinecraftClient.getInstance();
         TextRenderer textRenderer = mc.textRenderer;
 
-        // 获取宇航服氧气值
         var chestStack = mc.player.getEquippedStack(EquipmentSlot.CHEST);
         double oxygen = SpaceOxygenManager.getOxygen(chestStack);
 
-        // 检测玩家是否在氧气机覆盖范围内（通过是否有 OXYGENATED 效果）
-        boolean hasOxygen = mc.player.hasStatusEffect(AITStatusEffects.OXYGENATED);
+        // 与 MixinSpacesuitItem 逻辑一致
+        boolean worldHasOxygen = true;
+        try {
+            var planet = PlanetRegistry.getInstance().get(mc.world);
+            if (planet != null) {
+                worldHasOxygen = planet.hasOxygen();
+            }
+        } catch (Exception ignored) {}
 
-        // 显示环境氧气状态
+        boolean isTardis = TardisServerWorld.isTardisDimension(mc.world);
+        boolean hasOxygenated = mc.player.hasStatusEffect(AITStatusEffects.OXYGENATED);
+
+        boolean isSubmerged = mc.player.isSubmergedInWater();
+        boolean isHeadInsideBlock = !mc.world.getBlockState(mc.player.getBlockPos().up(1)).isAir();
+        boolean isUnbreathableEnvironment = isSubmerged || isHeadInsideBlock;
+
+        boolean hasOxygen = (worldHasOxygen || isTardis || hasOxygenated) && !isUnbreathableEnvironment;
+
         Text envText = hasOxygen ?
                 Text.translatable("hud.doctor_m.environment.oxygenated").formatted(Formatting.GREEN) :
                 Text.translatable("hud.doctor_m.environment.deoxygenated").formatted(Formatting.RED);
         drawContext.drawTextWithShadow(textRenderer, envText, 2, 2, 0xFFFFFF);
 
-        // 渲染宇航服氧气
         String oxygenText = String.format("%.1f", oxygen) + "L / " + SpaceOxygenManager.MAX_OXYGEN + "L";
         drawContext.drawTextWithShadow(textRenderer,
                 Text.literal(oxygenText),

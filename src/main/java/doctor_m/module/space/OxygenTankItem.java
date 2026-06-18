@@ -60,7 +60,6 @@ public class OxygenTankItem extends Item {
 
         SpaceOxygenManager.refillOxygen(chestStack, transferAmount);
         setOxygen(tankStack, tankOxygen - transferAmount);
-        SpaceOxygenManager.updatePlayerOxygenStatus(user, chestStack);
 
         user.sendMessage(Text.translatable("message.doctor_m.oxygen_tank.transfer", transferAmount), true);
 
