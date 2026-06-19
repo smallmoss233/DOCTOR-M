@@ -29,7 +29,7 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 
 **Credits for Custom Content**
 
-*永恒之眼(Evereye) interior & exterior , 谨名(Jin Ming) Sonic Screwdriver , 守望(Watcher) interior & console texture, 恶疯(Madness) interior & exterior, 回廊(Cloister) , 恒朽(Permanence) interior*: Smallmoss
+*永恒之眼(Evereye) interior & exterior , 玛丽.谨(Mary.Jin) Sonic Screwdriver , 守望(Watcher) interior & console texture, 恶疯(Madness) interior & exterior, 回廊(Cloister) , 恒朽(Permanence) interior*: Smallmoss
 
 *守望(Watcher) console texture*: 白桦下的赤俄(Kilin_Mus)
 
