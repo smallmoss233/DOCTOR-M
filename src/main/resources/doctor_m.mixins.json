@@ -6,7 +6,9 @@
     "MobEntityMixin",
     "MixinSpacesuitItem",
     "MixinOxygenatedEffect",
-    "MixinOxygenatorBlockEntity"
+    "MixinOxygenatorBlockEntity",
+    "MixinAITMod",
+    "MixinBetaVerification"
   ],
   "injectors": {
     "defaultRequire": 1
