@@ -1,14 +1,13 @@
 package doctor_m;
 
 import dev.amble.lib.container.RegistryContainer;
-import doctor_m.module.Industry.Industry_items;
 import doctor_m.Item.item_group;
 import doctor_m.entities.entities;
 import doctor_m.Item.items;
 import doctor_m.module.ait_space_mixin.ModBlockEntities;
 import doctor_m.module.ait_space_mixin.ModBlocks;
-import doctor_m.world_data.PocketWatchFunction;
-import doctor_m.world_data.TimeKeyFunction;
+import world_data.PocketWatchFunction;
+import world_data.TimeKeyFunction;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 
@@ -20,13 +19,12 @@ public class DOCTORM implements ModInitializer {
     @Override
     public void onInitialize() {
         RegistryContainer.register(items.class, MOD_ID);
-        RegistryContainer.register(Industry_items.class, MOD_ID);
         items.registerAbilities();
         item_group.registerItems();
         entities.registerAttributes();
         doctor_m.dimension.trenzalore.register();
-        TimeKeyFunction.register();
-        PocketWatchFunction.register();
+        TimeKeyFunction.INSTANCE.register();
+        PocketWatchFunction.INSTANCE.register();
         ModBlocks.register();
         ModBlockEntities.register();
     }

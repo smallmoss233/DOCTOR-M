@@ -1,6 +1,7 @@
 plugins {
     id 'fabric-loom' version "${loom_version}"
     id 'maven-publish'
+    id 'org.jetbrains.kotlin.jvm' version '2.4.0'
 }
 
 version = project.mod_version
@@ -46,7 +47,6 @@ repositories {
         name = "JEI"
         url = "https://maven.blamejared.com/"
     }
-    // 新增 Ladysnake Libs 仓库
     maven {
         name = "Ladysnake Libs"
         url = 'https://maven.ladysnake.org/releases'
@@ -57,10 +57,11 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
     modImplementation "dev.amble:lib:${project.amblekit_version}"
     modImplementation "dev.amble:ait:${project.ait_version}"
     modImplementation "dev.emi:trinkets:${trinkets_version}"
+    modImplementation "net.fabricmc:fabric-language-kotlin:${project.kotlin_version}"
 }
 
 loom {
@@ -91,7 +92,7 @@ tasks.withType(JavaCompile).configureEach {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(22)
     }
 }
 
@@ -102,9 +103,9 @@ jar {
                 'Specification-Version': project.version,
                 'Implementation-Title': project.name,
                 'Implementation-Version': project.version,
-                'Implementation-Vendor': 'Doctor M',
+                'Implementation-Vendor': 'DOCTOR M',
                 'Fabric-Loader': project.loader_version,
-                'Fabric-Api': project.fabric_version
+                'Fabric-Api': project.fabric_api_version
         )
     }
 }

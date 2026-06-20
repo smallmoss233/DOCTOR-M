@@ -1,49 +1,50 @@
 {
-	"schemaVersion": 1,
-	"id": "doctor_m",
-	"version": "${version}",
-	"name": "DOCTOR M",
-	"description": "AIT的扩展MOD,至于为啥叫DOCTOR M? 你别管 (An extension MOD of AIT. As for why it's called DOCTOR M? Don't worry about it.)",
-	"authors": [
-		"作者(Author):Small Moss",
-        "贡献者(Contributor):白桦下的赤俄",
-        "贡献者(Contributor):zhujianX_Offical",
-        "贡献者(Contributor):斯格.尔特",
-        "贡献者(Contributor):慢跑者",
-        "贡献者(Contributor):今稍"
-	],
-	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/smallmoss233/doctor-m-template-1.20.1"
-	},
-	"license": "GPL-3.0-only",
-	"icon": "assets/doctor_m/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"doctor_m.DOCTORM"
-		],
-		"client": [
-			"doctor_m.DOCTORMClient",
-            "doctor_m.client.AccessoryPassiveButton"
-		],
-		"fabric-datagen": [
-			"doctor_m.DOCTORMDataGenerator"
-		]
-	},
-	"mixins": [
-		"doctor_m.mixins.json",
-        "doctor_m.client.mixins.json"
-	],
-	"depends": {
-		"fabricloader": ">=0.17.3",
-		"minecraft": "~1.20.1",
-		"java": ">=17",
-		"fabric-api": "*",
-        "trinkets": "3.7.2",
-        "ait": "*",
-        "amblekit": "*"
-    },
+  "schemaVersion": 1,
+  "id": "doctor_m",
+  "version": "${version}",
+  "name": "DOCTOR M",
+  "description": "AIT的扩展MOD,至于为啥叫DOCTOR M? 你别管 (An extension MOD of AIT. As for why it's called DOCTOR M? Don't worry about it.)",
+  "authors": [
+    "作者(Author):Small Moss",
+    "贡献者(Contributor):白桦下的赤俄",
+    "贡献者(Contributor):zhujianX_Offical",
+    "贡献者(Contributor):斯格.尔特",
+    "贡献者(Contributor):慢跑者",
+    "贡献者(Contributor):今稍"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/smallmoss233/doctor-m-template-1.20.1"
+  },
+  "license": "GPL-3.0-only",
+  "icon": "assets/doctor_m/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "doctor_m.DOCTORM"
+    ],
+    "client": [
+      "doctor_m.DOCTORMClient",
+      "doctor_m.client.AccessoryPassiveButton"
+    ],
+    "fabric-datagen": [
+      "doctor_m.DOCTORMDataGenerator"
+    ]
+  },
+  "mixins": [
+    "doctor_m.mixins.json",
+    "doctor_m.client.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.17.3",
+    "minecraft": "~1.20.1",
+    "java": ">=17",
+    "fabric-api": "*",
+    "trinkets": "3.7.2",
+    "ait": "*",
+    "amblekit": ">=1.1.14",
+    "fabric-language-kotlin": ">=1.13.12+kotlin.2.4.0"
+  },
   "suggests": {
     "ait_extras": "*",
     "Create": "*",
