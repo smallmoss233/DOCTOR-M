@@ -1,4 +1,4 @@
-package doctor_m.module.space;
+package doctor_m.module.ait_space_mixin;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;

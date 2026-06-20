@@ -1,4 +1,4 @@
-package doctor_m.module.space;
+package doctor_m.module.ait_space_mixin;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;

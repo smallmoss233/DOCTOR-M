@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import doctor_m.module.space.SpaceOxygenManager;
+import doctor_m.module.ait_space_mixin.SpaceOxygenManager;
 import dev.amble.ait.module.planet.core.item.SpacesuitItem;
 
 @Mixin(SpaceSuitOverlay.class)

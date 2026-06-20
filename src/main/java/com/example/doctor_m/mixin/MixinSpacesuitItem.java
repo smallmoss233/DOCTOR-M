@@ -3,7 +3,7 @@ package com.example.doctor_m.mixin;
 import dev.amble.ait.core.AITStatusEffects;
 import dev.amble.ait.module.planet.core.item.SpacesuitItem;
 import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry;
-import doctor_m.module.space.SpaceOxygenManager;
+import doctor_m.module.ait_space_mixin.SpaceOxygenManager;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;

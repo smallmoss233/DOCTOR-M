@@ -1,4 +1,4 @@
-package doctor_m.module.space;
+package doctor_m.module.ait_space_mixin;
 
 import dev.amble.ait.module.planet.core.item.SpacesuitItem;
 import net.minecraft.block.Block;
@@ -6,8 +6,6 @@ import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemPlacementContext;
