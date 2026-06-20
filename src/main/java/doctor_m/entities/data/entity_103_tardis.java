@@ -34,9 +34,9 @@ public class entity_103_tardis extends PathAwareEntity {
 
     // 皮肤相关
     private static final TrackedData<String> SELECTED_SKIN =
-            DataTracker.registerData(entity_103_tardis.class, TrackedDataHandlerRegistry.STRING);
+    DataTracker.registerData(entity_103_tardis.class, TrackedDataHandlerRegistry.STRING);
     private static final TrackedData<String> MODEL_TYPE =
-            DataTracker.registerData(entity_103_tardis.class, TrackedDataHandlerRegistry.STRING);
+    DataTracker.registerData(entity_103_tardis.class, TrackedDataHandlerRegistry.STRING);
 
     private String selectedSkin = "";
     private String displayName = "";
@@ -44,7 +44,7 @@ public class entity_103_tardis extends PathAwareEntity {
 
     // 个性系统（初始化默认值，避免 null）
     public enum Personality {
-        AGGRESSIVE, DEFENSIVE, TIMID, BRAVE, TRADER
+            AGGRESSIVE, DEFENSIVE, TIMID, BRAVE, TRADER
     }
     private Personality personality = Personality.DEFENSIVE;
     private long lastCounterAttackTime = 0;
@@ -73,25 +73,25 @@ public class entity_103_tardis extends PathAwareEntity {
         // 根据个性添加行为
         switch (personality) {
             case AGGRESSIVE:
-                this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
-                this.goalSelector.add(4, new MeleeAttackGoal(this, 1.0, true));
-                this.goalSelector.add(5, new WanderAroundGoal(this, 0.7));
-                break;
+            this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+            this.goalSelector.add(4, new MeleeAttackGoal(this, 1.0, true));
+            this.goalSelector.add(5, new WanderAroundGoal(this, 0.7));
+            break;
             case DEFENSIVE:
-                this.goalSelector.add(5, new WanderAroundGoal(this, 0.6));
-                break;
+            this.goalSelector.add(5, new WanderAroundGoal(this, 0.6));
+            break;
             case TIMID:
-                this.goalSelector.add(4, new FleeEntityGoal<>(this, PlayerEntity.class, 10.0f, 1.2, 1.5));
-                this.goalSelector.add(5, new WanderAroundGoal(this, 0.5));
-                break;
+            this.goalSelector.add(4, new FleeEntityGoal<>(this, PlayerEntity.class, 10.0f, 1.2, 1.5));
+            this.goalSelector.add(5, new WanderAroundGoal(this, 0.5));
+            break;
             case BRAVE:
-                this.targetSelector.add(2, new ActiveTargetGoal<>(this, HostileEntity.class, true));
-                this.goalSelector.add(4, new MeleeAttackGoal(this, 1.2, true));
-                this.goalSelector.add(5, new WanderAroundGoal(this, 0.8));
-                break;
+            this.targetSelector.add(2, new ActiveTargetGoal<>(this, HostileEntity.class, true));
+            this.goalSelector.add(4, new MeleeAttackGoal(this, 1.2, true));
+            this.goalSelector.add(5, new WanderAroundGoal(this, 0.8));
+            break;
             case TRADER:
-                this.goalSelector.add(5, new WanderAroundGoal(this, 0.6));
-                break;
+            this.goalSelector.add(5, new WanderAroundGoal(this, 0.6));
+            break;
         }
     }
 
@@ -203,8 +203,8 @@ public class entity_103_tardis extends PathAwareEntity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return list;
-    }
+            return list;
+        }
 
     private static class SkinEntry {
         String texture;
@@ -257,8 +257,8 @@ public class entity_103_tardis extends PathAwareEntity {
 
     public static DefaultAttributeContainer.Builder createMobAttributes() {
         return PathAwareEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 2.0);
+            .add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0)
+            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25)
+            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 2.0);
     }
 }
