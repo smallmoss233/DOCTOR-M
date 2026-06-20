@@ -11,7 +11,6 @@ public class MixinAITMod {
 
     @Inject(method = "isBetaLocked", at = @At("HEAD"), cancellable = true)
     private static void onIsBetaLocked(CallbackInfoReturnable<Boolean> cir) {
-        // 永远返回 false，禁用 Beta 锁定
         cir.setReturnValue(false);
     }
 }
