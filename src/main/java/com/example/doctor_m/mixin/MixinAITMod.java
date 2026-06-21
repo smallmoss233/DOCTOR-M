@@ -9,13 +9,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(AITMod.class)
 public class MixinAITMod {
 
-    @Inject(method = "isBetaLocked", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "isBetaLocked", at = @At("HEAD"), cancellable = true, require = 0)
     private static void onIsBetaLocked(CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(false);
     }
 
-    // 新增：劫持 isUnsafeBranch，返回 false 以禁用警告框
-    @Inject(method = "isUnsafeBranch", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "isUnsafeBranch", at = @At("HEAD"), cancellable = true, require = 0)
     private static void onIsUnsafeBranch(CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(false);
     }
