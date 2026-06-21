@@ -51,10 +51,6 @@ repositories {
         name = "Ladysnake Libs"
         url = 'https://maven.ladysnake.org/releases'
     }
-    maven {
-        name = "Modrinth"
-        url = "https://api.modrinth.com/maven"
-    }
 }
 
 dependencies {
@@ -66,7 +62,6 @@ dependencies {
     modImplementation "dev.amble:ait:${project.ait_version}"
     modImplementation "dev.emi:trinkets:${trinkets_version}"
     modImplementation "net.fabricmc:fabric-language-kotlin:${project.kotlin_version}"
-    //modImplementation "maven.modrinth:goety-fabric:${project.goety_fabric_version}"
 }
 
 loom {
