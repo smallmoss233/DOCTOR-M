@@ -16,6 +16,7 @@
   "item.doctor_m.evereye_spawn": "生成永恆之眼",
   "item.doctor_m.oxygen_tank": "氧氣瓶",
   "item.doctor_m.oxygen_charger_item": "氧氣補充機",
+  "item.doctor_m.tlipoca_scythe": "特莉波卡的鐮刀",
   "block.doctor_m.oxygen_charger": "氧氣補充機",
   "entity.doctor_m.type_103w_evereye": "永恆之眼",
   "key.doctor_m.mode.on": "§a開啟",
@@ -57,5 +58,7 @@
   "message.doctor_m.mystery_gem.detail": "§7裝備後你將獲得永久的抗性提升二效果，即40%傷害減免",
   "message.doctor_m.eternal_crystal.desc": "§7曾受祂之祝福，經時間洗禮神力已流失許多但剩餘力量仍足矣讓所有生命畏懼",
   "message.doctor_m.eternal_crystal.detail": "§7裝備後你的每次攻擊都將附帶基於攻擊力的50%的強制扣血，冷卻五秒",
+  "message.doctor_m.tlipoca_scythe.tip": "§7見習死神的鐮刀，儘管如此它也能收割靈魂",
+  "message.doctor_m.tlipoca_scythe.detail": "§d見習死神鐮刀的斬擊能將世間生靈的靈魂奪走",
   "dimension.doctor_m.trenzalore": "§3特蘭澤洛"
 }

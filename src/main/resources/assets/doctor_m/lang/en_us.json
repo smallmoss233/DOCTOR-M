@@ -16,6 +16,7 @@
   "item.doctor_m.evereye_spawn": "Spawn the Eternal Eye",
   "item.doctor_m.oxygen_tank": "Oxygen Tank",
   "item.doctor_m.oxygen_charger_item": "Oxygen Recharger",
+  "item.doctor_m.tlipoca_scythe": "Tlipoca's Scythe",
   "block.doctor_m.oxygen_charger": "Oxygen Recharger",
   "entity.doctor_m.type_103w_evereye": "Eternal Eye",
   "key.doctor_m.mode.on": "§aOn",
@@ -57,5 +58,7 @@
   "message.doctor_m.mystery_gem.detail": "§7While equipped, you gain permanent Resistance II, which reduces damage taken by 40%.",
   "message.doctor_m.eternal_crystal.desc": "§7Once blessed by Him, the divine power has waned over time, but what remains is still enough to make all life tremble in fear.",
   "message.doctor_m.eternal_crystal.detail": "§7While equipped, each of your attacks will deal an additional forced 50% damage based on your attack damage. Cooldown: 5 seconds.",
+  "message.doctor_m.tlipoca_scythe.tip": "§7An apprentice reaper's scythe. Even so, it can still harvest souls.",
+  "message.doctor_m.tlipoca_scythe.detail": "§dThe strikes of the apprentice reaper's scythe can rip the souls from all living beings in this world.",
   "dimension.doctor_m.trenzalore": "§3Trenzalore"
 }
