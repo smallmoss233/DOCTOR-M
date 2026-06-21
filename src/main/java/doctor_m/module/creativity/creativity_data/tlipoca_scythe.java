@@ -1,13 +1,21 @@
 package doctor_m.module.creativity.creativity_data;
 
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -25,24 +33,50 @@ import java.util.concurrent.ConcurrentHashMap;
 public class tlipoca_scythe extends SwordItem {
     private static final String KILL_COUNT_KEY = "TlipocaKillCount";
     private static final String GROWTH_KEY = "TlipocaGrowth";
-    private static final long COOLDOWN_TICKS = 60; // 3秒冷却
+    private static final String INIT_KEY = "TlipocaInit";
+    public static final long COOLDOWN_TICKS = 60; // 3秒
+
     private static final ConcurrentHashMap<UUID, Long> lastSlashTime = new ConcurrentHashMap<>();
 
+    private static final UUID DAMAGE_UUID = UUID.fromString("12345678-1234-1234-1234-123456789014");
+    private static final UUID SPEED_UUID = UUID.fromString("12345678-1234-1234-1234-123456789016");
+
     public tlipoca_scythe(Settings settings) {
-        super(TlipocaMaterial.INSTANCE, 0, -2.4f, settings);
+        super(TlipocaMaterial.INSTANCE, 0, -3.2f, settings);
     }
 
-    // 初始化NBT（附魔+无法破坏）
-    public static void initScytheNbt(ItemStack stack) { // 改为 public
+    @Override
+    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
+        if (slot == EquipmentSlot.MAINHAND) {
+            return ImmutableMultimap.of();
+        }
+        return super.getAttributeModifiers(slot);
+    }
+
+    public static void initScytheNbt(ItemStack stack) {
         NbtCompound nbt = stack.getOrCreateNbt();
+        boolean changed = false;
+
         if (EnchantmentHelper.getLevel(Enchantments.SHARPNESS, stack) == 0) {
             stack.addEnchantment(Enchantments.SHARPNESS, 10);
+            changed = true;
         }
         if (EnchantmentHelper.getLevel(Enchantments.LOOTING, stack) == 0) {
             stack.addEnchantment(Enchantments.LOOTING, 10);
+            changed = true;
         }
         if (!nbt.getBoolean("Unbreakable")) {
             nbt.putBoolean("Unbreakable", true);
+            changed = true;
+        }
+
+        if (!nbt.contains("AttributeModifiers", 9)) {
+            writeAttributeModifiers(stack, 20.0f);
+            changed = true;
+        }
+
+        if (changed) {
+            System.out.println("[TlipocaScythe] NBT initialized for stack");
         }
     }
 
@@ -59,71 +93,112 @@ public class tlipoca_scythe extends SwordItem {
         initScytheNbt(stack);
     }
 
-    // 右键触发横扫攻击
+    @Override
+    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+        if (world.isClient) return;
+        NbtCompound nbt = stack.getOrCreateNbt();
+        if (!nbt.getBoolean(INIT_KEY)) {
+            nbt.putBoolean(INIT_KEY, true);
+            initScytheNbt(stack);
+        }
+    }
+
+    private static void writeAttributeModifiers(ItemStack stack, float damage) {
+        NbtCompound nbt = stack.getOrCreateNbt();
+        NbtList list = new NbtList();
+
+        NbtCompound dmg = new NbtCompound();
+        dmg.putString("AttributeName", "minecraft:generic.attack_damage");
+        dmg.putString("Name", "tlipoca_damage");
+        dmg.putDouble("Amount", damage);
+        dmg.putInt("Operation", 0);
+        dmg.putUuid("UUID", DAMAGE_UUID);
+        dmg.putString("Slot", "mainhand");
+        list.add(dmg);
+
+        NbtCompound spd = new NbtCompound();
+        spd.putString("AttributeName", "minecraft:generic.attack_speed");
+        spd.putString("Name", "tlipoca_speed");
+        spd.putDouble("Amount", -3.6);
+        spd.putInt("Operation", 0);
+        spd.putUuid("UUID", SPEED_UUID);
+        spd.putString("Slot", "mainhand");
+        list.add(spd);
+
+        nbt.put("AttributeModifiers", list);
+        System.out.println("[TlipocaScythe] AttributeModifiers updated: damage=" + damage);
+    }
+
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
-        UUID uuid = user.getUuid();
-        long now = world.getTime();
 
-        // 服务端：冷却检测 + 攻击 + 粒子触发（通过发包？为了简化，我们服务端只处理攻击，客户端通过标志同步）
         if (!world.isClient) {
-            Long last = lastSlashTime.get(uuid);
-            if (last != null && now - last < COOLDOWN_TICKS) {
+            if (isOnCooldown(world, user)) {
                 user.sendMessage(Text.literal("§c镰刀还在冷却中！"), true);
                 return TypedActionResult.fail(stack);
             }
-
-            // 执行攻击
-            performSlashAttack(world, (ServerPlayerEntity) user);
-            lastSlashTime.put(uuid, now);
-            user.getItemCooldownManager().set(this, 20); // 防止连点
-        }
-
-        // 客户端：生成粒子效果
-        if (world.isClient) {
+            if (user instanceof ServerPlayerEntity serverPlayer) {
+                performSlashAttack(world, serverPlayer, stack);
+                setCooldown(world, user, this);
+            }
+        } else {
             spawnSlashParticles(user);
         }
 
         return TypedActionResult.success(stack);
     }
 
-    // 获取当前总伤害（含成长）
+    public static boolean isOnCooldown(World world, PlayerEntity player) {
+        Long last = lastSlashTime.get(player.getUuid());
+        return last != null && world.getTime() - last < COOLDOWN_TICKS;
+    }
+
+    public static void setCooldown(World world, PlayerEntity player, tlipoca_scythe item) {
+        lastSlashTime.put(player.getUuid(), world.getTime());
+        player.getItemCooldownManager().set(item, (int) COOLDOWN_TICKS);
+    }
+
     public static float getTotalAttackDamage(ItemStack stack) {
         int growth = stack.getOrCreateNbt().getInt(GROWTH_KEY);
         return 20.0f + growth;
     }
 
-    // 击杀增长（每10个增加5伤害）
-    public static void onKill(ItemStack stack) {
+    public static void onKill(ItemStack stack, ServerPlayerEntity player) {
         NbtCompound nbt = stack.getOrCreateNbt();
         int killCount = nbt.getInt(KILL_COUNT_KEY) + 1;
         nbt.putInt(KILL_COUNT_KEY, killCount);
+        System.out.println("[TlipocaScythe] Kill! Count=" + killCount);
+
         if (killCount % 10 == 0) {
-            int growth = nbt.getInt(GROWTH_KEY);
-            nbt.putInt(GROWTH_KEY, growth + 5);
+            int growth = nbt.getInt(GROWTH_KEY) + 5;
+            nbt.putInt(GROWTH_KEY, growth);
+            float newDamage = 20.0f + growth;
+            writeAttributeModifiers(stack, newDamage);
+            player.getInventory().markDirty();
+            System.out.println("[TlipocaScythe] GROWTH UP! New damage=" + newDamage);
         }
     }
 
-    // 工具提示
     @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
         int growth = stack.getOrCreateNbt().getInt(GROWTH_KEY);
+        int kills = stack.getOrCreateNbt().getInt(KILL_COUNT_KEY);
+
         tooltip.add(Text.literal(""));
         tooltip.add(Text.literal("当前伤害: " + (20 + growth)).formatted(Formatting.DARK_RED));
         if (growth > 0) {
             tooltip.add(Text.literal("成长加成: +" + growth).formatted(Formatting.GREEN));
         }
+        tooltip.add(Text.literal("击杀计数: " + kills + " / 10").formatted(Formatting.GRAY));
         tooltip.add(Text.literal(""));
         tooltip.add(Text.literal("右键：死亡斩击（冷却3秒）").formatted(Formatting.DARK_PURPLE));
     }
 
-    // ---------- 横扫攻击 ----------
-    private static void performSlashAttack(World world, ServerPlayerEntity player) {
+    public static void performSlashAttack(World world, ServerPlayerEntity player, ItemStack stack) {
         Vec3d eyePos = player.getEyePos();
         Vec3d look = player.getRotationVec(1.0f);
-        ItemStack stack = player.getMainHandStack();
         float damage = getTotalAttackDamage(stack);
 
         double reach = 8.0;
@@ -150,13 +225,11 @@ public class tlipoca_scythe extends SwordItem {
         }
     }
 
-    // ---------- 客户端粒子效果 ----------
-    private static void spawnSlashParticles(PlayerEntity player) {
+    public static void spawnSlashParticles(PlayerEntity player) {
         World world = player.getWorld();
         Vec3d eyePos = player.getEyePos();
         Vec3d look = player.getRotationVec(1.0f);
 
-        // 计算水平方向向量
         Vec3d forward = look.normalize();
         Vec3d up = new Vec3d(0, 1, 0);
         Vec3d right = forward.crossProduct(up).normalize();
@@ -165,30 +238,26 @@ public class tlipoca_scythe extends SwordItem {
         }
         Vec3d realUp = right.crossProduct(forward).normalize();
 
-        int count = 200; // 增加粒子数量使扇形更饱满
+        int count = 80;
         double minDistance = 2.0;
         double maxDistance = 6.0;
-        double maxAngle = Math.PI / 3; // 60度，形成宽扇形
+        double maxAngle = Math.PI / 3;
 
         for (int i = 0; i < count; i++) {
-            // 随机角度（从左到右）和距离（从近到远）
-            double angle = (world.random.nextDouble() - 0.5) * 2 * maxAngle; // -60° ~ 60°
-            double distance = minDistance + (world.random.nextDouble()) * (maxDistance - minDistance);
+            double angle = (world.random.nextDouble() - 0.5) * 2 * maxAngle;
+            double distance = minDistance + world.random.nextDouble() * (maxDistance - minDistance);
 
-            // 计算粒子位置：在水平面上沿 right 方向偏移，同时沿 forward 方向前进
             double horizontalOffset = Math.sin(angle) * distance;
             double forwardOffset = Math.cos(angle) * distance;
 
             Vec3d basePos = eyePos.add(forward.multiply(forwardOffset));
             Vec3d offset = right.multiply(horizontalOffset);
 
-            // 添加微小的垂直随机偏移，增加厚度
             double verticalSpread = 0.5;
             Vec3d verticalOffset = realUp.multiply((world.random.nextDouble() - 0.5) * verticalSpread);
 
             Vec3d pos = basePos.add(offset).add(verticalOffset);
 
-            // 随机散布微调
             double spread = 0.15;
             pos = pos.add(
                     (world.random.nextDouble() - 0.5) * spread,
@@ -196,7 +265,6 @@ public class tlipoca_scythe extends SwordItem {
                     (world.random.nextDouble() - 0.5) * spread
             );
 
-            // 红黑交替
             if (i % 2 == 0) {
                 world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, pos.x, pos.y, pos.z, 0, 0, 0);
             } else {
@@ -205,24 +273,23 @@ public class tlipoca_scythe extends SwordItem {
         }
     }
 
-    // ---------- 生命加成（+30%） ----------
     private static final UUID TLIPOCA_HEALTH_UUID = UUID.fromString("12345678-1234-1234-1234-123456789012");
 
     public static void applyMaxHealthBoost(ServerPlayerEntity player) {
-        var attribute = player.getAttributeInstance(net.minecraft.entity.attribute.EntityAttributes.GENERIC_MAX_HEALTH);
+        var attribute = player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
         if (attribute != null) {
             attribute.removeModifier(TLIPOCA_HEALTH_UUID);
-            attribute.addPersistentModifier(new net.minecraft.entity.attribute.EntityAttributeModifier(
+            attribute.addPersistentModifier(new EntityAttributeModifier(
                     TLIPOCA_HEALTH_UUID,
                     "Tlipoca Health Boost",
                     0.3,
-                    net.minecraft.entity.attribute.EntityAttributeModifier.Operation.MULTIPLY_TOTAL
+                    EntityAttributeModifier.Operation.MULTIPLY_TOTAL
             ));
         }
     }
 
     public static void removeMaxHealthBoost(ServerPlayerEntity player) {
-        var attribute = player.getAttributeInstance(net.minecraft.entity.attribute.EntityAttributes.GENERIC_MAX_HEALTH);
+        var attribute = player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
         if (attribute != null) {
             attribute.removeModifier(TLIPOCA_HEALTH_UUID);
         }
