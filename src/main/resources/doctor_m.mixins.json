@@ -7,6 +7,7 @@
     "MixinSpacesuitItem",
     "MixinOxygenatedEffect",
     "MixinOxygenatorBlockEntity",
+    "MixinPlanetOxygenOverride",
     "MixinAITMod"
   ],
   "injectors": {
