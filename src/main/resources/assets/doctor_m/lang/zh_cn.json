@@ -27,6 +27,8 @@
   "tooltip.doctor_m.oxygen": "§b氧气: %.1f / %.0fL",
   "tooltip.doctor_m.hold_shift": "按住 Shift 查看详情",
   "message.doctor_m.tip.not.done": "§c[此项目未完成！]",
+  "message.doctor_m.scythe.cooldown": "§c[斩击]冷却中！",
+  "message.doctor_m.scythe.hit": "§7收割了 §c%d §7个目标",
   "hud.doctor_m.environment.oxygenated": "有氧，可脱下航天服",
   "hud.doctor_m.environment.deoxygenated": "无氧，不可脱下航天服",
   "message.doctor_m.oxygen_tank.no_suit": "§c请先穿上宇航服胸甲！",

@@ -32,7 +32,7 @@ public class ScytheSlashManager {
         if (world.isClient) return;
 
         if (isOnCooldown(world, player)) {
-            player.sendMessage(Text.literal("§c镰刀还在冷却中！"), true);
+            player.sendMessage(Text.translatable("message.doctor_m.scythe.cooldown"), true);
             return;
         }
 
@@ -70,7 +70,7 @@ public class ScytheSlashManager {
         }
 
         if (hitCount > 0) {
-            player.sendMessage(Text.literal("§7斩击命中 §c" + hitCount + " §7个目标"), true);
+            player.sendMessage(Text.translatable("message.doctor_m.scythe.hit", hitCount), true);
         }
     }
 
