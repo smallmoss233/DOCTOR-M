@@ -7,7 +7,6 @@ import doctor_m.Item.items;
 import doctor_m.module.ait_space_mixin.ModBlockEntities;
 import doctor_m.module.ait_space_mixin.ModBlocks;
 import doctor_m.module.creativity.creativity_items;
-import doctor_m.module.creativity.handler.TlipocaScytheHandler;
 import world_data.PocketWatchFunction;
 import world_data.TimeKeyFunction;
 import net.fabricmc.api.ModInitializer;
@@ -23,6 +22,7 @@ public class DOCTORM implements ModInitializer {
         RegistryContainer.register(items.class, MOD_ID);
         RegistryContainer.register(creativity_items.class, MOD_ID);
         items.registerAbilities();
+        creativity_items.registerAbilities();
         item_group.registerItems();
         entities.registerAttributes();
         doctor_m.dimension.trenzalore.register();

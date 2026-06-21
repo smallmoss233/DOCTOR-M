@@ -29,7 +29,7 @@ public class ScytheSlashManager {
      * 服务端执行斩击（只有服务端调用）
      */
     public static void performSlash(ServerWorld world, ServerPlayerEntity player, ItemStack stack) {
-        if (world.isClient) return; // 双重保险
+        if (world.isClient) return;
 
         if (isOnCooldown(world, player)) {
             player.sendMessage(Text.literal("§c镰刀还在冷却中！"), true);
@@ -38,9 +38,11 @@ public class ScytheSlashManager {
 
         setCooldown(world, player);
 
+        // 斩击伤害
+        float damage = 400.0f;
+
         Vec3d eyePos = player.getEyePos();
         Vec3d look = player.getRotationVec(1.0f);
-        float damage = ScytheGrowthManager.getTotalDamage(stack);
 
         double reach = 8.0;
         double width = 5.0;
@@ -91,7 +93,6 @@ public class ScytheSlashManager {
      * 客户端生成粒子（只有客户端调用！）
      */
     public static void spawnParticlesClient(PlayerEntity player) {
-        // 必须在客户端世界执行
         if (player.getWorld().isClient) {
             doSpawnParticles(player);
         }

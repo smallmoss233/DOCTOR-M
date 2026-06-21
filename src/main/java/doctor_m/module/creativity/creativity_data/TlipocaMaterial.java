@@ -8,7 +8,7 @@ public class TlipocaMaterial implements ToolMaterial {
 
     @Override
     public int getDurability() {
-        return 9999;
+        return Integer.MAX_VALUE;
     }
 
     @Override
