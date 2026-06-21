@@ -32,6 +32,7 @@
 -  根成就 / Root Achievement
 -  归途 / Way Home
 -  利用mixin重写了AIT的氧气逻辑！ / Rewrote AIT's oxygen logic using mixin!
+-  修改了整个主菜单！ / Modified the entire main menu!
 
 ### 修复 / Repair
 
