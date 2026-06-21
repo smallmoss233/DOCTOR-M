@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/tlipoca_scythe",
+  "textures": {
+    "layer0": "doctor_m:item/tlipoca_scythe"
+  },
+  "gui_light": "front"
+}

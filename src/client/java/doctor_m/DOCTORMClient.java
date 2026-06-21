@@ -18,7 +18,6 @@ public class DOCTORMClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-
         EntityRendererRegistry.register(entities.TYPE_103_TARDIS, tardis_renderer::new);
         EntityRendererRegistry.register(entities.TYPE_103W_EVEREYE, evereye_renderer::new);
     }

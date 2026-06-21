@@ -8,6 +8,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import static doctor_m.Item.items.*;
+import static doctor_m.module.creativity.creativity_items.*;
 
 public class item_group {
 public static void registerItems() {
@@ -26,6 +27,7 @@ public static void registerItems() {
                                 entries.add(EVEREYE_SPAWN);
                                 entries.add(OXYGEN_CHARGER_ITEM);
                                 entries.add(OXYGEN_TANK);
+                                entries.add(TLIPOCA_SCYTHE);
                             })
                             .build());
         }
