@@ -49,18 +49,10 @@ public class VortexBackgroundRenderer {
             this.time = (System.currentTimeMillis() % 100000) / 50f;
         }
 
-        // 禁用深度测试，确保绘制在背景层
-        RenderSystem.disableDepthTest();
-        RenderSystem.depthMask(false);
-
         // 渲染三个图层
         this.renderLayer(matrixStack, 1.0F, texture);
         this.renderLayer(matrixStack, 1.5f, secondLayer);
         this.renderLayer(matrixStack, 2.5f, thirdLayer);
-
-        // 恢复深度设置
-        RenderSystem.depthMask(true);
-        RenderSystem.enableDepthTest();
 
         matrixStack.pop();
     }
