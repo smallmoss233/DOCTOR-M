@@ -15,11 +15,9 @@
 -  2型霁光内饰 / Type 2 Claresco Interior
 -  霁光400R型内饰 / Claresco Type 400 Model R Interior
 -  时隙内饰 / The Rift Interior
--  103型塔迪斯与变体NPC（未完成！） / Type 103 TARDIS and Variant NPC (Not Done!)
 
 ### 物品 / Items
 
--  时间钥匙 / Time Key
 -  怀表 / Pocket Watch
 -  神秘宝石 / Mystery Gem
 -  永恒水晶 / Eternal Crystal
