@@ -6,6 +6,7 @@ import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry;
 import doctor_m.module.ait_space_mixin.SpaceOxygenManager;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,14 +28,19 @@ public abstract class MixinSpacesuitItem {
     private void onInventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected, CallbackInfo ci) {
         SpacesuitItem self = (SpacesuitItem)(Object)this;
 
+        // 1. 只处理胸甲
         if (self.getType() != ArmorItem.Type.CHESTPLATE) return;
         if (world.isClient()) return;
-        if (!(entity instanceof PlayerEntity player)) return;
-        if (player.getInventory().armor.get(2) != stack) {
+        if (!(entity instanceof LivingEntity living)) return;
+
+        // 2. 检查是否穿在胸甲槽位（对于非玩家生物，通过 getEquippedStack 检查）
+        if (living.getEquippedStack(net.minecraft.entity.EquipmentSlot.CHEST) != stack) {
             ci.cancel();
             return;
         }
-        if (player.isCreative()) {
+
+        // 3. 创造模式玩家不消耗氧气
+        if (living instanceof PlayerEntity player && player.isCreative()) {
             ci.cancel();
             return;
         }
@@ -50,28 +56,26 @@ public abstract class MixinSpacesuitItem {
 
         boolean isTardis = world.getRegistryKey().getValue().getNamespace().equals("ait") &&
                 world.getRegistryKey().getValue().getPath().startsWith("tardis");
-        boolean hasOxygenated = player.hasStatusEffect(AITStatusEffects.OXYGENATED);
+        boolean hasOxygenated = living.hasStatusEffect(AITStatusEffects.OXYGENATED);
 
         // 水下检测（即使世界有氧，也视为无氧环境）
-        boolean isSubmerged = player.isSubmergedInWater();
-        boolean isHeadInsideBlock = !world.getBlockState(player.getBlockPos().up(1)).isAir();
+        boolean isSubmerged = living.isSubmergedInWater();
+        boolean isHeadInsideBlock = !world.getBlockState(living.getBlockPos().up(1)).isAir();
 
         // ====== 核心逻辑：水下呼吸 ======
         if (isSubmerged) {
-            // 水下：无论世界是否有氧，都消耗氧气提供呼吸
             double oxygen = SpaceOxygenManager.getOxygen(stack);
             if (oxygen > 0) {
                 // 有氧气：重置呼吸条，移除溺水效果
-                player.setAir(300); // 重置呼吸条到满
-                player.removeStatusEffect(StatusEffects.WITHER);
-                // 消耗氧气（每2秒消耗1点，比普通无氧环境更节能？可根据需要调整）
+                living.setAir(300);
+                living.removeStatusEffect(StatusEffects.WITHER);
+                // 消耗氧气（每2秒消耗0.5点）
                 if (world.getTime() % 40 == 0) {
                     SpaceOxygenManager.consumeOxygen(stack, 0.5);
                 }
             } else {
                 // 无氧气：允许溺水，添加缺氧效果
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 40, 0, false, false));
-                // 不干预呼吸条，让原版溺水机制工作
+                living.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 40, 0, false, false));
             }
             ci.cancel();
             return;
@@ -82,7 +86,7 @@ public abstract class MixinSpacesuitItem {
         boolean hasOxygen = (worldHasOxygen || isTardis || hasOxygenated) && !isUnbreathableEnvironment;
 
         if (hasOxygen) {
-            player.removeStatusEffect(StatusEffects.WITHER);
+            living.removeStatusEffect(StatusEffects.WITHER);
             ci.cancel();
             return;
         }
@@ -98,9 +102,9 @@ public abstract class MixinSpacesuitItem {
         if (world.getTime() % 40 == 0) {
             double oxygen = SpaceOxygenManager.getOxygen(stack);
             if (oxygen > 0) {
-                player.removeStatusEffect(StatusEffects.WITHER);
+                living.removeStatusEffect(StatusEffects.WITHER);
             } else {
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 40, 0, false, false));
+                living.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 40, 0, false, false));
             }
         }
 

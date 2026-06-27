@@ -1,5 +1,7 @@
 package world_data
 
+import dev.amble.ait.core.AITStatusEffects
+import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry
 import dev.emi.trinkets.api.TrinketsApi
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
@@ -21,6 +23,7 @@ import net.minecraft.world.GameMode
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import doctor_m.Item.data_itme.time_key
+import java.lang.Boolean.getBoolean
 
 object TimeKeyFunction {
     // 状态缓存
@@ -94,41 +97,87 @@ object TimeKeyFunction {
             )
         }
 
-        // 3. 生命恢复 + 灭火
+        // 合并：生命恢复 + 饱食度 + 灭火 + 飞行恢复 + 永久有氧（仅无氧星球）
         ServerTickEvents.END_SERVER_TICK.register { server ->
             val now = server.ticks.toLong()
             server.playerManager.playerList.forEach { player ->
-                if (!isTimeKeyEquipped(player)) return@forEach
-                lastHealTime[player.uuid]?.let { last ->
-                    if (now - last >= 20) {
-                        player.heal(player.maxHealth * 0.1f)
+                val hasTimeKey = isTimeKeyEquipped(player)
+
+                // ====== 1. 生命恢复 + 饱食度 + 灭火 ======
+                if (hasTimeKey) {
+                    val healAmount = player.maxHealth * 0.1f
+                    // 恢复生命值（每秒）
+                    lastHealTime[player.uuid]?.let { last ->
+                        if (now - last >= 20) {
+                            player.heal(healAmount)
+                            lastHealTime[player.uuid] = now
+                        }
+                    } ?: run {
+                        player.heal(healAmount)
                         lastHealTime[player.uuid] = now
                     }
-                } ?: run {
-                    player.heal(player.maxHealth * 0.1f)
-                    lastHealTime[player.uuid] = now
+                    // 恢复饱食度
+                    val hunger = player.hungerManager
+                    val foodAdd = healAmount.toInt()
+                    val newFood = (hunger.foodLevel + foodAdd).coerceAtMost(20)
+                    val newSaturation = (hunger.saturationLevel + healAmount).coerceAtMost(newFood.toFloat())
+                    hunger.foodLevel = newFood
+                    hunger.saturationLevel = newSaturation
+                    // 灭火
+                    if (player.isOnFire) {
+                        player.fireTicks = 0
+                        player.setOnFire(false)
+                    }
                 }
-                if (player.isOnFire) {
-                    player.fireTicks = 0
-                    player.setOnFire(false)
-                }
-            }
-        }
 
-        // 4. 飞行恢复
-        ServerTickEvents.END_SERVER_TICK.register { server ->
-            server.playerManager.playerList.forEach { player ->
+                // ====== 2. 飞行恢复（模式切换检测） ======
                 val current = player.interactionManager.gameMode
                 lastGameMode[player.uuid]?.takeIf { it != current }?.let { previous ->
                     if ((previous == GameMode.CREATIVE || previous == GameMode.SPECTATOR) &&
                         (current == GameMode.SURVIVAL || current == GameMode.ADVENTURE) &&
-                        isTimeKeyEquipped(player) && !player.abilities.allowFlying
+                        hasTimeKey && !player.abilities.allowFlying
                     ) {
                         player.abilities.allowFlying = true
                         player.sendAbilitiesUpdate()
                     }
                 }
                 lastGameMode[player.uuid] = current
+
+                // ====== 3. 永久有氧（仅无氧星球） ======
+                if (hasTimeKey) {
+                    val world = player.world
+                    // 优先检测星球是否有氧（有氧星球 → 不需要效果）
+                    var worldHasOxygen = false
+                    try {
+                        val planet = PlanetRegistry.getInstance().get(world)
+                        if (planet != null) {
+                            worldHasOxygen = planet.hasOxygen()
+                        }
+                    } catch (_: Exception) {}
+                    // 如果星球检测失败或星球无氧，检测是否为 TARDIS 维度
+                    if (!worldHasOxygen) {
+                        val registryKey = world.registryKey.value
+                        val isTardis = registryKey.namespace.contains("tardis") ||
+                                registryKey.path.contains("tardis")
+                        worldHasOxygen = isTardis
+                    }
+
+                    // 只有无氧环境才施加 OXYGENATED 效果
+                    if (!worldHasOxygen) {
+                        if (!player.hasStatusEffect(AITStatusEffects.OXYGENATED)) {
+                            player.addStatusEffect(
+                                StatusEffectInstance(AITStatusEffects.OXYGENATED, 60, 0, false, false)
+                            )
+                        } else {
+                            val effect = player.getStatusEffect(AITStatusEffects.OXYGENATED)
+                            if (effect != null && effect.duration < 40) {
+                                player.addStatusEffect(
+                                    StatusEffectInstance(AITStatusEffects.OXYGENATED, 60, 0, false, false)
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }

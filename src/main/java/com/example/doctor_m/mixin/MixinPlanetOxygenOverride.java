@@ -17,13 +17,19 @@ public class MixinPlanetOxygenOverride {
     @Inject(method = "hasOxygenInTank", at = @At("HEAD"), cancellable = true, require = 0)
     private static void onHasOxygenInTank(LivingEntity entity, CallbackInfoReturnable<Boolean> cir) {
         if (entity == null) return;
+
+        //任何生物，只要穿了宇航服胸甲且有氧气，就有氧
         ItemStack chest = entity.getEquippedStack(EquipmentSlot.CHEST);
         if (chest.getItem() instanceof SpacesuitItem) {
             double oxygen = SpaceOxygenManager.getOxygen(chest);
-            cir.setReturnValue(oxygen > 0);
-        } else {
-            cir.setReturnValue(false);
+            if (oxygen > 0) {
+                cir.setReturnValue(true);
+                return;
+            }
         }
+
+        // 3. 其他情况 → 无氧
+        cir.setReturnValue(false);
     }
 
     @Inject(method = "hasFullSuit", at = @At("HEAD"), cancellable = true, require = 0)
