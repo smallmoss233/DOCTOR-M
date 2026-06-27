@@ -47,7 +47,7 @@ public class time_key extends TrinketItem {
                         new Color(128, 0, 128),  // 紫色
                         Color.WHITE
                 ),
-                8000
+                8500
         );
         ShiftTooltipInvoker.addShiftTooltip(tooltip, detailText);
     }
@@ -84,6 +84,6 @@ public class time_key extends TrinketItem {
                 Color.RED,                // 红色
                 Color.WHITE             // 白色
         );
-        return DynamicColorHelper.applyColorCycle(baseName, colors, 8000);
+        return DynamicColorHelper.applyColorCycle(baseName, colors, 15000);
     }
 }
