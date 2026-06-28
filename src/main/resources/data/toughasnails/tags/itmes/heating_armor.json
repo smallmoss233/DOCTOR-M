@@ -1,9 +1,9 @@
 {
   "replace": false,
   "values": [
-    "ait:steel_helmet",
-    "ait:steel_chestplate",
-    "ait:steel_leggings",
-    "ait:steel_boots"
+    "ait:spacesuit_helmet",
+    "ait:spacesuit_chestplate",
+    "ait:spacesuit_leggings",
+    "ait:spacesuit_boots"
   ]
 }
