@@ -12,5 +12,7 @@
         "muddy": "ait:textures/blockentities/exteriors/police_box/biome/police_box_mud.png",
         "chorus": "ait:textures/blockentities/exteriors/police_box/biome/police_box_chorus.png",
         "cherry": "ait:textures/blockentities/exteriors/police_box/biome/police_box_cherry.png"
-    }
+    },
+   "vortex": "ait:darkness",
+   "loyalty": "OWNER"
 }

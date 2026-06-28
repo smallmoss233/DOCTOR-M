@@ -146,24 +146,12 @@ object TimeKeyFunction {
                 // ====== 3. 永久有氧（仅无氧星球） ======
                 if (hasTimeKey) {
                     val world = player.world
-                    // 优先检测星球是否有氧（有氧星球 → 不需要效果）
-                    var worldHasOxygen = false
-                    try {
-                        val planet = PlanetRegistry.getInstance().get(world)
-                        if (planet != null) {
-                            worldHasOxygen = planet.hasOxygen()
-                        }
-                    } catch (_: Exception) {}
-                    // 如果星球检测失败或星球无氧，检测是否为 TARDIS 维度
-                    if (!worldHasOxygen) {
-                        val registryKey = world.registryKey.value
-                        val isTardis = registryKey.namespace.contains("tardis") ||
-                                registryKey.path.contains("tardis")
-                        worldHasOxygen = isTardis
-                    }
+                    // 检测当前世界是否为无氧环境（星球检测：若无星球数据，默认为有氧）
+                    val planet = try { PlanetRegistry.getInstance().get(world) } catch (_: Exception) { null }
+                    val worldHasOxygen = if (planet != null) planet.hasOxygen() else true // 默认有氧
 
-                    // 只有无氧环境才施加 OXYGENATED 效果
                     if (!worldHasOxygen) {
+                        // 无氧环境：施加 OXYGENATED 效果
                         if (!player.hasStatusEffect(AITStatusEffects.OXYGENATED)) {
                             player.addStatusEffect(
                                 StatusEffectInstance(AITStatusEffects.OXYGENATED, 60, 0, false, false)
