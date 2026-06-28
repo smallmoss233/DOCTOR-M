@@ -6,6 +6,7 @@ import doctor_m.client.render.VortexBackgroundRenderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -22,7 +23,8 @@ public class MixinTitleScreenBackground {
     @Inject(method = "init", at = @At("HEAD"))
     private void onInit(CallbackInfo ci) {
         Identifier texture = new Identifier("ait", "textures/vortex/darkness.png");
-        doctor_m$vortexRenderer = new VortexBackgroundRenderer(texture);
+        // 使用单例入口，自动推导 _second / _third 分层纹理
+        doctor_m$vortexRenderer = VortexBackgroundRenderer.getInstance(texture);
         doctor_m$vortexRenderer.setSpeed(2.0f);
     }
 
@@ -36,12 +38,17 @@ public class MixinTitleScreenBackground {
                     target = "Lnet/minecraft/client/gui/RotatingCubeMapRenderer;render(FF)V"
             )
     )
-    private void renderVortexBackground(RotatingCubeMapRenderer instance, float delta, float alpha, Operation<Void> original) {
+    private void renderVortexBackground(
+            RotatingCubeMapRenderer instance,
+            float delta,
+            float alpha,
+            Operation<Void> original
+    ) {
         if (doctor_m$vortexRenderer != null) {
             var client = MinecraftClient.getInstance();
             int width = client.getWindow().getScaledWidth();
             int height = client.getWindow().getScaledHeight();
-            var matrices = new net.minecraft.client.util.math.MatrixStack();
+            MatrixStack matrices = new MatrixStack();
             doctor_m$vortexRenderer.render(matrices, width, height);
         } else {
             original.call(instance, delta, alpha);
