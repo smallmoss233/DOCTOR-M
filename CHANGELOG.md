@@ -31,7 +31,6 @@
 -  归途 / Way Home
 -  利用mixin重写了AIT的氧气逻辑！ / Rewrote AIT's oxygen logic using mixin!
 -  修改了整个主菜单！ / Modified the entire main menu!
--  安装了Tough As Nails后，AIT的航天服将会提供保暖效果 / After installing Tough As Nails, the AIT spacesuit will provide warmth.
 
 ### 修复 / Repair
 
