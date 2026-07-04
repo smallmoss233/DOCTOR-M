@@ -10,6 +10,7 @@
     "MixinPlanetOxygenOverride",
     "MixinShieldHandler",
     "MixinSiegeModeControl",
+    "MixinHandlesItem",
     "MixinAITMod"
   ],
   "injectors": {
