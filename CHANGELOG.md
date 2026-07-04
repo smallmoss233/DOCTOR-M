@@ -32,6 +32,7 @@
 -  利用mixin重写了AIT的氧气逻辑！ / Rewrote AIT's oxygen logic using mixin!
 -  修改了整个主菜单！ / Modified the entire main menu!
 -  AIT的太空服将会提供保暖效果 / AIT's spacesuit will provide warmth
+-  让手柄听得懂中文！ / Make Handle understand Chinese!
 
 ### 修复 / Repair
 
