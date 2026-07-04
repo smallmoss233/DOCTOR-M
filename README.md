@@ -23,6 +23,8 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 
 [**Create**](https://modrinth.com/mod/create-fabric) – **Permanence** , Claresco and Clara’s TARDIS need content from this mod.
 
+[**Tough as nails**](https://modrinth.com/mod/tough-as-nails) - AIT's spacesuit will provide warmth.
+
 [**Blue archive halo**](https://modrinth.com/mod/blue-archive-halo) – Purely decorative (optional) qwq
 
 ---
