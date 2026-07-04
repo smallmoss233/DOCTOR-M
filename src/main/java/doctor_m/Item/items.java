@@ -51,7 +51,7 @@ public class items extends ItemContainer {
 
     public static void registerAbilities() {
         new PercentageDamageHelper(new PercentageDamageHelper.Config(
-                20, 1.0, 5.0, PercentageDamageHelper.hasAnyOfItems(TIME_KEY)
+                20, 1.0, 10.0, PercentageDamageHelper.hasAnyOfItems(TIME_KEY)
         ));
         new PercentageDamageHelper(new PercentageDamageHelper.Config(
                 100, 0.5, 2.5, PercentageDamageHelper.hasAnyOfItems(ETERNAL_CRYSTAL)

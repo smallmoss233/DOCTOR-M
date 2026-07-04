@@ -5,6 +5,7 @@
 	"client": [
 		"ExampleClientMixin",
         "MixinSpaceSuitOverlay",
+        "MixinShieldsModel",
         "MixinTitleScreenBackground"
 	],
 	"injectors": {

@@ -5,6 +5,9 @@
   "advancements.doctor_m.enter_trenzalore.description": "在大雪飛揚的城鎮，一位年老的戰士即將迎來他的鐘聲，他榮耀的舊軀即將迎來新的篇章。",
   "advancements.doctor_m.obtain_time_key.title": "宇宙的擁有者",
   "advancements.doctor_m.obtain_time_key.description": "我們有能力做任何我們想做的事。對宇宙中每一個粒子擁有絕對的掌控權。對所有曾經存在過和將會存在的事物都有絕對的掌控權。從現在起，你在聽我說話嗎，羅曼娜？因為如果你不聽，我可以讓你聽，因為我能做任何事。從此刻起，整個宇宙中沒有自由意志。只有我的意志，因為我擁有時間之鑰！",
+
+  "tardis.message.control.siege.confirm_prompt": "再次按下以啟用圍攻模式！（等待10秒再點擊）",
+
   "itemGroup.doctor_m": "Doctor M",
   "item.doctor_m.rassilon_key": "拉斯隆之鑰",
   "item.doctor_m.de_mat_gun": "去物質槍",
@@ -17,20 +20,26 @@
   "item.doctor_m.oxygen_tank": "氧氣瓶",
   "item.doctor_m.oxygen_charger_item": "氧氣補充機",
   "item.doctor_m.tlipoca_scythe": "特莉波卡的鐮刀",
+
   "block.doctor_m.oxygen_charger": "氧氣補充機",
+
   "entity.doctor_m.type_103w_evereye": "永恆之眼",
+
   "key.doctor_m.mode.on": "§a開啟",
   "key.doctor_m.mode.off": "§c關閉",
   "key.doctor_m.toggle_passive_a": "切換被動開關A",
   "key.doctor_m.toggle_passive_b": "切換被動開關B",
+
   "category.doctor_m": "Doctor M",
   "tooltip.doctor_m.oxygen": "§b氧氣: %.1f / %.0fL",
   "tooltip.doctor_m.hold_shift": "按住 Shift 查看詳情",
+
+  "hud.doctor_m.environment.oxygenated": "有氧，可脫下太空衣",
+  "hud.doctor_m.environment.deoxygenated": "無氧，不可脫下太空衣",
+
   "message.doctor_m.tip.not.done": "§c[此項目未完成！]",
   "message.doctor_m.scythe.cooldown": "§c[斬擊]冷卻中！",
   "message.doctor_m.scythe.hit": "§7收割了 §c%d §7個目標",
-  "hud.doctor_m.environment.oxygenated": "有氧，可脫下太空衣",
-  "hud.doctor_m.environment.deoxygenated": "無氧，不可脫下太空衣",
   "message.doctor_m.oxygen_tank.no_suit": "§c請先穿上太空衣胸甲！",
   "message.doctor_m.oxygen_tank.empty": "§c氧氣瓶已空！",
   "message.doctor_m.oxygen_tank.suit_full": "§a太空衣氧氣已滿！",
@@ -51,7 +60,7 @@
   "message.doctor_m.time_key.neutral_mode.off": "§c生物強制中立模式已關閉",
   "message.doctor_m.time_key.godmode.on": "§a傷害完全免疫已開啟",
   "message.doctor_m.time_key.godmode.off": "§c傷害完全免疫已關閉",
-  "message.doctor_m.time_key.detail": "擁有了它，恩典之下的力量將會讓你成為凌駕時間守護者之上的存在*在你「死亡」時，你會復活並且秒殺35格內的敵人，冷卻十秒，攻擊將附帶基於攻擊力的百分比扣血，冷卻一秒*任何能作用在你身上的傷害都只能造成生命值上限的15%，箭矢則會被你的力量抹除*每秒鐘你都會獲得生命值上限10%的治療，同時熄滅身上的火焰*你將擁有飛行的能力，同時免疫火焰，缺氧，藥水，回響衝擊波的傷害",
+  "message.doctor_m.time_key.detail": "§d擁有了它，恩典之下的力量將會讓你成為凌駕時間守護者之上的存在*在你「死亡」時，你會復活並且秒殺35格內的敵人，冷卻十秒。*攻擊將附帶基於攻擊力的百分比扣血，冷卻一秒*任何能作用在你身上的傷害都只能造成生命值上限的15%，箭矢則會被你的力量抹除*每秒鐘你都會獲得生命值上限10%的治療，同時熄滅身上的火焰*你將擁有飛行的能力，同時免疫火焰，缺氧，藥水，回響衝擊波的傷害",
   "message.doctor_m.pocket_watch.tip": "§7一塊懷錶...看上去很普通，也許吧",
   "message.doctor_m.pocket_watch.detail": "§7玩家受到致命傷害時強制復活玩家，並對周圍10格的所有生物造成25點傷害",
   "message.doctor_m.pocket_watch.revived": "§d你的旅途尚未到達終點，六重神注視著你，期待著你的旅途最終通往何方...",
@@ -62,5 +71,6 @@
   "message.doctor_m.eternal_crystal.detail": "§7裝備後你的每次攻擊都將附帶基於攻擊力的50%的強制扣血，冷卻五秒",
   "message.doctor_m.tlipoca_scythe.tip": "§7見習死神的鐮刀，儘管如此它也能收割靈魂",
   "message.doctor_m.tlipoca_scythe.detail": "§d見習死神鐮刀的斬擊能將世間生靈的靈魂奪走",
+
   "dimension.doctor_m.trenzalore": "§3特蘭澤洛"
 }

@@ -5,6 +5,9 @@
   "advancements.doctor_m.enter_trenzalore.description": "在大雪飞扬的城镇，一位年老的战士即将迎来他的钟声，他荣耀的旧躯即将迎来新的篇章。",
   "advancements.doctor_m.obtain_time_key.title": "宇宙的拥有者",
   "advancements.doctor_m.obtain_time_key.description": "我们有能力做任何我们想做的事。对宇宙中每一个粒子拥有绝对的掌控权。对所有曾经存在过和将会存在的事物都有绝对的掌控权。从现在起，你在听我说话吗，罗曼娜？因为如果你不听，我可以让你听，因为我能做任何事。从此刻起，整个宇宙中没有自由意志。只有我的意志，因为我拥有时间之钥！",
+
+  "tardis.message.control.siege.confirm_prompt": "再次按下以启用围攻模式！（等待10秒再点击）",
+
   "itemGroup.doctor_m": "Doctor M",
   "item.doctor_m.rassilon_key": "拉斯隆之钥",
   "item.doctor_m.de_mat_gun": "去物质枪",
@@ -17,20 +20,26 @@
   "item.doctor_m.oxygen_tank": "氧气瓶",
   "item.doctor_m.oxygen_charger_item": "氧气补充机",
   "item.doctor_m.tlipoca_scythe": "特莉波卡的镰刀",
+
   "block.doctor_m.oxygen_charger": "氧气补充机",
+
   "entity.doctor_m.type_103w_evereye": "永恒之眼",
+
   "key.doctor_m.mode.on": "§a开启",
   "key.doctor_m.mode.off": "§c关闭",
   "key.doctor_m.toggle_passive_a": "切换被动开关A",
   "key.doctor_m.toggle_passive_b": "切换被动开关B",
+
   "category.doctor_m": "Doctor M",
   "tooltip.doctor_m.oxygen": "§b氧气: %.1f / %.0fL",
   "tooltip.doctor_m.hold_shift": "按住 Shift 查看详情",
+
+  "hud.doctor_m.environment.oxygenated": "有氧，可脱下航天服",
+  "hud.doctor_m.environment.deoxygenated": "无氧，不可脱下航天服",
+
   "message.doctor_m.tip.not.done": "§c[此项目未完成！]",
   "message.doctor_m.scythe.cooldown": "§c[斩击]冷却中！",
   "message.doctor_m.scythe.hit": "§7收割了 §c%d §7个目标",
-  "hud.doctor_m.environment.oxygenated": "有氧，可脱下航天服",
-  "hud.doctor_m.environment.deoxygenated": "无氧，不可脱下航天服",
   "message.doctor_m.oxygen_tank.no_suit": "§c请先穿上宇航服胸甲！",
   "message.doctor_m.oxygen_tank.empty": "§c氧气瓶已空！",
   "message.doctor_m.oxygen_tank.suit_full": "§a宇航服氧气已满！",
@@ -62,5 +71,6 @@
   "message.doctor_m.eternal_crystal.detail": "§7装备后你的每次攻击都将附带基于攻击力的50%的强制扣血，冷却五秒",
   "message.doctor_m.tlipoca_scythe.tip": "§7见习死神的镰刀，尽管如此它也能收割灵魂",
   "message.doctor_m.tlipoca_scythe.detail": "§d见习死神镰刀的斩击能将世间生灵的灵魂夺走",
+
   "dimension.doctor_m.trenzalore": "§3特兰泽洛"
 }

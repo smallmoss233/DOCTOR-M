@@ -8,6 +8,8 @@
     "MixinOxygenatedEffect",
     "MixinOxygenatorBlockEntity",
     "MixinPlanetOxygenOverride",
+    "MixinShieldHandler",
+    "MixinSiegeModeControl",
     "MixinAITMod"
   ],
   "injectors": {

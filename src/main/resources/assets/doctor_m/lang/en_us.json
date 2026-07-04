@@ -5,6 +5,9 @@
   "advancements.doctor_m.enter_trenzalore.description": "In a snow-covered town, an aged warrior is about to face his final hour, and his glorious old body is about to begin a new chapter.",
   "advancements.doctor_m.obtain_time_key.title": "Owner of the Universe",
   "advancements.doctor_m.obtain_time_key.description": "We have the power to do whatever we want. Absolute control over every particle in the universe. Absolute control over everything that ever existed and everything that ever will. From now on, are you listening to me, Romana? Because if you aren't, I can make you listen, for I can do anything. From this moment on, there is no free will in the entire universe. Only my will, for I possess the Key of Time!",
+
+  "tardis.message.control.siege.confirm_prompt": "Press again to enable Siege Mode! (Wait 10 seconds before clicking)",
+
   "itemGroup.doctor_m": "Doctor M",
   "item.doctor_m.rassilon_key": "Key of Rassilon",
   "item.doctor_m.de_mat_gun": "De-Mat Gun",
@@ -17,20 +20,26 @@
   "item.doctor_m.oxygen_tank": "Oxygen Tank",
   "item.doctor_m.oxygen_charger_item": "Oxygen Recharger",
   "item.doctor_m.tlipoca_scythe": "Tlipoca's Scythe",
+
   "block.doctor_m.oxygen_charger": "Oxygen Recharger",
+
   "entity.doctor_m.type_103w_evereye": "Eternal Eye",
+
   "key.doctor_m.mode.on": "§aOn",
   "key.doctor_m.mode.off": "§cOff",
   "key.doctor_m.toggle_passive_a": "Toggle Passive Switch A",
   "key.doctor_m.toggle_passive_b": "Toggle Passive Switch B",
+
   "category.doctor_m": "Doctor M",
   "tooltip.doctor_m.oxygen": "§bOxygen: %.1f / %.0fL",
   "tooltip.doctor_m.hold_shift": "Hold Shift for Details",
+
+  "hud.doctor_m.environment.oxygenated": "Oxygenated, can take off spacesuit",
+  "hud.doctor_m.environment.deoxygenated": "Deoxygenated, cannot take off spacesuit",
+
   "message.doctor_m.tip.not.done": "§c[This feature is not yet complete!]",
   "message.doctor_m.scythe.cooldown": "§c[Slash] Cooldown!",
   "message.doctor_m.scythe.hit": "§7Reaped §c%d §7target(s)",
-  "hud.doctor_m.environment.oxygenated": "Oxygenated, can take off spacesuit",
-  "hud.doctor_m.environment.deoxygenated": "Deoxygenated, cannot take off spacesuit",
   "message.doctor_m.oxygen_tank.no_suit": "§cPlease equip the spacesuit chestplate first!",
   "message.doctor_m.oxygen_tank.empty": "§cOxygen tank is empty!",
   "message.doctor_m.oxygen_tank.suit_full": "§aSpacesuit oxygen is full!",
@@ -62,5 +71,6 @@
   "message.doctor_m.eternal_crystal.detail": "§7While equipped, each of your attacks will deal an additional forced 50% damage based on your attack damage. Cooldown: 5 seconds.",
   "message.doctor_m.tlipoca_scythe.tip": "§7An apprentice reaper's scythe. Even so, it can still reap souls.",
   "message.doctor_m.tlipoca_scythe.detail": "§dThe slash of the apprentice reaper's scythe can steal the souls of all living beings.",
+
   "dimension.doctor_m.trenzalore": "§3Trenzalore"
 }
