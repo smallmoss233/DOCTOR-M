@@ -70,7 +70,7 @@ public class MixinHandlesItem {
         CHINESE_TO_ENGLISH.put("加油开", "activate refuel");
         CHINESE_TO_ENGLISH.put("加油", "refuel");
         CHINESE_TO_ENGLISH.put("启动加油", "start refueling");
-        CHINESE_TO_ENGLISH.put("加油开", "refueling on");
+        CHINESE_TO_ENGLISH.put("打开加油", "refueling on");
         CHINESE_TO_ENGLISH.put("停止加油", "stop refueling");
         CHINESE_TO_ENGLISH.put("加油关", "disable refueling");
         CHINESE_TO_ENGLISH.put("禁用加油", "disable refueling");
