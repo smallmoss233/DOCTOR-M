@@ -1,4 +1,4 @@
-package doctor_m.mixin.client;
+package doctor_m.mixin.client.ait;
 
 import dev.amble.ait.core.AITStatusEffects;
 import dev.amble.ait.core.world.TardisServerWorld;

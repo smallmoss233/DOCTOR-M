@@ -1,4 +1,4 @@
-package com.example.doctor_m.mixin;
+package com.example.doctor_m.mixin.ait_oxygenatedmixin;
 
 import dev.amble.ait.core.AITStatusEffects;
 import dev.amble.ait.module.planet.core.item.SpacesuitItem;

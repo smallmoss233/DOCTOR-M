@@ -3,15 +3,15 @@
   "package": "com.example.doctor_m.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "MobEntityMixin",
-    "MixinSpacesuitItem",
-    "MixinOxygenatedEffect",
-    "MixinOxygenatorBlockEntity",
-    "MixinPlanetOxygenOverride",
-    "MixinShieldHandler",
-    "MixinSiegeModeControl",
-    "MixinHandlesItem",
-    "MixinAITMod"
+    "doctor_m.MobEntityMixin",
+    "ait_oxygenatedmixin.MixinSpacesuitItem",
+    "ait_oxygenatedmixin.MixinOxygenatedEffect",
+    "ait_oxygenatedmixin.MixinOxygenatorBlockEntity",
+    "ait_oxygenatedmixin.MixinPlanetOxygenOverride",
+    "aitmixin.MixinShieldHandler",
+    "aitmixin.MixinSiegeModeControl",
+    "aitmixin.MixinHandlesItem",
+    "aitmixin.MixinAITMod"
   ],
   "injectors": {
     "defaultRequire": 1

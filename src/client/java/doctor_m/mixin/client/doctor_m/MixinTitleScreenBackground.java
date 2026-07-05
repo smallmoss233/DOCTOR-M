@@ -1,4 +1,4 @@
-package doctor_m.mixin.client;
+package doctor_m.mixin.client.doctor_m;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;

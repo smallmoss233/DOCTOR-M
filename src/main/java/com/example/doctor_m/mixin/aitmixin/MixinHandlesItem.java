@@ -1,4 +1,4 @@
-package com.example.doctor_m.mixin;
+package com.example.doctor_m.mixin.aitmixin;
 
 import dev.amble.ait.core.handles.HandlesResponse;
 import dev.amble.ait.registry.impl.HandlesResponseRegistry;

@@ -1,4 +1,4 @@
-package com.example.doctor_m.mixin;
+package com.example.doctor_m.mixin.doctor_m;
 
 import dev.emi.trinkets.api.TrinketsApi;
 import net.minecraft.entity.LivingEntity;

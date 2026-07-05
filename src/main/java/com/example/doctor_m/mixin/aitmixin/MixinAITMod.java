@@ -1,4 +1,4 @@
-package com.example.doctor_m.mixin;
+package com.example.doctor_m.mixin.aitmixin;
 
 import dev.amble.ait.AITMod;
 import org.spongepowered.asm.mixin.Mixin;

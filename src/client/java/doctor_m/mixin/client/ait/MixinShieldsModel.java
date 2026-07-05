@@ -1,4 +1,4 @@
-package doctor_m.mixin.client;
+package doctor_m.mixin.client.ait;
 
 import net.minecraft.client.model.*;
 import dev.amble.ait.client.models.machines.ShieldsModel;
