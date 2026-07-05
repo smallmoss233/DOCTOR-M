@@ -27,8 +27,8 @@
 
   "key.doctor_m.mode.on": "§a开启",
   "key.doctor_m.mode.off": "§c关闭",
-  "key.doctor_m.toggle_passive_a": "切换被动开关A",
-  "key.doctor_m.toggle_passive_b": "切换被动开关B",
+  "key.doctor_m.toggle_passive_a": "切换被动开关A(按住Shift)",
+  "key.doctor_m.toggle_passive_b": "切换被动开关B(按住Shift)",
 
   "category.doctor_m": "Doctor M",
   "tooltip.doctor_m.oxygen": "§b氧气: %.1f / %.0fL",

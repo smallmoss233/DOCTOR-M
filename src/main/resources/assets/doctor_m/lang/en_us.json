@@ -16,19 +16,19 @@
   "item.doctor_m.mystery_gem": "§2Mysterious Gem",
   "item.doctor_m.eternal_crystal": "Eternal Crystal",
   "item.doctor_m.type_103_spawn": "Spawn Type 103 TARDIS",
-  "item.doctor_m.evereye_spawn": "Spawn the Eternal Eye",
+  "item.doctor_m.evereye_spawn": "Spawn the Evereye",
   "item.doctor_m.oxygen_tank": "Oxygen Tank",
   "item.doctor_m.oxygen_charger_item": "Oxygen Recharger",
   "item.doctor_m.tlipoca_scythe": "Tlipoca's Scythe",
 
   "block.doctor_m.oxygen_charger": "Oxygen Recharger",
 
-  "entity.doctor_m.type_103w_evereye": "Eternal Eye",
+  "entity.doctor_m.type_103w_evereye": "Evereye",
 
   "key.doctor_m.mode.on": "§aOn",
   "key.doctor_m.mode.off": "§cOff",
-  "key.doctor_m.toggle_passive_a": "Toggle Passive Switch A",
-  "key.doctor_m.toggle_passive_b": "Toggle Passive Switch B",
+  "key.doctor_m.toggle_passive_a": "Toggle Passive Switch A (Hold Shift)",
+  "key.doctor_m.toggle_passive_b": "Toggle Passive Switch B (Hold Shift)",
 
   "category.doctor_m": "Doctor M",
   "tooltip.doctor_m.oxygen": "§bOxygen: %.1f / %.0fL",
