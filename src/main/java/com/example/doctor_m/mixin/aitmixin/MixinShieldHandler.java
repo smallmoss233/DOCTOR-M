@@ -4,8 +4,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.amble.ait.core.AITStatusEffects;
 import dev.amble.ait.core.tardis.handler.ShieldHandler;
-import dev.amble.ait.core.tardis.control.impl.SecurityControl;
-import dev.amble.ait.data.Loyalty;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -77,12 +75,6 @@ public abstract class MixinShieldHandler {
                 .filter(entity -> entity instanceof ServerPlayerEntity)
                 .map(entity -> (ServerPlayerEntity) entity)
                 .forEach(player -> {
-                    // 判断是否为"忠诚"玩家：COMPANION 或持有匹配钥匙
-                    boolean isLoyal = self.tardis().loyalty().get(player).isOf(Loyalty.Type.COMPANION)
-                            || SecurityControl.hasMatchingKey(player, self.tardis());
-
-                    if (!isLoyal) return;
-
                     // 1. 给予生命恢复效果（每秒恢复 1 心，持续 1 秒，每 tick 刷新）
                     player.addStatusEffect(
                             new StatusEffectInstance(StatusEffects.REGENERATION, 20, 0, true, false, false)
@@ -92,7 +84,7 @@ public abstract class MixinShieldHandler {
                     );
                         // 重置氧气条为最大值（立即补满）
                         player.setAir(player.getMaxAir());
-
-                });
+                }
+        );
     }
 }
