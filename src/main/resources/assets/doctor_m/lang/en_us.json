@@ -5,6 +5,10 @@
   "advancements.doctor_m.enter_trenzalore.description": "In a snow-covered town, an aged warrior is about to face his final hour, and his glorious old body is about to begin a new chapter.",
   "advancements.doctor_m.obtain_time_key.title": "Owner of the Universe",
   "advancements.doctor_m.obtain_time_key.description": "We have the power to do whatever we want. Absolute control over every particle in the universe. Absolute control over everything that ever existed and everything that ever will. From now on, are you listening to me, Romana? Because if you aren't, I can make you listen, for I can do anything. From this moment on, there is no free will in the entire universe. Only my will, for I possess the Key of Time!",
+  "advancement.doctor_m.not_thermos.title": "This really isn't a thermos...",
+  "advancement.doctor_m.not_thermos.description": "What are you doing?? Drinking the oxygen from the tank??",
+  "advancement.doctor_m.you_ate_this.title": "You ate that thing?!",
+  "advancement.doctor_m.you_ate_this.description": "In extreme hunger, one can become incredibly strong—like you, who pried open the oxygen tank valve with bare hands, gulped down the compressed air as if it were a biscuit, swallowing the tank and all. Your stomach protested, but your will prevailed.",
 
   "tardis.message.control.siege.confirm_prompt": "Press again to enable Siege Mode! (Wait 10 seconds before clicking)",
 
@@ -51,6 +55,7 @@
   "message.doctor_m.oxygen_charger.suit_full": "§aSpacesuit oxygen is already full!",
   "message.doctor_m.oxygen_charger.invalid_item": "Invalid item!",
   "message.doctor_m.oxygen_charger.cooldown": "Oxygen Recharger cooling down.. %d seconds remaining...",
+  "message.doctor_m.oxygen_tank": "Looks like a thermos",
   "message.doctor_m.rassilon_key.tooltip.line": "§7No Time Lord president has ever obtained the Key of Rassilon except Rassilon himself...",
   "message.doctor_m.de_mat_gun.tooltip.line1": "Advice from the Time Lords:",
   "message.doctor_m.de_mat_gun.tooltip.line2": "Destroy this gun, destroy all its data, and do not let its immense power corrupt your mind...",

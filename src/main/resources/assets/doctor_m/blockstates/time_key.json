@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:item/time_key",
-  "textures": {
-    "layer0": "doctor_m:item/time_key"
-  },
-  "gui_light": "front"
-}

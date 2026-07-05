@@ -2,7 +2,7 @@
 
 ---
 
-## [ v2.0-beta ]
+## [ v2.0 ]
 
 ### 新翻译 / New lang
 
@@ -22,6 +22,7 @@
 -  神秘宝石 / Mystery Gem
 -  永恒水晶 / Eternal Crystal
 -  氧气补充机 / Oxygen Charger
+-  氧气瓶 / Oxygen Tank
 
 ### 修改 / Edit
 
@@ -34,6 +35,7 @@
 -  修改了主菜单！ / Modified the main menu!
 -  AIT的太空服将会提供保暖效果 / AIT's spacesuit will provide warmth
 -  让手柄听得懂中文！ / Make Handle understand Chinese!
+-  氧气补充机 / Oxygen Charger
 
 ### 修复 / Repair
 

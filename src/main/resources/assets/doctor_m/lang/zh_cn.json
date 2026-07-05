@@ -5,6 +5,10 @@
   "advancements.doctor_m.enter_trenzalore.description": "在大雪飞扬的城镇，一位年老的战士即将迎来他的钟声，他荣耀的旧躯即将迎来新的篇章。",
   "advancements.doctor_m.obtain_time_key.title": "宇宙的拥有者",
   "advancements.doctor_m.obtain_time_key.description": "我们有能力做任何我们想做的事。对宇宙中每一个粒子拥有绝对的掌控权。对所有曾经存在过和将会存在的事物都有绝对的掌控权。从现在起，你在听我说话吗，罗曼娜？因为如果你不听，我可以让你听，因为我能做任何事。从此刻起，整个宇宙中没有自由意志。只有我的意志，因为我拥有时间之钥！",
+  "advancement.doctor_m.not_thermos.title": "这真的不是保温杯...",
+  "advancement.doctor_m.not_thermos.description": "你在干什么？？喝氧气瓶里头的氧气吗？？",
+  "advancement.doctor_m.you_ate_this.title": "你把这玩意吃了？！",
+  "advancement.doctor_m.you_ate_this.description": "人在极度饥饿的状态下真的会力大无穷——比如你，你徒手拧开了氧气瓶的阀门，把里面的压缩空气当成压缩饼干，连瓶带气吞了下去，胃在抗议，但你的意志赢了。",
 
   "tardis.message.control.siege.confirm_prompt": "再次按下以启用围攻模式！（等待10秒再点击）",
 
@@ -51,6 +55,7 @@
   "message.doctor_m.oxygen_charger.suit_full": "§a宇航服氧气已满！",
   "message.doctor_m.oxygen_charger.invalid_item": "无效物品！",
   "message.doctor_m.oxygen_charger.cooldown": "氧气补充机冷却中..还剩 %d 秒...",
+  "message.doctor_m.oxygen_tank": "看上去像个保温杯",
   "message.doctor_m.rassilon_key.tooltip.line": "§7除了拉斯隆，从未有时间领主总统能得到过拉斯隆之钥...",
   "message.doctor_m.de_mat_gun.tooltip.line1": "来自时间领主的忠告：",
   "message.doctor_m.de_mat_gun.tooltip.line2": "毁了这把枪，毁掉它的所有资料，不要被强大的力量蛊惑心智...",

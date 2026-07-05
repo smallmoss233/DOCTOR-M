@@ -23,6 +23,11 @@ public static void registerItems() {
                                 entries.add(ETERNAL_CRYSTAL);
                                 entries.add(DE_MAT_GUN);
                                 entries.add(RASSILON_KEY);
+                                entries.add(OXYGEN_CHARGER_ITEM);
+                                entries.add(TYPE_103_SPAWN);
+                                entries.add(EVEREYE_SPAWN);
+                                entries.add(OXYGEN_TANK);
+                                entries.add(TLIPOCA_SCYTHE);
                             })
                             .build());
         }

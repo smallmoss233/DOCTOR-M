@@ -5,7 +5,7 @@
 ## **Introduction**
 
 ### Version 2.0 official update is about to arrive!
-**This mod's code uses artificial intelligence(AI). If you encounter a crash, please report it on GitHub. If you don't like AI, you can avoid this mod.**
+**This mod's code uses artificial intelligence(AI). If you encounter a crash, [please report it on GitHub](https://github.com/smallmoss233/DOCTOR-M/issues). If you don't like AI, you can avoid this mod.**
 
 DOCTOR M is an addon for the [**AIT**](https://modrinth.com/mod/ait) mod, adding several TARDIS interiors with unique stylistic designs, as well as brand‑new dimensions, new adventure content, and more.
 
@@ -31,23 +31,23 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 
 **Credits for Custom Content**
 
-*永恒之眼(Evereye) interior & exterior , 玛丽.谨(Mary.Jin) Sonic Screwdriver , 守望(Watcher) interior & console texture, 恶疯(Madness) interior & exterior, 回廊(Cloister) , 恒朽(Permanence) interior*: Smallmoss
+*永恒之眼(Evereye) interior & exterior , 玛丽.谨(Mary.Jin) Sonic Screwdriver , 守望(Watcher) interior & console texture, 恶疯(Madness) interior & exterior, 回廊(Cloister) , 恒朽(Permanence) interior*: [Smallmoss](https://modrinth.com/user/SmallMoss)
 
-*守望(Watcher) console texture*: 白桦下的赤俄(Kilin_Mus)
+*守望(Watcher) console texture*: [白桦下的赤俄(Kilin_Mus)](https://modrinth.com/user/Kilin_Mus)
 
 *霓虹(Rainbow), 烈火(Fire) , 泽顿水晶(Crystalline Zeiton) interiors*: Asnit_PnQing
 
-*斯格(Sig) interior*: 斯格尔特(Sigeerte)
+*斯格(Sig) interior*: [斯格尔特(Sigeerte)](https://modrinth.com/user/Sigeerte)
 
-*归途(Way Home), 克拉拉的塔迪斯(Clara’s TARDIS), Type 50/55, 霁光(Claresco) interior*: Siletonight
+*归途(Way Home), 克拉拉的塔迪斯(Clara’s TARDIS), Type 50/55, 霁光(Claresco) interior*: [Siletonight](https://modrinth.com/user/Siletonight)
 
-*时隙(Rift) interior*: TC020
+*时隙(Rift) interior*: [TC020](https://modrinth.com/user/TC020)
 
 *Redstone Torch Sonic Screwdriver author*: 慢跑者
 
-*Partial item models*：Tsinafs-Bcim
+*Partial item models*：[Tsinafs-Bcim](https://modrinth.com/user/Tsinafs-Bcim)
 
-*Partial achievement text and item tooltip text*：斯格尔特(Sigeerte), asdjdfk
+*Partial achievement text and item tooltip text*：斯格尔特(Sigeerte), [asdjdfk](https://modrinth.com/user/asdjdfk), T天玄X
 
 ---
 
