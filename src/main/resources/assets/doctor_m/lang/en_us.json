@@ -49,6 +49,8 @@
   "message.doctor_m.oxygen_charger.tank_full": "§aOxygen tank is already full!",
   "message.doctor_m.oxygen_charger.suit_fill": "§aSpacesuit oxygen has been fully refilled!",
   "message.doctor_m.oxygen_charger.suit_full": "§aSpacesuit oxygen is already full!",
+  "message.doctor_m.oxygen_charger.invalid_item": "Invalid item!",
+  "message.doctor_m.oxygen_charger.cooldown": "Oxygen Recharger cooling down.. %d seconds remaining...",
   "message.doctor_m.rassilon_key.tooltip.line": "§7No Time Lord president has ever obtained the Key of Rassilon except Rassilon himself...",
   "message.doctor_m.de_mat_gun.tooltip.line1": "Advice from the Time Lords:",
   "message.doctor_m.de_mat_gun.tooltip.line2": "Destroy this gun, destroy all its data, and do not let its immense power corrupt your mind...",
