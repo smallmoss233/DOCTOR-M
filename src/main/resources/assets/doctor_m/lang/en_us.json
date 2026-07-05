@@ -66,7 +66,7 @@
   "message.doctor_m.pocket_watch.tip": "§7A pocket watch... It looks ordinary. Maybe.",
   "message.doctor_m.pocket_watch.detail": "§7When the player takes fatal damage, force revive the player and deal 25 damage to all mobs within 10 blocks.",
   "message.doctor_m.pocket_watch.revived": "§dYour journey is not yet over. The Hexad God watches you, awaiting where your path will finally lead...",
-  "message.doctor_m.pocket_watch.cooldown": "§cThe pocket watch cannot protect you forever. You must wait for it to recover. Time remaining: %s",
+  "message.doctor_m.pocket_watch.cooldown": "§cThe pocket watch cannot protect you forever. You must wait for it to recover. Time remaining: %d minutes %d seconds",
   "message.doctor_m.mystery_gem": "§7As time passes, her power is no longer what it once was, but may she still bless you...",
   "message.doctor_m.mystery_gem.detail": "§7While equipped, you gain permanent Resistance II, which reduces damage taken by 40%.",
   "message.doctor_m.eternal_crystal.desc": "§7Once blessed by Him, the divine power has waned over time, but what remains is still enough to make all life tremble in fear.",

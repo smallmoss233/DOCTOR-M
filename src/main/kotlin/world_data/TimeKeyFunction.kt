@@ -35,7 +35,7 @@ object TimeKeyFunction {
 
     @JvmStatic
     fun register() {
-        // 1. 伤害处理
+        // 1. 伤害处理（保持不变）
         ServerLivingEntityEvents.ALLOW_DAMAGE.register { entity, source, amount ->
             customDamage.get().also { if (it) customDamage.set(false) }
             (entity as? ServerPlayerEntity)?.let { player ->
@@ -83,13 +83,13 @@ object TimeKeyFunction {
             true
         }
 
-        // 2. 命令系统（极简）
+        // 2. 命令系统（不变）
         CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
             fun handle(player: PlayerEntity, key: String, msg: String) {
                 getTimeKeyStack(player).takeIf { it.item is time_key }?.orCreateNbt?.apply {
                     putBoolean(key, !getBoolean(key))
                     player.sendMessage(Text.translatable("$msg.${if (getBoolean(key)) "on" else "off"}"), true)
-                } ?: player.sendMessage(Text.translatable("message.doctor_m.time_key.not_equipped"), true)
+                }
             }
             dispatcher.register(CommandManager.literal("passive")
                 .then(CommandManager.literal("a").executes { handle(it.source.player!!, "neutral_mode", "message.doctor_m.time_key.neutral_mode"); 1 })
@@ -97,7 +97,7 @@ object TimeKeyFunction {
             )
         }
 
-        // 合并：生命恢复 + 饱食度 + 灭火 + 飞行恢复 + 永久有氧（仅无氧星球）
+        // 3. 合并：生命恢复 + 饱食度 + 灭火 + 飞行恢复 + 永久有氧
         ServerTickEvents.END_SERVER_TICK.register { server ->
             val now = server.ticks.toLong()
             server.playerManager.playerList.forEach { player ->
@@ -171,17 +171,16 @@ object TimeKeyFunction {
     }
 
     // ====== 工具函数 ======
-    private fun getTimeKeyStack(player: PlayerEntity) =
+    private fun getTimeKeyStack(player: PlayerEntity): ItemStack =
         player.mainHandStack.takeIf { it.item is time_key }
             ?: TrinketsApi.getTrinketComponent(player)
                 .flatMap { it.getEquipped { stack -> stack.item is time_key }.stream().findFirst() }
                 .map { it.right }
                 .orElse(ItemStack.EMPTY)
 
-    private fun isTimeKeyEquipped(player: PlayerEntity) =
-        TrinketsApi.getTrinketComponent(player)
-            .map { it.isEquipped { stack -> stack.item is time_key } }
-            .orElse(false)
+    // 修改：同时检查主手和饰品
+    private fun isTimeKeyEquipped(player: PlayerEntity): Boolean =
+        getTimeKeyStack(player).isEmpty == false
 
     private fun isInCooldown(player: ServerPlayerEntity) =
         revivalCooldown[player.uuid]?.let { player.serverWorld.time < it } ?: false

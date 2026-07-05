@@ -1,5 +1,6 @@
 package world_data
 
+import com.ibm.icu.impl.Pair
 import dev.emi.trinkets.api.TrinketsApi
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.minecraft.entity.effect.StatusEffectInstance
@@ -8,41 +9,73 @@ import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
+import net.minecraft.item.ItemStack
 import doctor_m.Item.data_itme.fragment.pocket_watch
 import net.minecraft.entity.LivingEntity
 
 object PocketWatchFunction {
     const val COOLDOWN_KEY = "table_revival_cooldown_end_ms"
-    private const val COOLDOWN_MILLIS = 24000L * 50L // 1 游戏日 = 1,200,000 毫秒
+    private const val COOLDOWN_MILLIS = 24000L * 50L // 1 游戏日
 
     @JvmStatic
     fun register() {
         ServerLivingEntityEvents.ALLOW_DAMAGE.register { entity, source, amount ->
             if (entity !is ServerPlayerEntity) return@register true
 
-            val tableOpt = TrinketsApi.getTrinketComponent(entity)
-                .flatMap { comp -> comp.getEquipped { stack -> stack.item is pocket_watch }.stream().findFirst() }
+            val player = entity
+            val watchStack = findPocketWatch(player)
+            if (watchStack == null) return@register true
 
-            if (tableOpt.isEmpty) return@register true
-
-            val tableStack = tableOpt.get().right
-            val nbt = tableStack.orCreateNbt
+            val nbt = watchStack.orCreateNbt
             val currentTime = System.currentTimeMillis()
             val cooldownEnd = nbt.getLong(COOLDOWN_KEY)
 
-            // 冷却中 → 无法复活
+            // 冷却中 → 发送提示（使用可翻译的时间文本）
             if (currentTime < cooldownEnd) {
+                val remaining = cooldownEnd - currentTime
+                val parts = getRemainingTimeParts(remaining)
+                val minutes = parts.first
+                val seconds = parts.second
+                player.sendMessage(
+                    Text.translatable("message.doctor_m.pocket_watch.cooldown", minutes, seconds),
+                    true
+                )
                 return@register true
             }
 
-            val newHealth = entity.health - amount
+            val newHealth = player.health - amount
             if (newHealth <= 0) {
-                revivePlayer(entity)
+                revivePlayer(player)
                 nbt.putLong(COOLDOWN_KEY, System.currentTimeMillis() + COOLDOWN_MILLIS)
                 return@register false
             }
             true
         }
+    }
+
+    // 🔥 新增：返回 Text 对象，时间单位可翻译
+    @JvmStatic
+    fun getRemainingTimeParts(millis: Long): kotlin.Pair<Int, Int> {
+        val totalSeconds = millis / 1000
+        val minutes = (totalSeconds / 60).toInt()
+        val seconds = (totalSeconds % 60).toInt()
+        return kotlin.Pair(minutes, seconds)
+    }
+
+    // 查找背包中的 pocket_watch（主手、副手、背包、饰品）
+    private fun findPocketWatch(player: ServerPlayerEntity): ItemStack? {
+        for (stack in player.inventory.main) {
+            if (stack.item is pocket_watch) return stack
+        }
+        if (player.inventory.offHand.firstOrNull { it.item is pocket_watch } != null) {
+            return player.inventory.offHand.first { it.item is pocket_watch }
+        }
+        val trinketOpt = TrinketsApi.getTrinketComponent(player)
+            .flatMap { comp -> comp.getEquipped { stack -> stack.item is pocket_watch }.stream().findFirst() }
+        if (trinketOpt.isPresent) {
+            return trinketOpt.get().right
+        }
+        return null
     }
 
     private fun revivePlayer(player: ServerPlayerEntity) {
@@ -67,17 +100,5 @@ object PocketWatchFunction {
         }
         player.playSound(SoundEvents.BLOCK_BELL_RESONATE, 1.0f, 1.0f)
         player.sendMessage(Text.translatable("message.doctor_m.pocket_watch.revived"), true)
-    }
-
-    @JvmStatic
-    fun formatRemainingTime(millis: Long): String {
-        val seconds = millis / 1000
-        if (seconds < 60) return "${seconds}秒"
-        val minutes = seconds / 60
-        val remainingSeconds = seconds % 60
-        if (minutes < 60) return "${minutes}分${remainingSeconds}秒"
-        val hours = minutes / 60
-        val remainingMinutes = minutes % 60
-        return "${hours}小时${remainingMinutes}分"
     }
 }

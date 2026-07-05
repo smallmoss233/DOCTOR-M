@@ -11,6 +11,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import kotlin.Pair;
 
 import java.util.List;
 
@@ -28,12 +29,14 @@ public class pocket_watch extends TrinketItem {
             long now = System.currentTimeMillis();
             if (now < cooldownEnd) {
                 long remaining = cooldownEnd - now;
-                String timeStr = PocketWatchFunction.formatRemainingTime(remaining);
-                tooltip.add(Text.translatable("message.doctor_m.pocket_watch.cooldown", timeStr).formatted(Formatting.GRAY));
+                kotlin.Pair<Integer, Integer> parts = PocketWatchFunction.getRemainingTimeParts(remaining);
+                int minutes = parts.getFirst();
+                int seconds = parts.getSecond();
+                tooltip.add(Text.translatable("message.doctor_m.pocket_watch.cooldown", minutes, seconds)
+                        .formatted(Formatting.GRAY));
             }
         }
 
-        // 需要自动换行的长文本
         Text longDescription = Text.translatable("message.doctor_m.pocket_watch.tip");
         TooltipHelper.addWrappedTooltip(tooltip, longDescription);
         ShiftTooltipInvoker.addShiftTooltip(tooltip,

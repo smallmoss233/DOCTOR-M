@@ -66,7 +66,7 @@
   "message.doctor_m.pocket_watch.tip": "§7一塊懷錶...看上去很普通，也許吧",
   "message.doctor_m.pocket_watch.detail": "§7玩家受到致命傷害時強制復活玩家，並對周圍10格的所有生物造成25點傷害",
   "message.doctor_m.pocket_watch.revived": "§d你的旅途尚未到達終點，六重神注視著你，期待著你的旅途最終通往何方...",
-  "message.doctor_m.pocket_watch.cooldown": "§c懷錶不能一直保護你，你需要等待它的恢復，剩餘時間: %s",
+  "message.doctor_m.pocket_watch.cooldown": "§c懷錶不能一直保護你，你需要等待它的恢復，剩餘時間: %d分%d秒",
   "message.doctor_m.mystery_gem": "§7隨著時間流逝，她的力量已不如從前，但仍願她保佑你...",
   "message.doctor_m.mystery_gem.detail": "§7裝備後你將獲得永久的抗性提升二效果，即40%傷害減免",
   "message.doctor_m.eternal_crystal.desc": "§7曾受祂之祝福，經時間洗禮神力已流失許多但剩餘力量仍足矣讓所有生命畏懼",

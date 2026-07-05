@@ -2,7 +2,9 @@ package com.example.doctor_m.mixin.aitmixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import dev.amble.ait.core.AITStatusEffects;
 import dev.amble.ait.core.tardis.handler.ShieldHandler;
+import dev.amble.ait.core.tardis.control.impl.SecurityControl;
 import dev.amble.ait.data.Loyalty;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -22,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ShieldHandler.class)
 public abstract class MixinShieldHandler {
 
-    // --- 修改扫描范围为8格（保持原有） ---
+    // --- 原有的档位/范围修改（保持不变） ---
     @ModifyArg(
             method = "tick",
             at = @At(
@@ -35,7 +37,6 @@ public abstract class MixinShieldHandler {
         return 8.0;
     }
 
-    // --- 将球体边界改为立方体（保持原有） ---
     @WrapOperation(
             method = "lambda$tick$1",
             at = @At(
@@ -49,61 +50,49 @@ public abstract class MixinShieldHandler {
         return maxAxis <= 4.0 ? 0.0 : 9999.0;
     }
 
-    // --- 新增：为护盾内的忠诚玩家提供增益（生命恢复随等级提升） ---
+    // --- 新增：为忠诚玩家添加增益效果 ---
     @Inject(
             method = "tick",
             at = @At("TAIL")
     )
     private void onTickTail(MinecraftServer server, CallbackInfo ci) {
+        // 强制转换为 ShieldHandler 以访问其字段和方法（this 本身就是）
         ShieldHandler self = (ShieldHandler) (Object) this;
 
+        // 护盾必须开启且子系统正常
         if (!self.shielded().get() || !self.tardis().subsystems().shields().isEnabled()
                 || self.tardis().subsystems().shields().isBroken()) {
             return;
         }
 
+        // 获取外部位置
         var travel = self.tardis().travel();
         var globalPos = travel.position();
         World world = globalPos.getWorld();
         BlockPos exteriorPos = globalPos.getPos();
 
-        world.getOtherEntities(null, new Box(exteriorPos).expand(8.0))
+        // 扫描护盾范围内的所有玩家
+        world.getOtherEntities(null, new Box(exteriorPos).expand(4.0))
                 .stream()
                 .filter(entity -> entity instanceof ServerPlayerEntity)
                 .map(entity -> (ServerPlayerEntity) entity)
                 .forEach(player -> {
-                    Loyalty loyalty = self.tardis().loyalty().get(player);
+                    // 判断是否为"忠诚"玩家：COMPANION 或持有匹配钥匙
+                    boolean isLoyal = self.tardis().loyalty().get(player).isOf(Loyalty.Type.COMPANION)
+                            || SecurityControl.hasMatchingKey(player, self.tardis());
 
-                    if (!loyalty.isOf(Loyalty.Type.COMPANION)) {
-                        return;
-                    }
+                    if (!isLoyal) return;
 
-                    // 根据等级决定生命恢复等级
-                    int regenAmplifier = 0; // COMPANION: I
-                    if (loyalty.isOf(Loyalty.Type.OWNER)) {
-                        regenAmplifier = 2; // III
-                    } else if (loyalty.isOf(Loyalty.Type.PILOT)) {
-                        regenAmplifier = 1; // II
-                    }
-
+                    // 1. 给予生命恢复效果（每秒恢复 1 心，持续 1 秒，每 tick 刷新）
                     player.addStatusEffect(
-                            new StatusEffectInstance(StatusEffects.REGENERATION, 20, regenAmplifier, true, false, false)
+                            new StatusEffectInstance(StatusEffects.REGENERATION, 20, 0, true, false, false)
                     );
-
-                    // 水下处理（所有 COMPANION 及以上）
-                    if (player.isSubmergedInWater()) {
-                        player.addStatusEffect(
-                                new StatusEffectInstance(StatusEffects.WATER_BREATHING, 20, 0, true, false, false)
-                        );
+                    player.addStatusEffect(
+                            new StatusEffectInstance(AITStatusEffects.OXYGENATED, 60, 0, false, false)
+                    );
+                        // 重置氧气条为最大值（立即补满）
                         player.setAir(player.getMaxAir());
-                    }
 
-                    // OWNER 专属：伤害吸收 I
-                    if (loyalty.isOf(Loyalty.Type.OWNER)) {
-                        player.addStatusEffect(
-                                new StatusEffectInstance(StatusEffects.ABSORPTION, 20, 0, true, false, false)
-                        );
-                    }
                 });
     }
 }
