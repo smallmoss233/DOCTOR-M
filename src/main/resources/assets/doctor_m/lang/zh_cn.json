@@ -50,7 +50,7 @@
   "message.doctor_m.oxygen_charger.suit_fill": "§a宇航服氧气已充满！",
   "message.doctor_m.oxygen_charger.suit_full": "§a宇航服氧气已满！",
   "message.doctor_m.oxygen_charger.invalid_item": "无效物品！",
-  "message.doctor_m.oxygen_charger.cooldown": "氧气补充机冷却种..还剩 %d 秒...",
+  "message.doctor_m.oxygen_charger.cooldown": "氧气补充机冷却中..还剩 %d 秒...",
   "message.doctor_m.rassilon_key.tooltip.line": "§7除了拉斯隆，从未有时间领主总统能得到过拉斯隆之钥...",
   "message.doctor_m.de_mat_gun.tooltip.line1": "来自时间领主的忠告：",
   "message.doctor_m.de_mat_gun.tooltip.line2": "毁了这把枪，毁掉它的所有资料，不要被强大的力量蛊惑心智...",
