@@ -66,7 +66,7 @@
   "message.doctor_m.pocket_watch.tip": "§7一块怀表...看上去很普通，也许吧",
   "message.doctor_m.pocket_watch.detail": "§7玩家受到致命伤害时强制复活玩家，并对周围10格的所有生物造成25点伤害",
   "message.doctor_m.pocket_watch.revived": "§d你的旅途尚未到达终点，六重神注视着你，期待着你的旅途最终通往何方...",
-  "message.doctor_m.pocket_watch.cooldown": "§c怀表不能一直保护你，你需要等待它的恢复，剩余时间: %d分%d秒",
+  "message.doctor_m.pocket_watch.cooldown": "§c怀表不能一直保护你，你需要等待它的恢复...*剩余时间: %d分%d秒",
   "message.doctor_m.mystery_gem": "§7随着时间流逝，她的力量已不如从前，但仍愿她保佑你...",
   "message.doctor_m.mystery_gem.detail": "§7装备后你将获得永久的抗性提升二效果，既40%伤害减免",
   "message.doctor_m.eternal_crystal.desc": "§7曾受祂之祝福，经时间洗礼神力已流失许多但剩余力量仍足矣让所有生命畏惧",

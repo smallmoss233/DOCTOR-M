@@ -31,8 +31,8 @@ public class pocket_watch extends TrinketItem {
                 kotlin.Pair<Integer, Integer> parts = PocketWatchFunction.getRemainingTimeParts(remaining);
                 int minutes = parts.getFirst();
                 int seconds = parts.getSecond();
-                tooltip.add(Text.translatable("message.doctor_m.pocket_watch.cooldown", minutes, seconds)
-                        .formatted(Formatting.GRAY));
+                Text longDescription = Text.translatable("message.doctor_m.pocket_watch.cooldown", minutes, seconds);
+                TooltipHelper.addWrappedTooltip(tooltip, longDescription);
             }
         }
 

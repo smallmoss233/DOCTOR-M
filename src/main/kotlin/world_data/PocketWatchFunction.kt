@@ -30,16 +30,8 @@ object PocketWatchFunction {
             val currentTime = System.currentTimeMillis()
             val cooldownEnd = nbt.getLong(COOLDOWN_KEY)
 
-            // 冷却中 → 发送提示（使用可翻译的时间文本）
+            // 冷却中 → 正常受伤，不弹提示
             if (currentTime < cooldownEnd) {
-                val remaining = cooldownEnd - currentTime
-                val parts = getRemainingTimeParts(remaining)
-                val minutes = parts.first
-                val seconds = parts.second
-                player.sendMessage(
-                    Text.translatable("message.doctor_m.pocket_watch.cooldown", minutes, seconds),
-                    true
-                )
                 return@register true
             }
 
@@ -53,7 +45,6 @@ object PocketWatchFunction {
         }
     }
 
-    // 🔥 新增：返回 Text 对象，时间单位可翻译
     @JvmStatic
     fun getRemainingTimeParts(millis: Long): kotlin.Pair<Int, Int> {
         val totalSeconds = millis / 1000
