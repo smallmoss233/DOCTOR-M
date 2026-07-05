@@ -4,7 +4,6 @@
 ---
 ## **Introduction**
 
-### Version 2.0 official update is about to arrive!
 **This mod's code uses artificial intelligence(AI). If you encounter a crash, [please report it on GitHub](https://github.com/smallmoss233/DOCTOR-M/issues). If you don't like AI, you can avoid this mod.**
 
 DOCTOR M is an addon for the [**AIT**](https://modrinth.com/mod/ait) mod, adding several TARDIS interiors with unique stylistic designs, as well as brand‑new dimensions, new adventure content, and more.
