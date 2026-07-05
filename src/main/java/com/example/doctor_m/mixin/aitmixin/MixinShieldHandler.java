@@ -2,27 +2,17 @@ package com.example.doctor_m.mixin.aitmixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import dev.amble.ait.core.AITStatusEffects;
 import dev.amble.ait.core.tardis.handler.ShieldHandler;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ShieldHandler.class)
-public abstract class MixinShieldHandler {
+public class MixinShieldHandler {
 
-    // --- 原有的档位/范围修改（保持不变） ---
+    // 扫描范围扩大到 8 格（配合下面的 8 格立方体）
     @ModifyArg(
             method = "tick",
             at = @At(
@@ -35,8 +25,16 @@ public abstract class MixinShieldHandler {
         return 8.0;
     }
 
+    /**
+     * 把球体边界改成轴对齐立方体边界
+     * 原来：squaredDistanceTo(center) <= 8  →  半径 2.8 格的球
+     * 现在：每个轴独立比较 |diff| <= 4  →  8×8×8 的立方体
+     *
+     * 注意：这个 WrapOperation 会匹配 lambda$tick$1 里的 squaredDistanceTo 调用
+     * 需要确认 method 名是否正确
+     */
     @WrapOperation(
-            method = "lambda$tick$1",
+            method = "lambda$tick$1",  // 或 "tick"，如果 MixinExtras 能穿透 lambda
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/entity/Entity;squaredDistanceTo(Lnet/minecraft/util/math/Vec3d;)D"
@@ -45,46 +43,9 @@ public abstract class MixinShieldHandler {
     private double wrapSquaredDistanceTo(Entity entity, Vec3d center, Operation<Double> original) {
         Vec3d diff = entity.getPos().subtract(center);
         double maxAxis = Math.max(Math.abs(diff.x), Math.max(Math.abs(diff.y), Math.abs(diff.z)));
+        // 返回一个"伪距离平方"：如果 maxAxis <= 4，返回 0（表示在范围内）
+        // 如果 > 4，返回一个很大的数（表示在范围外）
+        // 这样外层 <= 8.0 的比较就能正常工作
         return maxAxis <= 4.0 ? 0.0 : 9999.0;
-    }
-
-    // --- 新增：为忠诚玩家添加增益效果 ---
-    @Inject(
-            method = "tick",
-            at = @At("TAIL")
-    )
-    private void onTickTail(MinecraftServer server, CallbackInfo ci) {
-        // 强制转换为 ShieldHandler 以访问其字段和方法（this 本身就是）
-        ShieldHandler self = (ShieldHandler) (Object) this;
-
-        // 护盾必须开启且子系统正常
-        if (!self.shielded().get() || !self.tardis().subsystems().shields().isEnabled()
-                || self.tardis().subsystems().shields().isBroken()) {
-            return;
-        }
-
-        // 获取外部位置
-        var travel = self.tardis().travel();
-        var globalPos = travel.position();
-        World world = globalPos.getWorld();
-        BlockPos exteriorPos = globalPos.getPos();
-
-        // 扫描护盾范围内的所有玩家
-        world.getOtherEntities(null, new Box(exteriorPos).expand(4.0))
-                .stream()
-                .filter(entity -> entity instanceof ServerPlayerEntity)
-                .map(entity -> (ServerPlayerEntity) entity)
-                .forEach(player -> {
-                    // 1. 给予生命恢复效果（每秒恢复 1 心，持续 1 秒，每 tick 刷新）
-                    player.addStatusEffect(
-                            new StatusEffectInstance(StatusEffects.REGENERATION, 20, 0, true, false, false)
-                    );
-                    player.addStatusEffect(
-                            new StatusEffectInstance(AITStatusEffects.OXYGENATED, 60, 0, false, false)
-                    );
-                        // 重置氧气条为最大值（立即补满）
-                        player.setAir(player.getMaxAir());
-                }
-        );
     }
 }
