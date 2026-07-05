@@ -26,8 +26,6 @@ public static void registerItems() {
                                 entries.add(TYPE_103_SPAWN);
                                 entries.add(EVEREYE_SPAWN);
                                 entries.add(OXYGEN_CHARGER_ITEM);
-                                entries.add(OXYGEN_TANK);
-                                entries.add(TLIPOCA_SCYTHE);
                             })
                             .build());
         }

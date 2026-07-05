@@ -21,8 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Mixin(SiegeModeControl.class)
 public class MixinSiegeModeControl extends Control {
 
-    // 改这里：12.5 秒（250 tick）
-    private static final long CONFIRMATION_WINDOW = 20 * 15; // 240 tick ≈ 12 秒（也可以直接写 250）
+    private static final long CONFIRMATION_WINDOW = 20 * 15;
 
     // 存储每个 TARDIS 的武装时间
     private static final Map<UUID, Long> SIEGE_ARMED = new ConcurrentHashMap<>();

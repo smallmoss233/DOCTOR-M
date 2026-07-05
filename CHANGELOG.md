@@ -2,7 +2,7 @@
 
 ---
 
-## [ v2.0 ]
+## [ v2.0-beta ]
 
 ### 新翻译 / New lang
 
@@ -21,6 +21,7 @@
 -  怀表 / Pocket Watch
 -  神秘宝石 / Mystery Gem
 -  永恒水晶 / Eternal Crystal
+-  氧气补充机 / Oxygen Charger
 
 ### 修改 / Edit
 
@@ -30,7 +31,7 @@
 -  根成就 / Root Achievement
 -  归途 / Way Home
 -  利用mixin重写了AIT的氧气逻辑！ / Rewrote AIT's oxygen logic using mixin!
--  修改了整个主菜单！ / Modified the entire main menu!
+-  修改了主菜单！ / Modified the main menu!
 -  AIT的太空服将会提供保暖效果 / AIT's spacesuit will provide warmth
 -  让手柄听得懂中文！ / Make Handle understand Chinese!
 
