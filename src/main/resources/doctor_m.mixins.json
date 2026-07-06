@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "doctor_m.MobEntityMixin",
+    "PlanetRegistryMixin",
     "ait_oxygenatedmixin.MixinSpacesuitItem",
     "ait_oxygenatedmixin.MixinOxygenatedEffect",
     "ait_oxygenatedmixin.MixinOxygenatorBlockEntity",

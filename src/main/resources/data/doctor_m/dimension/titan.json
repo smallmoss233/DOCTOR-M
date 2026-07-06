@@ -1,0 +1,11 @@
+{
+  "type": "doctor_m:titan",
+  "generator": {
+    "type": "doctor_m:titan",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "doctor_m:titan"
+    },
+    "settings": "minecraft:overworld"
+  }
+}

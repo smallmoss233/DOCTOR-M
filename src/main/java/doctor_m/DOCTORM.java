@@ -2,6 +2,8 @@ package doctor_m;
 
 import dev.amble.lib.container.RegistryContainer;
 import doctor_m.Item.item_group;
+import doctor_m.dimension.dimension;
+import doctor_m.dimension.dimension_register;
 import doctor_m.entities.entities;
 import doctor_m.Item.items;
 import doctor_m.module.ait_space_mixin.ModBlockEntities;
@@ -27,11 +29,11 @@ public class DOCTORM implements ModInitializer {
         creativity_items.registerAbilities();
         item_group.registerItems();
         entities.registerAttributes();
-        doctor_m.dimension.trenzalore.register();
+        dimension_register.register();
         TimeKeyFunction.INSTANCE.register();
         PocketWatchFunction.INSTANCE.register();
-        GemDeathSaveHandler.register();
-        GemTickHandler.register();
+        GemDeathSaveHandler.INSTANCE.register();
+        GemTickHandler.INSTANCE.register();
         ModBlocks.register();
         ModBlockEntities.register();
     }
