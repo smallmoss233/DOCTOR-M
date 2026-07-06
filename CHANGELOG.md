@@ -19,6 +19,7 @@
 ### 修改 / Edit
 
 -  AIT的哈赞卓水晶不再是消耗物品本身，而是消耗物品耐久（16）
+-  增强神秘宝石（遗物宝石）[@TC-020 iss12](https://github.com/smallmoss233/DOCTOR-M/issues/11)
 
 ### 修复 / Repair
 

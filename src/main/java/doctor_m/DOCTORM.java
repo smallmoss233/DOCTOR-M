@@ -7,6 +7,8 @@ import doctor_m.Item.items;
 import doctor_m.module.ait_space_mixin.ModBlockEntities;
 import doctor_m.module.ait_space_mixin.ModBlocks;
 import doctor_m.module.creativity.creativity_items;
+import world_data.GemDeathSaveHandler;
+import world_data.GemTickHandler;
 import world_data.PocketWatchFunction;
 import world_data.TimeKeyFunction;
 import net.fabricmc.api.ModInitializer;
@@ -28,6 +30,8 @@ public class DOCTORM implements ModInitializer {
         doctor_m.dimension.trenzalore.register();
         TimeKeyFunction.INSTANCE.register();
         PocketWatchFunction.INSTANCE.register();
+        GemDeathSaveHandler.register();
+        GemTickHandler.register();
         ModBlocks.register();
         ModBlockEntities.register();
     }
