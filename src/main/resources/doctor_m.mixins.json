@@ -11,7 +11,8 @@
     "aitmixin.MixinShieldHandler",
     "aitmixin.MixinSiegeModeControl",
     "aitmixin.MixinHandlesItem",
-    "aitmixin.MixinAITMod"
+    "aitmixin.MixinAITMod",
+    "aitmixin.MixinInteriorTeleporterItem"
   ],
   "injectors": {
     "defaultRequire": 1
