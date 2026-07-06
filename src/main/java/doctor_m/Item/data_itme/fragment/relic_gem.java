@@ -15,7 +15,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
-public class mystery_gem extends TrinketItem {
+public class relic_gem extends TrinketItem {
 
     private static final String NBT_LEVEL = "GemLevel";
     private static final String NBT_COOLDOWN = "CooldownUntil";
@@ -25,7 +25,7 @@ public class mystery_gem extends TrinketItem {
     private static final int BASE_COOLDOWN_TICKS = 20 * 60 * 10; // 10分钟
     private static final int COOLDOWN_REDUCTION_PER_LEVEL = 20 * 60 * 2; // 每级减2分钟
 
-    public mystery_gem(Settings settings) {
+    public relic_gem(Settings settings) {
         super(settings.maxCount(1));
     }
 
@@ -158,13 +158,13 @@ public class mystery_gem extends TrinketItem {
 
         int currentLevel = getLevel(stack);
         if (currentLevel >= MAX_LEVEL) {
-            user.sendMessage(Text.translatable("message.doctor_m.mystery_gem.max_level").formatted(Formatting.RED), true);
+            user.sendMessage(Text.translatable("message.doctor_m.relic_gem.max_level").formatted(Formatting.RED), true);
             return TypedActionResult.fail(stack);
         }
 
         int cost = getXpCost(currentLevel + 1);
         if (user.experienceLevel < cost) {
-            user.sendMessage(Text.translatable("message.doctor_m.mystery_gem.not_enough_xp", cost).formatted(Formatting.RED), true);
+            user.sendMessage(Text.translatable("message.doctor_m.relic_gem.not_enough_xp", cost).formatted(Formatting.RED), true);
             return TypedActionResult.fail(stack);
         }
 
@@ -179,7 +179,7 @@ public class mystery_gem extends TrinketItem {
             }
         });
 
-        user.sendMessage(Text.translatable("message.doctor_m.mystery_gem.level_up", currentLevel + 1).formatted(Formatting.GREEN), true);
+        user.sendMessage(Text.translatable("message.doctor_m.relic_gem.level_up", currentLevel + 1).formatted(Formatting.GREEN), true);
         world.playSound(null, user.getBlockPos(), net.minecraft.sound.SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, net.minecraft.sound.SoundCategory.PLAYERS, 0.5f, 1.5f);
 
         return TypedActionResult.success(stack);
@@ -192,7 +192,7 @@ public class mystery_gem extends TrinketItem {
         int level = getLevel(stack);
         int resistance = getPassiveResistanceLevel(stack);
 
-        tooltip.add(Text.translatable("message.doctor_m.mystery_gem").formatted(Formatting.GRAY));
+        tooltip.add(Text.translatable("message.doctor_m.relic_gem").formatted(Formatting.GRAY));
 
         // 单行状态文本
         String statusKey;
@@ -200,20 +200,20 @@ public class mystery_gem extends TrinketItem {
 
         if (world != null && isOnCooldown(stack, world.getTime())) {
             long remain = (getCooldownUntil(stack) - world.getTime()) / 20;
-            statusKey = "message.doctor_m.mystery_gem.status.cooldown";
+            statusKey = "message.doctor_m.relic_gem.status.cooldown";
             args = new Object[]{level, MAX_LEVEL, resistance, remain / 60, remain % 60};
         } else if (level < MAX_LEVEL) {
-            statusKey = "message.doctor_m.mystery_gem.status.upgradable";
+            statusKey = "message.doctor_m.relic_gem.status.upgradable";
             args = new Object[]{level, MAX_LEVEL, resistance, getXpCost(level + 1)};
         } else {
-            statusKey = "message.doctor_m.mystery_gem.status.max";
+            statusKey = "message.doctor_m.relic_gem.status.max";
             args = new Object[]{level, MAX_LEVEL, resistance};
         }
 
         tooltip.add(Text.translatable(statusKey, args).formatted(Formatting.AQUA));
 
         ShiftTooltipInvoker.addShiftTooltip(tooltip,
-                Text.translatable("message.doctor_m.mystery_gem.detail")
+                Text.translatable("message.doctor_m.relic_gem.detail")
         );
     }
 }

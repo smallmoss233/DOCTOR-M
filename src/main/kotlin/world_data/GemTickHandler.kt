@@ -1,20 +1,21 @@
-package world_data;
+package world_data
 
-import doctor_m.Item.data_itme.fragment.mystery_gem;
-import dev.emi.trinkets.api.TrinketsApi;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.minecraft.server.network.ServerPlayerEntity;
+import dev.emi.trinkets.api.TrinketsApi
+import doctor_m.Item.data_itme.fragment.relic_gem
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 
-public class GemTickHandler {
-    public static void register() {
-        ServerTickEvents.END_SERVER_TICK.register(server -> {
-            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-                TrinketsApi.getTrinketComponent(player).ifPresent(component -> {
-                    component.getEquipped(stack -> stack.getItem() instanceof mystery_gem).forEach(pair -> {
-                        mystery_gem.tick(player, pair.getRight());
-                    });
-                });
+object GemTickHandler {
+    @JvmStatic
+    fun register() {
+        ServerTickEvents.END_SERVER_TICK.register { server ->
+            for (player in server.playerManager.playerList) {
+                TrinketsApi.getTrinketComponent(player).ifPresent { component ->
+                    component.getEquipped { stack -> stack.item is relic_gem }
+                        .forEach { pair ->
+                            relic_gem.tick(player, pair.right)
+                        }
+                }
             }
-        });
+        }
     }
 }
