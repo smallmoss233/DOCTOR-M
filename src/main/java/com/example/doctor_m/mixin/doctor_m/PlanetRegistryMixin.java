@@ -1,4 +1,4 @@
-package com.example.doctor_m.mixin; // 换成你的包名
+package com.example.doctor_m.mixin.doctor_m; // 换成你的包名
 
 import dev.amble.ait.module.planet.core.space.planet.Planet;
 import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry;
