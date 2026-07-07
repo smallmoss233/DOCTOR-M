@@ -1,4 +1,4 @@
-package doctor_m.util;
+package doctor_m.util.javautil;
 
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;

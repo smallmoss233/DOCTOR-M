@@ -1,4 +1,4 @@
-package doctor_m.util;
+package doctor_m.util.javautil;
 
 import dev.emi.trinkets.api.TrinketsApi;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;

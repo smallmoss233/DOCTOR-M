@@ -2,13 +2,14 @@ package doctor_m;
 
 import dev.amble.lib.container.RegistryContainer;
 import doctor_m.Item.item_group;
-import doctor_m.dimension.dimension;
 import doctor_m.dimension.dimension_register;
 import doctor_m.entities.entities;
 import doctor_m.Item.items;
 import doctor_m.module.ait_space_mixin.ModBlockEntities;
 import doctor_m.module.ait_space_mixin.ModBlocks;
 import doctor_m.module.creativity.creativity_items;
+import doctor_m.util.command.AITTardisBuilderCommand;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import world_data.GemDeathSaveHandler;
 import world_data.GemTickHandler;
 import world_data.PocketWatchFunction;
@@ -36,5 +37,6 @@ public class DOCTORM implements ModInitializer {
         GemTickHandler.INSTANCE.register();
         ModBlocks.register();
         ModBlockEntities.register();
+        CommandRegistrationCallback.EVENT.register(AITTardisBuilderCommand::register);
     }
 }

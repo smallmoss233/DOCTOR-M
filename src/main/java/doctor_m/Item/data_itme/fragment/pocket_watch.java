@@ -1,14 +1,13 @@
 package doctor_m.Item.data_itme.fragment;
 
 import dev.emi.trinkets.api.TrinketItem;  // 改为 TrinketItem
-import doctor_m.util.ShiftTooltipInvoker;
-import doctor_m.util.TooltipHelper;
+import doctor_m.util.javautil.ShiftTooltipInvoker;
+import doctor_m.util.javautil.TooltipHelper;
 import world_data.PocketWatchFunction;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 

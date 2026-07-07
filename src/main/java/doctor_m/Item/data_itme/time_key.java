@@ -1,9 +1,9 @@
 package doctor_m.Item.data_itme;
 
 import dev.emi.trinkets.api.TrinketItem;
-import doctor_m.util.DynamicColorHelper;
-import doctor_m.util.ShiftTooltipInvoker;
-import doctor_m.util.TooltipHelper;
+import doctor_m.util.javautil.DynamicColorHelper;
+import doctor_m.util.javautil.ShiftTooltipInvoker;
+import doctor_m.util.javautil.TooltipHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;

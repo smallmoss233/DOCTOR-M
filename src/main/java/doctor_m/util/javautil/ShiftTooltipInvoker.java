@@ -1,4 +1,4 @@
-package doctor_m.util;
+package doctor_m.util.javautil;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.api.EnvType;

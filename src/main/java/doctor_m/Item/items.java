@@ -14,7 +14,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.util.Rarity;
-import doctor_m.util.PercentageDamageHelper;
+import doctor_m.util.javautil.PercentageDamageHelper;
 
 public class items extends ItemContainer {
 

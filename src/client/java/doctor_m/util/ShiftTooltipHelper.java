@@ -1,5 +1,6 @@
 package doctor_m.util;
 
+import doctor_m.util.javautil.TooltipHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;

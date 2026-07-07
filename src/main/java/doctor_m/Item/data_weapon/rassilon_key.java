@@ -1,6 +1,6 @@
 package doctor_m.Item.data_weapon;
 
-import doctor_m.util.TooltipHelper;
+import doctor_m.util.javautil.TooltipHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

@@ -3,7 +3,7 @@ package doctor_m.Item.data_itme.fragment;
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketItem;
 import dev.emi.trinkets.api.TrinketsApi;
-import doctor_m.util.ShiftTooltipInvoker;
+import doctor_m.util.javautil.ShiftTooltipInvoker;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;

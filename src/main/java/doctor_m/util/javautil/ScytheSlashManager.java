@@ -1,4 +1,4 @@
-package doctor_m.util;
+package doctor_m.util.javautil;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;

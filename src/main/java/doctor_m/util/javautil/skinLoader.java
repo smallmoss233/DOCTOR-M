@@ -1,4 +1,4 @@
-package doctor_m.util;
+package doctor_m.util.javautil;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

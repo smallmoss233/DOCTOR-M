@@ -1,8 +1,8 @@
 package doctor_m.Item.data_itme.fragment;
 
 import dev.emi.trinkets.api.TrinketItem;
-import doctor_m.util.ShiftTooltipInvoker;
-import doctor_m.util.TooltipHelper;
+import doctor_m.util.javautil.ShiftTooltipInvoker;
+import doctor_m.util.javautil.TooltipHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
