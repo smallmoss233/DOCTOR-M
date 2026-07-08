@@ -13,7 +13,10 @@
     "aitmixin.MixinSiegeModeControl",
     "aitmixin.MixinHandlesItem",
     "aitmixin.MixinAITMod",
-    "aitmixin.MixinInteriorTeleporterItem"
+    "aitmixin.MixinInteriorTeleporterItem",
+    "aitmixin.OverloadSonicModeMixin",
+    "SonicMode.TardisSonicModeMixin",
+    "SonicMode.ScanningSonicModeMixin"
   ],
   "injectors": {
     "defaultRequire": 1

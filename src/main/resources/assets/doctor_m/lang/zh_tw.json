@@ -9,6 +9,8 @@
   "advancement.doctor_m.not_thermos.description": "你在幹什麼？？喝氧氣瓶裡頭的氧氣嗎？？",
   "advancement.doctor_m.you_ate_this.title": "你把這玩意吃了？！",
   "advancement.doctor_m.you_ate_this.description": "人在極度飢餓的狀態下真的會力大無窮——比如你，你徒手擰開了氧氣瓶的閥門，把裡面的壓縮空氣當成壓縮餅乾，連瓶帶氣吞了下去，胃在抗議，但你的意志贏了。",
+  "advancement.doctor_m.deafening.title": "震耳欲聾",
+  "advancement.doctor_m.deafening.description": "用音速起子過載模式痛擊堅守者！",
 
   "tardis.message.control.siege.confirm_prompt": "再次按下以啟用圍攻模式！（等待10秒再點擊）",
 
@@ -54,6 +56,18 @@
   "tooltip.doctor_m.ait_tardisbuilder.success.owner": "塔迪斯主人：%s",
   "tooltip.doctor_m.ait_tardisbuilder.success.position": "所處位置：%s",
   "tooltip.doctor_m.ait_tardisbuilder.success.subsystem_mode": "搭載子系統：%s",
+  "tooltip.doctor_m.scan.space_found": "🔍 牆後 %.1f 格處發現 %s",
+  "tooltip.doctor_m.scan.type.air": "空氣",
+  "tooltip.doctor_m.scan.type.liquid": "液體",
+  "tooltip.doctor_m.scan.type.passable": "空間（含植物）",
+  "tooltip.doctor_m.scan.type.space": "空間",
+  "tooltip.doctor_m.scan.region_info": "📍 %d %d %d  |  %s  |  🕐 %s",
+  "tooltip.doctor_m.scan.entity.format": "🧬 %s | %s",
+  "tooltip.doctor_m.scan.entity.undead": "亡靈",
+  "tooltip.doctor_m.scan.entity.arthropod": "節肢",
+  "tooltip.doctor_m.scan.entity.illager": "災厄",
+  "tooltip.doctor_m.scan.entity.unknown": "未知",
+  "tooltip.doctor_m.scan.entity.non_living": "📦 非生物實體",
 
   "hud.doctor_m.environment.oxygenated": "有氧，可脫下太空衣",
   "hud.doctor_m.environment.deoxygenated": "無氧，不可脫下太空衣",

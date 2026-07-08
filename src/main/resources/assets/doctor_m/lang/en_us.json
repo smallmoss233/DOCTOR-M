@@ -9,6 +9,8 @@
   "advancement.doctor_m.not_thermos.description": "What are you doing?? Drinking the oxygen from the tank??",
   "advancement.doctor_m.you_ate_this.title": "You ate that thing?!",
   "advancement.doctor_m.you_ate_this.description": "In extreme hunger, one can become incredibly strong—like you, who pried open the oxygen tank valve with bare hands, gulped down the compressed air as if it were a biscuit, swallowing the tank and all. Your stomach protested, but your will prevailed.",
+  "advancement.doctor_m.deafening.title": "Deafening",
+  "advancement.doctor_m.deafening.description": "Strike the Warden with the Sonic Screwdriver in overcharge mode!",
 
   "tardis.message.control.siege.confirm_prompt": "Press again to enable Siege Mode! (Wait 10 seconds before clicking)",
 
@@ -54,6 +56,18 @@
   "tooltip.doctor_m.ait_tardisbuilder.success.owner": "TARDIS owner: %s",
   "tooltip.doctor_m.ait_tardisbuilder.success.position": "Location: %s",
   "tooltip.doctor_m.ait_tardisbuilder.success.subsystem_mode": "Equipped with subsystems: %s",
+  "tooltip.doctor_m.scan.space_found": "🔍 Found %s %.1f blocks behind wall",
+  "tooltip.doctor_m.scan.type.air": "air",
+  "tooltip.doctor_m.scan.type.liquid": "liquid",
+  "tooltip.doctor_m.scan.type.passable": "space (with plants)",
+  "tooltip.doctor_m.scan.type.space": "space",
+  "tooltip.doctor_m.scan.region_info": "📍 %d %d %d  |  %s  |  🕐 %s",
+  "tooltip.doctor_m.scan.entity.format": "🧬 %s",
+  "tooltip.doctor_m.scan.entity.undead": "Undead",
+  "tooltip.doctor_m.scan.entity.arthropod": "Arthropod",
+  "tooltip.doctor_m.scan.entity.illager": "Illager",
+  "tooltip.doctor_m.scan.entity.unknown": "Unknown",
+  "tooltip.doctor_m.scan.entity.non_living": "📦 Non-living entity",
 
   "hud.doctor_m.environment.oxygenated": "Oxygenated, can take off spacesuit",
   "hud.doctor_m.environment.deoxygenated": "Deoxygenated, cannot take off spacesuit",
