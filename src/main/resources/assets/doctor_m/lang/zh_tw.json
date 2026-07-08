@@ -68,6 +68,11 @@
   "tooltip.doctor_m.scan.entity.illager": "災厄",
   "tooltip.doctor_m.scan.entity.unknown": "未知",
   "tooltip.doctor_m.scan.entity.non_living": "📦 非生物實體",
+  "tooltip.doctor_m.sonic.tardis_not_bound": "⚠️ 這把音速起子沒有綁定 TARDIS",
+  "tooltip.doctor_m.sonic.position_unknown": "❌ 無法獲取 TARDIS 位置",
+  "tooltip.doctor_m.sonic.player_location": "📍 你的位置: %d %d %d [%s]",
+  "tooltip.doctor_m.sonic.tardis_location_with_arrow": "📡 TARDIS 位置: %d %d %d [距離 %d 格 %s]",
+  "tooltip.doctor_m.sonic.different_world": "🌍 TARDIS 不在此世界 (位於 %s)",
 
   "hud.doctor_m.environment.oxygenated": "有氧，可脫下太空衣",
   "hud.doctor_m.environment.deoxygenated": "無氧，不可脫下太空衣",

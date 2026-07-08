@@ -68,6 +68,11 @@
   "tooltip.doctor_m.scan.entity.illager": "Illager",
   "tooltip.doctor_m.scan.entity.unknown": "Unknown",
   "tooltip.doctor_m.scan.entity.non_living": "📦 Non-living entity",
+  "tooltip.doctor_m.sonic.tardis_not_bound": "⚠️ This sonic screwdriver is not bound to a TARDIS",
+  "tooltip.doctor_m.sonic.position_unknown": "❌ Unable to get TARDIS position",
+  "tooltip.doctor_m.sonic.player_location": "📍 Your location: %d %d %d [%s]",
+  "tooltip.doctor_m.sonic.tardis_location_with_arrow": "📡 TARDIS location: %d %d %d [%d blocks %s]",
+  "tooltip.doctor_m.sonic.different_world": "🌍 TARDIS is not in this world (located in %s)",
 
   "hud.doctor_m.environment.oxygenated": "Oxygenated, can take off spacesuit",
   "hud.doctor_m.environment.deoxygenated": "Deoxygenated, cannot take off spacesuit",
