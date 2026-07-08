@@ -25,6 +25,7 @@
 -  AIT的哈赞卓水晶不再是消耗物品本身，而是消耗物品耐久（16） / AIT's Hazandra Crystal no longer consumes the item itself, but instead consumes item durability (16).
 -  增强神秘宝石（遗物宝石）[@TC-020 iss12](https://github.com/smallmoss233/DOCTOR-M/issues/11) / Enhance Mysterious Gem (Relic Gem) [@TC-020 iss12](https://github.com/smallmoss233/DOCTOR-M/issues/11)
 -  指令创建塔迪斯功能 / Command to create TARDIS functionality
+-  拉斯隆之钥可以当塔迪斯的钥匙 / Rassilon key can be used as TARDIS key
 
 ### 修复 / Repair
 
