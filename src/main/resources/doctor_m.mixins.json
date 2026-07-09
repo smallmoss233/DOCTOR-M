@@ -14,7 +14,7 @@
     "aitmixin.MixinHandlesItem",
     "aitmixin.MixinAITMod",
     "aitmixin.MixinInteriorTeleporterItem",
-    "aitmixin.OverloadSonicModeMixin",
+    "SonicMode.OverloadSonicModeMixin",
     "SonicMode.TardisSonicModeMixin",
     "SonicMode.ScanningSonicModeMixin"
   ],

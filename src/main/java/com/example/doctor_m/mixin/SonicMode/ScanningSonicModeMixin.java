@@ -1,16 +1,15 @@
 package com.example.doctor_m.mixin.SonicMode;
 
+import dev.amble.ait.core.item.sonic.ScanningSonicMode;
+import dev.amble.ait.core.item.sonic.SonicMode;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.CaveSpiderEntity;
 import net.minecraft.entity.mob.EndermiteEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.mob.SilverfishEntity;
 import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.entity.passive.BeeEntity;
-import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.EntityTypeTags;
@@ -27,9 +26,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import dev.amble.ait.core.item.sonic.ScanningSonicMode;
-import dev.amble.ait.core.item.sonic.SonicMode;
 
 @Mixin(ScanningSonicMode.class)
 public abstract class ScanningSonicModeMixin extends SonicMode {
