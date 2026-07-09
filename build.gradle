@@ -37,6 +37,7 @@ repositories {
         url "https://amblelabs.dev/maven"
         content {
             includeGroup "dev.amble"
+            includeGroup "dev.amblelabs"
         }
     }
     maven {
@@ -59,7 +60,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
     modImplementation "dev.amble:lib:${project.amblekit_version}"
-    modImplementation "dev.amble:ait:${project.ait_version}"
+    modImplementation "dev.amblelabs:ait:${project.ait_version}"
     modImplementation "dev.emi:trinkets:${trinkets_version}"
     modImplementation "net.fabricmc:fabric-language-kotlin:${project.kotlin_version}"
 }
