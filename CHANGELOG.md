@@ -14,7 +14,7 @@
 
 ### 内饰 / Interior
 
--  空
+-  修改：时隙 / Edit : rift
 
 ### 物品 / Items
 
