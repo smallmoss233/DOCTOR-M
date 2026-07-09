@@ -33,4 +33,4 @@
 
 ### 修复 / Repair
 
--  空
+-  fabric.mod.json中贡献者:今悄修改为：贡献者:Siletonight / In fabric.mod.json, change the contributor from "今悄" to "Siletonight".
