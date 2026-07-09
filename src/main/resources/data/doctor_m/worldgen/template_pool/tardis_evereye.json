@@ -1,31 +1,14 @@
 {
-  "name": "doctorm:tardis_evereye",
+  "name": "doctor_m:tardis_evereye",
   "fallback": "minecraft:empty",
   "elements": [
     {
       "weight": 1,
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "doctorm:evereye",
+        "location": "doctor_m:evereye",
         "projection": "rigid",
-        "processors": {
-          "processors": [
-            {
-              "processor_type": "minecraft:block_ignore",
-              "blocks": [
-                {
-                  "Name": "minecraft:structure_block"
-                },
-                {
-                  "Name": "minecraft:barrier"
-                },
-                {
-                  "Name": "minecraft:structure_void"
-                }
-              ]
-            }
-          ]
-        }
+        "processors": "minecraft:empty"
       }
     }
   ]
