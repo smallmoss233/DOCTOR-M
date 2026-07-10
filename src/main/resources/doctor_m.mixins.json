@@ -5,6 +5,7 @@
   "mixins": [
     "doctor_m.MobEntityMixin",
     "doctor_m.PlanetRegistryMixin",
+    "doctor_m.ItemEntityMixin",
     "ait_oxygenatedmixin.MixinSpacesuitItem",
     "ait_oxygenatedmixin.MixinOxygenatedEffect",
     "ait_oxygenatedmixin.MixinOxygenatorBlockEntity",

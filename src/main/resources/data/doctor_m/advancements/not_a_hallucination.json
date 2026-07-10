@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:lava_bucket"
+    },
+    "title": {
+      "translate": "advancement.doctor_m.not_a_hallucination.title"
+    },
+    "description": {
+      "translate": "advancement.doctor_m.not_a_hallucination.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "background": "minecraft:textures/block/lava_still.png"
+  },
+  "parent": "doctor_m:root",
+  "criteria": {
+    "not_a_hallucination": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    ["not_a_hallucination"]
+  ]
+}

@@ -13,6 +13,8 @@
   "advancement.doctor_m.deafening.description": "用音速起子过载模式痛击坚守者！",
   "advancement.doctor_m.scan_overload.title": "怎么会这样呢...",
   "advancement.doctor_m.scan_overload.description": "扫描到一个让音速起子难以理解的存在",
+  "advancement.doctor_m.not_a_hallucination.title": "这并不是幻觉",
+  "advancement.doctor_m.not_a_hallucination.description": "你把塔迪斯的钥匙扔到了岩浆里，这么做让塔迪斯感到不适",
 
   "tardis.message.control.siege.confirm_prompt": "再次按下以启用围攻模式！（等待10秒再点击）",
 

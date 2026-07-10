@@ -13,6 +13,8 @@
   "advancement.doctor_m.deafening.description": "Strike the Warden with the Sonic Screwdriver in overcharge mode!",
   "advancement.doctor_m.scan_overload.title": "How could this be...",
   "advancement.doctor_m.scan_overload.description": "Scanned an entity that the Sonic Screwdriver finds incomprehensible",
+  "advancement.doctor_m.not_a_hallucination.title": "This Is Not a Hallucination",
+  "advancement.doctor_m.not_a_hallucination.description": "You threw the TARDIS key into lava, and doing so made the TARDIS feel uneasy.",
 
   "tardis.message.control.siege.confirm_prompt": "Press again to enable Siege Mode! (Wait 10 seconds before clicking)",
 
