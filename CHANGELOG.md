@@ -15,6 +15,7 @@
 ### 内饰 / Interior
 
 -  修改：时隙 / Edit : rift
+-  修改：永恒之眼/永恒之眼 40型 / Edit : Evereye/Evereye Type40
 
 ### 物品 / Items
 
@@ -26,11 +27,13 @@
 -  增强神秘宝石（遗物宝石）[@TC-020 iss12](https://github.com/smallmoss233/DOCTOR-M/issues/11) / Enhance Mysterious Gem (Relic Gem) [@TC-020 iss12](https://github.com/smallmoss233/DOCTOR-M/issues/11)
 -  指令创建塔迪斯功能 / Command to create TARDIS functionality
 -  拉斯隆之钥可以当塔迪斯的钥匙 / Rassilon key can be used as TARDIS key
--  增强音速起子
-   扫描模式：能探测墙后空间/生物类型，敌对状况/时间，维度，坐标
-   塔迪斯模式：召唤塔迪斯失败时汇报塔迪斯的位置/维度于玩家的相对距离和方向
-   过载模式：可以对坚守者造成伤害和硬控10s
+-  增强音速起子 / Enhanced Sonic
+     扫描模式：能探测墙后空间/生物类型，敌对状况/时间，维度，坐标 / Screwdriver - Scan Mode: Can detect spaces behind walls, entity types, hostility status, time, dimension, and coordinates.
+     塔迪斯模式：召唤塔迪斯失败时汇报塔迪斯的位置/维度于玩家的相对距离和方向 / Screwdriver - TARDIS Mode: When summoning TARDIS fails, reports the TARDIS's location and dimension, along with its relative distance and direction from the player.
+     过载模式：可以对坚守者造成伤害和硬控10s / Screwdriver - Overload Mode: Can deal damage to the Warden and apply a hard stun for 10 seconds.
 
 ### 修复 / Repair
 
 -  fabric.mod.json中贡献者:今悄修改为：贡献者:Siletonight / In fabric.mod.json, change the contributor from "今悄" to "Siletonight".
+-  所有的塔迪斯废墟结构现在都能正常生成 / All TARDIS ruin structures now generate correctly
+-  所有有光影的内饰预览图都经过拍摄了 / All interior preview images with shaders have been captured

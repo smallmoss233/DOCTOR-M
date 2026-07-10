@@ -1,6 +1,6 @@
 {
   "type": "minecraft:jigsaw",
-  "start_pool": "doctor_m:tardis_sig",
+  "start_pool": "doctor_m:ruins_evereye",
   "size": 1,
   "max_distance_from_center": 64,
   "spawn_overrides": {},
@@ -12,18 +12,10 @@
   "project_start_to_heightmap": "OCEAN_FLOOR_WG",
   "biomes": [
     "deep_dark",
-    "forest",
-    "frozen_ocean",
-    "frozen_peaks",
-    "frozen_river",
-    "grove",
     "ice_spikes",
-    "mangrove_swamp",
-    "meadow",
-    "small_end_islands",
-    "snowy_slopes",
     "snowy_beach",
-    "snowy_plains"
+    "snowy_plains",
+    "snowy_taiga"
   ],
   "use_expansion_hack": false
 }
