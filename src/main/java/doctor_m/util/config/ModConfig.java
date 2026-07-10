@@ -19,9 +19,9 @@ public class ModConfig {
     public static final double DEFAULT_ETERNAL_CRYSTAL_EXTRA = 2.5;//最低扣血量（百分比）
 
     //特莉波卡的镰刀
-    public static final int DEFAULT_TLIPOCA_SCYTHE_DAMAGE = 30;
-    public static final double DEFAULT_TLIPOCA_SCYTHE_MULTIPLIER = 1.0;
-    public static final double DEFAULT_TLIPOCA_SCYTHE_EXTRA = 25.0;
+    public static final int DEFAULT_TLIPOCA_SCYTHE_DAMAGE = 30;//冷却
+    public static final double DEFAULT_TLIPOCA_SCYTHE_MULTIPLIER = 1.0;//扣血倍率
+    public static final double DEFAULT_TLIPOCA_SCYTHE_EXTRA = 25.0;//最低扣血量（百分比）
     public boolean enableSlashSystem = true;         // 总开关
     public long slashCooldownTicks = 60;             // 冷却时间（tick）
     public float slashDamage = 400.0f;               // 伤害值
