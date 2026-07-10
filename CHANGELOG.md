@@ -32,6 +32,7 @@
      塔迪斯模式：召唤塔迪斯失败时汇报塔迪斯的位置/维度于玩家的相对距离和方向 / Screwdriver - TARDIS Mode: When summoning TARDIS fails, reports the TARDIS's location and dimension, along with its relative distance and direction from the player.
      过载模式：可以对坚守者造成伤害和硬控10s / Screwdriver - Overload Mode: Can deal damage to the Warden and apply a hard stun for 10 seconds.
 -  塔迪斯自毁的爆炸威力更大，更壮观 / The explosion from TARDIS self-destruction is now more powerful and more spectacular.
+-  现在有非常的可配置项在config/doctor_m里！/ There are now many configurable options available in the config/doctor_m directory!
 
 ### 修复 / Repair
 

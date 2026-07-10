@@ -1,5 +1,6 @@
 package doctor_m.module.ait_space_mixin;
 
+import doctor_m.util.config.ConfigManager;
 import dev.amble.ait.module.planet.core.item.SpacesuitItem;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -49,18 +50,16 @@ public class OxygenChargerBlock extends BlockWithEntity {
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        // 客户端不做实际处理
         if (world.isClient()) {
             return ActionResult.SUCCESS;
         }
 
-        // 获取方块实体
+        var config = ConfigManager.getConfig();
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (!(blockEntity instanceof OxygenChargerBlockEntity charger)) {
             return ActionResult.PASS;
         }
 
-        // 检查冷却
         long currentTime = world.getTime();
         if (currentTime < charger.getCooldownEndTick()) {
             long remainingSeconds = (charger.getCooldownEndTick() - currentTime) / 20;
@@ -68,31 +67,33 @@ public class OxygenChargerBlock extends BlockWithEntity {
                     Text.translatable("message.doctor_m.oxygen_charger.cooldown", remainingSeconds),
                     true
             );
-            // 返回 SUCCESS 以阻止物品自身使用
             return ActionResult.SUCCESS;
         }
 
-        // 处理手持物品
         ItemStack held = player.getStackInHand(hand);
         boolean charged = false;
 
+        // 获取最大容量
+        double maxTankOxygen = config.oxygenTankMaxOxygen;
+        double maxSuitOxygen = config.spacesuitMaxOxygen;
+
         // 尝试充氧气瓶
         if (held.getItem() instanceof OxygenTankItem) {
-            if (OxygenTankItem.getOxygen(held) < OxygenTankItem.MAX_OXYGEN) {
-                OxygenTankItem.setOxygen(held, OxygenTankItem.MAX_OXYGEN);
+            double current = OxygenTankItem.getOxygen(held);
+            if (current < maxTankOxygen) {
+                OxygenTankItem.setOxygen(held, maxTankOxygen);
                 player.sendMessage(Text.translatable("message.doctor_m.oxygen_charger.tank_fill"), true);
                 charged = true;
             } else {
                 player.sendMessage(Text.translatable("message.doctor_m.oxygen_charger.tank_full"), true);
-                // 即使未充氧，也返回 SUCCESS 阻止物品使用
                 return ActionResult.SUCCESS;
             }
         }
         // 尝试充航天服（胸甲）
         else if (held.getItem() instanceof SpacesuitItem && ((ArmorItem) held.getItem()).getType() == ArmorItem.Type.CHESTPLATE) {
             double current = SpaceOxygenManager.getOxygen(held);
-            if (current < SpaceOxygenManager.MAX_OXYGEN) {
-                SpaceOxygenManager.setOxygen(held, SpaceOxygenManager.MAX_OXYGEN);
+            if (current < maxSuitOxygen) {
+                SpaceOxygenManager.setOxygen(held, maxSuitOxygen);
                 player.sendMessage(Text.translatable("message.doctor_m.oxygen_charger.suit_fill"), true);
                 charged = true;
             } else {
@@ -100,20 +101,17 @@ public class OxygenChargerBlock extends BlockWithEntity {
                 return ActionResult.SUCCESS;
             }
         } else {
-            // 手持物品不是可充氧物品，返回 PASS 让物品自己处理（但会触发物品使用）
-            // 如果你希望完全阻止物品使用，可以返回 SUCCESS 并提示无效物品
             player.sendMessage(Text.translatable("message.doctor_m.oxygen_charger.invalid_item"), true);
             return ActionResult.SUCCESS;
         }
 
-        // 如果成功充氧，设置冷却（32秒 = 640 ticks）
         if (charged) {
-            charger.setCooldownEndTick(world.getTime() + 32 * 20);
+            int cooldownSeconds = config.oxygenChargerCooldownSeconds;
+            charger.setCooldownEndTick(world.getTime() + cooldownSeconds * 20L);
             charger.markDirty();
             player.playSound(SoundEvents.BLOCK_BELL_RESONATE, 1.0F, 1.0F);
         }
 
-        // 始终返回 SUCCESS，阻止物品自身使用
         return ActionResult.SUCCESS;
     }
 }

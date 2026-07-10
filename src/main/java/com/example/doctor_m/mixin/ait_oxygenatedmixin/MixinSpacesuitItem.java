@@ -4,6 +4,7 @@ import dev.amble.ait.core.AITStatusEffects;
 import dev.amble.ait.module.planet.core.item.SpacesuitItem;
 import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry;
 import doctor_m.module.ait_space_mixin.SpaceOxygenManager;
+import doctor_m.util.config.ConfigManager;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -28,18 +29,15 @@ public abstract class MixinSpacesuitItem {
     private void onInventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected, CallbackInfo ci) {
         SpacesuitItem self = (SpacesuitItem)(Object)this;
 
-        // 1. 只处理胸甲
         if (self.getType() != ArmorItem.Type.CHESTPLATE) return;
         if (world.isClient()) return;
         if (!(entity instanceof LivingEntity living)) return;
 
-        // 2. 检查是否穿在胸甲槽位（对于非玩家生物，通过 getEquippedStack 检查）
         if (living.getEquippedStack(net.minecraft.entity.EquipmentSlot.CHEST) != stack) {
             ci.cancel();
             return;
         }
 
-        // 3. 创造模式玩家不消耗氧气
         if (living instanceof PlayerEntity player && player.isCreative()) {
             ci.cancel();
             return;
@@ -58,23 +56,25 @@ public abstract class MixinSpacesuitItem {
                 world.getRegistryKey().getValue().getPath().startsWith("tardis");
         boolean hasOxygenated = living.hasStatusEffect(AITStatusEffects.OXYGENATED);
 
-        // 水下检测（即使世界有氧，也视为无氧环境）
         boolean isSubmerged = living.isSubmergedInWater();
         boolean isHeadInsideBlock = !world.getBlockState(living.getBlockPos().up(1)).isAir();
+
+        // ====== 读取配置 ======
+        var config = ConfigManager.getConfig();
+        double consumeUnderwater = config.spacesuitOxygenConsumeUnderwater;
+        double consumeSpace = config.spacesuitOxygenConsumeSpace;
 
         // ====== 核心逻辑：水下呼吸 ======
         if (isSubmerged) {
             double oxygen = SpaceOxygenManager.getOxygen(stack);
             if (oxygen > 0) {
-                // 有氧气：重置呼吸条，移除溺水效果
                 living.setAir(300);
                 living.removeStatusEffect(StatusEffects.WITHER);
-                // 消耗氧气（每2秒消耗0.5点）
+                // 使用配置的消耗量（每2秒消耗）
                 if (world.getTime() % 40 == 0) {
-                    SpaceOxygenManager.consumeOxygen(stack, 0.5);
+                    SpaceOxygenManager.consumeOxygen(stack, consumeUnderwater);
                 }
             } else {
-                // 无氧气：允许溺水，添加缺氧效果
                 living.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 40, 0, false, false));
             }
             ci.cancel();
@@ -95,7 +95,7 @@ public abstract class MixinSpacesuitItem {
         if (world.getTime() % 60 == 0) {
             double current = SpaceOxygenManager.getOxygen(stack);
             if (current > 0) {
-                SpaceOxygenManager.consumeOxygen(stack, 1.0);
+                SpaceOxygenManager.consumeOxygen(stack, consumeSpace);
             }
         }
 
@@ -117,7 +117,8 @@ public abstract class MixinSpacesuitItem {
         if (self.getType() != ArmorItem.Type.CHESTPLATE) return;
 
         double oxygen = SpaceOxygenManager.getOxygen(stack);
-        tooltip.add(Text.translatable("tooltip.doctor_m.oxygen", oxygen, SpaceOxygenManager.MAX_OXYGEN));
+        double maxOxygen = SpaceOxygenManager.MAX_OXYGEN;
+        tooltip.add(Text.translatable("tooltip.doctor_m.oxygen", oxygen, maxOxygen));
 
         ci.cancel();
     }

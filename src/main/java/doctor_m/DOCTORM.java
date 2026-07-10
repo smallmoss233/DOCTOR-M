@@ -9,6 +9,7 @@ import doctor_m.module.ait_space_mixin.ModBlockEntities;
 import doctor_m.module.ait_space_mixin.ModBlocks;
 import doctor_m.module.creativity.creativity_items;
 import doctor_m.util.command.AITTardisBuilderCommand;
+import doctor_m.util.config.ConfigManager;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import world_data.GemDeathSaveHandler;
 import world_data.GemTickHandler;
@@ -38,5 +39,6 @@ public class DOCTORM implements ModInitializer {
         ModBlocks.register();
         ModBlockEntities.register();
         CommandRegistrationCallback.EVENT.register(AITTardisBuilderCommand::register);
+        ConfigManager.loadConfig();
     }
 }

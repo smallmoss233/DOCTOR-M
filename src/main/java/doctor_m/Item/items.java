@@ -10,6 +10,8 @@ import doctor_m.Item.data_weapon.rassilon_key;
 import doctor_m.entities.entities;
 import doctor_m.module.ait_space_mixin.ModBlocks;
 import doctor_m.module.ait_space_mixin.OxygenTankItem;
+import doctor_m.util.config.ConfigManager;
+import doctor_m.util.config.ModConfig;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.SpawnEggItem;
@@ -50,11 +52,20 @@ public class items extends ItemContainer {
             .rarity(Rarity.EPIC));
 
     public static void registerAbilities() {
+        ModConfig config = ConfigManager.getConfig();
+
         new PercentageDamageHelper(new PercentageDamageHelper.Config(
-                20, 1.0, 10.0, PercentageDamageHelper.hasAnyOfItems(TIME_KEY)
+                config.timeKeyDamage,
+                config.timeKeyMultiplier,
+                config.timeKeyExtra,
+                PercentageDamageHelper.hasAnyOfItems(TIME_KEY)
         ));
+
         new PercentageDamageHelper(new PercentageDamageHelper.Config(
-                100, 0.5, 2.5, PercentageDamageHelper.hasAnyOfItems(ETERNAL_CRYSTAL)
+                config.eternalCrystalDamage,
+                config.eternalCrystalMultiplier,
+                config.eternalCrystalExtra,
+                PercentageDamageHelper.hasAnyOfItems(ETERNAL_CRYSTAL)
         ));
     }
 }

@@ -1,5 +1,6 @@
 package com.example.doctor_m.mixin.aitmixin;
 
+import doctor_m.util.config.ConfigManager;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -24,7 +25,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import dev.amble.ait.AITMod;
 import dev.amble.ait.core.AITSounds;
 import dev.amble.ait.core.tardis.Tardis;
@@ -40,12 +40,7 @@ import java.util.List;
 @Mixin(SelfDestructHandler.class)
 public class SelfDestructHandlerMixin {
 
-    private static final int MAX_RADIUS = 80;
-    private static final int EXPLOSION_STEPS = 20;
-    private static final int DELAY_PER_STEP = 4;
-    private static final int FINAL_CLEAR_RADIUS = 100;
-    private static final int KNOCKBACK_RADIUS = 30;
-    private static final double KNOCKBACK_FORCE = 2.5;
+    // 不再使用硬编码常量，改为从配置读取
 
     private static final List<DelayedTask> TASK_QUEUE = new ArrayList<>();
     private static boolean TICK_LISTENER_REGISTERED = false;
@@ -70,7 +65,19 @@ public class SelfDestructHandlerMixin {
 
     @Inject(method = "complete", at = @At("HEAD"), cancellable = true)
     private void doctor_m$gradualAnnihilation(CallbackInfo ci) {
+        // 检查总开关
+        if (!ConfigManager.getConfig().enableSelfDestructEnhancement) {
+            return; // 让原方法执行
+        }
         ci.cancel();
+
+        // 读取配置参数
+        int MAX_RADIUS = ConfigManager.getConfig().selfDestructMaxRadius;
+        int EXPLOSION_STEPS = ConfigManager.getConfig().selfDestructExplosionSteps;
+        int DELAY_PER_STEP = ConfigManager.getConfig().selfDestructDelayPerStep;
+        int FINAL_CLEAR_RADIUS = ConfigManager.getConfig().selfDestructFinalClearRadius;
+        int KNOCKBACK_RADIUS = ConfigManager.getConfig().selfDestructKnockbackRadius;
+        double KNOCKBACK_FORCE = ConfigManager.getConfig().selfDestructKnockbackForce;
 
         SelfDestructHandler self = (SelfDestructHandler) (Object) this;
         Tardis tardis = this.doctor_m$getTardis(self);
@@ -129,16 +136,16 @@ public class SelfDestructHandlerMixin {
             scheduleTask(delayTicks, () -> {
                 annihilateSphere(world, centerPos, (int) radius);
                 applyScreenShake(world, center, (int) radius + 20);
-                applyKnockback(world, center, radius);
-                spawnExpansionEffect(world, center, radius, currentStep);
+                applyKnockback(world, center, radius, KNOCKBACK_RADIUS, KNOCKBACK_FORCE);
+                spawnExpansionEffect(world, center, radius, currentStep, EXPLOSION_STEPS);
             });
         }
 
         // 终极阶段
         int finalDelay = 10 + (EXPLOSION_STEPS + 3) * DELAY_PER_STEP;
         scheduleTask(finalDelay, () -> {
-            ultimateAnnihilation(world, centerPos, center);
-            executeTotalObliteration(world, center, centerPos);
+            ultimateAnnihilation(world, centerPos, center, FINAL_CLEAR_RADIUS);
+            executeTotalObliteration(world, center, centerPos, FINAL_CLEAR_RADIUS);
             spawnGrandFinale(world, center);
         });
     }
@@ -188,9 +195,6 @@ public class SelfDestructHandlerMixin {
         }
     }
 
-    /**
-     * 屏幕震动效果（ nausea ），不影响视野
-     */
     private void applyScreenShake(ServerWorld world, Vec3d center, int effectRadius) {
         Box box = new Box(center, center).expand(effectRadius);
         List<ServerPlayerEntity> players = world.getEntitiesByClass(ServerPlayerEntity.class, box, p -> true);
@@ -206,9 +210,10 @@ public class SelfDestructHandlerMixin {
         }
     }
 
-    private void applyKnockback(ServerWorld world, Vec3d center, double currentRadius) {
+    private void applyKnockback(ServerWorld world, Vec3d center, double currentRadius,
+                                int knockbackRadius, double knockbackForce) {
         double innerRadius = currentRadius;
-        double outerRadius = currentRadius + KNOCKBACK_RADIUS;
+        double outerRadius = currentRadius + knockbackRadius;
 
         Box box = new Box(center, center).expand(outerRadius);
         List<LivingEntity> targets = world.getEntitiesByClass(LivingEntity.class, box, LivingEntity::isAlive);
@@ -223,8 +228,8 @@ public class SelfDestructHandlerMixin {
             Vec3d targetPos = target.getPos();
             Vec3d direction = targetPos.subtract(center).normalize();
 
-            double proximityFactor = 1 - (distance - innerRadius) / KNOCKBACK_RADIUS;
-            double force = KNOCKBACK_FORCE * (1 + proximityFactor * 2);
+            double proximityFactor = 1 - (distance - innerRadius) / knockbackRadius;
+            double force = knockbackForce * (1 + proximityFactor * 2);
 
             target.setVelocity(
                     direction.x * force,
@@ -235,8 +240,8 @@ public class SelfDestructHandlerMixin {
         }
     }
 
-    private void ultimateAnnihilation(ServerWorld world, BlockPos center, Vec3d centerVec) {
-        int radius = FINAL_CLEAR_RADIUS;
+    private void ultimateAnnihilation(ServerWorld world, BlockPos center, Vec3d centerVec, int finalRadius) {
+        int radius = finalRadius;
         int cx = center.getX();
         int cy = center.getY();
         int cz = center.getZ();
@@ -269,8 +274,8 @@ public class SelfDestructHandlerMixin {
         world.spawnParticles(ParticleTypes.WHITE_ASH, centerVec.x, centerVec.y, centerVec.z, 2000, 100, 100, 100, 0.1);
     }
 
-    private void executeTotalObliteration(ServerWorld world, Vec3d center, BlockPos centerPos) {
-        Box killBox = new Box(center, center).expand(FINAL_CLEAR_RADIUS);
+    private void executeTotalObliteration(ServerWorld world, Vec3d center, BlockPos centerPos, int finalRadius) {
+        Box killBox = new Box(center, center).expand(finalRadius);
         List<LivingEntity> targets = world.getEntitiesByClass(
                 LivingEntity.class, killBox,
                 LivingEntity::isAlive
@@ -313,7 +318,7 @@ public class SelfDestructHandlerMixin {
                 SoundCategory.BLOCKS, 5f, 0.5f);
     }
 
-    private void spawnExpansionEffect(ServerWorld world, Vec3d center, double radius, int step) {
+    private void spawnExpansionEffect(ServerWorld world, Vec3d center, double radius, int step, int totalSteps) {
         int points = (int) (radius * 8);
         for (int i = 0; i < points; i++) {
             double theta = (2 * Math.PI * i) / points;
@@ -336,8 +341,8 @@ public class SelfDestructHandlerMixin {
                 (int) (radius * 4), radius * 0.3, radius * 0.3, radius * 0.3, 0.02
         );
 
-        float volume = 2 + (step / (float) EXPLOSION_STEPS) * 6;
-        float pitch = 1.2f - (step / (float) EXPLOSION_STEPS) * 0.8f;
+        float volume = 2 + (step / (float) totalSteps) * 6;
+        float pitch = 1.2f - (step / (float) totalSteps) * 0.8f;
 
         world.playSound(
                 null, center.x, center.y, center.z,

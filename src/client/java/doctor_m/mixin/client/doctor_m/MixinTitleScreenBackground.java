@@ -3,6 +3,7 @@ package doctor_m.mixin.client.doctor_m;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import doctor_m.client.render.VortexBackgroundRenderer;
+import doctor_m.util.config.ConfigManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.TitleScreen;
@@ -22,14 +23,14 @@ public class MixinTitleScreenBackground {
 
     @Inject(method = "init", at = @At("HEAD"))
     private void onInit(CallbackInfo ci) {
+        // 从配置读取开关，但无论开闭都创建（避免空指针）
         Identifier texture = new Identifier("ait", "textures/vortex/darkness.png");
-        // 使用单例入口，自动推导 _second / _third 分层纹理
         doctor_m$vortexRenderer = VortexBackgroundRenderer.getInstance(texture);
         doctor_m$vortexRenderer.setSpeed(2.0f);
     }
 
     /**
-     * 替换全景图渲染为涡旋背景
+     * 替换全景图渲染为涡旋背景（带开关控制）
      */
     @WrapOperation(
             method = "render",
@@ -44,13 +45,20 @@ public class MixinTitleScreenBackground {
             float alpha,
             Operation<Void> original
     ) {
-        if (doctor_m$vortexRenderer != null) {
-            var client = MinecraftClient.getInstance();
-            int width = client.getWindow().getScaledWidth();
-            int height = client.getWindow().getScaledHeight();
-            MatrixStack matrices = new MatrixStack();
-            doctor_m$vortexRenderer.render(matrices, width, height);
+        // 读取配置开关
+        if (ConfigManager.getConfig().enableVortexTitleBackground) {
+            if (doctor_m$vortexRenderer != null) {
+                var client = MinecraftClient.getInstance();
+                int width = client.getWindow().getScaledWidth();
+                int height = client.getWindow().getScaledHeight();
+                MatrixStack matrices = new MatrixStack();
+                doctor_m$vortexRenderer.render(matrices, width, height);
+            } else {
+                // 如果渲染器未初始化，回退到原版
+                original.call(instance, delta, alpha);
+            }
         } else {
+            // 开关关闭，使用原版全景图
             original.call(instance, delta, alpha);
         }
     }

@@ -2,6 +2,8 @@ package doctor_m.module.creativity;
 
 import dev.amble.lib.container.impl.ItemContainer;
 import doctor_m.module.creativity.creativity_data.tlipoca_scythe;
+import doctor_m.util.config.ConfigManager;
+import doctor_m.util.config.ModConfig;
 import doctor_m.util.javautil.PercentageDamageHelper;
 import net.minecraft.item.Item;
 import net.minecraft.util.Rarity;
@@ -13,10 +15,12 @@ public class creativity_items extends ItemContainer {
             new Item.Settings().maxCount(1).rarity(Rarity.EPIC)
     );
     public static void registerAbilities() {
+        ModConfig config = ConfigManager.getConfig();
+
         new PercentageDamageHelper(new PercentageDamageHelper.Config(
-                30,
-                1.0,
-                25,
+                config.tlipocaScytheDamage,
+                config.tlipocaScytheMultiplier,
+                config.tlipocaScytheExtra,
                 player -> {
                     return player.getMainHandStack().getItem() instanceof tlipoca_scythe ||
                             player.getOffHandStack().getItem() instanceof tlipoca_scythe;

@@ -1,5 +1,6 @@
 package doctor_m.util.javautil;
 
+import doctor_m.util.config.ConfigManager;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -20,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ScytheSlashManager {
 
-    public static final long COOLDOWN_TICKS = 60; // 3秒
+    // 移除硬编码常量，改为从配置读取
     private static final ConcurrentHashMap<UUID, Long> lastSlashTime = new ConcurrentHashMap<>();
 
     // ========== 服务端逻辑 ==========
@@ -31,22 +32,32 @@ public class ScytheSlashManager {
     public static void performSlash(ServerWorld world, ServerPlayerEntity player, ItemStack stack) {
         if (world.isClient) return;
 
-        if (isOnCooldown(world, player)) {
+        var config = ConfigManager.getConfig();
+
+        // 总开关
+        if (!config.enableSlashSystem) {
+            return;
+        }
+
+        long cooldownTicks = config.slashCooldownTicks;
+
+        // 检查冷却
+        if (isOnCooldown(world, player, cooldownTicks)) {
             player.sendMessage(Text.translatable("message.doctor_m.scythe.cooldown"), true);
             return;
         }
 
-        setCooldown(world, player);
+        setCooldown(world, player, cooldownTicks);
 
-        // 斩击伤害
-        float damage = 400.0f;
+        // 从配置读取参数
+        float damage = config.slashDamage;
+        double reach = config.slashReach;
+        double width = config.slashWidth;
+        double height = config.slashHeight;
 
         Vec3d eyePos = player.getEyePos();
         Vec3d look = player.getRotationVec(1.0f);
 
-        double reach = 8.0;
-        double width = 5.0;
-        double height = 3.0;
         Vec3d center = eyePos.add(look.multiply(reach / 2));
         Box slashBox = new Box(
                 center.x - width / 2, center.y - height / 2, center.z - width / 2,
@@ -74,16 +85,16 @@ public class ScytheSlashManager {
         }
     }
 
-    public static boolean isOnCooldown(World world, PlayerEntity player) {
+    public static boolean isOnCooldown(World world, PlayerEntity player, long cooldownTicks) {
         Long last = lastSlashTime.get(player.getUuid());
-        return last != null && world.getTime() - last < COOLDOWN_TICKS;
+        return last != null && world.getTime() - last < cooldownTicks;
     }
 
-    public static void setCooldown(World world, PlayerEntity player) {
+    public static void setCooldown(World world, PlayerEntity player, long cooldownTicks) {
         lastSlashTime.put(player.getUuid(), world.getTime());
         player.getItemCooldownManager().set(
                 doctor_m.module.creativity.creativity_data.tlipoca_scythe.getInstance(),
-                (int) COOLDOWN_TICKS
+                (int) cooldownTicks
         );
     }
 

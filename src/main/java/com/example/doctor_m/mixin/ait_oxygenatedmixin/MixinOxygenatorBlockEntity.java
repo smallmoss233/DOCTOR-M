@@ -2,6 +2,7 @@ package com.example.doctor_m.mixin.ait_oxygenatedmixin;
 
 import dev.amble.ait.core.AITStatusEffects;
 import dev.amble.ait.module.planet.core.blockentities.OxygenatorBlockEntity;
+import doctor_m.util.config.ConfigManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
@@ -18,18 +19,19 @@ import java.util.*;
 public class MixinOxygenatorBlockEntity {
 
     private static final Map<BlockPos, CachedRoom> roomCache = new HashMap<>();
-    private static final int CACHE_EXPIRE_TICKS = 40;
-    private static final int MAX_SEARCH_SIZE = 5000;
-    private static final int MIN_AIR_BLOCKS = 10;
+    // 移除硬编码常量
 
     @Overwrite
     public void tick(World world, BlockPos pos, BlockState state, OxygenatorBlockEntity self) {
         if (world.isClient()) return;
         if (world.getTime() % 40 != 0) return;
 
-        // 检测周围 16 格内是否有生物（玩家、动物、怪物等）
+        var config = ConfigManager.getConfig();
+        int detectionRadius = config.oxygenatorBiologicalDetectionRadius;
+
+        // 检测周围生物
         boolean hasLivingEntityNearby = !world.getEntitiesByClass(LivingEntity.class,
-                new Box(pos).expand(16), e -> !e.isSpectator() && e.isAlive()).isEmpty();
+                new Box(pos).expand(detectionRadius), e -> !e.isSpectator() && e.isAlive()).isEmpty();
         if (!hasLivingEntityNearby) return;
 
         // 获取或计算封闭空间
@@ -57,8 +59,11 @@ public class MixinOxygenatorBlockEntity {
     // 洪水填充计算边界
     private CachedRoom getOrComputeRoom(World world, BlockPos pos) {
         long currentTime = world.getTime();
+        var config = ConfigManager.getConfig();
+        int cacheExpireTicks = config.oxygenatorCacheExpireTicks;
+
         CachedRoom cached = roomCache.get(pos);
-        if (cached != null && currentTime - cached.lastUpdateTick < CACHE_EXPIRE_TICKS) {
+        if (cached != null && currentTime - cached.lastUpdateTick < cacheExpireTicks) {
             return cached;
         }
 
@@ -68,6 +73,10 @@ public class MixinOxygenatorBlockEntity {
     }
 
     private CachedRoom computeRoom(World world, BlockPos start) {
+        var config = ConfigManager.getConfig();
+        int maxSearchSize = config.oxygenatorMaxSearchSize;
+        int minAirBlocks = config.oxygenatorMinAirBlocks;
+
         Set<BlockPos> airBlocks = new HashSet<>();
         Queue<BlockPos> queue = new ArrayDeque<>();
         queue.add(start);
@@ -81,7 +90,7 @@ public class MixinOxygenatorBlockEntity {
         int minY = start.getY(), maxY = start.getY();
         int minZ = start.getZ(), maxZ = start.getZ();
 
-        while (!queue.isEmpty() && airBlocks.size() < MAX_SEARCH_SIZE) {
+        while (!queue.isEmpty() && airBlocks.size() < maxSearchSize) {
             BlockPos current = queue.poll();
             int x = current.getX(), y = current.getY(), z = current.getZ();
 
@@ -104,7 +113,7 @@ public class MixinOxygenatorBlockEntity {
             }
         }
 
-        if (airBlocks.size() < MIN_AIR_BLOCKS) {
+        if (airBlocks.size() < minAirBlocks) {
             return new CachedRoom(Collections.emptySet(), null, world.getTime());
         }
 
