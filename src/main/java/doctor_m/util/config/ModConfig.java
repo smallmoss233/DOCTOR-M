@@ -9,8 +9,8 @@ public class ModConfig {
     public double shieldHalfSize = 4.0;  // 护盾立方体半边长（总边长 = 2 * 此值），默认 4 格
 
     //时间钥匙
-    public static final int DEFAULT_TIME_KEY_DAMAGE = 20;//冷却
-    public static final double DEFAULT_TIME_KEY_MULTIPLIER = 1.0;//扣血倍率
+    public static final int DEFAULT_TIME_KEY_DAMAGE = 5;//冷却
+    public static final double DEFAULT_TIME_KEY_MULTIPLIER = 1.5;//扣血倍率
     public static final double DEFAULT_TIME_KEY_EXTRA = 10.0;//最低扣血量（百分比）
 
     //永恒水晶

@@ -31,16 +31,39 @@ object TimeKeyFunction {
     private val revivalCooldown = ConcurrentHashMap<UUID, Long>()
     private val lastGameMode = ConcurrentHashMap<UUID, GameMode>()
     private val lastHealTime = ConcurrentHashMap<UUID, Long>()
-    private const val COOLDOWN_TICKS = 200L
+
+    // ========== 公共 API（供 Java Mixin 调用） ==========
+    @JvmStatic
+    fun getTimeKeyStack(player: PlayerEntity): ItemStack =
+        player.mainHandStack.takeIf { it.item is time_key }
+            ?: TrinketsApi.getTrinketComponent(player)
+                .flatMap { it.getEquipped { stack -> stack.item is time_key }.stream().findFirst() }
+                .map { it.right }
+                .orElse(ItemStack.EMPTY)
+
+    @JvmStatic
+    fun isTimeKeyEquipped(player: PlayerEntity): Boolean =
+        getTimeKeyStack(player).isEmpty == false
+
+    @JvmStatic
+    fun isGodMode(player: PlayerEntity): Boolean =
+        isTimeKeyEquipped(player) && getTimeKeyStack(player).orCreateNbt.getBoolean("godmode")
 
     @JvmStatic
     fun register() {
-        // 1. 伤害处理（保持不变）
+        // ===== 1. 伤害拦截（所有装备者） =====
         ServerLivingEntityEvents.ALLOW_DAMAGE.register { entity, source, amount ->
             customDamage.get().also { if (it) customDamage.set(false) }
             (entity as? ServerPlayerEntity)?.let { player ->
                 if (!isTimeKeyEquipped(player)) return@register true
-                // 弹开箭矢
+
+                // GodMode：完全免疫，直接满血
+                if (isGodMode(player)) {
+                    player.health = player.maxHealth
+                    return@register false
+                }
+
+                // 弹开箭矢（所有装备者）
                 (source.source as? PersistentProjectileEntity)?.takeIf { it.owner != player }?.let { proj ->
                     player.world.playSound(null, player.x, player.y, player.z,
                         SoundEvents.ENTITY_ARROW_HIT_PLAYER, SoundCategory.PLAYERS, 0.5f, 1.5f)
@@ -54,10 +77,8 @@ object TimeKeyFunction {
                     proj.discard()
                     return@register false
                 }
-                // 完全免疫模式
-                val stack = getTimeKeyStack(player)
-                if (stack.orCreateNbt.getBoolean("godmode")) return@register false
-                // 常规伤害免疫
+
+                // 常规环境伤害免疫（所有装备者）
                 when (source.name) {
                     "inFire", "onFire", "lava", "magic", "indirectMagic", "wither", "drown",
                     "starve", "fall", "cactus", "hotFloor", "sweetBerryBush", "freeze",
@@ -65,13 +86,13 @@ object TimeKeyFunction {
                     "dryout", "stalagmite", "fallingStalactite", "cramming", "flyIntoWall",
                     "generic" -> return@register false
                 }
-                // 伤害上限与复活
+
+                // 伤害上限 15% + 致死复活（非 GodMode）
                 val maxAllowed = player.maxHealth * 0.15f
                 val newAmount = amount.coerceAtMost(maxAllowed)
                 val newHealth = player.health - newAmount
-                if (newHealth <= 0 && !isInCooldown(player)) {
+                if (newHealth <= 0) {
                     revivePlayer(player)
-                    revivalCooldown[player.uuid] = player.serverWorld.time + COOLDOWN_TICKS
                     return@register false
                 }
                 if (newAmount != amount) {
@@ -83,7 +104,18 @@ object TimeKeyFunction {
             true
         }
 
-        // 2. 命令系统（不变）
+        // ===== ★ 新增：死亡事件拦截（所有装备者） =====
+        ServerLivingEntityEvents.ALLOW_DEATH.register { entity, source, amount ->
+            (entity as? ServerPlayerEntity)?.let { player ->
+                if (isTimeKeyEquipped(player)) {
+                    revivePlayer(player)
+                    return@register false
+                }
+            }
+            true
+        }
+
+        // ===== 2. 命令系统 =====
         CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
             fun handle(player: PlayerEntity, key: String, msg: String) {
                 getTimeKeyStack(player).takeIf { it.item is time_key }?.orCreateNbt?.apply {
@@ -97,16 +129,16 @@ object TimeKeyFunction {
             )
         }
 
-        // 3. 合并：生命恢复 + 饱食度 + 灭火 + 飞行恢复 + 永久有氧
+        // ===== 3. Tick 循环：恢复 + 灭火 + 飞行 + 有氧 + 绝对保护 =====
         ServerTickEvents.END_SERVER_TICK.register { server ->
             val now = server.ticks.toLong()
             server.playerManager.playerList.forEach { player ->
                 val hasTimeKey = isTimeKeyEquipped(player)
+                val isGodMode = hasTimeKey && isGodMode(player)
 
-                // ====== 1. 生命恢复 + 饱食度 + 灭火 ======
+                // ------ 基础恢复（所有装备者） ------
                 if (hasTimeKey) {
                     val healAmount = player.maxHealth * 0.1f
-                    // 恢复生命值（每秒）
                     lastHealTime[player.uuid]?.let { last ->
                         if (now - last >= 20) {
                             player.heal(healAmount)
@@ -116,21 +148,41 @@ object TimeKeyFunction {
                         player.heal(healAmount)
                         lastHealTime[player.uuid] = now
                     }
-                    // 恢复饱食度
+
                     val hunger = player.hungerManager
                     val foodAdd = healAmount.toInt()
                     val newFood = (hunger.foodLevel + foodAdd).coerceAtMost(20)
                     val newSaturation = (hunger.saturationLevel + healAmount).coerceAtMost(newFood.toFloat())
                     hunger.foodLevel = newFood
                     hunger.saturationLevel = newSaturation
-                    // 灭火
+
                     if (player.isOnFire) {
                         player.fireTicks = 0
                         player.setOnFire(false)
                     }
                 }
 
-                // ====== 2. 飞行恢复（模式切换检测） ======
+                // ------ ★ GodMode 绝对不死循环（额外层） ------
+                if (isGodMode) {
+                    if (player.health < player.maxHealth) player.health = player.maxHealth
+                    if (player.isOnFire) {
+                        player.fireTicks = 0
+                        player.setOnFire(false)
+                    }
+                    player.removeStatusEffect(StatusEffects.INSTANT_DAMAGE)
+                    player.removeStatusEffect(StatusEffects.WITHER)
+                    if (player.air < player.maxAir) player.air = player.maxAir
+                    if (player.hungerManager.foodLevel < 20) {
+                        player.hungerManager.foodLevel = 20
+                        player.hungerManager.saturationLevel = 20f
+                    }
+                    // 极端边缘：已死或血量为 0，强制完整复活
+                    if (!player.isAlive || player.health <= 0) {
+                        revivePlayer(player)
+                    }
+                }
+
+                // ------ 飞行恢复 ------
                 val current = player.interactionManager.gameMode
                 lastGameMode[player.uuid]?.takeIf { it != current }?.let { previous ->
                     if ((previous == GameMode.CREATIVE || previous == GameMode.SPECTATOR) &&
@@ -143,15 +195,13 @@ object TimeKeyFunction {
                 }
                 lastGameMode[player.uuid] = current
 
-                // ====== 3. 永久有氧（仅无氧星球） ======
+                // ------ 永久有氧 ------
                 if (hasTimeKey) {
                     val world = player.world
-                    // 检测当前世界是否为无氧环境（星球检测：若无星球数据，默认为有氧）
                     val planet = try { PlanetRegistry.getInstance().get(world) } catch (_: Exception) { null }
-                    val worldHasOxygen = if (planet != null) planet.hasOxygen() else true // 默认有氧
+                    val worldHasOxygen = if (planet != null) planet.hasOxygen() else true
 
                     if (!worldHasOxygen) {
-                        // 无氧环境：施加 OXYGENATED 效果
                         if (!player.hasStatusEffect(AITStatusEffects.OXYGENATED)) {
                             player.addStatusEffect(
                                 StatusEffectInstance(AITStatusEffects.OXYGENATED, 60, 0, false, false)
@@ -170,31 +220,38 @@ object TimeKeyFunction {
         }
     }
 
-    // ====== 工具函数 ======
-    private fun getTimeKeyStack(player: PlayerEntity): ItemStack =
-        player.mainHandStack.takeIf { it.item is time_key }
-            ?: TrinketsApi.getTrinketComponent(player)
-                .flatMap { it.getEquipped { stack -> stack.item is time_key }.stream().findFirst() }
-                .map { it.right }
-                .orElse(ItemStack.EMPTY)
-
-    // 修改：同时检查主手和饰品
-    private fun isTimeKeyEquipped(player: PlayerEntity): Boolean =
-        getTimeKeyStack(player).isEmpty == false
-
-    private fun isInCooldown(player: ServerPlayerEntity) =
-        revivalCooldown[player.uuid]?.let { player.serverWorld.time < it } ?: false
-
-    private fun revivePlayer(p: ServerPlayerEntity) {
+    // ====== 复活核心（所有装备者共用） ======
+    @JvmStatic
+    fun revivePlayer(p: ServerPlayerEntity) {
         p.apply {
+            // 反射彻底重置死亡状态字段
+            try {
+                val clazz = LivingEntity::class.java
+                clazz.getDeclaredField("deathTime").apply {
+                    isAccessible = true
+                    set(this@apply, 0)
+                }
+                clazz.getDeclaredField("hurtTime").apply {
+                    isAccessible = true
+                    set(this@apply, 0)
+                }
+                clazz.getDeclaredField("fallDistance").apply {
+                    isAccessible = true
+                    set(this@apply, 0f)
+                }
+            } catch (_: Exception) { }
+
+            // 强制满血
             health = maxHealth
+            // 清除所有负面效果
             clearStatusEffects()
+            // 给抗性
             addStatusEffect(StatusEffectInstance(StatusEffects.RESISTANCE, 40, 2, false, false))
             // 清敌
             serverWorld.getEntitiesByClass(LivingEntity::class.java, boundingBox.expand(35.0)) {
                 it != this && it.isAlive && it is HostileEntity
             }.forEach { it.kill() }
-            // 粒子
+            // 粒子特效
             repeat(50) {
                 serverWorld.spawnParticles(ParticleTypes.END_ROD,
                     x + (random.nextDouble() - .5) * 2.0,

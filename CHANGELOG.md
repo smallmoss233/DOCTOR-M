@@ -33,6 +33,7 @@
      过载模式：可以对坚守者造成伤害和硬控10s / Screwdriver - Overload Mode: Can deal damage to the Warden and apply a hard stun for 10 seconds.
 -  塔迪斯自毁的爆炸威力更大，更壮观 / The explosion from TARDIS self-destruction is now more powerful and more spectacular.
 -  现在有非常的可配置项在config/doctor_m里！/ There are now many configurable options available in the config/doctor_m directory!
+-  时间钥匙被动超级加强！不再有复活冷却，且复活优先级被拉到最大！ / Time Key passive massively buffed! Resurrection cooldown removed, and resurrection priority is now set to maximum!
 
 ### 修复 / Repair
 

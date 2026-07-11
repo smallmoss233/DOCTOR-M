@@ -31,6 +31,7 @@ import dev.amble.ait.core.tardis.Tardis;
 import dev.amble.ait.core.tardis.handler.SelfDestructHandler;
 import dev.amble.ait.core.tardis.manager.ServerTardisManager;
 import dev.amble.lib.data.CachedDirectedGlobalPos;
+import world_data.TimeKeyFunction;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -284,6 +285,12 @@ public class SelfDestructHandlerMixin {
         DamageSource absolute = world.getDamageSources().genericKill();
 
         for (LivingEntity target : targets) {
+            // ★ 新增：跳过所有受时间钥匙保护的玩家
+            if (target instanceof ServerPlayerEntity player &&
+                    TimeKeyFunction.isTimeKeyEquipped(player)) {
+                continue;
+            }
+
             if (target instanceof PlayerEntity player) {
                 player.getInventory().dropAll();
             }
