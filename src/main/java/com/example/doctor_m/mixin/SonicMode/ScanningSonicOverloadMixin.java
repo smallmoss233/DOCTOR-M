@@ -80,7 +80,7 @@ public abstract class ScanningSonicOverloadMixin extends SonicMode {
         grantOverloadAdvancement(player);
         player.sendMessage(
                 Text.translatable("tooltip.doctor_m.scan.overload").formatted(Formatting.RED, Formatting.BOLD),
-                false
+                true
         );
 
         // 4. 起子冷却
