@@ -2,7 +2,7 @@
 
 ---
 
-## [ v2.1 ]
+## [ v2.1 - 过去的历史...与尚未发生的.../past... and what hasn't happened yet...]
 
 ### 新维度 / New Dimension
 
