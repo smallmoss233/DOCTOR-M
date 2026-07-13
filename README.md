@@ -34,7 +34,7 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 
 *守望(Watcher) console texture*: [白桦下的赤俄(Kilin_Mus)](https://modrinth.com/user/Kilin_Mus)
 
-*霓虹(Rainbow), 烈火(Fire) , 泽顿水晶(Crystalline Zeiton) interiors*: Asnit_PnQing
+*霓虹(Rainbow), 烈火(Fire) , 泽顿水晶(Crystalline Zeiton) , 立方(Cube)interiors*: Asnit_PnQing
 
 *斯格(Sig) interior*: [斯格尔特(Sigeerte)](https://modrinth.com/user/Sigeerte)
 

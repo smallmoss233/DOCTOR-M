@@ -17,6 +17,8 @@
 -  修改：时隙 / Edit : rift
 -  修改：永恒之眼/永恒之眼 40型 / Edit : Evereye/Evereye Type40
 
+-  新增：立方（作者：Asnit_PnQing） / New addition: Cube (Author: Asnit_PnQing)
+
 ### 物品 / Items
 
 -  空
