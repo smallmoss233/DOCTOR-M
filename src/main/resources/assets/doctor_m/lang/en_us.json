@@ -55,6 +55,7 @@
   "tooltip.doctor_m.ait_tardisbuilder.subsystem_mode.none": "None",
   "tooltip.doctor_m.ait_tardisbuilder.success.created": "TARDIS created successfully!",
   "tooltip.doctor_m.ait_tardisbuilder.success.uuid": "TARDIS UUID: %s",
+  "tooltip.doctor_m.ait_tardisbuilder.success.name": "TARDIS Name：%s",
   "tooltip.doctor_m.ait_tardisbuilder.success.desktop": "TARDIS desktop: %s",
   "tooltip.doctor_m.ait_tardisbuilder.success.exterior": "TARDIS exterior: %s",
   "tooltip.doctor_m.ait_tardisbuilder.success.owner": "TARDIS owner: %s",

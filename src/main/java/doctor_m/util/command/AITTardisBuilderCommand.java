@@ -43,12 +43,11 @@ public class AITTardisBuilderCommand {
 
     private static final Random RANDOM = new Random();
 
-    // 子系统配置模式
     public enum SubSystemMode {
-        FULL("full"),           // 全满
-        ESSENTIAL("essential"), // 必要：引擎、生命维持、稳定器、变色龙
-        ENGINE_ONLY("only_engine"), // 仅引擎
-        NONE("none");           // 无
+        FULL("full"),
+        ESSENTIAL("essential"),
+        ENGINE_ONLY("only_engine"),
+        NONE("none");
 
         private final String id;
 
@@ -74,7 +73,6 @@ public class AITTardisBuilderCommand {
         }
     }
 
-    // 必要子系统集合
     private static final Set<SubSystem.IdLike> ESSENTIAL_SUBSYSTEMS = Set.of(
             SubSystem.Id.ENGINE,
             SubSystem.Id.LIFE_SUPPORT,
@@ -89,55 +87,78 @@ public class AITTardisBuilderCommand {
                 .requires(source -> source.hasPermissionLevel(2))
                 .then(CommandManager.literal("build")
                         .executes(AITTardisBuilderCommand::executeDefault)
-                        // /doctor_m ait_tardisbuilder <desktop>
-                        .then(CommandManager.argument("desktop", StringArgumentType.string())
+
+                        // /doctor_m build <desktop>
+                        .then(CommandManager.argument("desktop", StringArgumentType.word())
                                 .suggests(DESKTOP_SUGGESTIONS)
                                 .executes(ctx -> executeWithArgs(ctx,
-                                        StringArgumentType.getString(ctx, "desktop"),
-                                        null, null, null, null))
-                                // /doctor_m ait_tardisbuilder <desktop> <exterior>
-                                .then(CommandManager.argument("exterior", StringArgumentType.string())
+                                        getString(ctx, "desktop"), null, null, null, SubSystemMode.FULL, null))
+
+                                // /doctor_m build <desktop> <exterior>
+                                .then(CommandManager.argument("exterior", StringArgumentType.word())
                                         .suggests(EXTERIOR_SUGGESTIONS)
                                         .executes(ctx -> executeWithArgs(ctx,
-                                                StringArgumentType.getString(ctx, "desktop"),
-                                                StringArgumentType.getString(ctx, "exterior"),
-                                                null, null, null))
-                                        // /doctor_m ait_tardisbuilder <desktop> <exterior> <owner>
-                                        .then(CommandManager.argument("owner", StringArgumentType.string())
+                                                getString(ctx, "desktop"), getString(ctx, "exterior"),
+                                                null, null, SubSystemMode.FULL, null))
+
+                                        // /doctor_m build <desktop> <exterior> <owner>
+                                        .then(CommandManager.argument("owner", StringArgumentType.word())
                                                 .suggests(OWNER_SUGGESTIONS)
                                                 .executes(ctx -> executeWithArgs(ctx,
-                                                        StringArgumentType.getString(ctx, "desktop"),
-                                                        StringArgumentType.getString(ctx, "exterior"),
-                                                        StringArgumentType.getString(ctx, "owner"),
-                                                        null, null))
-                                                // /doctor_m ait_tardisbuilder <desktop> <exterior> <owner> <subsystem>
-                                                .then(CommandManager.argument("subsystem", StringArgumentType.string())
+                                                        getString(ctx, "desktop"), getString(ctx, "exterior"),
+                                                        getString(ctx, "owner"), null, SubSystemMode.FULL, null))
+
+                                                // ===== 分支 A: 直接跟子系统模式 =====
+                                                .then(CommandManager.argument("subsystem", StringArgumentType.word())
                                                         .suggests(SUBSYSTEM_SUGGESTIONS)
                                                         .executes(ctx -> executeWithArgs(ctx,
-                                                                StringArgumentType.getString(ctx, "desktop"),
-                                                                StringArgumentType.getString(ctx, "exterior"),
-                                                                StringArgumentType.getString(ctx, "owner"),
-                                                                StringArgumentType.getString(ctx, "subsystem"),
-                                                                null))
-                                                        // /doctor_m ait_tardisbuilder <desktop> <exterior> <owner> <subsystem> <pos>
+                                                                getString(ctx, "desktop"), getString(ctx, "exterior"),
+                                                                getString(ctx, "owner"), null,
+                                                                parseSubsystem(ctx), null))
                                                         .then(CommandManager.argument("pos", Vec3ArgumentType.vec3())
                                                                 .executes(ctx -> executeWithArgs(ctx,
-                                                                        StringArgumentType.getString(ctx, "desktop"),
-                                                                        StringArgumentType.getString(ctx, "exterior"),
-                                                                        StringArgumentType.getString(ctx, "owner"),
-                                                                        StringArgumentType.getString(ctx, "subsystem"),
-                                                                        Vec3ArgumentType.getVec3(ctx, "pos")))
-                                                        )
-                                                )
-                                                // 兼容旧格式：owner 后直接跟 pos（默认全满）
+                                                                        getString(ctx, "desktop"), getString(ctx, "exterior"),
+                                                                        getString(ctx, "owner"), null,
+                                                                        parseSubsystem(ctx),
+                                                                        Vec3ArgumentType.getVec3(ctx, "pos")))))
+
+                                                // ===== 分支 B: name <名称> =====
+                                                .then(CommandManager.literal("name")
+                                                        .then(CommandManager.argument("name", StringArgumentType.word())
+                                                                .suggests(NAME_SUGGESTIONS)
+                                                                .executes(ctx -> executeWithArgs(ctx,
+                                                                        getString(ctx, "desktop"), getString(ctx, "exterior"),
+                                                                        getString(ctx, "owner"), getString(ctx, "name"),
+                                                                        SubSystemMode.FULL, null))
+
+                                                                // /... name <名称> <subsystem>
+                                                                .then(CommandManager.argument("subsystem", StringArgumentType.word())
+                                                                        .suggests(SUBSYSTEM_SUGGESTIONS)
+                                                                        .executes(ctx -> executeWithArgs(ctx,
+                                                                                getString(ctx, "desktop"), getString(ctx, "exterior"),
+                                                                                getString(ctx, "owner"), getString(ctx, "name"),
+                                                                                parseSubsystem(ctx), null))
+                                                                        .then(CommandManager.argument("pos", Vec3ArgumentType.vec3())
+                                                                                .executes(ctx -> executeWithArgs(ctx,
+                                                                                        getString(ctx, "desktop"), getString(ctx, "exterior"),
+                                                                                        getString(ctx, "owner"), getString(ctx, "name"),
+                                                                                        parseSubsystem(ctx),
+                                                                                        Vec3ArgumentType.getVec3(ctx, "pos")))))
+
+                                                                // /... name <名称> <pos> (无 subsystem，默认 full)
+                                                                .then(CommandManager.argument("pos", Vec3ArgumentType.vec3())
+                                                                        .executes(ctx -> executeWithArgs(ctx,
+                                                                                getString(ctx, "desktop"), getString(ctx, "exterior"),
+                                                                                getString(ctx, "owner"), getString(ctx, "name"),
+                                                                                SubSystemMode.FULL,
+                                                                                Vec3ArgumentType.getVec3(ctx, "pos"))))))
+
+                                                // ===== 分支 C: 直接跟坐标（默认名称 + 默认子系统）=====
                                                 .then(CommandManager.argument("pos", Vec3ArgumentType.vec3())
                                                         .executes(ctx -> executeWithArgs(ctx,
-                                                                StringArgumentType.getString(ctx, "desktop"),
-                                                                StringArgumentType.getString(ctx, "exterior"),
-                                                                StringArgumentType.getString(ctx, "owner"),
-                                                                null,  // 默认全满
-                                                                Vec3ArgumentType.getVec3(ctx, "pos")))
-                                                )
+                                                                getString(ctx, "desktop"), getString(ctx, "exterior"),
+                                                                getString(ctx, "owner"), null, SubSystemMode.FULL,
+                                                                Vec3ArgumentType.getVec3(ctx, "pos"))))
                                         )
                                 )
                         )
@@ -145,26 +166,34 @@ public class AITTardisBuilderCommand {
         );
     }
 
+    private static SubSystemMode parseSubsystem(CommandContext<ServerCommandSource> ctx) {
+        String sub = getString(ctx, "subsystem");
+        SubSystemMode mode = SubSystemMode.fromString(sub);
+        if (mode == null) {
+            throw new IllegalArgumentException("Invalid subsystem mode: " + sub);
+        }
+        return mode;
+    }
+
+    private static String getString(CommandContext<ServerCommandSource> ctx, String name) {
+        try {
+            return StringArgumentType.getString(ctx, name);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
     private static int executeDefault(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        return executeWithArgs(ctx, null, null, null, null, null);
+        return executeWithArgs(ctx, null, null, null, null, SubSystemMode.FULL, null);
     }
 
     private static int executeWithArgs(CommandContext<ServerCommandSource> ctx,
                                        String desktopRaw, String exteriorRaw,
-                                       String ownerRaw, String subsystemRaw, Vec3d pos) throws CommandSyntaxException {
+                                       String ownerRaw, String nameRaw,
+                                       SubSystemMode subsystemMode, Vec3d pos) throws CommandSyntaxException {
         ServerCommandSource source = ctx.getSource();
         ServerPlayerEntity player = source.getPlayerOrThrow();
         ServerWorld world = source.getWorld();
-
-        // 解析子系统模式
-        SubSystemMode subsystemMode = SubSystemMode.FULL; // 默认全满
-        if (subsystemRaw != null && !subsystemRaw.isEmpty()) {
-            subsystemMode = SubSystemMode.fromString(subsystemRaw);
-            if (subsystemMode == null) {
-                source.sendError(Text.translatable("tooltip.doctor_m.ait_tardisbuilder.error.invalid_subsystem_mode", subsystemRaw));
-                return 0;
-            }
-        }
 
         // 位置
         CachedDirectedGlobalPos tardisPos;
@@ -266,11 +295,19 @@ public class AITTardisBuilderCommand {
             return 0;
         }
 
+        // 设置名称
+        if (nameRaw != null && !nameRaw.isEmpty()) {
+            tardis.stats().setName(nameRaw);
+        } else {
+            tardis.stats().setName(finalOwnerName + "'s TARDIS");
+        }
+
         tardis.getDesktop().getDoorPos(); // 触发加载
 
         Text feedback = Text.literal("")
                 .append(Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.created")).append("\n")
                 .append(Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.uuid", tardis.getUuid())).append("\n")
+                .append(Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.name", tardis.stats().getName())).append("\n")
                 .append(Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.desktop", tardis.getDesktop().getSchema().name())).append("\n")
                 .append(Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.exterior", tardis.getExterior().getVariant().name())).append("\n")
                 .append(Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.owner", finalOwnerName)).append("\n")
@@ -283,13 +320,9 @@ public class AITTardisBuilderCommand {
         return 1;
     }
 
-    /**
-     * 根据模式应用子系统状态
-     */
     private static void applySubSystemMode(SubSystemHandler handler, SubSystemMode mode) {
         switch (mode) {
             case FULL -> {
-                // 全满：所有子系统启用且耐久度满
                 for (SubSystem sub : handler) {
                     if (sub instanceof DurableSubSystem durable) {
                         durable.setDurability(DurableSubSystem.MAX_DURABILITY);
@@ -298,7 +331,6 @@ public class AITTardisBuilderCommand {
                 }
             }
             case ESSENTIAL -> {
-                // 必要：仅启用必要子系统
                 for (SubSystem sub : handler) {
                     boolean isEssential = ESSENTIAL_SUBSYSTEMS.contains(sub.getId());
                     if (sub instanceof DurableSubSystem durable) {
@@ -308,7 +340,6 @@ public class AITTardisBuilderCommand {
                 }
             }
             case ENGINE_ONLY -> {
-                // 仅引擎
                 for (SubSystem sub : handler) {
                     boolean isEngine = sub.getId() == SubSystem.Id.ENGINE;
                     if (sub instanceof DurableSubSystem durable) {
@@ -318,7 +349,6 @@ public class AITTardisBuilderCommand {
                 }
             }
             case NONE -> {
-                // 无：所有子系统禁用
                 for (SubSystem sub : handler) {
                     if (sub instanceof DurableSubSystem durable) {
                         durable.setDurability(0);
@@ -351,6 +381,7 @@ public class AITTardisBuilderCommand {
         builder.suggest("Doctor");
         builder.suggest("Master");
         builder.suggest("Mary.Jin");
+        builder.suggest("Marianne.jin");
         builder.suggest("Evereye");
         builder.suggest("SmallMoss");
         builder.suggest("Mobius");
@@ -361,6 +392,17 @@ public class AITTardisBuilderCommand {
         for (String id : SubSystemMode.ids()) {
             builder.suggest(id);
         }
+        return builder.buildFuture();
+    };
+
+    private static final SuggestionProvider<ServerCommandSource> NAME_SUGGESTIONS = (ctx, builder) -> {
+        builder.suggest("Lolita");
+        builder.suggest("Marianne");
+        builder.suggest("Marianne.jin");
+        builder.suggest("Evereye");
+        builder.suggest("Mobius");
+        builder.suggest("Sexy");
+        builder.suggest("Idris");
         return builder.buildFuture();
     };
 }

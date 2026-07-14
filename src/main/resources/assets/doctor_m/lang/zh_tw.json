@@ -55,6 +55,7 @@
   "tooltip.doctor_m.ait_tardisbuilder.subsystem_mode.none": "無",
   "tooltip.doctor_m.ait_tardisbuilder.success.created": "塔迪斯建立成功！",
   "tooltip.doctor_m.ait_tardisbuilder.success.uuid": "塔迪斯UUID：%s",
+  "tooltip.doctor_m.ait_tardisbuilder.success.name": "塔迪斯名稱：%s",
   "tooltip.doctor_m.ait_tardisbuilder.success.desktop": "塔迪斯內飾：%s",
   "tooltip.doctor_m.ait_tardisbuilder.success.exterior": "塔迪斯外觀：%s",
   "tooltip.doctor_m.ait_tardisbuilder.success.owner": "塔迪斯主人：%s",
