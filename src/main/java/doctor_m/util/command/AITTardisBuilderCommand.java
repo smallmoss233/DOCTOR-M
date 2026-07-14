@@ -373,7 +373,7 @@ public class AITTardisBuilderCommand {
         }
         return builder.buildFuture();
     };
-
+//预设驾驶员名字
     private static final SuggestionProvider<ServerCommandSource> OWNER_SUGGESTIONS = (ctx, builder) -> {
         for (ServerPlayerEntity player : ctx.getSource().getServer().getPlayerManager().getPlayerList()) {
             builder.suggest(player.getName().getString());
@@ -394,7 +394,7 @@ public class AITTardisBuilderCommand {
         }
         return builder.buildFuture();
     };
-
+//预设塔迪斯名字
     private static final SuggestionProvider<ServerCommandSource> NAME_SUGGESTIONS = (ctx, builder) -> {
         builder.suggest("Lolita");
         builder.suggest("Marianne");
