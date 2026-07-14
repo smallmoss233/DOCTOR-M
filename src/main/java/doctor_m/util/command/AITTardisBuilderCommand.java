@@ -403,6 +403,7 @@ public class AITTardisBuilderCommand {
         builder.suggest("Mobius");
         builder.suggest("Sexy");
         builder.suggest("Idris");
+        builder.suggest("Watcher");
         return builder.buildFuture();
     };
 }
