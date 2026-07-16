@@ -30,6 +30,7 @@
   "item.doctor_m.oxygen_tank": "Oxygen Tank",
   "item.doctor_m.oxygen_charger_item": "Oxygen Recharger",
   "item.doctor_m.tlipoca_scythe": "Tlipoca's Scythe",
+  "item.doctor_m.shield_core": "Shield Generator",
 
   "block.doctor_m.oxygen_charger": "Oxygen Recharger",
 
@@ -41,8 +42,9 @@
   "key.doctor_m.toggle_passive_b": "Toggle Passive Switch B (Hold Shift)",
   "category.doctor_m": "DOCTOR M",
 
-  "tooltip.doctor_m.oxygen": "§bOxygen: %.1f / %.0fL",
   "tooltip.doctor_m.hold_shift": "Hold Shift for Details",
+  "tooltip.doctor_m.oxygen": "§bOxygen: %.1f / %.0fL",
+  "tooltip.doctor_m.shield_core.energy": "Energy: %s/%s",
   "tooltip.doctor_m.ait_tardisbuilder.error.invalid_desktop_id": "Invalid desktop ID format: %s",
   "tooltip.doctor_m.ait_tardisbuilder.error.unknown_desktop": "Unknown desktop: %s (resolved to %s)",
   "tooltip.doctor_m.ait_tardisbuilder.error.invalid_exterior_id": "Invalid exterior ID format: %s",

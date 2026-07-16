@@ -60,7 +60,6 @@ public class ShieldOverlay implements HudRenderCallback {
     public static void triggerShield() {
         alpha = 1.0f;
         fadeTicks = 0;
-        System.out.println("[ShieldOverlay] 触发护盾叠加层");
     }
 
     public static void resetShield() {
@@ -68,7 +67,6 @@ public class ShieldOverlay implements HudRenderCallback {
         if (fadeTicks < 20) {
             alpha = 1.0f;
             fadeTicks = 0;
-            System.out.println("[ShieldOverlay] 重置护盾叠加层");
         }
     }
 }

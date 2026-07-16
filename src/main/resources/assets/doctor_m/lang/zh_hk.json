@@ -30,6 +30,7 @@
   "item.doctor_m.oxygen_tank": "氧氣瓶",
   "item.doctor_m.oxygen_charger_item": "氧氣補充機",
   "item.doctor_m.tlipoca_scythe": "特莉波卡的鐮刀",
+  "item.doctor_m.shield_core": "护盾生成器",
 
   "block.doctor_m.oxygen_charger": "氧氣補充機",
 
@@ -41,8 +42,9 @@
   "key.doctor_m.toggle_passive_b": "切換被動開關B(按住Shift)",
   "category.doctor_m": "DOCTOR M",
 
-  "tooltip.doctor_m.oxygen": "§b氧氣: %.1f / %.0fL",
   "tooltip.doctor_m.hold_shift": "按住 Shift 查看詳情",
+  "tooltip.doctor_m.oxygen": "§b氧氣: %.1f / %.0fL",
+  "tooltip.doctor_m.shield_core.energy": "能量: %s/%s",
   "tooltip.doctor_m.ait_tardisbuilder.error.invalid_desktop_id": "無效的內飾 ID 格式：%s",
   "tooltip.doctor_m.ait_tardisbuilder.error.unknown_desktop": "未知的內飾：%s（解析為 %s）",
   "tooltip.doctor_m.ait_tardisbuilder.error.invalid_exterior_id": "無效的外觀 ID 格式：%s",

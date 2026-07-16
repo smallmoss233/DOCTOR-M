@@ -5,8 +5,13 @@ public class ModConfig {
     //涡旋背景
     public boolean enableVortexTitleBackground = true; // 默认开启
 
-    //护盾半径
+    //TT护盾半径
     public double shieldHalfSize = 4.0;  // 护盾立方体半边长（总边长 = 2 * 此值），默认 4 格
+
+    //护盾生成器
+    public int shieldMaxEnergy = 1000;              // 护盾能量总容量
+    public int shieldRechargePerTick = 1;           // 每 tick 恢复的能量
+    public int shieldCostPerDamage = 5;             // 每 1 点伤害消耗的能量
 
     //时间钥匙
     public static final int DEFAULT_TIME_KEY_DAMAGE = 5;//冷却
