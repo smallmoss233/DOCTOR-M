@@ -3,7 +3,7 @@ package doctor_m.Item.data_itme.fragment;
 import dev.emi.trinkets.api.TrinketItem;  // 改为 TrinketItem
 import doctor_m.util.javautil.ShiftTooltipInvoker;
 import doctor_m.util.javautil.TooltipHelper;
-import doctor_m.world_data.PocketWatchFunction;
+import doctor_m.world_data.TimeKey.PocketWatchFunction;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;

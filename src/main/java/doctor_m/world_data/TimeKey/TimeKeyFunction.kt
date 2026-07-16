@@ -1,4 +1,4 @@
-package doctor_m.world_data
+package doctor_m.world_data.TimeKey
 
 import dev.amble.ait.core.AITStatusEffects
 import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry

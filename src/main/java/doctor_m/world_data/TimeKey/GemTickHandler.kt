@@ -1,4 +1,4 @@
-package doctor_m.world_data
+package doctor_m.world_data.TimeKey
 
 import dev.emi.trinkets.api.TrinketsApi
 import doctor_m.Item.data_itme.fragment.relic_gem

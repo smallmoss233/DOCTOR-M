@@ -1,4 +1,4 @@
-package doctor_m.world_data
+package doctor_m.world_data.TimeKey
 
 import com.ibm.icu.impl.Pair
 import dev.emi.trinkets.api.TrinketsApi

@@ -1,4 +1,4 @@
-package doctor_m.client;
+package doctor_m.client.Shield;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import doctor_m.DOCTORM;
@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.Perspective;
+import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.util.Identifier;
 
 public class ShieldOverlay implements HudRenderCallback {
@@ -13,17 +14,14 @@ public class ShieldOverlay implements HudRenderCallback {
 
     private static float alpha = 0f;
     private static int fadeTicks = 0;
-    private static final int FADE_DURATION = 60; // 3秒淡出
+    private static final int FADE_DURATION = 60;
 
     @Override
     public void onHudRender(DrawContext context, float tickDelta) {
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.player == null || mc.world == null) return;
-
-        // 可选：只在第一人称显示（参考DelayOverlay）
         if (mc.options.getPerspective() != Perspective.FIRST_PERSON) return;
 
-        // 更新淡出
         if (alpha > 0) {
             fadeTicks++;
             if (fadeTicks >= FADE_DURATION) {
@@ -44,8 +42,6 @@ public class ShieldOverlay implements HudRenderCallback {
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, alpha);
 
-        // 关键修复：256x128 纹理要全屏拉伸，必须用矩阵缩放
-        // 否则 UV 会超出 1.0，纹理会平铺 7~8 次
         context.getMatrices().push();
         context.getMatrices().scale((float) screenW / 256f, (float) screenH / 128f, 1.0f);
         context.drawTexture(TEXTURE, 0, 0, 0, 0, 256, 128, 256, 128);
@@ -60,13 +56,21 @@ public class ShieldOverlay implements HudRenderCallback {
     public static void triggerShield() {
         alpha = 1.0f;
         fadeTicks = 0;
+        playShieldSound();
     }
 
     public static void resetShield() {
-        // 1秒内（20 ticks）再次受击则重置
         if (fadeTicks < 20) {
             alpha = 1.0f;
             fadeTicks = 0;
+            playShieldSound();
         }
+    }
+
+    private static void playShieldSound() {
+        float pitch = 0.9f + (float) Math.random() * 0.2f; // 0.9 ~ 1.1
+        MinecraftClient.getInstance().getSoundManager().play(
+                PositionedSoundInstance.master(DOCTORM.SHIELD_ACTIVATE, pitch, 1.0f)
+        );
     }
 }
