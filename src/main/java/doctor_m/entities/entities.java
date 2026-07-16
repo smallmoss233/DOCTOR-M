@@ -2,7 +2,7 @@ package doctor_m.entities;
 
 import doctor_m.DOCTORM;
 import doctor_m.entities.data.entity_103_tardis;
-import entities.data.entity_103w_evereye;
+import doctor_m.entities.data.entity_103w_evereye;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityDimensions;

@@ -1,4 +1,4 @@
-package entities.data
+package doctor_m.entities.data
 
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity

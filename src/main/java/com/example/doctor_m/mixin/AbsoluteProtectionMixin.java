@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import world_data.TimeKeyFunction;
+import doctor_m.world_data.TimeKeyFunction;
 
 @Mixin(LivingEntity.class)
 public class AbsoluteProtectionMixin {

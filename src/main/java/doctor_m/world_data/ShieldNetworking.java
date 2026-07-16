@@ -1,4 +1,4 @@
-package world_data;  // 或者你项目里合适的包
+package doctor_m.world_data;  // 或者你项目里合适的包
 
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

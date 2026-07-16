@@ -3,7 +3,7 @@ package doctor_m.client;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import world_data.ShieldNetworking;
+import doctor_m.world_data.ShieldNetworking;
 
 @Environment(EnvType.CLIENT)
 public class ShieldNetworkingClient {

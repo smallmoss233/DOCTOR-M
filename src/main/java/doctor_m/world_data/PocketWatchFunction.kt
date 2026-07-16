@@ -1,4 +1,4 @@
-package world_data
+package doctor_m.world_data
 
 import com.ibm.icu.impl.Pair
 import dev.emi.trinkets.api.TrinketsApi

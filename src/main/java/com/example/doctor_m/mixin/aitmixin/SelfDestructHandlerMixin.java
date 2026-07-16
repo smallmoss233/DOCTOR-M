@@ -31,7 +31,7 @@ import dev.amble.ait.core.tardis.Tardis;
 import dev.amble.ait.core.tardis.handler.SelfDestructHandler;
 import dev.amble.ait.core.tardis.manager.ServerTardisManager;
 import dev.amble.lib.data.CachedDirectedGlobalPos;
-import world_data.TimeKeyFunction;
+import doctor_m.world_data.TimeKeyFunction;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

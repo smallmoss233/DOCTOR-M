@@ -10,8 +10,8 @@ import doctor_m.module.ait_space_mixin.ModBlocks;
 import doctor_m.module.creativity.creativity_items;
 import doctor_m.util.command.AITTardisBuilderCommand;
 import doctor_m.util.config.ConfigManager;
+import doctor_m.world_data.*;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import world_data.*;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 
