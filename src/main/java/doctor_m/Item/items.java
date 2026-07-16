@@ -1,6 +1,7 @@
 package doctor_m.Item;
 
 import dev.amble.lib.container.impl.ItemContainer;
+import doctor_m.Item.data_itme.ShieldCoreItem;
 import doctor_m.Item.data_itme.fragment.eternal_crystal;
 import doctor_m.Item.data_itme.fragment.relic_gem;
 import doctor_m.Item.data_itme.time_key;
@@ -20,11 +21,13 @@ import doctor_m.util.javautil.PercentageDamageHelper;
 
 public class items extends ItemContainer {
 
-    //DW物品相关
+    //时间钥匙
     public static final Item TIME_KEY = new time_key(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
     public static final Item POCKET_WATCH = new pocket_watch(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
     public static final Item RELIC_GEM = new relic_gem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
     public static final Item ETERNAL_CRYSTAL = new eternal_crystal(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
+
+    public static final Item SHIELD_CORE = new ShieldCoreItem(new Item.Settings().maxCount(1));
 
     //氧气相关
     public static final Item OXYGEN_CHARGER_ITEM = new BlockItem(ModBlocks.OXYGEN_CHARGER, new Item.Settings());

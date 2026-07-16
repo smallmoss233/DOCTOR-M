@@ -28,6 +28,7 @@ public static void registerItems() {
                                 entries.add(EVEREYE_SPAWN);
                                 entries.add(OXYGEN_TANK);
                                 entries.add(TLIPOCA_SCYTHE);
+                                entries.add(SHIELD_CORE);
                             })
                             .build());
         }

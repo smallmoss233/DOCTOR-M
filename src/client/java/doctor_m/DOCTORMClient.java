@@ -3,12 +3,15 @@ package doctor_m;
 import client.render.TitanDimensionEffects;
 import client.render.entity.evereye_renderer;
 import client.render.entity.tardis_renderer;
+import doctor_m.client.ShieldNetworkingClient;
+import doctor_m.client.ShieldOverlay;
 import doctor_m.entities.entities;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.util.Identifier;
 
@@ -25,6 +28,9 @@ public class DOCTORMClient implements ClientModInitializer {
                 new Identifier("doctor_m", "titan"),
                 new TitanDimensionEffects()
         );
+
+        ShieldNetworkingClient.register();
+        HudRenderCallback.EVENT.register(new ShieldOverlay());
 
         EntityRendererRegistry.register(entities.TYPE_103_TARDIS, tardis_renderer::new);
         EntityRendererRegistry.register(entities.TYPE_103W_EVEREYE, evereye_renderer::new);

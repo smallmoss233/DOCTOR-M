@@ -11,10 +11,7 @@ import doctor_m.module.creativity.creativity_items;
 import doctor_m.util.command.AITTardisBuilderCommand;
 import doctor_m.util.config.ConfigManager;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import world_data.GemDeathSaveHandler;
-import world_data.GemTickHandler;
-import world_data.PocketWatchFunction;
-import world_data.TimeKeyFunction;
+import world_data.*;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 
@@ -32,6 +29,7 @@ public class DOCTORM implements ModInitializer {
         item_group.registerItems();
         entities.registerAttributes();
         dimension_register.register();
+        ShieldDamageHandler.register();
         TimeKeyFunction.INSTANCE.register();
         PocketWatchFunction.INSTANCE.register();
         GemDeathSaveHandler.INSTANCE.register();
