@@ -21,7 +21,7 @@
 
 ### 物品 / Items
 
--  护盾生成器，能提供99.99%的伤害减免并消耗能量，默认1000点能量，每次受伤消耗5点（可配置） / 
+-  护盾生成器，能提供99.99%的伤害减免并消耗能量，默认1000点能量，每次受伤消耗5点（可配置） / Shield Generator: Provides 99.99% damage reduction while consuming energy. Default energy capacity is 1000, and each hit consumes 5 energy (configurable)
 
 ### 修改 / Edit
 
