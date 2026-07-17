@@ -7,7 +7,15 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public class ShieldDamageHandler {
+    // 护盾特效冷却：避免高频受伤导致高频发包
+    private static final Map<UUID, Integer> LAST_SHIELD_TICK = new HashMap<>();
+    private static final int SHIELD_FX_COOLDOWN = 4; // 0.2秒
+
     public static void register() {
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
             if (!(entity instanceof ServerPlayerEntity player)) return true;
@@ -21,15 +29,21 @@ public class ShieldDamageHandler {
 
             if (!ShieldCoreItem.consumeEnergy(shield, cost)) return true;
 
-            // 发送网络包到客户端
-            ShieldNetworking.sendShieldActivation(player);
-
-            // 计算实际伤害（0.01%）
+            // 扣除 0.01% 穿透伤害
             float actualDamage = amount * 0.0001f;
             if (actualDamage > 0) {
                 float newHealth = player.getHealth() - actualDamage;
                 player.setHealth(Math.max(newHealth, 0));
             }
+
+            // 特效冷却：挡伤害逻辑每 tick 都走，但发包/声音有冷却
+            int currentTick = player.getWorld().getServer().getTicks();
+            Integer lastTick = LAST_SHIELD_TICK.get(player.getUuid());
+            if (lastTick == null || currentTick - lastTick >= SHIELD_FX_COOLDOWN) {
+                LAST_SHIELD_TICK.put(player.getUuid(), currentTick);
+                ShieldNetworking.sendShieldActivation(player);
+            }
+
             return false; // 取消原伤害
         });
     }
@@ -38,7 +52,6 @@ public class ShieldDamageHandler {
         var component = TrinketsApi.getTrinketComponent(player).orElse(null);
         if (component == null) return ItemStack.EMPTY;
 
-        // 修复：getInventory() 返回 Map<String, Map<String, TrinketInventory>>
         for (var group : component.getInventory().values()) {
             for (var slot : group.values()) {
                 for (int i = 0; i < slot.size(); i++) {

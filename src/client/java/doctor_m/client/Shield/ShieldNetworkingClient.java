@@ -11,8 +11,8 @@ public class ShieldNetworkingClient {
         ClientPlayNetworking.registerGlobalReceiver(
                 ShieldNetworking.SHIELD_ACTIVATION,
                 (client, handler, buf, responseSender) -> {
-                    // TODO: 触发护盾叠加层渲染
-                    ShieldOverlay.triggerShield(); // 必须调用这个！
+                    // 关键修复：Netty IO 线程不能操作 SoundManager，必须切回客户端主线程
+                    client.execute(() -> ShieldOverlay.triggerShield());
                 }
         );
     }
