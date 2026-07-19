@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import dev.amble.ait.api.tardis.TardisComponent;
 import dev.amble.ait.core.engine.DurableSubSystem;
@@ -36,12 +37,9 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationPropertyHelper;
 import net.minecraft.util.math.Vec3d;
 
-import java.util.Random;
 import java.util.Set;
 
 public class AITTardisBuilderCommand {
-
-    private static final Random RANDOM = new Random();
 
     public enum SubSystemMode {
         FULL("full"),
@@ -77,6 +75,7 @@ public class AITTardisBuilderCommand {
             SubSystem.Id.ENGINE,
             SubSystem.Id.LIFE_SUPPORT,
             SubSystem.Id.STABILISERS,
+            SubSystem.Id.DEMAT,
             SubSystem.Id.CHAMELEON
     );
 
@@ -89,27 +88,27 @@ public class AITTardisBuilderCommand {
                         .executes(AITTardisBuilderCommand::executeDefault)
 
                         // /doctor_m build <desktop>
-                        .then(CommandManager.argument("desktop", StringArgumentType.word())
+                        .then(CommandManager.argument("desktop", StringArgumentType.string())
                                 .suggests(DESKTOP_SUGGESTIONS)
                                 .executes(ctx -> executeWithArgs(ctx,
                                         getString(ctx, "desktop"), null, null, null, SubSystemMode.FULL, null))
 
                                 // /doctor_m build <desktop> <exterior>
-                                .then(CommandManager.argument("exterior", StringArgumentType.word())
+                                .then(CommandManager.argument("exterior", StringArgumentType.string())
                                         .suggests(EXTERIOR_SUGGESTIONS)
                                         .executes(ctx -> executeWithArgs(ctx,
                                                 getString(ctx, "desktop"), getString(ctx, "exterior"),
                                                 null, null, SubSystemMode.FULL, null))
 
                                         // /doctor_m build <desktop> <exterior> <owner>
-                                        .then(CommandManager.argument("owner", StringArgumentType.word())
+                                        .then(CommandManager.argument("owner", StringArgumentType.string())
                                                 .suggests(OWNER_SUGGESTIONS)
                                                 .executes(ctx -> executeWithArgs(ctx,
                                                         getString(ctx, "desktop"), getString(ctx, "exterior"),
                                                         getString(ctx, "owner"), null, SubSystemMode.FULL, null))
 
                                                 // ===== 分支 A: 直接跟子系统模式 =====
-                                                .then(CommandManager.argument("subsystem", StringArgumentType.word())
+                                                .then(CommandManager.argument("subsystem", StringArgumentType.string())
                                                         .suggests(SUBSYSTEM_SUGGESTIONS)
                                                         .executes(ctx -> executeWithArgs(ctx,
                                                                 getString(ctx, "desktop"), getString(ctx, "exterior"),
@@ -124,7 +123,7 @@ public class AITTardisBuilderCommand {
 
                                                 // ===== 分支 B: name <名称> =====
                                                 .then(CommandManager.literal("name")
-                                                        .then(CommandManager.argument("name", StringArgumentType.word())
+                                                        .then(CommandManager.argument("name", StringArgumentType.string())
                                                                 .suggests(NAME_SUGGESTIONS)
                                                                 .executes(ctx -> executeWithArgs(ctx,
                                                                         getString(ctx, "desktop"), getString(ctx, "exterior"),
@@ -132,7 +131,7 @@ public class AITTardisBuilderCommand {
                                                                         SubSystemMode.FULL, null))
 
                                                                 // /... name <名称> <subsystem>
-                                                                .then(CommandManager.argument("subsystem", StringArgumentType.word())
+                                                                .then(CommandManager.argument("subsystem", StringArgumentType.string())
                                                                         .suggests(SUBSYSTEM_SUGGESTIONS)
                                                                         .executes(ctx -> executeWithArgs(ctx,
                                                                                 getString(ctx, "desktop"), getString(ctx, "exterior"),
@@ -166,11 +165,16 @@ public class AITTardisBuilderCommand {
         );
     }
 
-    private static SubSystemMode parseSubsystem(CommandContext<ServerCommandSource> ctx) {
-        String sub = getString(ctx, "subsystem");
+    /**
+     * 解析子系统模式，失败时抛出友好的命令异常（显示本地化错误消息）。
+     */
+    private static SubSystemMode parseSubsystem(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+        String sub = StringArgumentType.getString(ctx, "subsystem");
         SubSystemMode mode = SubSystemMode.fromString(sub);
         if (mode == null) {
-            throw new IllegalArgumentException("Invalid subsystem mode: " + sub);
+            throw new SimpleCommandExceptionType(
+                    Text.translatable("tooltip.doctor_m.ait_tardisbuilder.error.invalid_subsystem_mode", sub)
+            ).create();
         }
         return mode;
     }
@@ -280,12 +284,14 @@ public class AITTardisBuilderCommand {
             stats.markPlayerCreatorName();
         });
 
-        // 应用内饰和外观
-        if (desktop == null || exterior == null) {
+        // ================================================================
+        // 修复：允许只指定 desktop 或 exterior 中的一个，而不是强制全随机
+        // ================================================================
+        if (desktop == null && exterior == null) {
             DefaultThemes.getRandom().apply(builder);
         } else {
-            builder.desktop(desktop);
-            builder.exterior(exterior);
+            if (desktop != null) builder.desktop(desktop);
+            if (exterior != null) builder.exterior(exterior);
         }
 
         // 创建
@@ -302,20 +308,21 @@ public class AITTardisBuilderCommand {
             tardis.stats().setName(finalOwnerName + "'s TARDIS");
         }
 
-        tardis.getDesktop().getDoorPos(); // 触发加载
+        // 触发加载（如有必要）
+        tardis.getDesktop().getDoorPos();
 
-        Text feedback = Text.literal("")
-                .append(Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.created")).append("\n")
-                .append(Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.uuid", tardis.getUuid())).append("\n")
-                .append(Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.name", tardis.stats().getName())).append("\n")
-                .append(Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.desktop", tardis.getDesktop().getSchema().name())).append("\n")
-                .append(Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.exterior", tardis.getExterior().getVariant().name())).append("\n")
-                .append(Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.owner", finalOwnerName)).append("\n")
-                .append(Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.subsystem_mode",
-                        Text.translatable("tooltip.doctor_m.ait_tardisbuilder.subsystem_mode." + finalSubsystemMode.getId()))).append("\n")
-                .append(Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.position", tardisPos.getPos().toShortString()));
-
-        source.sendFeedback(() -> feedback, true);
+        // ================================================================
+        // 修复：反馈消息改为多条发送，避免单条过长且不支持换行
+        // ================================================================
+        source.sendFeedback(() -> Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.created"), true);
+        source.sendFeedback(() -> Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.uuid", tardis.getUuid()), true);
+        source.sendFeedback(() -> Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.name", tardis.stats().getName()), true);
+        source.sendFeedback(() -> Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.desktop", tardis.getDesktop().getSchema().name()), true);
+        source.sendFeedback(() -> Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.exterior", tardis.getExterior().getVariant().name()), true);
+        source.sendFeedback(() -> Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.owner", finalOwnerName), true);
+        source.sendFeedback(() -> Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.subsystem_mode",
+                Text.translatable("tooltip.doctor_m.ait_tardisbuilder.subsystem_mode." + finalSubsystemMode.getId())), true);
+        source.sendFeedback(() -> Text.translatable("tooltip.doctor_m.ait_tardisbuilder.success.position", tardisPos.getPos().toShortString()), true);
 
         return 1;
     }
@@ -373,10 +380,10 @@ public class AITTardisBuilderCommand {
         }
         return builder.buildFuture();
     };
-//预设驾驶员名字
+
     private static final SuggestionProvider<ServerCommandSource> OWNER_SUGGESTIONS = (ctx, builder) -> {
-        for (ServerPlayerEntity player : ctx.getSource().getServer().getPlayerManager().getPlayerList()) {
-            builder.suggest(player.getName().getString());
+        for (ServerPlayerEntity p : ctx.getSource().getServer().getPlayerManager().getPlayerList()) {
+            builder.suggest(p.getName().getString());
         }
         builder.suggest("Doctor");
         builder.suggest("Master");
@@ -394,7 +401,7 @@ public class AITTardisBuilderCommand {
         }
         return builder.buildFuture();
     };
-//预设塔迪斯名字
+
     private static final SuggestionProvider<ServerCommandSource> NAME_SUGGESTIONS = (ctx, builder) -> {
         builder.suggest("Lolita");
         builder.suggest("Marianne");
