@@ -41,8 +41,8 @@ repositories {
         }
     }
     maven {
-        name = "Mod Menu"
-        url = "https://maven.terraformersmc.com/releases/"
+        name = "Terraformers"
+        url = "https://maven.terraformersmc.com/"
     }
     maven {
         name = "JEI"
