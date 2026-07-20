@@ -3,7 +3,7 @@ package doctor_m.mixin.client.doctor_m;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import doctor_m.client.render.VortexBackgroundRenderer;
-import doctor_m.util.config.ConfigManager;
+import doctor_m.config.ConfigManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.TitleScreen;

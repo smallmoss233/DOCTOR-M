@@ -1,8 +1,8 @@
 package doctor_m.module.creativity.creativity_data;
 
 import com.google.common.collect.Multimap;
-import doctor_m.util.javautil.ShiftTooltipInvoker;
-import doctor_m.util.javautil.TooltipHelper;
+import doctor_m.util.tooltip.ShiftTooltipInvoker;
+import doctor_m.util.tooltip.TooltipHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttribute;
@@ -21,7 +21,7 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.UUID;
 
-import doctor_m.util.javautil.ScytheSlashManager;
+import doctor_m.util.creativity.ScytheSlashManager;
 
 public class tlipoca_scythe extends SwordItem {
     private static final String INIT_KEY = "TlipocaInit";

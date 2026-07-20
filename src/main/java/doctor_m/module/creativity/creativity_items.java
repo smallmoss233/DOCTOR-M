@@ -2,9 +2,9 @@ package doctor_m.module.creativity;
 
 import dev.amble.lib.container.impl.ItemContainer;
 import doctor_m.module.creativity.creativity_data.tlipoca_scythe;
-import doctor_m.util.config.ConfigManager;
-import doctor_m.util.config.ModConfig;
-import doctor_m.util.javautil.PercentageDamageHelper;
+import doctor_m.config.ConfigManager;
+import doctor_m.config.ModConfig;
+import doctor_m.util.creativity.PercentageDamageHelper;
 import net.minecraft.item.Item;
 import net.minecraft.util.Rarity;
 

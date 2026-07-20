@@ -1,6 +1,6 @@
 package doctor_m.mixin.client.ait;
 
-import doctor_m.util.config.ConfigManager;
+import doctor_m.config.ConfigManager;
 import net.minecraft.client.model.*;
 import dev.amble.ait.client.models.machines.ShieldsModel;
 import org.spongepowered.asm.mixin.Mixin;

@@ -44,7 +44,7 @@
 
   "tooltip.doctor_m.hold_shift": "按住 Shift 查看詳情",
   "tooltip.doctor_m.oxygen": "§b氧氣: %.1f / %.0fL",
-  "tooltip.doctor_m.shield_core.energy": "能量: %s/%s",
+  "tooltip.doctor_m.vacuum_consuming": "你正在真空下吃東西！",
   "tooltip.doctor_m.ait_tardisbuilder.error.invalid_desktop_id": "無效的內飾 ID 格式：%s",
   "tooltip.doctor_m.ait_tardisbuilder.error.unknown_desktop": "未知的內飾：%s（解析為 %s）",
   "tooltip.doctor_m.ait_tardisbuilder.error.invalid_exterior_id": "無效的外觀 ID 格式：%s",
@@ -155,6 +155,7 @@
   "message.doctor_m.eternal_crystal.detail": "§7裝備後你的每次攻擊都將附帶基於攻擊力的50%的強制扣血，冷卻五秒",
   "message.doctor_m.tlipoca_scythe.tip": "§7見習死神的鐮刀，儘管如此它也能收割靈魂",
   "message.doctor_m.tlipoca_scythe.detail": "§d見習死神鐮刀的斬擊能將世間生靈的靈魂奪走",
+  "message.doctor_m.shield_core.energy": "能量: %s/%s",
 
   "dimension.doctor_m.trenzalore": "§3特蘭澤洛",
   "dimension.doctor_m.titan": "土衛六-泰坦"

@@ -33,7 +33,7 @@
     ],
     "client": [
       "doctor_m.DOCTORMClient",
-      "doctor_m.client.AccessoryPassiveButton"
+      "doctor_m.client.util.AccessoryPassiveButton"
     ],
     "fabric-datagen": [
       "doctor_m.DOCTORMDataGenerator"

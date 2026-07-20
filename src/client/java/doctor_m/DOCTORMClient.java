@@ -1,8 +1,8 @@
 package doctor_m;
 
-import client.render.TitanDimensionEffects;
-import client.render.entity.evereye_renderer;
-import client.render.entity.tardis_renderer;
+import doctor_m.client.TitanDimensionEffects;
+import doctor_m.client.entity.evereye_renderer;
+import doctor_m.client.entity.tardis_renderer;
 import doctor_m.client.Shield.ShieldNetworkingClient;
 import doctor_m.client.Shield.ShieldOverlay;
 import doctor_m.entities.entities;

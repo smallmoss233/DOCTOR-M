@@ -44,7 +44,7 @@
 
   "tooltip.doctor_m.hold_shift": "Hold Shift for Details",
   "tooltip.doctor_m.oxygen": "§bOxygen: %.1f / %.0fL",
-  "tooltip.doctor_m.shield_core.energy": "Energy: %s/%s",
+  "tooltip.doctor_m.vacuum_consuming": "You are eating in a vacuum!",
   "tooltip.doctor_m.ait_tardisbuilder.error.invalid_desktop_id": "Invalid desktop ID format: %s",
   "tooltip.doctor_m.ait_tardisbuilder.error.unknown_desktop": "Unknown desktop: %s (resolved to %s)",
   "tooltip.doctor_m.ait_tardisbuilder.error.invalid_exterior_id": "Invalid exterior ID format: %s",
@@ -155,6 +155,7 @@
   "message.doctor_m.eternal_crystal.detail": "§7While equipped, each of your attacks will deal an additional forced 50% damage based on your attack damage. Cooldown: 5 seconds.",
   "message.doctor_m.tlipoca_scythe.tip": "§7An apprentice reaper's scythe. Even so, it can still reap souls.",
   "message.doctor_m.tlipoca_scythe.detail": "§dThe slash of the apprentice reaper's scythe can steal the souls of all living beings.",
+  "message.doctor_m.shield_core.energy": "Energy: %s/%s",
 
   "dimension.doctor_m.trenzalore": "§3Trenzalore",
   "dimension.doctor_m.titan": "Saturn VI-Titan"

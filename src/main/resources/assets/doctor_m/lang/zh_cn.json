@@ -44,7 +44,7 @@
 
   "tooltip.doctor_m.hold_shift": "按住 Shift 查看详情",
   "tooltip.doctor_m.oxygen": "§b氧气: %.1f / %.0fL",
-  "tooltip.doctor_m.shield_core.energy": "能量: %s/%s",
+  "tooltip.doctor_m.vacuum_consuming": "你正在真空下吃东西！",
   "tooltip.doctor_m.ait_tardisbuilder.error.invalid_desktop_id": "无效的内饰 ID 格式：%s",
   "tooltip.doctor_m.ait_tardisbuilder.error.unknown_desktop": "未知的内饰：%s（解析为 %s）",
   "tooltip.doctor_m.ait_tardisbuilder.error.invalid_exterior_id": "无效的外观 ID 格式：%s",
@@ -155,6 +155,7 @@
   "message.doctor_m.eternal_crystal.detail": "§7装备后你的每次攻击都将附带基于攻击力的50%的强制扣血，冷却五秒",
   "message.doctor_m.tlipoca_scythe.tip": "§7见习死神的镰刀，尽管如此它也能收割灵魂",
   "message.doctor_m.tlipoca_scythe.detail": "§d见习死神镰刀的斩击能将世间生灵的灵魂夺走",
+  "message.doctor_m.shield_core.energy": "能量: %s/%s",
 
   "dimension.doctor_m.trenzalore": "§3特兰泽洛",
   "dimension.doctor_m.titan": "土卫六-泰坦"
