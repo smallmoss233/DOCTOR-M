@@ -25,6 +25,4 @@ public class SpaceOxygenManager {
         double current = getOxygen(stack);
         setOxygen(stack, current + amount);
     }
-
-    // 移除旧的 updatePlayerOxygenStatus，由调用方直接处理
 }
