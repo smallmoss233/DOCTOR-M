@@ -1,8 +1,8 @@
 package doctor_m;
 
 import dev.amble.lib.container.RegistryContainer;
-import doctor_m.item.item_group;
-import doctor_m.item.items;
+import doctor_m.Item.item_group;
+import doctor_m.Item.items;
 import doctor_m.dimension.dimension_register;
 import doctor_m.entities.entities;
 import doctor_m.module.space_plus.block.ModBlockEntities;

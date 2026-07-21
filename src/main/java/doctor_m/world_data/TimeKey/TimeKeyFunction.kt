@@ -22,7 +22,7 @@ import net.minecraft.text.Text
 import net.minecraft.world.GameMode
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
-import doctor_m.item.data_itme.time_key
+import doctor_m.Item.data_itme.time_key
 import java.lang.Boolean.getBoolean
 
 object TimeKeyFunction {

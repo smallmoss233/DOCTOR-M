@@ -1,4 +1,4 @@
-package doctor_m.item.data_itme.fragment;
+package doctor_m.Item.data_itme.fragment;
 
 import dev.emi.trinkets.api.TrinketItem;
 import doctor_m.compat.TimelordRegenCompat;

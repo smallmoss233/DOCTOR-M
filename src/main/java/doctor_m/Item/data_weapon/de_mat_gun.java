@@ -1,4 +1,4 @@
-package doctor_m.item.data_weapon;
+package doctor_m.Item.data_weapon;
 
 import dev.amble.ait.module.gun.core.item.BaseGunItem;
 

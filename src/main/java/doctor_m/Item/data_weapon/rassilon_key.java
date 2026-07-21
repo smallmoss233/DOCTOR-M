@@ -1,4 +1,4 @@
-package doctor_m.item.data_weapon;
+package doctor_m.Item.data_weapon;
 
 import dev.amble.ait.core.item.KeyItem;
 import doctor_m.util.tooltip.TooltipHelper;

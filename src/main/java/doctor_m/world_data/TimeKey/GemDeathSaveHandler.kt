@@ -1,7 +1,7 @@
 package doctor_m.world_data.TimeKey
 
 import dev.emi.trinkets.api.TrinketsApi
-import doctor_m.item.data_itme.fragment.relic_gem
+import doctor_m.Item.data_itme.fragment.relic_gem
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents
 
 object GemDeathSaveHandler {

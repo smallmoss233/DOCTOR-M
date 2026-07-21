@@ -1,13 +1,13 @@
-package doctor_m.item;
+package doctor_m.Item;
 
 import dev.amble.lib.container.impl.ItemContainer;
-import doctor_m.item.data_itme.ShieldCoreItem;
-import doctor_m.item.data_itme.fragment.eternal_crystal;
-import doctor_m.item.data_itme.fragment.relic_gem;
-import doctor_m.item.data_itme.time_key;
-import doctor_m.item.data_itme.fragment.pocket_watch;
-import doctor_m.item.data_weapon.de_mat_gun;
-import doctor_m.item.data_weapon.rassilon_key;
+import doctor_m.Item.data_itme.ShieldCoreItem;
+import doctor_m.Item.data_itme.fragment.eternal_crystal;
+import doctor_m.Item.data_itme.fragment.relic_gem;
+import doctor_m.Item.data_itme.time_key;
+import doctor_m.Item.data_itme.fragment.pocket_watch;
+import doctor_m.Item.data_weapon.de_mat_gun;
+import doctor_m.Item.data_weapon.rassilon_key;
 import doctor_m.entities.entities;
 import doctor_m.module.space_plus.block.ModBlocks;
 import doctor_m.module.space_plus.OxygenTankItem;

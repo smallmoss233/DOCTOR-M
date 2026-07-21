@@ -1,4 +1,4 @@
-package doctor_m.item;
+package doctor_m.Item;
 
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.item.ItemStack;
@@ -7,7 +7,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-import static doctor_m.item.items.*;
+import static doctor_m.Item.items.*;
 import static doctor_m.module.creativity.creativity_items.*;
 
 public class item_group {

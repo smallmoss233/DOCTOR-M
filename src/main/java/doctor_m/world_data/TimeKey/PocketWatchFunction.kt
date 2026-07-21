@@ -10,7 +10,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
 import net.minecraft.item.ItemStack
-import doctor_m.item.data_itme.fragment.pocket_watch
+import doctor_m.Item.data_itme.fragment.pocket_watch
 import net.minecraft.entity.LivingEntity
 
 object PocketWatchFunction {
