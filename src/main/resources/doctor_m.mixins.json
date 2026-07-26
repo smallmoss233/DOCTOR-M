@@ -19,7 +19,8 @@
     "sonic_mode.ScanningSonicOverloadMixin",
     "sonic_mode.OverloadSonicModeMixin",
     "sonic_mode.TardisSonicModeMixin",
-    "sonic_mode.ScanningSonicModeMixin"
+    "sonic_mode.ScanningSonicModeMixin",
+    "sonic_mode.MixinInteractionSonicMode"
   ],
   "injectors": {
     "defaultRequire": 1
