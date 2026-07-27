@@ -1,19 +1,32 @@
 package doctor_m.world_data;
 
 import doctor_m.DOCTORM;
+import doctor_m.compat.TimelordRegenCompat;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerManager;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.network.ServerRecipeBook;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.stat.StatHandler;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.joml.Vector3f;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Set;
 
 public class DeMatGunEntityEraser {
 
@@ -121,18 +134,94 @@ public class DeMatGunEntityEraser {
     }
 
     public static void erasePlayer(PlayerEntity player) {
-        player.getInventory().clear();
-        player.getEnderChestInventory().clear();
+        if (!(player instanceof ServerPlayerEntity serverPlayer)) return;
+        MinecraftServer server = serverPlayer.getServer();
+        if (server == null) return;
 
-        player.addExperienceLevels(-player.experienceLevel);
-        player.experienceProgress = 0.0f;
+        // ---- 1. 时间领主兼容 ----
+        if (TimelordRegenCompat.isLoaded()) {
+            if (TimelordRegenCompat.isTimelord(serverPlayer)) {
+                TimelordRegenCompat.RegenInfo info = TimelordRegenCompat.getRegenInfo(serverPlayer);
+                if (info != null) info.setUsesLeft(0);
+            }
+        }
 
+        // ---- 2. 清除状态与物品 ----
+        serverPlayer.clearStatusEffects();
+        serverPlayer.addExperienceLevels(-serverPlayer.experienceLevel);
+        serverPlayer.experienceProgress = 0.0f;
+        serverPlayer.getInventory().clear();
+        serverPlayer.getEnderChestInventory().clear();
+
+        // ---- 3. 反射清空进度（成就） ----
+        try {
+            Object tracker = serverPlayer.getAdvancementTracker();
+            Field progressField = tracker.getClass().getDeclaredField("advancementToProgress");
+            progressField.setAccessible(true);
+            Map<?, ?> progressMap = (Map<?, ?>) progressField.get(tracker);
+            progressMap.clear();
+        } catch (Exception e) {
+            // 如果反射失败，打印异常，但不再做额外处理（因为主逻辑不受影响）
+            e.printStackTrace();
+        }
+
+        // ---- 4. 反射清空配方 ----
+        try {
+            ServerRecipeBook recipeBook = serverPlayer.getRecipeBook();
+            // 清空已解锁配方集合
+            Field recipesField = ServerRecipeBook.class.getDeclaredField("recipes");
+            recipesField.setAccessible(true);
+            Set<?> recipesSet = (Set<?>) recipesField.get(recipeBook);
+            recipesSet.clear();
+
+            // 清空显示过的配方集合
+            Field displayedField = ServerRecipeBook.class.getDeclaredField("displayedRecipes");
+            displayedField.setAccessible(true);
+            Set<?> displayedSet = (Set<?>) displayedField.get(recipeBook);
+            displayedSet.clear();
+
+            // 同步给客户端
+            Method sendUnlock = ServerRecipeBook.class.getDeclaredMethod("sendUnlockRecipes", ServerPlayerEntity.class);
+            sendUnlock.setAccessible(true);
+            sendUnlock.invoke(recipeBook, serverPlayer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // ---- 5. 反射清空统计 ----
+        try {
+            StatHandler stats = serverPlayer.getStatHandler();
+            Field statMapField = StatHandler.class.getDeclaredField("statMap");
+            statMapField.setAccessible(true);
+            Map<?, ?> statMap = (Map<?, ?>) statMapField.get(stats);
+            statMap.clear();
+
+            Method sendStats = StatHandler.class.getDeclaredMethod("sendStats", ServerPlayerEntity.class);
+            sendStats.setAccessible(true);
+            sendStats.invoke(stats, serverPlayer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // ---- 6. 强制保存玩家数据到磁盘（防止回档） ----
+        try {
+            PlayerManager playerManager = server.getPlayerManager();
+            Method saveMethod = PlayerManager.class.getDeclaredMethod("savePlayerData", ServerPlayerEntity.class);
+            saveMethod.setAccessible(true);
+            saveMethod.invoke(playerManager, serverPlayer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // ---- 7. 清除坐骑/乘客 ----
+        if (serverPlayer.getVehicle() != null) {
+            serverPlayer.getVehicle().discard();
+        }
+        serverPlayer.dismountVehicle();
+        serverPlayer.removeAllPassengers();
+
+        // ---- 8. 物理删除实体（跳过死亡流程） ----
         player.kill();
-
-        player.sendMessage(
-                net.minecraft.text.Text.translatable("message.doctor_m.de_mat_gun.erased")
-                        .formatted(net.minecraft.util.Formatting.RED),
-                false
-        );
+        serverPlayer.discard();
     }
 }
