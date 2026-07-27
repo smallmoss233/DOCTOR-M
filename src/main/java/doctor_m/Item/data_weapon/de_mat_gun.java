@@ -38,7 +38,7 @@ public class de_mat_gun extends BaseGunItem {
 
     @Override
     public int getCooldown() {
-        return 5;
+        return 60;
     }
 
     @Override

@@ -2,10 +2,8 @@ package doctor_m.network;
 
 import doctor_m.Item.data_weapon.de_mat_gun;
 import doctor_m.util.EntityEraser;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
@@ -33,9 +31,10 @@ public class DeMatGunNetwork {
                 double current = gun.getCurrentAmmo(stack);
                 gun.setCurrentAmmo(Math.max(0, current - cost), stack);
 
-                player.getItemCooldownManager().set(gun, gun.getCooldown());
+                double range = isAds ? 256.0 : 128.0;
+                EntityEraser.eraseByRaycast(player, player.getWorld(), range);
 
-                EntityEraser.eraseByRaycast(player, player.getWorld());
+                player.getItemCooldownManager().set(gun, gun.getCooldown());
             });
         });
     }

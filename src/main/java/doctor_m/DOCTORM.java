@@ -29,6 +29,8 @@ public class DOCTORM implements ModInitializer {
     public static final Identifier TOGGLE_PASSIVE_A = new Identifier(MOD_ID, "toggle_passive_a");
     public static final Identifier TOGGLE_PASSIVE_B = new Identifier(MOD_ID, "toggle_passive_b");
     public static final SoundEvent SHIELD_ACTIVATE = register("shieldcore");
+    public static final SoundEvent DE_MAT_GUN_FIRE = register("item.de_mat_gun.fire");
+    public static final SoundEvent DE_MAT_GUN_ERASE = register("entity.de_mat_gun.erase");
 
     private static SoundEvent register(String name) {
         Identifier id = new Identifier(DOCTORM.MOD_ID, name);

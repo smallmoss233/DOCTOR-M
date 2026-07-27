@@ -3,5 +3,17 @@
     "sounds": [
       "doctor_m:shieldcore"
     ]
+  },
+  "item.de_mat_gun.fire": {
+    "sounds": [
+      "doctor_m:de_mat_gun_fire"
+    ],
+    "subtitle": "subtitles.doctor_m.de_mat_gun.fire"
+  },
+  "entity.de_mat_gun.erase": {
+    "sounds": [
+      "doctor_m:de_mat_gun_erase"
+    ],
+    "subtitle": "subtitles.doctor_m.de_mat_gun.erase"
   }
 }
