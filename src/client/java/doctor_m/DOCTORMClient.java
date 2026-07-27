@@ -1,18 +1,23 @@
 package doctor_m;
 
+import doctor_m.Item.data_weapon.de_mat_gun;
 import doctor_m.client.Shield.ShieldNetworkingClient;
 import doctor_m.client.Shield.ShieldOverlay;
 import doctor_m.client.TitanDimensionEffects;
 import doctor_m.client.entity.evereye_renderer;
 import doctor_m.client.entity.tardis_renderer;
+import doctor_m.client.network.DeMatGunClientNetwork;
 import doctor_m.entities.entities;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
@@ -34,5 +39,19 @@ public class DOCTORMClient implements ClientModInitializer {
 
         EntityRendererRegistry.register(entities.TYPE_103_TARDIS, tardis_renderer::new);
         EntityRendererRegistry.register(entities.TYPE_103W_EVEREYE, evereye_renderer::new);
+
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            PlayerEntity player = client.player;
+            if (player == null) return;
+
+            ItemStack stack = player.getMainHandStack();
+            if (!(stack.getItem() instanceof de_mat_gun gun)) return;
+            if (!player.getItemCooldownManager().isCoolingDown(gun)
+                    && client.options.attackKey.isPressed()) {
+
+                boolean isAds = client.options.useKey.isPressed();
+                DeMatGunClientNetwork.sendShootPacket(isAds);
+            }
+        });
     }
 }

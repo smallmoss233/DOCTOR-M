@@ -11,6 +11,7 @@ import doctor_m.module.creativity.creativity_items;
 import doctor_m.module.space_plus.block.ModBlockEntities;
 import doctor_m.module.space_plus.block.ModBlocks;
 import doctor_m.module.space_plus.system.VacuumEatingHandler;
+import doctor_m.network.DeMatGunNetwork;
 import doctor_m.world_data.ShieldDamageHandler;
 import doctor_m.world_data.TimeKey.GemDeathSaveHandler;
 import doctor_m.world_data.TimeKey.GemTickHandler;
@@ -53,6 +54,7 @@ public class DOCTORM implements ModInitializer {
         creativity_items.registerAbilities();
         item_group.registerItems();
         entities.registerAttributes();
+        DeMatGunNetwork.registerServerReceiver();
 
         CommandRegistrationCallback.EVENT.register(AITTardisBuilderCommand::register);
         ConfigManager.loadConfig();
