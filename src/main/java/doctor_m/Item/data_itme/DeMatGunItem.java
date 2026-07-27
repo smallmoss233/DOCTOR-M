@@ -1,4 +1,4 @@
-package doctor_m.Item.data_weapon;
+package doctor_m.Item.data_itme;
 
 import dev.amble.ait.module.gun.core.item.BaseGunItem;
 import net.minecraft.client.item.TooltipContext;
@@ -52,8 +52,5 @@ public class DeMatGunItem extends BaseGunItem {
         MutableText line2 = Text.translatable("message.doctor_m.de_mat_gun.tooltip.line2");
         line2.setStyle(Style.EMPTY.withColor(Formatting.GRAY).withItalic(true));
         tooltip.add(line2);
-
-        super.appendTooltip(stack, world, tooltip, context);
-        tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
     }
 }

@@ -2,7 +2,7 @@ package doctor_m.world_data.TimeKey
 
 import com.ibm.icu.impl.Pair
 import dev.emi.trinkets.api.TrinketsApi
-import doctor_m.Item.data_itme.fragment.PocketWatchItem
+import doctor_m.Item.data_itme.TimeKyeFragment.PocketWatchItem
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.effect.StatusEffectInstance

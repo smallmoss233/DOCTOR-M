@@ -1,6 +1,6 @@
 package doctor_m;
 
-import doctor_m.Item.data_weapon.DeMatGunItem;
+import doctor_m.Item.data_itme.DeMatGunItem;
 import doctor_m.client.Shield.ShieldNetworkingClient;
 import doctor_m.client.Shield.ShieldOverlay;
 import doctor_m.client.dimension.TitanDimensionEffects;

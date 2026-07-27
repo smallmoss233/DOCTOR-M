@@ -1,4 +1,4 @@
-package doctor_m.Item.data_itme.fragment;
+package doctor_m.Item.data_itme.TimeKyeFragment;
 
 import dev.emi.trinkets.api.TrinketItem;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
