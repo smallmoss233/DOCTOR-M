@@ -1,7 +1,7 @@
 package doctor_m.mixin.doctor_m;
 
 import dev.emi.trinkets.api.TrinketsApi;
-import doctor_m.Item.data_itme.time_key;
+import doctor_m.Item.data_itme.TimeKeyItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,7 +23,7 @@ public class MobEntityMixin {
         if (target instanceof PlayerEntity player) {
             var trinketComp = TrinketsApi.getTrinketComponent(player).orElse(null);
             if (trinketComp != null) {
-                Optional<ItemStack> timeKeyStack = trinketComp.getEquipped(stack -> stack.getItem() instanceof time_key)
+                Optional<ItemStack> timeKeyStack = trinketComp.getEquipped(stack -> stack.getItem() instanceof TimeKeyItem)
                         .stream().findFirst().map(Pair::getRight);
                 if (timeKeyStack.isPresent()) {
                     NbtCompound nbt = timeKeyStack.get().getNbt();

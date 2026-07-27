@@ -10,9 +10,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class rassilon_key extends KeyItem {   // 继承 KeyItem
+public class RassilonKeyItem extends KeyItem {   // 继承 KeyItem
 
-    public rassilon_key(Settings settings) {
+    public RassilonKeyItem(Settings settings) {
         super(settings, Protocols.SNAP, Protocols.HAIL, Protocols.PERCEPTION, Protocols.SKELETON);
     }
 

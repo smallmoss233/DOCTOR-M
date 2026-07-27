@@ -15,7 +15,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
-public class relic_gem extends TrinketItem {
+public class RelicGemItem extends TrinketItem {
 
     // ========== NBT 常量 ==========
     private static final String NBT_LEVEL = "GemLevel";
@@ -27,7 +27,7 @@ public class relic_gem extends TrinketItem {
     private static final int COOLDOWN_REDUCTION_PER_LEVEL = 20 * 60 * 2;   // 每级减2分钟
 
     // ========== 构造 ==========
-    public relic_gem(Settings settings) {
+    public RelicGemItem(Settings settings) {
         super(settings.maxCount(1));
     }
 

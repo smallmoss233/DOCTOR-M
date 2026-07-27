@@ -1,13 +1,13 @@
 package doctor_m;
 
-import doctor_m.Item.data_weapon.de_mat_gun;
+import doctor_m.Item.data_weapon.DeMatGunItem;
 import doctor_m.client.Shield.ShieldNetworkingClient;
 import doctor_m.client.Shield.ShieldOverlay;
-import doctor_m.client.TitanDimensionEffects;
-import doctor_m.client.entity.evereye_renderer;
-import doctor_m.client.entity.tardis_renderer;
+import doctor_m.client.dimension.TitanDimensionEffects;
+import doctor_m.client.entity.EvereyeRenderer;
+import doctor_m.client.entity.Type103Renderer;
 import doctor_m.client.network.DeMatGunClientNetwork;
-import doctor_m.entities.entities;
+import doctor_m.entities.Entities;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -37,15 +37,15 @@ public class DOCTORMClient implements ClientModInitializer {
         ShieldNetworkingClient.register();
         HudRenderCallback.EVENT.register(new ShieldOverlay());
 
-        EntityRendererRegistry.register(entities.TYPE_103_TARDIS, tardis_renderer::new);
-        EntityRendererRegistry.register(entities.TYPE_103W_EVEREYE, evereye_renderer::new);
+        EntityRendererRegistry.register(Entities.TYPE_103_TARDIS, Type103Renderer::new);
+        EntityRendererRegistry.register(Entities.TYPE_103W_EVEREYE, EvereyeRenderer::new);
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             PlayerEntity player = client.player;
             if (player == null) return;
 
             ItemStack stack = player.getMainHandStack();
-            if (!(stack.getItem() instanceof de_mat_gun gun)) return;
+            if (!(stack.getItem() instanceof DeMatGunItem gun)) return;
             if (!player.getItemCooldownManager().isCoolingDown(gun)
                     && client.options.attackKey.isPressed()) {
 

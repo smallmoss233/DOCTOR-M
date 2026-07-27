@@ -3,10 +3,10 @@
 	"package": "doctor_m.mixin.client",
 	"compatibilityLevel": "JAVA_17",
 	"client": [
-      "ait.MixinSpaceSuitOverlay",
       "ait.MixinShieldsModel",
+      "ait.MixinSpaceSuitOverlay",
       "doctor_m.MixinTitleScreenBackground"
-	],
+    ],
 	"injectors": {
 		"defaultRequire": 1
 	}

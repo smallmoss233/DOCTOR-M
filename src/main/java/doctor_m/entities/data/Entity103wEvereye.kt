@@ -14,7 +14,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.world.World
 
-class entity_103w_evereye(entityType: EntityType<out PathAwareEntity>, world: World) : PathAwareEntity(entityType, world) {
+class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: World) : PathAwareEntity(entityType, world) {
 
     private var lastCounterAttackTime = 0L
     private var isAngry = false

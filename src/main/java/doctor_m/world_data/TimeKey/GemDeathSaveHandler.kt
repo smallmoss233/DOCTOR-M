@@ -1,7 +1,7 @@
 package doctor_m.world_data.TimeKey
 
 import dev.emi.trinkets.api.TrinketsApi
-import doctor_m.Item.data_itme.fragment.relic_gem
+import doctor_m.Item.data_itme.fragment.RelicGemItem
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
@@ -40,18 +40,18 @@ object GemDeathSaveHandler {
             // ====== 3. 查找装备的宝石 ======
             val gemStack = TrinketsApi.getTrinketComponent(player)
                 .orElse(null)
-                ?.getEquipped { stack -> stack.item is relic_gem }
+                ?.getEquipped { stack -> stack.item is RelicGemItem }
                 ?.firstOrNull()
                 ?.right ?: return@register true
 
             // ====== 4. 检查冷却 ======
-            val cooldownUntil = relic_gem.getCooldownUntilTick(gemStack)
+            val cooldownUntil = RelicGemItem.getCooldownUntilTick(gemStack)
             if (currentTick < cooldownUntil) return@register true
 
             // ====== 5. 触发复活 ======
-            val level = relic_gem.getLevel(gemStack)
-            val activeTicks = relic_gem.getActiveTicks(level)
-            val cooldownTicks = relic_gem.getCooldownTicks(level)
+            val level = RelicGemItem.getLevel(gemStack)
+            val activeTicks = RelicGemItem.getActiveTicks(level)
+            val cooldownTicks = RelicGemItem.getCooldownTicks(level)
             val totalTicks = activeTicks + cooldownTicks
 
             // 恢复满血
@@ -73,7 +73,7 @@ object GemDeathSaveHandler {
             invincibleMap[player.uuid] = currentTick + activeTicks
 
             // 设置冷却（游戏刻）
-            relic_gem.setCooldownUntilTick(gemStack, currentTick + totalTicks)
+            RelicGemItem.setCooldownUntilTick(gemStack, currentTick + totalTicks)
 
             // 特效 & 音效
             repeat(60) {

@@ -3,7 +3,6 @@ package doctor_m.Item.data_weapon;
 import dev.amble.ait.module.gun.core.item.BaseGunItem;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
@@ -14,9 +13,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class de_mat_gun extends BaseGunItem {
+public class DeMatGunItem extends BaseGunItem {
 
-    public de_mat_gun(Settings settings) {
+    public DeMatGunItem(Settings settings) {
         super(settings);
     }
 

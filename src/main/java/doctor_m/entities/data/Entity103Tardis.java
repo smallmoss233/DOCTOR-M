@@ -30,13 +30,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class entity_103_tardis extends PathAwareEntity {
+public class Entity103Tardis extends PathAwareEntity {
 
     // 皮肤相关
     private static final TrackedData<String> SELECTED_SKIN =
-    DataTracker.registerData(entity_103_tardis.class, TrackedDataHandlerRegistry.STRING);
+    DataTracker.registerData(Entity103Tardis.class, TrackedDataHandlerRegistry.STRING);
     private static final TrackedData<String> MODEL_TYPE =
-    DataTracker.registerData(entity_103_tardis.class, TrackedDataHandlerRegistry.STRING);
+    DataTracker.registerData(Entity103Tardis.class, TrackedDataHandlerRegistry.STRING);
 
     private String selectedSkin = "";
     private String displayName = "";
@@ -49,7 +49,7 @@ public class entity_103_tardis extends PathAwareEntity {
     private Personality personality = Personality.DEFENSIVE;
     private long lastCounterAttackTime = 0;
 
-    public entity_103_tardis(EntityType<? extends PathAwareEntity> type, World world) {
+    public Entity103Tardis(EntityType<? extends PathAwareEntity> type, World world) {
         super(type, world);
         if (!world.isClient) {
             // 随机个性
@@ -166,7 +166,7 @@ public class entity_103_tardis extends PathAwareEntity {
 
     private List<SkinEntry> loadSkinList() {
         List<SkinEntry> list = new ArrayList<>();
-        try (InputStream stream = entity_103_tardis.class.getResourceAsStream("/assets/doctor_m/textures/entity/tardis/skins.txt")) {
+        try (InputStream stream = Entity103Tardis.class.getResourceAsStream("/assets/doctor_m/textures/entity/tardis/skins.txt")) {
             if (stream == null) {
                 System.err.println("Could not find skins.txt");
                 return list;

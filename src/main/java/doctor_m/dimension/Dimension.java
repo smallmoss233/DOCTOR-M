@@ -11,14 +11,14 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 
-public class dimension implements ModInitializer {
+public class Dimension implements ModInitializer {
     public static WorldBlueprint TRENZALORE;
     public static WorldBlueprint TITAN;
 
     @Override
     public void onInitialize() {
         // 先注册生成器
-        dimension_register.register();
+        DimensionRegister.register();
 
         // 特兰泽洛
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {

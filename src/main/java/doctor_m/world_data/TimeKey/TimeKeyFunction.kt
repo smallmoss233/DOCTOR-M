@@ -3,7 +3,7 @@ package doctor_m.world_data.TimeKey
 import dev.amble.ait.core.AITStatusEffects
 import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry
 import dev.emi.trinkets.api.TrinketsApi
-import doctor_m.Item.data_itme.time_key
+import doctor_m.Item.data_itme.TimeKeyItem
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
@@ -35,9 +35,9 @@ object TimeKeyFunction {
     // ========== 公共 API（供 Java Mixin 调用） ==========
     @JvmStatic
     fun getTimeKeyStack(player: PlayerEntity): ItemStack =
-        player.mainHandStack.takeIf { it.item is time_key }
+        player.mainHandStack.takeIf { it.item is TimeKeyItem }
             ?: TrinketsApi.getTrinketComponent(player)
-                .flatMap { it.getEquipped { stack -> stack.item is time_key }.stream().findFirst() }
+                .flatMap { it.getEquipped { stack -> stack.item is TimeKeyItem }.stream().findFirst() }
                 .map { it.right }
                 .orElse(ItemStack.EMPTY)
 
@@ -118,7 +118,7 @@ object TimeKeyFunction {
         // ===== 2. 命令系统 =====
         CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
             fun handle(player: PlayerEntity, key: String, msg: String) {
-                getTimeKeyStack(player).takeIf { it.item is time_key }?.orCreateNbt?.apply {
+                getTimeKeyStack(player).takeIf { it.item is TimeKeyItem }?.orCreateNbt?.apply {
                     putBoolean(key, !getBoolean(key))
                     player.sendMessage(Text.translatable("$msg.${if (getBoolean(key)) "on" else "off"}"), true)
                 }

@@ -5,8 +5,8 @@ import doctor_m.Item.item_group;
 import doctor_m.Item.items;
 import doctor_m.command.AITTardisBuilderCommand;
 import doctor_m.config.ConfigManager;
-import doctor_m.dimension.dimension_register;
-import doctor_m.entities.entities;
+import doctor_m.dimension.DimensionRegister;
+import doctor_m.entities.Entities;
 import doctor_m.module.creativity.creativity_items;
 import doctor_m.module.space_plus.block.ModBlockEntities;
 import doctor_m.module.space_plus.block.ModBlocks;
@@ -41,7 +41,7 @@ public class DOCTORM implements ModInitializer {
     public void onInitialize() {
         RegistryContainer.register(items.class, MOD_ID);
         RegistryContainer.register(creativity_items.class, MOD_ID);
-        dimension_register.register();
+        DimensionRegister.register();
         ShieldDamageHandler.register();
         ModBlocks.register();
         ModBlockEntities.register();
@@ -55,7 +55,7 @@ public class DOCTORM implements ModInitializer {
         items.registerAbilities();
         creativity_items.registerAbilities();
         item_group.registerItems();
-        entities.registerAttributes();
+        Entities.registerAttributes();
         DeMatGunNetwork.registerServerReceiver();
 
         CommandRegistrationCallback.EVENT.register(AITTardisBuilderCommand::register);

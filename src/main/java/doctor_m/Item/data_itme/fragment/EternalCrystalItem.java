@@ -11,9 +11,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class eternal_crystal extends TrinketItem {
+public class EternalCrystalItem extends TrinketItem {
 
-    public eternal_crystal(Settings settings) {
+    public EternalCrystalItem(Settings settings) {
         super(settings);
     }
 

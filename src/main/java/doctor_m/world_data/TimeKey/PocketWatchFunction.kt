@@ -2,7 +2,7 @@ package doctor_m.world_data.TimeKey
 
 import com.ibm.icu.impl.Pair
 import dev.emi.trinkets.api.TrinketsApi
-import doctor_m.Item.data_itme.fragment.pocket_watch
+import doctor_m.Item.data_itme.fragment.PocketWatchItem
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.effect.StatusEffectInstance
@@ -56,13 +56,13 @@ object PocketWatchFunction {
     // 查找背包中的 pocket_watch（主手、副手、背包、饰品）
     private fun findPocketWatch(player: ServerPlayerEntity): ItemStack? {
         for (stack in player.inventory.main) {
-            if (stack.item is pocket_watch) return stack
+            if (stack.item is PocketWatchItem) return stack
         }
-        if (player.inventory.offHand.firstOrNull { it.item is pocket_watch } != null) {
-            return player.inventory.offHand.first { it.item is pocket_watch }
+        if (player.inventory.offHand.firstOrNull { it.item is PocketWatchItem } != null) {
+            return player.inventory.offHand.first { it.item is PocketWatchItem }
         }
         val trinketOpt = TrinketsApi.getTrinketComponent(player)
-            .flatMap { comp -> comp.getEquipped { stack -> stack.item is pocket_watch }.stream().findFirst() }
+            .flatMap { comp -> comp.getEquipped { stack -> stack.item is PocketWatchItem }.stream().findFirst() }
         if (trinketOpt.isPresent) {
             return trinketOpt.get().right
         }

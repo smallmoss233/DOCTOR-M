@@ -1,4 +1,4 @@
-package doctor_m.client;
+package doctor_m.client.dimension;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

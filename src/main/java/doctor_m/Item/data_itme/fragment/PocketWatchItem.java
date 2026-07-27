@@ -22,13 +22,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class pocket_watch extends TrinketItem {
+public class PocketWatchItem extends TrinketItem {
 
     private static final int COOLDOWN_TICKS = 100;
     private static final String OWNER_KEY = "MarkedOwner";
     private static final String CHARGES_KEY = "Charges";
 
-    public pocket_watch(Settings settings) {
+    public PocketWatchItem(Settings settings) {
         super(settings);
     }
 

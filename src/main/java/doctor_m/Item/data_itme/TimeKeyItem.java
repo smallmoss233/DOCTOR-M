@@ -18,9 +18,9 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.List;
 
-public class time_key extends TrinketItem {
+public class TimeKeyItem extends TrinketItem {
 
-    public time_key(Settings settings) {
+    public TimeKeyItem(Settings settings) {
         super(settings);
     }
 

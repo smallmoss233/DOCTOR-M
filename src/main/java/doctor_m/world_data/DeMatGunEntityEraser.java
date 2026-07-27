@@ -1,4 +1,4 @@
-package doctor_m.util;
+package doctor_m.world_data;
 
 import doctor_m.DOCTORM;
 import net.minecraft.entity.Entity;
@@ -15,7 +15,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.joml.Vector3f;
 
-public class EntityEraser {
+public class DeMatGunEntityEraser {
 
     private static final Vector3f GOLD_COLOR = new Vector3f(1.0f, 0.84f, 0.0f);
     private static final float BEAM_PARTICLE_SIZE = 1.0f;

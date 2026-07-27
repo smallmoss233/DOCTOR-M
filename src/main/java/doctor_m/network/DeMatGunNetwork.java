@@ -1,7 +1,7 @@
 package doctor_m.network;
 
-import doctor_m.Item.data_weapon.de_mat_gun;
-import doctor_m.util.EntityEraser;
+import doctor_m.Item.data_weapon.DeMatGunItem;
+import doctor_m.world_data.DeMatGunEntityEraser;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
@@ -16,8 +16,8 @@ public class DeMatGunNetwork {
             boolean isAds = buf.readBoolean();
             server.execute(() -> {
                 ItemStack stack = player.getMainHandStack();
-                if (!(stack.getItem() instanceof de_mat_gun)) return;
-                de_mat_gun gun = (de_mat_gun) stack.getItem();
+                if (!(stack.getItem() instanceof DeMatGunItem)) return;
+                DeMatGunItem gun = (DeMatGunItem) stack.getItem();
 
                 if (player.getItemCooldownManager().isCoolingDown(gun)) return;
 
@@ -32,7 +32,7 @@ public class DeMatGunNetwork {
                 gun.setCurrentAmmo(Math.max(0, current - cost), stack);
 
                 double range = isAds ? 256.0 : 128.0;
-                EntityEraser.eraseByRaycast(player, player.getWorld(), range);
+                DeMatGunEntityEraser.eraseByRaycast(player, player.getWorld(), range);
 
                 player.getItemCooldownManager().set(gun, gun.getCooldown());
             });

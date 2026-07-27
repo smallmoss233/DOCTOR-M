@@ -2,15 +2,15 @@ package doctor_m.Item;
 
 import dev.amble.lib.container.impl.ItemContainer;
 import doctor_m.Item.data_itme.ShieldCoreItem;
-import doctor_m.Item.data_itme.fragment.eternal_crystal;
-import doctor_m.Item.data_itme.fragment.pocket_watch;
-import doctor_m.Item.data_itme.fragment.relic_gem;
-import doctor_m.Item.data_itme.time_key;
-import doctor_m.Item.data_weapon.de_mat_gun;
-import doctor_m.Item.data_weapon.rassilon_key;
+import doctor_m.Item.data_itme.TimeKeyItem;
+import doctor_m.Item.data_itme.fragment.EternalCrystalItem;
+import doctor_m.Item.data_itme.fragment.PocketWatchItem;
+import doctor_m.Item.data_itme.fragment.RelicGemItem;
+import doctor_m.Item.data_weapon.DeMatGunItem;
+import doctor_m.Item.data_weapon.RassilonKeyItem;
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
-import doctor_m.entities.entities;
+import doctor_m.entities.Entities;
 import doctor_m.module.space_plus.OxygenTankItem;
 import doctor_m.module.space_plus.block.ModBlocks;
 import doctor_m.util.creativity.PercentageDamageHelper;
@@ -22,10 +22,10 @@ import net.minecraft.util.Rarity;
 public class items extends ItemContainer {
 
     //时间钥匙
-    public static final Item TIME_KEY = new time_key(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
-    public static final Item POCKET_WATCH = new pocket_watch(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
-    public static final Item RELIC_GEM = new relic_gem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
-    public static final Item ETERNAL_CRYSTAL = new eternal_crystal(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
+    public static final Item TIME_KEY = new TimeKeyItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
+    public static final Item POCKET_WATCH = new PocketWatchItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
+    public static final Item RELIC_GEM = new RelicGemItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
+    public static final Item ETERNAL_CRYSTAL = new EternalCrystalItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
 
     public static final Item SHIELD_CORE = new ShieldCoreItem(new Item.Settings().maxCount(1));
 
@@ -35,22 +35,22 @@ public class items extends ItemContainer {
 
     //实体相关
     public static final Item TYPE_103_SPAWN = new SpawnEggItem(
-            entities.TYPE_103_TARDIS,
+            Entities.TYPE_103_TARDIS,
             0xFFFFFFFF,
             0xFFFFFFFF,
             new Item.Settings()
     );
     public static final Item EVEREYE_SPAWN = new SpawnEggItem(
-            entities.TYPE_103W_EVEREYE,
+            Entities.TYPE_103W_EVEREYE,
             0xFFFFFFFF,
             0xFFFFFFFF,
             new Item.Settings()
     );
-    public static final Item DE_MAT_GUN = new de_mat_gun(new Item.Settings()
+    public static final Item DE_MAT_GUN = new DeMatGunItem(new Item.Settings()
             .maxCount(1)
             .rarity(Rarity.EPIC));
 
-    public static final Item RASSILON_KEY = new rassilon_key(new Item.Settings()
+    public static final Item RASSILON_KEY = new RassilonKeyItem(new Item.Settings()
             .maxCount(1)
             .rarity(Rarity.EPIC));
 

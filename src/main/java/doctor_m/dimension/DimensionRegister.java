@@ -5,7 +5,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
-public class dimension_register {
+public class DimensionRegister {
 
     public static void register() {
         Registry.register(
