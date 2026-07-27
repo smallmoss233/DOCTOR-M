@@ -1,10 +1,10 @@
 package doctor_m;
 
+import doctor_m.client.Shield.ShieldNetworkingClient;
+import doctor_m.client.Shield.ShieldOverlay;
 import doctor_m.client.TitanDimensionEffects;
 import doctor_m.client.entity.evereye_renderer;
 import doctor_m.client.entity.tardis_renderer;
-import doctor_m.client.Shield.ShieldNetworkingClient;
-import doctor_m.client.Shield.ShieldOverlay;
 import doctor_m.entities.entities;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;

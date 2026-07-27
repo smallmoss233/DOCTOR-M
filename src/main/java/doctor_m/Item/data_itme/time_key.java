@@ -1,5 +1,6 @@
 package doctor_m.Item.data_itme;
 
+import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketItem;
 import doctor_m.util.creativity.DynamicColorHelper;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
@@ -13,9 +14,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import dev.emi.trinkets.api.SlotReference;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.List;
 
 public class time_key extends TrinketItem {

@@ -2,16 +2,16 @@ package doctor_m.world_data.TimeKey
 
 import com.ibm.icu.impl.Pair
 import dev.emi.trinkets.api.TrinketsApi
+import doctor_m.Item.data_itme.fragment.pocket_watch
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
+import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
+import net.minecraft.item.ItemStack
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
-import net.minecraft.item.ItemStack
-import doctor_m.Item.data_itme.fragment.pocket_watch
-import net.minecraft.entity.LivingEntity
 
 object PocketWatchFunction {
     const val COOLDOWN_KEY = "table_revival_cooldown_end_ms"

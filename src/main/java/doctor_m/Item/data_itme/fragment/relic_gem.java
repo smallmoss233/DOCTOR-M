@@ -17,19 +17,21 @@ import net.minecraft.world.World;
 
 public class relic_gem extends TrinketItem {
 
+    // ========== NBT 常量 ==========
     private static final String NBT_LEVEL = "GemLevel";
-    private static final String NBT_COOLDOWN = "CooldownUntil";
+    private static final String NBT_COOLDOWN_TICKS = "CooldownUntilTick";
 
     public static final int MAX_LEVEL = 3;
-    private static final int BASE_COOLDOWN_TICKS = 20 * 60 * 10;
-    private static final int COOLDOWN_REDUCTION_PER_LEVEL = 20 * 60 * 2;
 
+    private static final int BASE_COOLDOWN_TICKS = 20 * 60 * 10;          // 10分钟
+    private static final int COOLDOWN_REDUCTION_PER_LEVEL = 20 * 60 * 2;   // 每级减2分钟
+
+    // ========== 构造 ==========
     public relic_gem(Settings settings) {
         super(settings.maxCount(1));
     }
 
-    // ========== NBT ==========
-
+    // ========== NBT 读写 ==========
     public static int getLevel(ItemStack stack) {
         return stack.getOrCreateNbt().getInt(NBT_LEVEL);
     }
@@ -38,22 +40,21 @@ public class relic_gem extends TrinketItem {
         stack.getOrCreateNbt().putInt(NBT_LEVEL, Math.min(level, MAX_LEVEL));
     }
 
-    public static long getCooldownUntil(ItemStack stack) {
-        return stack.getOrCreateNbt().getLong(NBT_COOLDOWN);
+    public static long getCooldownUntilTick(ItemStack stack) {
+        return stack.getOrCreateNbt().getLong(NBT_COOLDOWN_TICKS);
     }
 
-    public static void setCooldownUntil(ItemStack stack, long time) {
-        stack.getOrCreateNbt().putLong(NBT_COOLDOWN, time);
+    public static void setCooldownUntilTick(ItemStack stack, long tick) {
+        stack.getOrCreateNbt().putLong(NBT_COOLDOWN_TICKS, tick);
     }
 
     public static boolean isOnCooldown(ItemStack stack, long worldTime) {
-        return worldTime < getCooldownUntil(stack);
+        return worldTime < getCooldownUntilTick(stack);
     }
 
     // ========== 属性计算 ==========
-
-    public static int getPassiveResistanceLevel(int level) {
-        return Math.min(1 + level, 4);
+    public static int getPassiveResistanceLevel(int gemLevel) {
+        return Math.min(1 + gemLevel, 4);
     }
 
     public static int getPassiveResistanceLevel(ItemStack stack) {
@@ -61,26 +62,47 @@ public class relic_gem extends TrinketItem {
     }
 
     public static int getXpCost(int targetLevel) {
-        return new int[]{120, 240, 480}[targetLevel - 1];
+        return switch (targetLevel) {
+            case 1 -> 120;
+            case 2 -> 240;
+            case 3 -> 480;
+            default -> 0;
+        };
     }
 
-    public static int getCooldownTicks(int level) {
-        return Math.max(20 * 60, BASE_COOLDOWN_TICKS - level * COOLDOWN_REDUCTION_PER_LEVEL);
+    public static int getCooldownTicks(int gemLevel) {
+        return Math.max(20 * 60, BASE_COOLDOWN_TICKS - gemLevel * COOLDOWN_REDUCTION_PER_LEVEL);
     }
 
-    public static int getActiveTicks(int level) {
-        return 20 * (15 + level * 10);
+    public static int getActiveTicks(int gemLevel) {
+        return 20 * (15 + gemLevel * 10);
+    }
+
+    // ========== 被动效果管理 ==========
+    private static void applyPassiveResistance(PlayerEntity player, ItemStack stack) {
+        int level = getPassiveResistanceLevel(stack);
+        // 移除旧抗性（如果有）再添加，确保等级更新
+        player.removeStatusEffect(StatusEffects.RESISTANCE);
+        player.addStatusEffect(new StatusEffectInstance(
+                StatusEffects.RESISTANCE,
+                Integer.MAX_VALUE,   // 无限持续时间
+                level - 1,
+                false, false, false
+        ));
+    }
+
+    private static void removePassiveResistance(PlayerEntity player) {
+        player.removeStatusEffect(StatusEffects.RESISTANCE);
     }
 
     // ========== 装备/卸下 ==========
-
     @Override
     public void onEquip(ItemStack stack, SlotReference slot, LivingEntity entity) {
         super.onEquip(stack, slot, entity);
         if (entity instanceof PlayerEntity player && !player.getWorld().isClient()) {
-            long worldTime = player.getWorld().getTime();
-            if (!isOnCooldown(stack, worldTime)) {
-                applyPassiveEffect(player, stack);
+            // 装备时如果不在冷却，立即施加被动抗性
+            if (!isOnCooldown(stack, player.getWorld().getTime())) {
+                applyPassiveResistance(player, stack);
             }
         }
     }
@@ -89,47 +111,27 @@ public class relic_gem extends TrinketItem {
     public void onUnequip(ItemStack stack, SlotReference slot, LivingEntity entity) {
         super.onUnequip(stack, slot, entity);
         if (entity instanceof PlayerEntity player) {
-            removeAllGemEffects(player);
+            removePassiveResistance(player);
+            // 注意：主动 BUFF 由复活事件管理，这里只移除被动抗性
         }
     }
 
-    public static void applyPassiveEffect(PlayerEntity player, ItemStack stack) {
-        int level = getPassiveResistanceLevel(stack);
-        player.addStatusEffect(new StatusEffectInstance(
-                StatusEffects.RESISTANCE,
-                Integer.MAX_VALUE,
-                level - 1,
-                false, false, false
-        ));
-    }
-
-    public static void removeAllGemEffects(PlayerEntity player) {
-        player.removeStatusEffect(StatusEffects.RESISTANCE);
-        player.removeStatusEffect(StatusEffects.SPEED);
-        player.removeStatusEffect(StatusEffects.NIGHT_VISION);
-        player.removeStatusEffect(StatusEffects.HASTE);
-        player.removeStatusEffect(StatusEffects.WATER_BREATHING);
-    }
-
-    // ========== 每 tick 更新 ==========
-
+    // ========== 每 Tick 更新（由外部调用） ==========
     public static void tick(PlayerEntity player, ItemStack stack) {
         if (player.getWorld().isClient()) return;
         long worldTime = player.getWorld().getTime();
 
-        // ⭐ 冷却中直接返回，不施加被动抗性
         if (isOnCooldown(stack, worldTime)) {
+            // 冷却中，确保被动抗性被移除（防止复活血量低但残留被动）
+            removePassiveResistance(player);
             return;
         }
 
-        // 冷却结束，施加被动抗性（如果玩家没有）
-        if (!player.hasStatusEffect(StatusEffects.RESISTANCE)) {
-            applyPassiveEffect(player, stack);
-        }
+        // 冷却结束，施加被动抗性（如果缺失或等级不符，applyPassiveResistance 会处理）
+        applyPassiveResistance(player, stack);
     }
 
     // ========== 右键升级 ==========
-
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
@@ -150,24 +152,24 @@ public class relic_gem extends TrinketItem {
         user.addExperienceLevels(-cost);
         setLevel(stack, currentLevel + 1);
 
-        TrinketsApi.getTrinketComponent(user).ifPresent(component -> {
-            boolean isEquipped = component.getEquipped(stack2 -> stack2 == stack).stream().findAny().isPresent();
-            if (isEquipped) {
-                user.removeStatusEffect(StatusEffects.RESISTANCE);
-                applyPassiveEffect(user, stack);
+        // 如果已装备，立即刷新被动抗性
+        TrinketsApi.getTrinketComponent(user).ifPresent(comp -> {
+            boolean equipped = comp.getEquipped(s -> s == stack).stream().findAny().isPresent();
+            if (equipped) {
+                applyPassiveResistance(user, stack);
             }
         });
 
         user.sendMessage(Text.translatable("message.doctor_m.relic_gem.level_up", currentLevel + 1).formatted(Formatting.GREEN), true);
-        world.playSound(null, user.getBlockPos(), net.minecraft.sound.SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, net.minecraft.sound.SoundCategory.PLAYERS, 0.5f, 1.5f);
+        world.playSound(null, user.getBlockPos(), net.minecraft.sound.SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE,
+                net.minecraft.sound.SoundCategory.PLAYERS, 0.5f, 1.5f);
 
         return TypedActionResult.success(stack);
     }
 
-    // ========== 提示文本 ==========
-
+    // ========== 工具提示 ==========
     @Override
-    public void appendTooltip(ItemStack stack, net.minecraft.world.World world, java.util.List<Text> tooltip, net.minecraft.client.item.TooltipContext context) {
+    public void appendTooltip(ItemStack stack, World world, java.util.List<Text> tooltip, net.minecraft.client.item.TooltipContext context) {
         int level = getLevel(stack);
         int resistance = getPassiveResistanceLevel(stack);
 
@@ -177,9 +179,12 @@ public class relic_gem extends TrinketItem {
         Object[] args;
 
         if (world != null && isOnCooldown(stack, world.getTime())) {
-            long remain = (getCooldownUntil(stack) - world.getTime()) / 20;
+            long remainTicks = getCooldownUntilTick(stack) - world.getTime();
+            long remainSec = remainTicks / 20;
+            long minutes = remainSec / 60;
+            long seconds = remainSec % 60;
             statusKey = "message.doctor_m.relic_gem.status.cooldown";
-            args = new Object[]{level, MAX_LEVEL, resistance, remain / 60, remain % 60};
+            args = new Object[]{level, MAX_LEVEL, resistance, minutes, seconds};
         } else if (level < MAX_LEVEL) {
             statusKey = "message.doctor_m.relic_gem.status.upgradable";
             args = new Object[]{level, MAX_LEVEL, resistance, getXpCost(level + 1)};
@@ -189,7 +194,6 @@ public class relic_gem extends TrinketItem {
         }
 
         tooltip.add(Text.translatable(statusKey, args).formatted(Formatting.AQUA));
-
         ShiftTooltipInvoker.addShiftTooltip(tooltip,
                 Text.translatable("message.doctor_m.relic_gem.detail")
         );

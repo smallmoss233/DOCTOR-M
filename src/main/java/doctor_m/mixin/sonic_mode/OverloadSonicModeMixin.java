@@ -1,5 +1,8 @@
 package doctor_m.mixin.sonic_mode;
 
+import dev.amble.ait.core.AITSounds;
+import dev.amble.ait.core.item.sonic.OverloadSonicMode;
+import dev.amble.ait.core.item.sonic.SonicMode;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.WardenEntity;
@@ -15,10 +18,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import dev.amble.ait.core.AITSounds;
-import dev.amble.ait.core.item.sonic.OverloadSonicMode;
-import dev.amble.ait.core.item.sonic.SonicMode;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

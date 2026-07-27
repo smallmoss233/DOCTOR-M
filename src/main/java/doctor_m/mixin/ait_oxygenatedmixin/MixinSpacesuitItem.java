@@ -1,9 +1,9 @@
 package doctor_m.mixin.ait_oxygenatedmixin;
 
 import dev.amble.ait.module.planet.core.item.SpacesuitItem;
+import doctor_m.config.ConfigManager;
 import doctor_m.module.space_plus.system.SpaceOxygenManager;
 import doctor_m.util.SpaceEnvironmentUtil;
-import doctor_m.config.ConfigManager;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;

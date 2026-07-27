@@ -8,9 +8,12 @@ import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundEvents
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 object GemDeathSaveHandler {
-    private const val COOLDOWN_KEY = "gem_revival_cooldown_end_ms"
+    // 存储玩家无敌结束的游戏刻
+    private val invincibleMap = ConcurrentHashMap<UUID, Long>()
 
     @JvmStatic
     fun register() {
@@ -18,34 +21,47 @@ object GemDeathSaveHandler {
             if (entity !is ServerPlayerEntity) return@register true
 
             val player = entity
-            // 不致命，正常受伤
+            val world = player.world
+            val currentTick = world.time
+
+            // ====== 1. 优先检查无敌状态 ======
+            val endTick = invincibleMap[player.uuid]
+            if (endTick != null && currentTick < endTick) {
+                // 无敌时间内，取消本次伤害
+                return@register false
+            } else if (endTick != null) {
+                // 已过期，清理
+                invincibleMap.remove(player.uuid)
+            }
+
+            // ====== 2. 检测致命伤害 ======
             if (player.health - amount > 0) return@register true
 
-            // 查找宝石（参考 PocketWatchFunction 的查找方式）
+            // ====== 3. 查找装备的宝石 ======
             val gemStack = TrinketsApi.getTrinketComponent(player)
-                .map { comp -> comp.getEquipped { stack -> stack.item is relic_gem }.firstOrNull()?.right }
-                .orElse(null) ?: return@register true
+                .orElse(null)
+                ?.getEquipped { stack -> stack.item is relic_gem }
+                ?.firstOrNull()
+                ?.right ?: return@register true
 
-            val nbt = gemStack.orCreateNbt
-            val currentTime = System.currentTimeMillis()
-            val cooldownEnd = nbt.getLong(COOLDOWN_KEY)
+            // ====== 4. 检查冷却 ======
+            val cooldownUntil = relic_gem.getCooldownUntilTick(gemStack)
+            if (currentTick < cooldownUntil) return@register true
 
-            // 冷却中 → 正常受伤，不触发
-            if (currentTime < cooldownEnd) return@register true
-
-            // === 触发复活 ===
+            // ====== 5. 触发复活 ======
             val level = relic_gem.getLevel(gemStack)
             val activeTicks = relic_gem.getActiveTicks(level)
             val cooldownTicks = relic_gem.getCooldownTicks(level)
             val totalTicks = activeTicks + cooldownTicks
 
-            // 1. 恢复生命并清空所有效果（与 PocketWatchFunction 一致）
-            player.health = 1.0f
-            player.clearStatusEffects()
+            // 恢复满血
+            player.health = player.maxHealth
 
-            // 2. 添加主动 BUFF（抗性5、速度3、夜视、急迫2、水下呼吸）
+            // 移除被动抗性（避免干扰）
+            player.removeStatusEffect(StatusEffects.RESISTANCE)
+
+            // 添加主动增益（速度、夜视、急迫、水下呼吸），不包含抗性
             val effects = listOf(
-                StatusEffectInstance(StatusEffects.RESISTANCE, activeTicks, 4, false, true, true),
                 StatusEffectInstance(StatusEffects.SPEED, activeTicks, 2, false, true, true),
                 StatusEffectInstance(StatusEffects.NIGHT_VISION, activeTicks, 0, false, true, true),
                 StatusEffectInstance(StatusEffects.HASTE, activeTicks, 1, false, true, true),
@@ -53,13 +69,13 @@ object GemDeathSaveHandler {
             )
             effects.forEach { player.addStatusEffect(it) }
 
-            // 3. 设置冷却（毫秒）
-            nbt.putLong(COOLDOWN_KEY, currentTime + totalTicks * 50L)
+            // 设置无敌时间（从当前刻开始，持续 activeTicks 刻）
+            invincibleMap[player.uuid] = currentTick + activeTicks
 
-            // 4. 同步设置游戏刻冷却，防止被动抗性提前覆盖（双重保障）
-            relic_gem.setCooldownUntil(gemStack, player.world.time + totalTicks)
+            // 设置冷却（游戏刻）
+            relic_gem.setCooldownUntilTick(gemStack, currentTick + totalTicks)
 
-            // 5. 特效 & 提示（和 PocketWatchFunction 风格一致）
+            // 特效 & 音效
             repeat(60) {
                 val x = player.x + (player.random.nextDouble() - 0.5) * 2.0
                 val y = player.y + player.random.nextDouble() * 2.5
@@ -68,8 +84,8 @@ object GemDeathSaveHandler {
             }
             player.playSound(SoundEvents.BLOCK_BELL_RESONATE, 1.0f, 1.0f)
 
-            // 6. 取消本次伤害
-            false
+            // 取消本次致命伤害
+            return@register false
         }
     }
 }

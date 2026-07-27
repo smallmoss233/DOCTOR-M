@@ -1,7 +1,6 @@
 package doctor_m.Item.data_weapon;
 
 import dev.amble.ait.module.gun.core.item.BaseGunItem;
-
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;

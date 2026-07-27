@@ -1,10 +1,13 @@
 package doctor_m.module.space_plus.block;
 
-import doctor_m.config.ConfigManager;
 import dev.amble.ait.module.planet.core.item.SpacesuitItem;
+import doctor_m.config.ConfigManager;
 import doctor_m.module.space_plus.OxygenTankItem;
 import doctor_m.module.space_plus.system.SpaceOxygenManager;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;

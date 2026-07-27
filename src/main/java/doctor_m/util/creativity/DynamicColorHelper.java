@@ -4,7 +4,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.math.MathHelper;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.List;
 
 public class DynamicColorHelper {

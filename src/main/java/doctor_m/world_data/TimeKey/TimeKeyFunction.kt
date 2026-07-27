@@ -3,6 +3,7 @@ package doctor_m.world_data.TimeKey
 import dev.amble.ait.core.AITStatusEffects
 import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry
 import dev.emi.trinkets.api.TrinketsApi
+import doctor_m.Item.data_itme.time_key
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
@@ -20,10 +21,9 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
 import net.minecraft.world.GameMode
-import java.util.UUID
-import java.util.concurrent.ConcurrentHashMap
-import doctor_m.Item.data_itme.time_key
 import java.lang.Boolean.getBoolean
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 object TimeKeyFunction {
     // 状态缓存

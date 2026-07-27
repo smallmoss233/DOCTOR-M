@@ -3,7 +3,9 @@ package doctor_m.mixin.client.ait;
 import dev.amble.ait.core.AITStatusEffects;
 import dev.amble.ait.core.world.TardisServerWorld;
 import dev.amble.ait.module.planet.client.SpaceSuitOverlay;
+import dev.amble.ait.module.planet.core.item.SpacesuitItem;
 import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry;
+import doctor_m.module.space_plus.system.SpaceOxygenManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -14,8 +16,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import doctor_m.module.space_plus.system.SpaceOxygenManager;
-import dev.amble.ait.module.planet.core.item.SpacesuitItem;
 
 @Mixin(SpaceSuitOverlay.class)
 public class MixinSpaceSuitOverlay {

@@ -1,6 +1,13 @@
 package doctor_m.mixin.aitmixin;
 
+import dev.amble.ait.AITMod;
+import dev.amble.ait.core.AITSounds;
+import dev.amble.ait.core.tardis.Tardis;
+import dev.amble.ait.core.tardis.handler.SelfDestructHandler;
+import dev.amble.ait.core.tardis.manager.ServerTardisManager;
+import dev.amble.lib.data.CachedDirectedGlobalPos;
 import doctor_m.config.ConfigManager;
+import doctor_m.world_data.TimeKey.TimeKeyFunction;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -20,18 +27,10 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import dev.amble.ait.AITMod;
-import dev.amble.ait.core.AITSounds;
-import dev.amble.ait.core.tardis.Tardis;
-import dev.amble.ait.core.tardis.handler.SelfDestructHandler;
-import dev.amble.ait.core.tardis.manager.ServerTardisManager;
-import dev.amble.lib.data.CachedDirectedGlobalPos;
-import doctor_m.world_data.TimeKey.TimeKeyFunction;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

@@ -1,5 +1,7 @@
 package doctor_m.mixin.doctor_m;
 
+import dev.amble.ait.core.item.KeyItem;
+import dev.amble.ait.core.tardis.Tardis;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
@@ -14,9 +16,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import dev.amble.ait.core.item.KeyItem;
-import dev.amble.ait.core.tardis.Tardis;
 
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin {

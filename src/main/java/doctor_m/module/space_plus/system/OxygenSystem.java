@@ -1,11 +1,11 @@
 package doctor_m.module.space_plus.system;
 
+import dev.amble.ait.core.AITStatusEffects;
 import doctor_m.config.ConfigManager;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import dev.amble.ait.core.AITStatusEffects;
 
 public class OxygenSystem {
     public static final String OXYGEN_KEY = "oxygen";

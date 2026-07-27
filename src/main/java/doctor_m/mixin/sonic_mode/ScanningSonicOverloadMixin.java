@@ -1,5 +1,8 @@
 package doctor_m.mixin.sonic_mode;
 
+import dev.amble.ait.core.AITSounds;
+import dev.amble.ait.core.item.sonic.ScanningSonicMode;
+import dev.amble.ait.core.item.sonic.SonicMode;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -20,10 +23,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import dev.amble.ait.core.AITSounds;
-import dev.amble.ait.core.item.sonic.ScanningSonicMode;
-import dev.amble.ait.core.item.sonic.SonicMode;
 
 @Mixin(ScanningSonicMode.class)
 public abstract class ScanningSonicOverloadMixin extends SonicMode {

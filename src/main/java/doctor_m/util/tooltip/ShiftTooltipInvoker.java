@@ -1,8 +1,9 @@
 package doctor_m.util.tooltip;
 
-import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.text.Text;
+
 import java.lang.reflect.Method;
 import java.util.List;
 

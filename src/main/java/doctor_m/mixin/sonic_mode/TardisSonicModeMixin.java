@@ -1,5 +1,10 @@
 package doctor_m.mixin.sonic_mode;
 
+import dev.amble.ait.core.item.SonicItem;
+import dev.amble.ait.core.item.sonic.SonicMode;
+import dev.amble.ait.core.item.sonic.TardisSonicMode;
+import dev.amble.ait.core.tardis.Tardis;
+import dev.amble.lib.data.CachedDirectedGlobalPos;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -13,12 +18,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import dev.amble.ait.core.item.SonicItem;
-import dev.amble.ait.core.item.sonic.SonicMode;
-import dev.amble.ait.core.item.sonic.TardisSonicMode;
-import dev.amble.ait.core.tardis.Tardis;
-import dev.amble.lib.data.CachedDirectedGlobalPos;
 
 @Mixin(TardisSonicMode.class)
 public abstract class TardisSonicModeMixin extends SonicMode {

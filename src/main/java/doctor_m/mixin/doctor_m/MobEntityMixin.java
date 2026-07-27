@@ -1,6 +1,7 @@
 package doctor_m.mixin.doctor_m;
 
 import dev.emi.trinkets.api.TrinketsApi;
+import doctor_m.Item.data_itme.time_key;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -11,7 +12,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import doctor_m.Item.data_itme.time_key;
 
 import java.util.Optional;
 

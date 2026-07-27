@@ -1,9 +1,9 @@
 package doctor_m.client.Shield;
 
+import doctor_m.network.ShieldNetworking;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import doctor_m.network.ShieldNetworking;
 
 @Environment(EnvType.CLIENT)
 public class ShieldNetworkingClient {
