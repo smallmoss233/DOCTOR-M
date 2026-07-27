@@ -1,7 +1,7 @@
 package doctor_m.Item.data_itme;
 
 import dev.amble.ait.module.gun.core.item.BaseGunItem;
-import doctor_m.util.tooltip.ShiftTooltipInvoker;   // 新增导入
+import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -54,11 +54,11 @@ public class DeMatGunItem extends BaseGunItem {
         MutableText line2 = Text.translatable("message.doctor_m.de_mat_gun.tooltip.line2");
         line2.setStyle(Style.EMPTY.withColor(Formatting.GRAY).withItalic(true));
         tooltip.add(line2);
+        //能量提示
+        super.appendTooltip(stack, world, tooltip, context);
         //详情提示
         ShiftTooltipInvoker.addShiftTooltip(tooltip,
                 Text.translatable("message.doctor_m.de_mat_gun.detail")
         );
-        //能量提示
-        super.appendTooltip(stack, world, tooltip, context);
     }
 }

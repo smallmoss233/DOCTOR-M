@@ -8,7 +8,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import static doctor_m.Item.items.*;
-import static doctor_m.module.creativity.creativity_items.TLIPOCA_SCYTHE;
+import static doctor_m.module.creativity.CreativityItems.TLIPOCA_SCYTHE;
 
 public class item_group {
 public static void registerItems() {

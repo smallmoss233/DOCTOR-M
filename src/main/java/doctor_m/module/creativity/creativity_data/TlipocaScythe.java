@@ -22,7 +22,7 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.UUID;
 
-public class tlipoca_scythe extends SwordItem {
+public class TlipocaScythe extends SwordItem {
     private static final String INIT_KEY = "TlipocaInit";
 
     private static final UUID DAMAGE_UUID = UUID.fromString("12345678-1234-1234-1234-123456789014");
@@ -30,10 +30,10 @@ public class tlipoca_scythe extends SwordItem {
     public static final UUID TLIPOCA_HEALTH_UUID = UUID.fromString("12345678-1234-1234-1234-123456789012");
 
     // 单例引用（用于冷却管理）
-    private static tlipoca_scythe INSTANCE;
-    public static tlipoca_scythe getInstance() { return INSTANCE; }
+    private static TlipocaScythe INSTANCE;
+    public static TlipocaScythe getInstance() { return INSTANCE; }
 
-    public tlipoca_scythe(Settings settings) {
+    public TlipocaScythe(Settings settings) {
         super(TlipocaMaterial.INSTANCE, 0, -3.2f, settings);
         INSTANCE = this;
     }

@@ -7,7 +7,7 @@ import doctor_m.command.AITTardisBuilderCommand;
 import doctor_m.config.ConfigManager;
 import doctor_m.dimension.DimensionRegister;
 import doctor_m.entities.Entities;
-import doctor_m.module.creativity.creativity_items;
+import doctor_m.module.creativity.CreativityItems;
 import doctor_m.module.space_plus.block.ModBlockEntities;
 import doctor_m.module.space_plus.block.ModBlocks;
 import doctor_m.module.space_plus.system.VacuumEatingHandler;
@@ -40,7 +40,7 @@ public class DOCTORM implements ModInitializer {
     @Override
     public void onInitialize() {
         RegistryContainer.register(items.class, MOD_ID);
-        RegistryContainer.register(creativity_items.class, MOD_ID);
+        RegistryContainer.register(CreativityItems.class, MOD_ID);
         DimensionRegister.register();
         ShieldDamageHandler.register();
         ModBlocks.register();
@@ -53,7 +53,7 @@ public class DOCTORM implements ModInitializer {
         GemTickHandler.INSTANCE.register();
 
         items.registerAbilities();
-        creativity_items.registerAbilities();
+        CreativityItems.registerAbilities();
         item_group.registerItems();
         Entities.registerAttributes();
         DeMatGunNetwork.registerServerReceiver();
