@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 public class ShiftTooltipInvoker {
-    private static final String HELPER_CLASS = "doctor_m.util.ShiftTooltipHelper";
+    private static final String HELPER_CLASS = "doctor_m.client.util.ShiftTooltipHelper";
     private static final String METHOD_NAME = "addShiftTooltip";
 
     public static void addShiftTooltip(List<Text> tooltip, Text longText) {
@@ -21,7 +21,7 @@ public class ShiftTooltipInvoker {
             Method method = clazz.getDeclaredMethod(METHOD_NAME, List.class, Text.class);
             method.invoke(null, tooltip, longText);
         } catch (Exception e) {
-            e.printStackTrace(); // 记录错误日志
+            e.printStackTrace();
         }
     }
 }

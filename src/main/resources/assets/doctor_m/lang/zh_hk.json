@@ -155,7 +155,8 @@
   "message.doctor_m.eternal_crystal.detail": "§7裝備後你的每次攻擊都將附帶基於攻擊力的50%的強制扣血，冷卻五秒",
   "message.doctor_m.tlipoca_scythe.tip": "§7見習死神的鐮刀，儘管如此它也能收割靈魂",
   "message.doctor_m.tlipoca_scythe.detail": "§d見習死神鐮刀的斬擊能將世間生靈的靈魂奪走",
-  "message.doctor_m.shield_core.energy": "能量: %s/%s",
+  "message.doctor_m.shield_core.energy": "§7能量: %s/%s",
+  "message.doctor_m.de_mat_gun.detail": "§7所有被去物質槍擊中的目標都會被從時間線上徹底抹除*被擊中的目標會失去存在的資訊和物品並死亡。",
 
   "dimension.doctor_m.trenzalore": "§3特蘭澤洛",
   "dimension.doctor_m.titan": "土衛六-泰坦"
