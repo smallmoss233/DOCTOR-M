@@ -40,7 +40,7 @@ public class EntityEraser {
                 end,
                 shooter.getBoundingBox().expand(range),
                 (entity) -> entity != shooter && !entity.isSpectator() && entity.isAlive(),
-                range
+                range * range
         );
 
         if (hitResult != null) {
