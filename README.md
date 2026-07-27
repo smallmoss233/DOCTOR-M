@@ -4,13 +4,22 @@
 ---
 ## **Introduction**
 
-**This mod's code uses artificial intelligence(AI). If you encounter a crash, [please report it on GitHub](https://github.com/smallmoss233/DOCTOR-M/issues). If you don't like AI, you can avoid this mod.**
+**This mod's code uses artificial intelligence (AI). If you encounter a crash, [please report it on GitHub](https://github.com/smallmoss233/DOCTOR-M/issues). If you don't like AI, you can avoid this mod.**
 
-DOCTOR M is an addon for the [**AIT**](https://modrinth.com/mod/ait) mod, adding several TARDIS interiors with unique stylistic designs, as well as brand‑new dimensions, new adventure content, and more.
+**What is DOCTOR M? You'd better not ask—I can't really explain it either.**  
+It could be DOCTOR MC, DOCTOR MOD, DOCTOR MOSS, or even DOCTOR MARY—but none of that really matters.
 
-In DOCTOR M, you can travel to **Trenzalore** to visit the Doctor’s grave, burn the TARDIS’s life force to enter your own timeline, trade with a Type 103 TARDIS that is just like a human, craft the ancient and powerful **De‑mat Gun**, explore new structures around the world, and embark on a brand‑new time adventure with your TARDIS!
+DOCTOR M is an addon for [**AIT**](https://modrinth.com/mod/ait), adding several TARDIS interiors with unique stylistic designs, as well as brand‑new dimensions, new adventure content, and more.
 
-Not only Doctor Who canon content, but DOCTOR M also includes fan‑made creations, such as the Type 103 TARDIS **Evereye**, the Type 102 TARDIS **Watcher**, the Type 60 TARDIS **Cloister**, and the mysterious Type 1 TARDIS **Madness**. Their related interiors have also been added to DOCTOR M! We hope you enjoy them.
+What matters is that it stuffs **Time Key**, **De‑Mat Gun**, **Key of Rassilon**, and **Trenzalore** into AIT—the very planet where the Eleventh Doctor regenerated in *The Time of the Doctor*!
+
+In DOCTOR M, you can travel to **Trenzalore** to visit the Doctor's grave, trade with a Type 103 TARDIS that is just like a human, craft the ancient and powerful **De‑mat Gun**, explore new structures around the world, and embark on a brand‑new time adventure with your TARDIS!
+
+It lets your sonic screwdriver repair subsystems, stun the Warden, and scan everything behind walls—and when you fail to summon your TARDIS, it'll tell you exactly where that blue box is hiding. It also overhauls AIT's space system for a better experience in the void. It makes Hazandra Crystals reusable instead of one‑time trinkets. And it replaces the game menu with the Time Vortex, giving you that familiar dizzy feeling before you even load into a world—like stepping right back into the Dalek Mod's main menu from the 1.12.2 days.
+
+Beyond the classic elements from *Doctor Who*, DOCTOR M also includes plenty of original content from [**us(the Celestial Intervention Agency)**](https://modrinth.com/organization/celestial-intervention-agency) : for example, the Type 103 TARDIS **Evereye**, the Type 102 TARDIS **Watcher**, the Type 60 TARDIS **Cloister**, and the mysterious Type 1 TARDIS **Madness**—each with its own unique interior, all now available in DOCTOR M! On top of that, we've also brought **Eternal Crystals**, **Relic Gems**, and many more interiors you've definitely never seen before.
+
+DOCTOR M isn't just about making your journey more entertaining—it's about making it easier to get lost, and making your tools not just usable, but genuinely *good* to use.** We hope you enjoy them!
 
 ---
 
@@ -23,8 +32,6 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 [**Create**](https://modrinth.com/mod/create-fabric) – **Permanence** , Claresco and Clara’s TARDIS need content from this mod.
 
 [**Tough as nails**](https://modrinth.com/mod/tough-as-nails) - AIT's spacesuit will provide warmth.
-
-[**Blue archive halo**](https://modrinth.com/mod/blue-archive-halo) – Purely decorative (optional) qwq
 
 ---
 
