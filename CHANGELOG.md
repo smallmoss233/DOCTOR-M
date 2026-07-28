@@ -15,7 +15,7 @@
 ### 内饰 / Interior
 
 -  修改：时隙 / Edit : rift
--  修改：永恒之眼/永恒之眼 40型 / Edit : Evereye/Evereye Type40
+-  修改：永恒之眼/永恒之眼 45型 / Edit : Evereye/Evereye Type45
 
 -  新增：立方（作者：Asnit_PnQing） / New addition: Cube (Author: Asnit_PnQing)
 -  新增：时隙[战争往事]（作者：TC020） / New addition: The rift [War Stories](Author: TC020)
@@ -35,13 +35,13 @@
 -  现在有非常的可配置项在config/doctor_m里！/ There are now many configurable options available in the config/doctor_m directory!
 -  时间钥匙被动超级加强！不再有复活冷却，且复活优先级被拉到最大！ / Time Key passive massively buffed! Resurrection cooldown removed, and resurrection priority is now set to maximum!
 -  增强音速起子 / Enhanced Sonic
-     扫描模式：能探测墙后空间/生物类型，敌对状况/时间，维度，坐标 / Scan Mode: Can detect spaces behind walls, entity types, hostility status, time, dimension, and coordinates.
-     塔迪斯模式：召唤塔迪斯失败时汇报塔迪斯的位置/维度于玩家的相对距离和方向 / TARDIS Mode: When summoning TARDIS fails, reports the TARDIS's location and dimension, along with its relative distance and direction from the player.
-     过载模式：可以对坚守者造成伤害和硬控10s / Overload Mode: Can deal damage to the Warden and apply a hard stun for 10 seconds.
-     交互模式：可以修复损坏的子系统耐久 / Interaction Mode: Can repair damaged subsystem durability.
+   扫描模式：能探测墙后空间/生物类型，敌对状况/时间，维度，坐标 / Scan Mode: Can detect spaces behind walls, entity types, hostility status, time, dimension, and coordinates.
+   塔迪斯模式：召唤塔迪斯失败时汇报塔迪斯的位置/维度于玩家的相对距离和方向 / TARDIS Mode: When summoning TARDIS fails, reports the TARDIS's location and dimension, along with its relative distance and direction from the player.
+   过载模式：可以对坚守者造成伤害和硬控10s / Overload Mode: Can deal damage to the Warden and apply a hard stun for 10 seconds.
+   交互模式：可以修复损坏的子系统耐久 / Interaction Mode: Can repair damaged subsystem durability.
 -  太空大改2.0 / Space Overhaul 2.0
-     在真空进食会扣血（孩子，谁告诉你太空可以打开面罩吃东西的？！） / Eating in a vacuum will damage you (Kid, who told you that you can open your helmet and eat in space?!)
-     氧气机的算法优化，一个区域内放置多台氧气机有氧范围扩大，且修复了一些潜在BUG / Optimized oxygen generator algorithm; placing multiple generators in an area expands the oxygen coverage, and fixed some potential bugs.
+   在真空进食会扣血（孩子，谁告诉你太空可以打开面罩吃东西的？！） / Eating in a vacuum will damage you (Kid, who told you that you can open your helmet and eat in space?!)
+   氧气机的算法优化，一个区域内放置多台氧气机有氧范围扩大，且修复了一些潜在BUG / Optimized oxygen generator algorithm; placing multiple generators in an area expands the oxygen coverage, and fixed some potential bugs.
 
 ### 修复 / Repair
 
