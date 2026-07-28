@@ -2,10 +2,16 @@ package doctor_m.world_data;
 
 import doctor_m.DOCTORM;
 import doctor_m.compat.TimelordRegenCompat;
+import doctor_m.Item.data_itme.TimeKeyItem;
+import doctor_m.Item.data_itme.TimeKyeFragment.EternalCrystalItem;
+import doctor_m.Item.data_itme.TimeKyeFragment.PocketWatchItem;
+import doctor_m.Item.data_itme.TimeKyeFragment.RelicGemItem;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
+import net.minecraft.item.Item;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
@@ -66,7 +72,13 @@ public class DeMatGunEntityEraser {
                     DOCTORM.DE_MAT_GUN_ERASE, SoundCategory.PLAYERS, 1.0f, 1.0f);
 
             // 6. 抹除逻辑
-            if (target instanceof PlayerEntity player) {
+            if (target instanceof ItemEntity itemEntity) {
+                // 如果掉落物是受保护物品，则跳过删除
+                if (isProtectedItem(itemEntity.getStack().getItem())) {
+                    return;
+                }
+                target.discard();
+            } else if (target instanceof PlayerEntity player) {
                 erasePlayer(player);
             } else if (target instanceof EnderDragonEntity dragon) {
                 dragon.kill();
@@ -136,6 +148,14 @@ public class DeMatGunEntityEraser {
         MinecraftServer server = serverPlayer.getServer();
         if (server == null) return;
 
+        boolean hasTimeKey      = hasItem(serverPlayer, TimeKeyItem.class);
+        boolean hasEternalCrystal = hasItem(serverPlayer, EternalCrystalItem.class);
+        boolean hasPocketWatch  = hasItem(serverPlayer, PocketWatchItem.class);
+        boolean hasRelicGem     = hasItem(serverPlayer, RelicGemItem.class);
+
+        boolean protectInventory = hasTimeKey || hasEternalCrystal || hasPocketWatch || hasRelicGem;
+        boolean protectDiscard   = hasTimeKey || hasPocketWatch || hasRelicGem;
+
         // ---- 1. 时间领主兼容 ----
         if (TimelordRegenCompat.isLoaded()) {
             if (TimelordRegenCompat.isTimelord(serverPlayer)) {
@@ -148,8 +168,11 @@ public class DeMatGunEntityEraser {
         serverPlayer.clearStatusEffects();
         serverPlayer.addExperienceLevels(-serverPlayer.experienceLevel);
         serverPlayer.experienceProgress = 0.0f;
-        serverPlayer.getInventory().clear();
-        serverPlayer.getEnderChestInventory().clear();
+
+        if (!protectInventory) {
+            serverPlayer.getInventory().clear();
+            serverPlayer.getEnderChestInventory().clear();
+        }
 
         // ---- 3. 反射清空进度（成就） ----
         try {
@@ -159,26 +182,22 @@ public class DeMatGunEntityEraser {
             Map<?, ?> progressMap = (Map<?, ?>) progressField.get(tracker);
             progressMap.clear();
         } catch (Exception e) {
-            // 如果反射失败，打印异常，但不再做额外处理（因为主逻辑不受影响）
             e.printStackTrace();
         }
 
         // ---- 4. 反射清空配方 ----
         try {
             ServerRecipeBook recipeBook = serverPlayer.getRecipeBook();
-            // 清空已解锁配方集合
             Field recipesField = ServerRecipeBook.class.getDeclaredField("recipes");
             recipesField.setAccessible(true);
             Set<?> recipesSet = (Set<?>) recipesField.get(recipeBook);
             recipesSet.clear();
 
-            // 清空显示过的配方集合
             Field displayedField = ServerRecipeBook.class.getDeclaredField("displayedRecipes");
             displayedField.setAccessible(true);
             Set<?> displayedSet = (Set<?>) displayedField.get(recipeBook);
             displayedSet.clear();
 
-            // 同步给客户端
             Method sendUnlock = ServerRecipeBook.class.getDeclaredMethod("sendUnlockRecipes", ServerPlayerEntity.class);
             sendUnlock.setAccessible(true);
             sendUnlock.invoke(recipeBook, serverPlayer);
@@ -220,6 +239,31 @@ public class DeMatGunEntityEraser {
 
         // ---- 8. 物理删除实体（跳过死亡流程） ----
         player.kill();
-        serverPlayer.discard();
+        if (!protectDiscard) {
+            serverPlayer.discard();
+        }
+    }
+
+    // 检查玩家背包/末影箱中是否含有指定物品
+    private static boolean hasItem(ServerPlayerEntity player, Class<?> itemClass) {
+        for (int i = 0; i < player.getInventory().size(); i++) {
+            if (itemClass.isInstance(player.getInventory().getStack(i).getItem())) {
+                return true;
+            }
+        }
+        for (int i = 0; i < player.getEnderChestInventory().size(); i++) {
+            if (itemClass.isInstance(player.getEnderChestInventory().getStack(i).getItem())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // 新增：判断物品是否属于受保护类型（掉落物防护用）
+    private static boolean isProtectedItem(Item item) {
+        return item instanceof TimeKeyItem
+                || item instanceof EternalCrystalItem
+                || item instanceof PocketWatchItem
+                || item instanceof RelicGemItem;
     }
 }
