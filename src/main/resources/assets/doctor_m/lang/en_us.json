@@ -108,6 +108,10 @@
   "tooltip.doctor_m.sonic.player_location": "📍 Your location: %d %d %d [%s]",
   "tooltip.doctor_m.sonic.tardis_location_with_arrow": "📡 TARDIS location: %d %d %d [%d blocks %s]",
   "tooltip.doctor_m.sonic.different_world": "🌍 TARDIS is not in this world (located in %s)",
+  "tooltip.doctor_m.oxygen_half": "Oxygen level below 50%, please refill!",
+  "tooltip.doctor_m.oxygen_low": "Oxygen level below the safety threshold, please refill!",
+  "tooltip.doctor_m.oxygen_critical": "Warning! Oxygen level critically low! Life support system is about to shut down!",
+  "tooltip.doctor_m.oxygen_empty": "Warning! Life support system shut down! Warning!",
 
   "hud.doctor_m.environment.oxygenated": "Oxygenated, can take off spacesuit",
   "hud.doctor_m.environment.deoxygenated": "Deoxygenated, cannot take off spacesuit",

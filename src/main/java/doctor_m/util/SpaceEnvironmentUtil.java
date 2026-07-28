@@ -2,10 +2,12 @@ package doctor_m.util;
 
 import dev.amble.ait.core.AITStatusEffects;
 import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry;
-import doctor_m.module.space_plus.system.SpaceOxygenManager;
+import doctor_m.module.space_plus.system.OxygenSystem;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class SpaceEnvironmentUtil {
@@ -21,7 +23,7 @@ public class SpaceEnvironmentUtil {
         // 宇航服供氧
         ItemStack chest = entity.getEquippedStack(EquipmentSlot.CHEST);
         if (chest.getItem() instanceof dev.amble.ait.module.planet.core.item.SpacesuitItem) {
-            if (SpaceOxygenManager.getOxygen(chest) > 0) return true;
+            if (OxygenSystem.getOxygen(chest) > 0) return true;
         }
 
         // 环境自然有氧
@@ -51,9 +53,14 @@ public class SpaceEnvironmentUtil {
         boolean isTardis = world.getRegistryKey().getValue().getNamespace().equals("ait")
                 && world.getRegistryKey().getValue().getPath().startsWith("tardis");
 
-        boolean isHeadInsideBlock = !world.getBlockState(entity.getBlockPos().up(1)).isAir();
+        // ========== 修复核心 ==========
+        // 用眼睛高度取头部所在方块，再用 isSolidBlock 判定是否真正被固体埋住
+        BlockPos eyePos = BlockPos.ofFloored(entity.getX(), entity.getEyeY(), entity.getZ());
+        BlockState headState = world.getBlockState(eyePos);
+        boolean isHeadInsideSuffocatingBlock = headState.isSolidBlock(world, eyePos);
+        // =============================
 
-        return (worldHasOxygen || isTardis) && !isHeadInsideBlock;
+        return (worldHasOxygen || isTardis) && !isHeadInsideSuffocatingBlock;
     }
 
     public static boolean isInVacuum(LivingEntity entity) {

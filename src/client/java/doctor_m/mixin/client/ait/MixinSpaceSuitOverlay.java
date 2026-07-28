@@ -5,13 +5,15 @@ import dev.amble.ait.core.world.TardisServerWorld;
 import dev.amble.ait.module.planet.client.SpaceSuitOverlay;
 import dev.amble.ait.module.planet.core.item.SpacesuitItem;
 import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry;
-import doctor_m.module.space_plus.system.SpaceOxygenManager;
+import doctor_m.module.space_plus.system.OxygenSystem;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,7 +39,7 @@ public class MixinSpaceSuitOverlay {
         TextRenderer textRenderer = mc.textRenderer;
 
         var chestStack = mc.player.getEquippedStack(EquipmentSlot.CHEST);
-        double oxygen = SpaceOxygenManager.getOxygen(chestStack);
+        double oxygen = OxygenSystem.getOxygen(chestStack);
 
         // 与 MixinSpacesuitItem 逻辑一致
         boolean worldHasOxygen = true;
@@ -52,7 +54,13 @@ public class MixinSpaceSuitOverlay {
         boolean hasOxygenated = mc.player.hasStatusEffect(AITStatusEffects.OXYGENATED);
 
         boolean isSubmerged = mc.player.isSubmergedInWater();
-        boolean isHeadInsideBlock = !mc.world.getBlockState(mc.player.getBlockPos().up(1)).isAir();
+
+        // ========== 修复：头部窒息判定 ==========
+        BlockPos eyePos = BlockPos.ofFloored(mc.player.getX(), mc.player.getEyeY(), mc.player.getZ());
+        BlockState headState = mc.world.getBlockState(eyePos);
+        boolean isHeadInsideBlock = headState.isSolidBlock(mc.world, eyePos);
+        // =======================================
+
         boolean isUnbreathableEnvironment = isSubmerged || isHeadInsideBlock;
 
         boolean hasOxygen = (worldHasOxygen || isTardis || hasOxygenated) && !isUnbreathableEnvironment;
@@ -62,7 +70,7 @@ public class MixinSpaceSuitOverlay {
                 Text.translatable("hud.doctor_m.environment.deoxygenated").formatted(Formatting.RED);
         drawContext.drawTextWithShadow(textRenderer, envText, 2, 2, 0xFFFFFF);
 
-        String oxygenText = String.format("%.1f", oxygen) + "L / " + SpaceOxygenManager.MAX_OXYGEN + "L";
+        String oxygenText = String.format("%.1f", oxygen) + "L / " + OxygenSystem.getMaxOxygen() + "L";
         drawContext.drawTextWithShadow(textRenderer,
                 Text.literal(oxygenText),
                 2, 40, 0xFFFFFF);

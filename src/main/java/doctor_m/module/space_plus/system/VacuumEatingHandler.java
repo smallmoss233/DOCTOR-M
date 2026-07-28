@@ -1,15 +1,15 @@
 package doctor_m.module.space_plus.system;
 
 import dev.amble.ait.core.AITStatusEffects;
+import dev.amble.ait.module.planet.core.item.SpacesuitItem;
+import doctor_m.config.ConfigManager;
 import doctor_m.util.SpaceEnvironmentUtil;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
@@ -20,21 +20,22 @@ import java.util.UUID;
 
 public class VacuumEatingHandler {
 
-    private static final Map<UUID, Long> LAST_DAMAGE_TIME = new HashMap<>();
-    private static final Map<UUID, Long> LAST_MESSAGE_TIME = new HashMap<>();
-    private static final long DAMAGE_COOLDOWN_MS = 1000;
-    private static final long MESSAGE_COOLDOWN_MS = 3000;
+    // 标记玩家"这次进食如果成功需要扣氧"
+    private static final Map<UUID, Long> PENDING_EAT = new HashMap<>();
 
     public static void register() {
         UseItemCallback.EVENT.register(VacuumEatingHandler::onUseItem);
-        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
-            UUID uuid = handler.player.getUuid();
-            LAST_DAMAGE_TIME.remove(uuid);
-            LAST_MESSAGE_TIME.remove(uuid);
-        });
     }
 
-    private static TypedActionResult<ItemStack> onUseItem(PlayerEntity player, World world, net.minecraft.util.Hand hand) {
+    private static double getCost() {
+        return ConfigManager.getConfig().vacuumEatingOxygenCost;
+    }
+
+    private static long getPendingTimeoutMs() {
+        return ConfigManager.getConfig().vacuumEatingPendingTimeoutSeconds * 1000L;
+    }
+
+    private static TypedActionResult<ItemStack> onUseItem(PlayerEntity player, World world, Hand hand) {
         if (world.isClient()) {
             return TypedActionResult.pass(player.getStackInHand(hand));
         }
@@ -43,64 +44,36 @@ public class VacuumEatingHandler {
         }
 
         ItemStack stack = serverPlayer.getStackInHand(hand);
-        UseAction action = stack.getUseAction();
-        if (action != UseAction.EAT && action != UseAction.DRINK) {
+        if (stack.getUseAction() != UseAction.EAT && stack.getUseAction() != UseAction.DRINK) {
             return TypedActionResult.pass(stack);
         }
 
-        // ========== 双重保险 ==========
-        // 保险1：只要有氧气效果（氧气机/宇航服），直接放行，不扣任何东西
-        if (serverPlayer.hasStatusEffect(AITStatusEffects.OXYGENATED)) {
+        if (serverPlayer.hasStatusEffect(AITStatusEffects.OXYGENATED)
+                || SpaceEnvironmentUtil.hasEnvironmentalOxygen(serverPlayer)
+                || serverPlayer.isCreative()) {
             return TypedActionResult.pass(stack);
         }
 
-        // 保险2：环境本身有氧（主世界、TARDIS 等）
-        if (SpaceEnvironmentUtil.hasEnvironmentalOxygen(serverPlayer)) {
-            return TypedActionResult.pass(stack);
-        }
-
-        if (serverPlayer.isCreative()) {
-            return TypedActionResult.pass(stack);
-        }
-
-        punish(serverPlayer);
-        return TypedActionResult.fail(stack);
+        PENDING_EAT.put(serverPlayer.getUuid(), System.currentTimeMillis());
+        return TypedActionResult.pass(stack);
     }
 
-    private static void punish(ServerPlayerEntity player) {
-        long now = System.currentTimeMillis();
+    public static void onPlayerActuallyEat(ServerPlayerEntity player) {
         UUID uuid = player.getUuid();
+        Long pendingTime = PENDING_EAT.remove(uuid);
+        if (pendingTime == null) return;
 
-        // 氧气泄漏（每次必扣）
+        if (System.currentTimeMillis() - pendingTime > getPendingTimeoutMs()) {
+            return;
+        }
+
         ItemStack chest = player.getEquippedStack(EquipmentSlot.CHEST);
-        if (chest.getItem() instanceof dev.amble.ait.module.planet.core.item.SpacesuitItem) {
+        if (chest.getItem() instanceof SpacesuitItem) {
             double current = OxygenSystem.getOxygen(chest);
             if (current > 0) {
-                int leak = 20 + player.getRandom().nextInt(31);
-                double remaining = Math.max(0.0, current - leak);
+                double remaining = Math.max(0.0, current - getCost());
                 OxygenSystem.setOxygen(chest, remaining);
-
-                if (remaining == 0.0 && current > 0) {
-                }
             }
-        }
-
-        // 伤害（带冷却）
-        Long lastDmg = LAST_DAMAGE_TIME.get(uuid);
-        if (lastDmg == null || now - lastDmg > DAMAGE_COOLDOWN_MS) {
-            LAST_DAMAGE_TIME.put(uuid, now);
-            player.damage(player.getDamageSources().dryOut(), 4.0f);
-        }
-
-        // 提示（带冷却）
-        Long lastMsg = LAST_MESSAGE_TIME.get(uuid);
-        if (lastMsg == null || now - lastMsg > MESSAGE_COOLDOWN_MS) {
-            LAST_MESSAGE_TIME.put(uuid, now);
-            player.sendMessage(
-                    Text.translatable("tooltip.doctor_m.vacuum_consuming")
-                            .formatted(Formatting.RED),
-                    true
-            );
         }
     }
 }

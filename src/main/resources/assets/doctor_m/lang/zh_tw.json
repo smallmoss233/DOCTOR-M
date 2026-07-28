@@ -108,6 +108,10 @@
   "tooltip.doctor_m.sonic.player_location": "📍 你的位置: %d %d %d [%s]",
   "tooltip.doctor_m.sonic.tardis_location_with_arrow": "📡 塔迪斯位置: %d %d %d [距離 %d 格 %s]",
   "tooltip.doctor_m.sonic.different_world": "🌍 塔迪斯不在此世界 (位於 %s)",
+  "tooltip.doctor_m.oxygen_half": "氧氣容量低於50％，請注意補充！",
+  "tooltip.doctor_m.oxygen_low": "氧氣容量低於安全閾值，請注意補充！",
+  "tooltip.doctor_m.oxygen_critical": "警告！氧氣容量極低！生命維持系統即將停擺！",
+  "tooltip.doctor_m.oxygen_empty": "警告！生命維持系統停擺！警告！",
 
   "hud.doctor_m.environment.oxygenated": "有氧，可脫下太空衣",
   "hud.doctor_m.environment.deoxygenated": "無氧，不可脫下太空衣",

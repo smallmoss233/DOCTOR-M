@@ -40,7 +40,9 @@
    过载模式：可以对坚守者造成伤害和硬控10s / Overload Mode: Can deal damage to the Warden and apply a hard stun for 10 seconds.
    交互模式：可以修复损坏的子系统耐久 / Interaction Mode: Can repair damaged subsystem durability.
 -  太空大改2.0 / Space Overhaul 2.0
-   在真空进食会扣血（孩子，谁告诉你太空可以打开面罩吃东西的？！） / Eating in a vacuum will damage you (Kid, who told you that you can open your helmet and eat in space?!)
+   在真空进食会扣除大量氧气（孩子，谁告诉你太空可以打开面罩吃东西的？！） / Eating in a vacuum will drain a significant amount of oxygen (Kid, who told you that you can open your helmet and eat in space?!)
+   修复航天服UI的关于有氧环境的误判 / Fixed the spacesuit UI's false detection regarding oxygenated environments.
+   航天服新增氧气阀值警告 / Added oxygen threshold warnings for the spacesuit.
    氧气机的算法优化，一个区域内放置多台氧气机有氧范围扩大，且修复了一些潜在BUG / Optimized oxygen generator algorithm; placing multiple generators in an area expands the oxygen coverage, and fixed some potential bugs.
 
 ### 修复 / Repair

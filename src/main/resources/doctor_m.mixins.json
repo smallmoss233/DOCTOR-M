@@ -10,6 +10,7 @@
     "ait_oxygenatedmixin.MixinOxygenatedEffect",
     "ait_oxygenatedmixin.MixinOxygenatorBlockEntity",
     "ait_oxygenatedmixin.MixinPlanetOxygenOverride",
+    "ait_oxygenatedmixin.MixinLivingEntityEat",
     "aitmixin.MixinShieldHandler",
     "aitmixin.MixinSiegeModeControl",
     "aitmixin.MixinHandlesItem",

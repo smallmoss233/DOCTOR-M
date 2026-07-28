@@ -1,7 +1,7 @@
 package doctor_m.module.space_plus;
 
 import doctor_m.config.ConfigManager;
-import doctor_m.module.space_plus.system.SpaceOxygenManager;
+import doctor_m.module.space_plus.system.OxygenSystem;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
@@ -23,7 +23,7 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class OxygenTankItem extends Item {
-    public static final String OXYGEN_KEY = "doctor_m_oxygen";
+    public static final String OXYGEN_KEY = "oxygen";
     // 移除硬编码常量，改为从配置读取
     private static final String START_TIME_KEY = "doctor_m_hold_start";
 
@@ -94,14 +94,14 @@ public class OxygenTankItem extends Item {
         }
 
         double tankOxygen = getOxygen(stack);
-        double suitOxygen = SpaceOxygenManager.getOxygen(chestStack);
+        double suitOxygen = OxygenSystem.getOxygen(chestStack);
 
         if (tankOxygen <= 0) {
             player.sendMessage(Text.translatable("message.doctor_m.oxygen_tank.empty"), true);
             return;
         }
 
-        double maxSuitOxygen = SpaceOxygenManager.MAX_OXYGEN; // 宇航服最大氧气（可能也需要配置，暂不处理）
+        double maxSuitOxygen = OxygenSystem.getMaxOxygen();
         if (suitOxygen >= maxSuitOxygen) {
             player.sendMessage(Text.translatable("message.doctor_m.oxygen_tank.suit_full"), true);
             return;
@@ -111,7 +111,7 @@ public class OxygenTankItem extends Item {
         double transferAmount = Math.min(transferRate, tankOxygen);
         transferAmount = Math.min(transferAmount, maxSuitOxygen - suitOxygen);
 
-        SpaceOxygenManager.refillOxygen(chestStack, transferAmount);
+        OxygenSystem.refillOxygen(chestStack, transferAmount);
         setOxygen(stack, tankOxygen - transferAmount);
 
         player.sendMessage(Text.translatable("message.doctor_m.oxygen_tank.transfer", transferAmount), true);

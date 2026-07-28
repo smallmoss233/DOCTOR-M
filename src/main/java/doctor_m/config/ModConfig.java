@@ -44,7 +44,7 @@ public class ModConfig {
     public double selfDestructKnockbackForce = 0.5;       // 击退力度
 
     //氧气瓶
-    public double oxygenTankMaxOxygen = 1200.0;          // 最大氧气容量
+    public double oxygenTankMaxOxygen = 1200.0;          // 氧气瓶最大氧气容量
     public double oxygenTankTransferRate = 100.0;        // 每次转移的氧气量
     public int oxygenTankFoodThreshold = 6;              // 饱食度阈值（<= 此值视为极低）
     public int oxygenTankHoldTicksForAchievement = 100;  // 长按多少 tick 触发成就（5秒 = 100 tick）
@@ -62,6 +62,10 @@ public class ModConfig {
     public int oxygenatorOpenSpaceRadius = 3;         // 开放空间有效半径
     public int oxygenatorCacheExpireTicks = 100;      // 缓存过期（5秒）
     public int oxygenatorMinAirBlocks = 10;           // 最小有效房间大小
+
+    // 真空进食
+    public double vacuumEatingOxygenCost = 100.0;         // 真空环境吃一次食物扣多少氧
+    public int vacuumEatingPendingTimeoutSeconds = 10;    // 进食 pending 超时（秒）
 
     // --- 实际配置值 ---
     public int timeKeyDamage = DEFAULT_TIME_KEY_DAMAGE;

@@ -3,7 +3,7 @@ package doctor_m.module.space_plus.block;
 import dev.amble.ait.module.planet.core.item.SpacesuitItem;
 import doctor_m.config.ConfigManager;
 import doctor_m.module.space_plus.OxygenTankItem;
-import doctor_m.module.space_plus.system.SpaceOxygenManager;
+import doctor_m.module.space_plus.system.OxygenSystem;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -96,9 +96,9 @@ public class OxygenChargerBlock extends BlockWithEntity {
         }
         // 尝试充航天服（胸甲）
         else if (held.getItem() instanceof SpacesuitItem && ((ArmorItem) held.getItem()).getType() == ArmorItem.Type.CHESTPLATE) {
-            double current = SpaceOxygenManager.getOxygen(held);
+            double current = OxygenSystem.getOxygen(held);
             if (current < maxSuitOxygen) {
-                SpaceOxygenManager.setOxygen(held, maxSuitOxygen);
+                OxygenSystem.setOxygen(held, maxSuitOxygen);
                 player.sendMessage(Text.translatable("message.doctor_m.oxygen_charger.suit_fill"), true);
                 charged = true;
             } else {
