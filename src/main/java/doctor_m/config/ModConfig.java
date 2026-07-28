@@ -14,9 +14,9 @@ public class ModConfig {
     public int shieldCostPerDamage = 5;             // 每 1 点伤害消耗的能量
 
     //时间钥匙
-    public static final int DEFAULT_TIME_KEY_DAMAGE = 5;//冷却
-    public static final double DEFAULT_TIME_KEY_MULTIPLIER = 1.5;//扣血倍率
-    public static final double DEFAULT_TIME_KEY_EXTRA = 10.0;//最低扣血量（百分比）
+    public static final int DEFAULT_TIME_KEY_DAMAGE = 1;//冷却
+    public static final double DEFAULT_TIME_KEY_MULTIPLIER = 2;//扣血倍率
+    public static final double DEFAULT_TIME_KEY_EXTRA = 15.0;//最低扣血量（百分比）
 
     //永恒水晶
     public static final int DEFAULT_ETERNAL_CRYSTAL_DAMAGE = 100;//冷却
@@ -38,10 +38,10 @@ public class ModConfig {
     public boolean enableSelfDestructEnhancement = true;  // 总开关
     public int selfDestructMaxRadius = 80;                // 最大扩散半径
     public int selfDestructExplosionSteps = 20;           // 扩散步数
-    public int selfDestructDelayPerStep = 20;              // 每步间隔（tick）
+    public int selfDestructDelayPerStep = 40;              // 每步间隔（tick）
     public int selfDestructFinalClearRadius = 100;        // 最终清除半径
-    public int selfDestructKnockbackRadius = 30;          // 击退影响半径
-    public double selfDestructKnockbackForce = 2.5;       // 击退力度
+    public int selfDestructKnockbackRadius = 2;          // 击退影响半径
+    public double selfDestructKnockbackForce = 0.5;       // 击退力度
 
     //氧气瓶
     public double oxygenTankMaxOxygen = 1200.0;          // 最大氧气容量
