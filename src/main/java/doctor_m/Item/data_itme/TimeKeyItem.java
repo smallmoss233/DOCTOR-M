@@ -2,6 +2,7 @@ package doctor_m.Item.data_itme;
 
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketItem;
+import doctor_m.Item.KeytoTime;
 import doctor_m.util.creativity.DynamicColorHelper;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import doctor_m.util.tooltip.TooltipHelper;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.List;
 
-public class TimeKeyItem extends TrinketItem {
+public class TimeKeyItem extends TrinketItem implements KeytoTime {
 
     public TimeKeyItem(Settings settings) {
         super(settings);

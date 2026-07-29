@@ -1,6 +1,7 @@
 package doctor_m.Item.data_itme.TimeKyeFragment;
 
 import dev.emi.trinkets.api.TrinketItem;
+import doctor_m.Item.KeytoTime;
 import doctor_m.compat.TimelordRegenCompat;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import doctor_m.util.tooltip.TooltipHelper;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class PocketWatchItem extends TrinketItem {
+public class PocketWatchItem extends TrinketItem implements KeytoTime {
 
     private static final int COOLDOWN_TICKS = 100;
     private static final String OWNER_KEY = "MarkedOwner";

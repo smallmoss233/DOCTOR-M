@@ -3,6 +3,7 @@ package doctor_m.Item.data_itme.TimeKyeFragment;
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketItem;
 import dev.emi.trinkets.api.TrinketsApi;
+import doctor_m.Item.KeytoTime;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -15,7 +16,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
-public class RelicGemItem extends TrinketItem {
+public class RelicGemItem extends TrinketItem implements KeytoTime {
 
     // ========== NBT 常量 ==========
     private static final String NBT_LEVEL = "GemLevel";

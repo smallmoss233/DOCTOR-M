@@ -1,6 +1,7 @@
 package doctor_m.Item.data_itme.TimeKyeFragment;
 
 import dev.emi.trinkets.api.TrinketItem;
+import doctor_m.Item.KeytoTime;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import doctor_m.util.tooltip.TooltipHelper;
 import net.minecraft.client.item.TooltipContext;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class EternalCrystalItem extends TrinketItem {
+public class EternalCrystalItem extends TrinketItem implements KeytoTime {
 
     public EternalCrystalItem(Settings settings) {
         super(settings);

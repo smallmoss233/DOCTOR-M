@@ -40,8 +40,6 @@ import java.util.List;
 @Mixin(SelfDestructHandler.class)
 public class SelfDestructHandlerMixin {
 
-    // 不再使用硬编码常量，改为从配置读取
-
     private static final List<DelayedTask> TASK_QUEUE = new ArrayList<>();
     private static boolean TICK_LISTENER_REGISTERED = false;
 
@@ -281,21 +279,14 @@ public class SelfDestructHandlerMixin {
                 LivingEntity::isAlive
         );
 
-        DamageSource absolute = world.getDamageSources().genericKill();
-
         for (LivingEntity target : targets) {
-            // ★ 新增：跳过所有受时间钥匙保护的玩家
-            if (target instanceof ServerPlayerEntity player &&
-                    TimeKeyFunction.isTimeKeyEquipped(player)) {
-                continue;
+            // 跳过创造/旁观模式玩家
+            if (target instanceof ServerPlayerEntity player) {
+                if (player.isCreative() || player.isSpectator()) {
+                    continue;
+                }
             }
-
-            if (target instanceof PlayerEntity player) {
-                player.getInventory().dropAll();
-            }
-            target.damage(absolute, Float.MAX_VALUE);
-            if (target.isAlive()) target.kill();
-            if (target.isAlive()) target.setHealth(0);
+            target.kill();
         }
 
         world.playSound(null, centerPos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 30f, 0.2f);

@@ -1,6 +1,7 @@
 package doctor_m.world_data;
 
 import doctor_m.DOCTORM;
+import doctor_m.Item.KeytoTime;
 import doctor_m.compat.TimelordRegenCompat;
 import doctor_m.Item.data_itme.TimeKeyItem;
 import doctor_m.Item.data_itme.TimeKyeFragment.EternalCrystalItem;
@@ -71,24 +72,33 @@ public class DeMatGunEntityEraser {
             world.playSound(null, hitPos.x, hitPos.y, hitPos.z,
                     DOCTORM.DE_MAT_GUN_ERASE, SoundCategory.PLAYERS, 1.0f, 1.0f);
 
+
             // 6. 抹除逻辑
-            if (target instanceof ItemEntity itemEntity) {
-                // 如果掉落物是受保护物品，则跳过删除
-                if (isProtectedItem(itemEntity.getStack().getItem())) {
-                    return;
+            if (hitResult != null) {
+                target = hitResult.getEntity();
+                hitPos = hitResult.getPos();
+
+                spawnEraseParticles(world, hitPos);
+                world.playSound(null, hitPos.x, hitPos.y, hitPos.z,
+                        DOCTORM.DE_MAT_GUN_ERASE, SoundCategory.PLAYERS, 1.0f, 1.0f);
+
+                if (target instanceof ItemEntity itemEntity) {
+                    // 受保护掉落物 → 跳过
+                    if (itemEntity.getStack().getItem() instanceof KeytoTime) {
+                        return;
+                    }
+                    target.discard();
+                } else if (target instanceof PlayerEntity player) {
+                    erasePlayer(player);
+                } else if (target instanceof EnderDragonEntity dragon) {
+                    dragon.kill();
+                } else {
+                    target.discard();
                 }
-                target.discard();
-            } else if (target instanceof PlayerEntity player) {
-                erasePlayer(player);
-            } else if (target instanceof EnderDragonEntity dragon) {
-                dragon.kill();
             } else {
-                target.discard();
+                world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(),
+                        SoundEvents.BLOCK_AMETHYST_BLOCK_HIT, SoundCategory.PLAYERS, 0.5f, 1.5f);
             }
-        } else {
-            // 未命中反馈
-            world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(),
-                    SoundEvents.BLOCK_AMETHYST_BLOCK_HIT, SoundCategory.PLAYERS, 0.5f, 1.5f);
         }
     }
 
@@ -143,127 +153,116 @@ public class DeMatGunEntityEraser {
         );
     }
 
-    public static void erasePlayer(PlayerEntity player) {
-        if (!(player instanceof ServerPlayerEntity serverPlayer)) return;
-        MinecraftServer server = serverPlayer.getServer();
-        if (server == null) return;
+        public static void erasePlayer(PlayerEntity player) {
+            if (!(player instanceof ServerPlayerEntity serverPlayer)) return;
+            MinecraftServer server = serverPlayer.getServer();
+            if (server == null) return;
 
-        boolean hasTimeKey      = hasItem(serverPlayer, TimeKeyItem.class);
-        boolean hasEternalCrystal = hasItem(serverPlayer, EternalCrystalItem.class);
-        boolean hasPocketWatch  = hasItem(serverPlayer, PocketWatchItem.class);
-        boolean hasRelicGem     = hasItem(serverPlayer, RelicGemItem.class);
+            // 只要背包或末影箱里有任意一件 KeytoTime 物品，就触发保护
+            boolean protectInventory = hasProtectedItem(serverPlayer);
+            boolean protectDiscard   = hasProtectedItem(serverPlayer);
 
-        boolean protectInventory = hasTimeKey || hasEternalCrystal || hasPocketWatch || hasRelicGem;
-        boolean protectDiscard   = hasTimeKey || hasPocketWatch || hasRelicGem;
+            // ---- 1. 时间领主兼容 ----
+            if (TimelordRegenCompat.isLoaded()) {
+                if (TimelordRegenCompat.isTimelord(serverPlayer)) {
+                    TimelordRegenCompat.RegenInfo info = TimelordRegenCompat.getRegenInfo(serverPlayer);
+                    if (info != null) info.setUsesLeft(0);
+                }
+            }
 
-        // ---- 1. 时间领主兼容 ----
-        if (TimelordRegenCompat.isLoaded()) {
-            if (TimelordRegenCompat.isTimelord(serverPlayer)) {
-                TimelordRegenCompat.RegenInfo info = TimelordRegenCompat.getRegenInfo(serverPlayer);
-                if (info != null) info.setUsesLeft(0);
+            // ---- 2. 清除状态与物品 ----
+            serverPlayer.clearStatusEffects();
+            serverPlayer.addExperienceLevels(-serverPlayer.experienceLevel);
+            serverPlayer.experienceProgress = 0.0f;
+
+            if (!protectInventory) {
+                serverPlayer.getInventory().clear();
+                serverPlayer.getEnderChestInventory().clear();
+            }
+
+            // ---- 3. 反射清空进度（成就） ----
+            try {
+                Object tracker = serverPlayer.getAdvancementTracker();
+                Field progressField = tracker.getClass().getDeclaredField("advancementToProgress");
+                progressField.setAccessible(true);
+                Map<?, ?> progressMap = (Map<?, ?>) progressField.get(tracker);
+                progressMap.clear();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // ---- 4. 反射清空配方 ----
+            try {
+                ServerRecipeBook recipeBook = serverPlayer.getRecipeBook();
+                Field recipesField = ServerRecipeBook.class.getDeclaredField("recipes");
+                recipesField.setAccessible(true);
+                Set<?> recipesSet = (Set<?>) recipesField.get(recipeBook);
+                recipesSet.clear();
+
+                Field displayedField = ServerRecipeBook.class.getDeclaredField("displayedRecipes");
+                displayedField.setAccessible(true);
+                Set<?> displayedSet = (Set<?>) displayedField.get(recipeBook);
+                displayedSet.clear();
+
+                Method sendUnlock = ServerRecipeBook.class.getDeclaredMethod("sendUnlockRecipes", ServerPlayerEntity.class);
+                sendUnlock.setAccessible(true);
+                sendUnlock.invoke(recipeBook, serverPlayer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // ---- 5. 反射清空统计 ----
+            try {
+                StatHandler stats = serverPlayer.getStatHandler();
+                Field statMapField = StatHandler.class.getDeclaredField("statMap");
+                statMapField.setAccessible(true);
+                Map<?, ?> statMap = (Map<?, ?>) statMapField.get(stats);
+                statMap.clear();
+
+                Method sendStats = StatHandler.class.getDeclaredMethod("sendStats", ServerPlayerEntity.class);
+                sendStats.setAccessible(true);
+                sendStats.invoke(stats, serverPlayer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // ---- 6. 强制保存玩家数据到磁盘 ----
+            try {
+                PlayerManager playerManager = server.getPlayerManager();
+                Method saveMethod = PlayerManager.class.getDeclaredMethod("savePlayerData", ServerPlayerEntity.class);
+                saveMethod.setAccessible(true);
+                saveMethod.invoke(playerManager, serverPlayer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // ---- 7. 清除坐骑/乘客 ----
+            if (serverPlayer.getVehicle() != null) {
+                serverPlayer.getVehicle().discard();
+            }
+            serverPlayer.dismountVehicle();
+            serverPlayer.removeAllPassengers();
+
+            // ---- 8. 物理删除实体 ----
+            player.kill();
+            if (!protectDiscard) {
+                serverPlayer.discard();
             }
         }
 
-        // ---- 2. 清除状态与物品 ----
-        serverPlayer.clearStatusEffects();
-        serverPlayer.addExperienceLevels(-serverPlayer.experienceLevel);
-        serverPlayer.experienceProgress = 0.0f;
-
-        if (!protectInventory) {
-            serverPlayer.getInventory().clear();
-            serverPlayer.getEnderChestInventory().clear();
-        }
-
-        // ---- 3. 反射清空进度（成就） ----
-        try {
-            Object tracker = serverPlayer.getAdvancementTracker();
-            Field progressField = tracker.getClass().getDeclaredField("advancementToProgress");
-            progressField.setAccessible(true);
-            Map<?, ?> progressMap = (Map<?, ?>) progressField.get(tracker);
-            progressMap.clear();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // ---- 4. 反射清空配方 ----
-        try {
-            ServerRecipeBook recipeBook = serverPlayer.getRecipeBook();
-            Field recipesField = ServerRecipeBook.class.getDeclaredField("recipes");
-            recipesField.setAccessible(true);
-            Set<?> recipesSet = (Set<?>) recipesField.get(recipeBook);
-            recipesSet.clear();
-
-            Field displayedField = ServerRecipeBook.class.getDeclaredField("displayedRecipes");
-            displayedField.setAccessible(true);
-            Set<?> displayedSet = (Set<?>) displayedField.get(recipeBook);
-            displayedSet.clear();
-
-            Method sendUnlock = ServerRecipeBook.class.getDeclaredMethod("sendUnlockRecipes", ServerPlayerEntity.class);
-            sendUnlock.setAccessible(true);
-            sendUnlock.invoke(recipeBook, serverPlayer);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // ---- 5. 反射清空统计 ----
-        try {
-            StatHandler stats = serverPlayer.getStatHandler();
-            Field statMapField = StatHandler.class.getDeclaredField("statMap");
-            statMapField.setAccessible(true);
-            Map<?, ?> statMap = (Map<?, ?>) statMapField.get(stats);
-            statMap.clear();
-
-            Method sendStats = StatHandler.class.getDeclaredMethod("sendStats", ServerPlayerEntity.class);
-            sendStats.setAccessible(true);
-            sendStats.invoke(stats, serverPlayer);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // ---- 6. 强制保存玩家数据到磁盘（防止回档） ----
-        try {
-            PlayerManager playerManager = server.getPlayerManager();
-            Method saveMethod = PlayerManager.class.getDeclaredMethod("savePlayerData", ServerPlayerEntity.class);
-            saveMethod.setAccessible(true);
-            saveMethod.invoke(playerManager, serverPlayer);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // ---- 7. 清除坐骑/乘客 ----
-        if (serverPlayer.getVehicle() != null) {
-            serverPlayer.getVehicle().discard();
-        }
-        serverPlayer.dismountVehicle();
-        serverPlayer.removeAllPassengers();
-
-        // ---- 8. 物理删除实体（跳过死亡流程） ----
-        player.kill();
-        if (!protectDiscard) {
-            serverPlayer.discard();
-        }
-    }
-
-    // 检查玩家背包/末影箱中是否含有指定物品
-    private static boolean hasItem(ServerPlayerEntity player, Class<?> itemClass) {
-        for (int i = 0; i < player.getInventory().size(); i++) {
-            if (itemClass.isInstance(player.getInventory().getStack(i).getItem())) {
-                return true;
+        // 检查玩家背包+末影箱中是否含有 KeytoTime 物品
+        private static boolean hasProtectedItem(ServerPlayerEntity player) {
+            for (int i = 0; i < player.getInventory().size(); i++) {
+                if (player.getInventory().getStack(i).getItem() instanceof KeytoTime) {
+                    return true;
+                }
             }
-        }
-        for (int i = 0; i < player.getEnderChestInventory().size(); i++) {
-            if (itemClass.isInstance(player.getEnderChestInventory().getStack(i).getItem())) {
-                return true;
+            for (int i = 0; i < player.getEnderChestInventory().size(); i++) {
+                if (player.getEnderChestInventory().getStack(i).getItem() instanceof KeytoTime) {
+                    return true;
+                }
             }
+            return false;
         }
-        return false;
-    }
 
-    // 新增：判断物品是否属于受保护类型（掉落物防护用）
-    private static boolean isProtectedItem(Item item) {
-        return item instanceof TimeKeyItem
-                || item instanceof EternalCrystalItem
-                || item instanceof PocketWatchItem
-                || item instanceof RelicGemItem;
-    }
 }
