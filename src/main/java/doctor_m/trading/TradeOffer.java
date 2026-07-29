@@ -20,6 +20,10 @@ public class TradeOffer {
     // 新增：输出物品附带的 NBT（可为 null）
     @Nullable
     private final NbtCompound outputNbt;
+    @Nullable
+    public NbtCompound getOutputNbt() {
+        return outputNbt;
+    }
 
     public TradeOffer(Item inputItem, int inputCount, Item outputItem, int outputCount, int maxUses, @Nullable NbtCompound outputNbt) {
         this.inputItem = inputItem;

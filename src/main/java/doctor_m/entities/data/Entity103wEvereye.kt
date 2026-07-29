@@ -342,20 +342,22 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
     // ==================== 交互系统（已集成交易）====================
     override fun interactMob(player: PlayerEntity, hand: Hand): ActionResult {
         if (!world.isClient) {
+            val serverPlayer = player as? ServerPlayerEntity ?: return ActionResult.SUCCESS
+
             if (isAngry) {
-                // 生气时：傲娇拒绝交易
                 player.sendMessage(Text.literal(angryInteractions.random()), false)
             } else {
-                // 平静时：霸道小商贩 + 显示交易列表
-                player.sendMessage(Text.literal(peacefulInteractions.random()), false)
-                player.sendMessage(Text.literal("§8§o（她看起来蛮不在乎的...）"), false)
-
-                val serverPlayer = player as? ServerPlayerEntity
-                if (serverPlayer != null) {
-                    sendTradeList(serverPlayer)
+                if (player.isSneaking) {
+                    // 蹲下右键 = 确认交易，不再刷屏
                     tryTrade(serverPlayer)
+                } else {
+                    // 普通右键 = 只看列表+打招呼
+                    player.sendMessage(Text.literal(peacefulInteractions.random()), false)
+                    player.sendMessage(Text.literal("§8§o（她看上去很随意...）"), false)
+                    sendTradeList(serverPlayer)
+                    player.sendMessage(Text.literal("§7§o手持对应数量的物品 §e§l蹲下右键§r§7 确认交易"), false)
+                    setState(AIState.TRADING)
                 }
-                setState(AIState.TRADING)
             }
         }
         return ActionResult.SUCCESS
@@ -364,7 +366,7 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
     // ==================== 交易辅助方法（新增）====================
     private fun sendTradeList(player: ServerPlayerEntity) {
         if (dailyTrades.isEmpty()) {
-            player.sendMessage(Text.literal("§7§o（玛丽安：今天没有东西可卖。）"), false)
+            player.sendMessage(Text.literal("§7§o（玛丽安 今天没有东西可卖。）"), false)
             return
         }
         player.sendMessage(Text.literal("§7════════════════════════"), false)
@@ -374,21 +376,39 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
             player.sendMessage(Text.literal("$status[${i + 1}] ${offer.displayText}"), false)
         }
         player.sendMessage(Text.literal("§7════════════════════════"), false)
-        player.sendMessage(Text.literal("§7§o手持对应物品右键即可交易"), false)
     }
 
+    /**
+     * 智能交易匹配：
+     * 同输入物品时，优先买 inputCount 最大的（贵的），买不起再降级
+     */
     private fun tryTrade(player: ServerPlayerEntity) {
         val held = player.mainHandStack
-        if (held.isEmpty) return
+        if (held.isEmpty) {
+            player.sendMessage(Text.literal("§7§o你手里空空如也，拿什么买？"), false)
+            return
+        }
 
-        for (offer in dailyTrades) {
-            if (offer.matches(held) && offer.isAvailable) {
+        val matches = dailyTrades.filter {
+            it.isAvailable && it.inputItem == held.item
+        }.sortedByDescending { it.inputCount }
+
+        if (matches.isEmpty()) {
+            player.sendMessage(Text.literal("§c§o你手里的东西我不收。"), false)
+            return
+        }
+
+        val heldCount = held.count
+        for (offer in matches) {
+            if (heldCount >= offer.inputCount) {
                 offer.execute(player)
                 player.sendMessage(Text.literal("§a§l[玛丽安] §r§a成交！这是你的货。"), false)
                 grantTradeAdvancement(player)
                 return
             }
         }
+
+        player.sendMessage(Text.literal("§c§o你手里的数量不够..."), false)
     }
 
     private fun grantTradeAdvancement(player: ServerPlayerEntity) {

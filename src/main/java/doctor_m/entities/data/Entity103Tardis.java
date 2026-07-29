@@ -481,26 +481,29 @@ public class Entity103Tardis extends PathAwareEntity {
         }
     }
 
-    // ==================== 交互系统（已集成交易）====================
+    // ==================== 交互系统（已集成交易+确认）====================
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         if (!this.getWorld().isClient) {
             String name = getTardisName();
             if (personality == Personality.TRADER) {
-                // 商人欢迎语
-                String[] welcomeMsgs = {
-                        String.format("§a§l[%s] §r§7你想要什么？我这里有泽顿能量、阿特隆水晶...", name),
-                        String.format("§a§l[%s] §r§7来看看今天的特价货吧，走过路过不要错过！", name),
-                        String.format("§a§l[%s] §r§7我这儿可有不少好东西，你有足够的能量单元吗？", name),
-                        String.format("§a§l[%s] §r§7欢迎光临！今天的时间线波动有点大，进货可不容易。", name)
-                };
-                player.sendMessage(Text.literal(welcomeMsgs[this.random.nextInt(welcomeMsgs.length)]), false);
-                player.sendMessage(Text.literal("§8§o（子系统？那得看运气，不是每次都有货。）"), false);
-
-                // 显示交易列表 & 尝试交易
-                sendTradeList((ServerPlayerEntity) player, name);
-                tryTrade((ServerPlayerEntity) player, name);
-                setState(AIState.TRADING);
+                if (player.isSneaking()) {
+                    // 蹲下右键 = 确认交易，不再刷屏发列表
+                    tryTrade((ServerPlayerEntity) player, name);
+                } else {
+                    // 普通右键 = 只看列表+打招呼
+                    String[] welcomeMsgs = {
+                            String.format("§a§l[%s] §r§7你想要什么？我这里有泽顿能量、阿特隆水晶...", name),
+                            String.format("§a§l[%s] §r§7来看看今天的特价货吧，走过路过不要错过！", name),
+                            String.format("§a§l[%s] §r§7我这儿可有不少好东西，你有足够的能量单元吗？", name),
+                            String.format("§a§l[%s] §r§7欢迎光临！今天的时间线波动有点大，进货可不容易。", name)
+                    };
+                    player.sendMessage(Text.literal(welcomeMsgs[this.random.nextInt(welcomeMsgs.length)]), false);
+                    player.sendMessage(Text.literal("§8§o（子系统？那得看运气，不是每次都有货。）"), false);
+                    sendTradeList((ServerPlayerEntity) player, name);
+                    player.sendMessage(Text.literal("§7§o手持对应数量的物品 §e§l蹲下右键§r§7 确认交易"), false);
+                    setState(AIState.TRADING);
+                }
             } else {
                 switch (personality) {
                     case TIMID -> {
@@ -542,7 +545,7 @@ public class Entity103Tardis extends PathAwareEntity {
         return ActionResult.SUCCESS;
     }
 
-    // ==================== 交易辅助方法（新增）====================
+    // ==================== 交易辅助方法（修复版）====================
     private void sendTradeList(ServerPlayerEntity player, String name) {
         if (dailyTrades.isEmpty()) {
             player.sendMessage(Text.literal("§7§o（" + name + " 今天没有东西可卖。）"), false);
@@ -555,21 +558,52 @@ public class Entity103Tardis extends PathAwareEntity {
             player.sendMessage(Text.literal(status + "[" + (i + 1) + "] " + offer.getDisplayText()), false);
         }
         player.sendMessage(Text.literal("§7════════════════════════"), false);
-        player.sendMessage(Text.literal("§7§o手持对应物品右键即可交易"), false);
     }
 
+    /**
+     * 智能交易匹配：
+     * 1. 找出所有"手持物品类型匹配"且仍有库存的交易
+     * 2. 按 inputCount 降序（优先买贵的）
+     * 3. 选手持数量能满足的最大那个
+     *
+     * 例：A要5绿宝石，D要32绿宝石，手持64个 → 买D（最大的）
+     *     手持10个 → 买A（D买不起，降级买A）
+     */
     private void tryTrade(ServerPlayerEntity player, String name) {
         ItemStack held = player.getMainHandStack();
-        if (held.isEmpty()) return;
+        if (held.isEmpty()) {
+            player.sendMessage(Text.literal("§7§o你手里空空如也，拿什么买？"), false);
+            return;
+        }
 
+        // 收集：同类型输入物品 + 有库存
+        List<TradeOffer> matches = new ArrayList<>();
         for (TradeOffer offer : dailyTrades) {
-            if (offer.matches(held) && offer.isAvailable()) {
+            if (offer.isAvailable() && offer.getInputItem() == held.getItem()) {
+                matches.add(offer);
+            }
+        }
+
+        if (matches.isEmpty()) {
+            player.sendMessage(Text.literal("§c§o你手里的东西我不收。"), false);
+            return;
+        }
+
+        // 按价格降序：优先尝试贵的
+        matches.sort((a, b) -> Integer.compare(b.getInputCount(), a.getInputCount()));
+
+        int heldCount = held.getCount();
+        for (TradeOffer offer : matches) {
+            if (heldCount >= offer.getInputCount()) {
                 offer.execute(player);
                 player.sendMessage(Text.literal("§a§l[" + name + "] §r§a成交！这是你的货。"), false);
                 grantTradeAdvancement(player);
                 return;
             }
         }
+
+        // 数量连最便宜的都不够
+        player.sendMessage(Text.literal("§c§o你手里的数量不够..."), false);
     }
 
     private void grantTradeAdvancement(ServerPlayerEntity player) {
@@ -593,7 +627,7 @@ public class Entity103Tardis extends PathAwareEntity {
     private void chooseRandomSkin() {
         List<SkinEntry> entries = loadSkinList();
         if (entries.isEmpty()) {
-            this.displayName = "103型塔迪斯";
+            this.displayName = "Type103";
             this.selectedSkin = "default.png";
             this.modelType = "slim";
             this.setCustomName(Text.literal(this.displayName));

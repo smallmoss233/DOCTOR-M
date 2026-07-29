@@ -95,7 +95,8 @@ public class TradeManager {
         for (int i = 0; i < count; i++) {
             TradeOffer t = shuffled.get(i);
             selected.add(new TradeOffer(t.getInputItem(), t.getInputCount(),
-                    t.getOutputItem(), t.getOutputCount(), t.getMaxUses(), null)); // NBT 在 TradeOffer 内部已处理
+                    t.getOutputItem(), t.getOutputCount(), t.getMaxUses(),
+                    t.getOutputNbt()));
         }
         return selected;
     }
