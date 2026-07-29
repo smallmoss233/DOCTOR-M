@@ -388,7 +388,7 @@ public class AITTardisBuilderCommand {
         builder.suggest("Doctor");
         builder.suggest("Master");
         builder.suggest("Mary.Jin");
-        builder.suggest("Marianne.jin");
+        builder.suggest("Marian.jin");
         builder.suggest("Evereye");
         builder.suggest("SmallMoss");
         builder.suggest("Mobius");
@@ -404,8 +404,8 @@ public class AITTardisBuilderCommand {
 
     private static final SuggestionProvider<ServerCommandSource> NAME_SUGGESTIONS = (ctx, builder) -> {
         builder.suggest("Lolita");
-        builder.suggest("Marianne");
-        builder.suggest("Marianne.jin");
+        builder.suggest("Marian");
+        builder.suggest("Marian.jin");
         builder.suggest("Evereye");
         builder.suggest("Mobius");
         builder.suggest("Sexy");

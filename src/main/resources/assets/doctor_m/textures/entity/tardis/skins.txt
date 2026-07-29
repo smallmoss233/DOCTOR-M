@@ -5,3 +5,5 @@ maki_qinzez.png|maki (Qinzez)|slim
 omega.png|Омега|slim
 maki.png|纪|slim
 smallmossold.png|SmallMoss(Old)|slim
+smallmoss.png|SmallMoss|slim
+evilmorty.png|Evil Morty (liyubee)|slim

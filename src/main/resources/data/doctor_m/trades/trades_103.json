@@ -1,13 +1,11 @@
 {
-  // "pool" 是交易池，里面放所有可能的交易条目。
-  // 游戏每天会从 pool 里随机抽 1~6 条作为当天的实际可交易内容。
   "pool": [
     {
-      "input": "minecraft:iron_ingot",// input：玩家需要付出的物品 ID
-      "inputCount": 2,// inputCount：玩家需要付出多少个 input 物品
-      "output": "minecraft:diamond",// output：玩家能买到的物品 ID
-      "outputCount": 1,// outputCount：玩家能拿到多少个 output 物品
-      "maxUses": 64 // maxUses：这个交易条目每天最多能成交几次
+      "input": "minecraft:iron_ingot",
+      "inputCount": 2,
+      "output": "ait:hyperion_core_shaft",
+      "outputCount": 1,
+      "maxUses": 15
     },
     {
       "input": "minecraft:diamond",
@@ -20,18 +18,42 @@
       "input": "minecraft:emerald",
       "inputCount": 5,
       "output": "ait:iron_key",
-      "outputCount": 2,
-      "maxUses": 16
+      "outputCount": 1,
+      "maxUses": 1
     },
     {
       "input": "minecraft:emerald",
-      "inputCount": 32,
-      "output": "minecraft:diamond_sword",
+      "inputCount": 5,
+      "output": "ait:orthogonal_engine_filter",
       "outputCount": 1,
-      "maxUses": 1,
-      "outputNbt": "{display:{Name:'{\"text\":\"超棒的钻石剑\"}'},Enchantments:[{id:\"minecraft:sharpness\",lvl:5s}],Damage:0}"//NBT
+      "maxUses": 10
+    },
+    {
+      "input": "minecraft:ender_pearl",
+      "inputCount": 1,
+      "output": "ait:photon_accelerator",
+      "outputCount": 1,
+      "maxUses": 8
+    },
+    {
+      "input": "minecraft:gold_ingot",
+      "inputCount": 3,
+      "output": "ait:transwarp_resonator",
+      "outputCount": 1,
+      "maxUses": 20
+    },
+    {
+      "input": "minecraft:heart_of_the_sea",
+      "inputCount": 3,
+      "output": "ait:vortex_fluid_link",
+      "outputCount": 1,
+      "maxUses": 1
     }
-    // 游戏每天只会从中随机抽 1~6 条出来卖。
-    // 如果某条被抽中了，它的 maxUses 就是当天的库存。
   ]
 }
+//  参数解析
+//  "input": "minecraft:iron_ingot", input：玩家需要付出的物品 ID
+//  "inputCount": 2, inputCount：玩家需要付出多少个 input 物品
+//  "output": "ait:hyperion_core_shaft", output：玩家能买到的物品 ID
+//  "outputCount": 1, outputCount：玩家能拿到多少个 output 物品
+//  "maxUses": 15  maxUses：这个交易条目每天最多能成交几次
