@@ -4,15 +4,9 @@
 
 ## [ v2.1 - 过去的历史...与尚未发生的.../past... and what hasn't happened yet...]
 
-### 新维度 / New Dimension
+### 修改 / Edit
 
 - 土卫六-泰坦 / Saturn VI-Titan
-
-### 新翻译 / New lang
-
--  空
-
-### 内饰 / Interior
 
 -  修改：时隙 / Edit : rift
 -  修改：永恒之眼/永恒之眼 45型 / Edit : Evereye/Evereye Type45
@@ -20,12 +14,11 @@
 -  新增：立方（作者：Asnit_PnQing） / New addition: Cube (Author: Asnit_PnQing)
 -  新增：时隙[战争往事]（作者：TC020） / New addition: The rift [War Stories](Author: TC020)
 
-### 物品 / Items
-
 -  护盾生成器，能提供99.99%的伤害减免并消耗能量，默认1000点能量，每次受伤消耗5点（可配置） / Shield Generator: Provides 99.99% damage reduction while consuming energy. Default energy capacity is 1000, and each hit consumes 5 energy (configurable)
 -  去物质枪！现在终于完成了！去物质枪会抹除击中的目标的物品栏/末影箱/成就，同时强制抹杀玩家，复活后玩家约等于重开新号（时间线级别抹除是这样的） / It's done—the De‑Mat Gun is finally finished! It wipes the target's inventory, ender chest, and achievements, and kills the player outright. When they respawn, it's like starting from scratch (that's timeline‑level erasure for you)
+-  103型塔迪斯和玛丽安NPC / Type-103-TARDIS and Marian NPC
 
-### 修改 / Edit
+---
 
 -  AIT的哈赞卓水晶不再是消耗物品本身，而是消耗物品耐久（16） / AIT's Hazandra Crystal no longer consumes the item itself, but instead consumes item durability (16).
 -  增强神秘宝石（遗物宝石）[@TC-020 iss12](https://github.com/smallmoss233/DOCTOR-M/issues/11) / Enhance Mysterious Gem (Relic Gem) [@TC-020 iss12](https://github.com/smallmoss233/DOCTOR-M/issues/11)
