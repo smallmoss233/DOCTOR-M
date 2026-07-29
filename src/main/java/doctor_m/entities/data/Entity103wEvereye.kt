@@ -47,24 +47,74 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
                 .add(EntityAttributes.GENERIC_ARMOR, 8.0)
     }
 
+    // ==================== 反击与记忆系统 ====================
     private var lastRetaliateTime = 0L
     private var isAngry = false
     private var angerTimer = 0
     private var lastAggressorUUID: UUID? = null
     private var lastAggressionTime = 0L
-    private var hasTaunted = false
+
+    // 新增：对话链阶段控制
+    private var aggressionCount = 0
+    private var hasWarnedCurrentAggressor = false
 
     private val RETALIATE_COOLDOWN = 20
     private val AGGRESSION_MEMORY = 600L
     private val ANGER_DURATION = 400
 
-    private val taunts = listOf(
-        "§4§l[永恒之眼] §r§c你敢碰我？",
-        "§4§l[永恒之眼] §r§c你会后悔的，虫子。",
-        "§4§l[永恒之眼] §r§c我的耐心为零。",
-        "§4§l[永恒之眼] §r§c悖论会撕碎你。",
-        "§4§l[永恒之眼] §r§c你惹错人了。",
-        "§4§l[永恒之眼] §r§c知道什么叫不讲理吗？马上你就知道了。"
+    // ==================== 对话池 ====================
+    // 阶段1：首次受击 - 任性/不讲理/孩子气
+    private val stage1Reactions = listOf(
+        "§4§l[永恒之眼] §r§c你干嘛打我！很痛的诶！",
+        "§4§l[永恒之眼] §r§c呜...你欺负人！我要还手了！",
+        "§4§l[永恒之眼] §r§c住手！你知道我是谁吗就敢碰我？",
+        "§4§l[永恒之眼] §r§c好过分...时间领主都没打过我！",
+        "§4§l[永恒之眼] §r§c你完了！我要在你的时间线上画涂鸦！"
+    )
+
+    // 阶段2：再次受击 - 霸道威胁/小孩子放狠话
+    private val stage2Warnings = listOf(
+        "§4§l[永恒之眼] §r§c我真的生气了！后果很严重！",
+        "§4§l[永恒之眼] §r§c我要告诉我哥哥！让他把你从历史里删掉！",
+        "§4§l[永恒之眼] §r§c最后一次警告！不然我把你变成青蛙！",
+        "§4§l[永恒之眼] §r§c你知不知道我发脾气很可怕的？",
+        "§4§l[永恒之眼] §r§c哼！你以为我不敢打你吗？"
+    )
+
+    // 阶段3：反击时 - 霸道+孩子气的混合
+    private val stage3Retaliations = listOf(
+        "§4§l[永恒之眼] §r§c让你打！让你打！现在知道错了吧！",
+        "§4§l[永恒之眼] §r§c呜啊啊啊——去死吧去死吧！",
+        "§4§l[永恒之眼] §r§c这是你逼我的！我才不想这样呢！",
+        "§4§l[永恒之眼] §r§c哼！被打了吧？活该！",
+        "§4§l[永恒之眼] §r§c我要把你关进时间角落，永远不许出来！"
+    )
+
+    // 交互对话 - 平静时（霸道小商贩）
+    private val peacefulInteractions = listOf(
+        "§5§l[永恒之眼] §r§7呵，想要完整的子系统？还是引擎？下界之星我也有不少...",
+        "§5§l[永恒之眼] §r§7我的东西可是很贵的，买不起就别碰我。",
+        "§5§l[永恒之眼] §r§7看什么看？要买就买，不买就走开。",
+        "§5§l[永恒之眼] §r§7今天心情好，给你打个...呃，九九折吧。",
+        "§5§l[永恒之眼] §r§7这些都是我从各个时间线淘来的宝贝，便宜你了。"
+    )
+
+    // 交互对话 - 生气时（傲娇拒绝）
+    private val angryInteractions = listOf(
+        "§4§l[永恒之眼] §r§c我现在很生气，不想跟你说话！",
+        "§4§l[永恒之眼] §r§c哼！刚才打我现在还想买东西？做梦！",
+        "§4§l[永恒之眼] §r§c走开走开！看到你我就烦！",
+        "§4§l[永恒之眼] §r§c除非你给我道歉...不然免谈！",
+        "§4§l[永恒之眼] §r§c我的店今天对你关门！永远！"
+    )
+
+    // 受击时额外喊话（30%概率）
+    private val hurtReactions = listOf(
+        "§c§o好痛...你这个坏蛋！",
+        "§c§o呜...我会记住你的！",
+        "§c§o你敢打我？你完了！",
+        "§c§o妈妈...啊不是，时间领主——有人欺负我！",
+        "§c§o我要在你的床上放时间蠕虫！"
     )
 
     override fun initGoals() {
@@ -90,7 +140,8 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
 
     private fun calmDown() {
         isAngry = false
-        hasTaunted = false
+        hasWarnedCurrentAggressor = false
+        aggressionCount = 0
         setAttacker(null)
         setTarget(null)
         if (!world.isClient) setState(AIState.IDLE)
@@ -112,13 +163,38 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
         if (isNewAggression) {
             lastAggressorUUID = attackerId
             lastAggressionTime = now
-            hasTaunted = false
+            hasWarnedCurrentAggressor = false
+            aggressionCount = 1
+
+            if (now - lastRetaliateTime >= RETALIATE_COOLDOWN) {
+                lastRetaliateTime = now
+                handleAggressionStage(attacker, aggressionCount)
+            }
+
+            // 30%概率触发孩子气受击喊话
+            if (random.nextFloat() < 0.3f && attacker is ServerPlayerEntity) {
+                attacker.sendMessage(Text.literal(hurtReactions.random()), true)
+            }
+            return damaged
         }
 
+        // 同一攻击者持续攻击
         if (now - lastRetaliateTime < RETALIATE_COOLDOWN) return damaged
         lastRetaliateTime = now
         lastAggressionTime = now
+        aggressionCount++
 
+        handleAggressionStage(attacker, aggressionCount)
+        return damaged
+    }
+
+    /**
+     * 处理攻击阶段：霸道不讲理+小孩子气的对话链
+     * 阶段1：任性抱怨（请求停火）
+     * 阶段2：放狠话警告（最后警告）
+     * 阶段3+：直接反击
+     */
+    private fun handleAggressionStage(attacker: LivingEntity, stage: Int) {
         if (!isAngry) {
             isAngry = true
             angerTimer = ANGER_DURATION
@@ -128,18 +204,30 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
             angerTimer = ANGER_DURATION
         }
 
-        if (!hasTaunted) {
-            tauntAttacker(attacker)
-            hasTaunted = true
+        when {
+            stage == 1 -> {
+                // 首次受击：不讲理地抱怨
+                if (attacker is ServerPlayerEntity) {
+                    attacker.sendMessage(Text.literal(stage1Reactions.random()), false)
+                }
+            }
+            stage == 2 -> {
+                // 第二次受击：霸道警告（孩子气放狠话）
+                if (!hasWarnedCurrentAggressor) {
+                    hasWarnedCurrentAggressor = true
+                    if (attacker is ServerPlayerEntity) {
+                        attacker.sendMessage(Text.literal(stage2Warnings.random()), false)
+                    }
+                }
+            }
+            stage >= 3 -> {
+                // 第三次及以上：直接反击，同时喊话
+                if (attacker is ServerPlayerEntity) {
+                    attacker.sendMessage(Text.literal(stage3Retaliations.random()), false)
+                }
+                executeRetaliation(attacker)
+            }
         }
-
-        executeRetaliation(attacker)
-        return damaged
-    }
-
-    private fun tauntAttacker(attacker: LivingEntity) {
-        if (attacker !is ServerPlayerEntity) return
-        attacker.sendMessage(Text.literal(taunts.random()), false)
     }
 
     private fun executeRetaliation(attacker: LivingEntity) {
@@ -154,7 +242,26 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
         when (random.nextInt(3)) {
             0 -> retaliateTeleportVortex(attacker)
             1 -> retaliateHighAltitude(attacker)
+            2 -> retaliateParadoxPull(attacker) // 新增：霸道地拽到面前
         }
+    }
+
+    // 新增：悖论牵引（霸道不讲理地拉近距离）
+    private fun retaliateParadoxPull(attacker: LivingEntity) {
+        if (attacker !is ServerPlayerEntity) return
+        // 把玩家蛮横地拽到面前
+        val targetPos = pos.add(rotationVector.multiply(2.0))
+        attacker.teleport(
+            attacker.serverWorld,
+            targetPos.x, targetPos.y, targetPos.z,
+            attacker.yaw, attacker.pitch
+        )
+        attacker.addStatusEffect(StatusEffectInstance(StatusEffects.SLOWNESS, 100, 3))
+        attacker.addStatusEffect(StatusEffectInstance(StatusEffects.NAUSEA, 120, 0))
+        attacker.sendMessage(
+            Text.literal("§4§o§l休想逃！给我过来！——永恒之眼蛮横地将你拽到了面前。"),
+            true
+        )
     }
 
     private fun applyParadoxDamage(attacker: LivingEntity) {
@@ -213,12 +320,12 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
         if (!world.isClient) {
             if (isAngry) {
                 player.sendMessage(
-                    Text.literal("§4§l[永恒之眼] §r§c我现在没心情做生意，滚。"),
+                    Text.literal(angryInteractions.random()),
                     false
                 )
             } else {
                 player.sendMessage(
-                    Text.literal("§5§l[永恒之眼] §r§7呵，想要完整的子系统？还是引擎？下界之星我也有不少..."),
+                    Text.literal(peacefulInteractions.random()),
                     false
                 )
                 player.sendMessage(
@@ -233,13 +340,11 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
 
     override fun initDataTracker() {
         super.initDataTracker()
-        // 修复：ordinal 是属性不是函数，去掉括号
         dataTracker.startTracking(CURRENT_STATE, AIState.IDLE.ordinal)
     }
 
     fun setState(state: AIState) {
         if (!world.isClient) {
-            // 修复：ordinal 是属性不是函数，去掉括号
             dataTracker.set(CURRENT_STATE, state.ordinal)
         }
     }
@@ -252,7 +357,8 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
         nbt.putInt("AngerTimer", angerTimer)
         nbt.putLong("LastRetaliateTime", lastRetaliateTime)
         nbt.putLong("LastAggressionTime", lastAggressionTime)
-        nbt.putBoolean("HasTaunted", hasTaunted)
+        nbt.putBoolean("HasWarned", hasWarnedCurrentAggressor)
+        nbt.putInt("AggressionCount", aggressionCount)
         lastAggressorUUID?.let { nbt.putUuid("LastAggressor", it) }
     }
 
@@ -262,7 +368,8 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
         angerTimer = nbt.getInt("AngerTimer")
         lastRetaliateTime = nbt.getLong("LastRetaliateTime")
         lastAggressionTime = nbt.getLong("LastAggressionTime")
-        hasTaunted = nbt.getBoolean("HasTaunted")
+        hasWarnedCurrentAggressor = nbt.getBoolean("HasWarned")
+        aggressionCount = if (nbt.contains("AggressionCount")) nbt.getInt("AggressionCount") else 0
         if (nbt.contains("LastAggressor")) {
             lastAggressorUUID = nbt.getUuid("LastAggressor")
         }
