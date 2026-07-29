@@ -59,7 +59,6 @@ public class Entity103Tardis extends PathAwareEntity {
         TRADER
     }
 
-    // 字段默认值，防止 initGoals() 在构造器之前执行时 NPE
     private Personality personality = Personality.TRADER;
 
     // ==================== 反击与记忆系统 ====================
@@ -70,6 +69,9 @@ public class Entity103Tardis extends PathAwareEntity {
     private long lastAggressionTime = 0;
     private static final long AGGRESSION_MEMORY = 600L;
     private boolean hasWarnedCurrentAggressor = false;
+
+    // 新增：攻击阶段计数，用于精确控制警告流程
+    private int aggressionCount = 0;
 
     // ==================== AI 状态机 ====================
     public enum AIState {
@@ -135,7 +137,6 @@ public class Entity103Tardis extends PathAwareEntity {
     public Entity103Tardis(EntityType<? extends PathAwareEntity> type, World world) {
         super(type, world);
         if (!world.isClient) {
-            // 只有仍是默认值时才随机分配，防止覆盖 NBT 加载或 initGoals 防御赋值
             if (this.personality == Personality.TRADER) {
                 Personality[] values = Personality.values();
                 float roll = this.random.nextFloat();
@@ -159,7 +160,6 @@ public class Entity103Tardis extends PathAwareEntity {
     protected void initGoals() {
         super.initGoals();
 
-        // 防御：MobEntity 构造时会先调用 initGoals，此时子类字段可能还未赋值
         if (this.personality == null) {
             this.personality = Personality.TRADER;
         }
@@ -224,7 +224,6 @@ public class Entity103Tardis extends PathAwareEntity {
         boolean damaged = super.damage(source, amount);
         if (!damaged || this.getWorld().isClient) return damaged;
 
-        // 被秒杀就不反击了，防止 TACZ 等高伤武器触发"尸体反击"
         if (this.isDead() || this.getHealth() <= 0.0f) return damaged;
 
         if (!(source.getAttacker() instanceof LivingEntity attacker)) return damaged;
@@ -239,6 +238,7 @@ public class Entity103Tardis extends PathAwareEntity {
         if (isNewAggression) {
             lastAggressorUUID = attackerId;
             lastAggressionTime = now;
+            aggressionCount = 1;
             hasWarnedCurrentAggressor = false;
 
             if (personality == Personality.AGGRESSIVE) {
@@ -249,42 +249,96 @@ public class Entity103Tardis extends PathAwareEntity {
             } else {
                 requestCeaseFire(attacker);
             }
+
+            // 30%概率触发受击喊话
+            if (this.random.nextFloat() < 0.3f) {
+                sendHurtReaction(attacker);
+            }
             return damaged;
         }
 
+        // 同一攻击者持续攻击
         if (now - lastRetaliateTime < RETALIATE_COOLDOWN) return damaged;
         lastRetaliateTime = now;
         lastAggressionTime = now;
+        aggressionCount++;
 
-        if (personality != Personality.AGGRESSIVE) {
-            if (isLowAggression()) {
-                warnBeforeRetaliation(attacker);
+        switch (personality) {
+            case AGGRESSIVE -> executeRetaliation(attacker);
+            case BRAVE -> {
+                if (aggressionCount == 2) {
+                    warnBeforeRetaliation(attacker);
+                } else {
+                    executeRetaliation(attacker);
+                }
+            }
+            case DEFENSIVE, TIMID, TRADER -> {
+                if (aggressionCount == 2) {
+                    warnBeforeRetaliation(attacker);
+                } else if (aggressionCount >= 3) {
+                    executeRetaliation(attacker);
+                }
             }
         }
-
-        executeRetaliation(attacker);
         return damaged;
     }
 
-    private boolean isLowAggression() {
-        return personality == Personality.DEFENSIVE
-                || personality == Personality.TIMID
-                || personality == Personality.TRADER;
+    private void sendHurtReaction(LivingEntity attacker) {
+        if (!(attacker instanceof ServerPlayerEntity player)) return;
+        String name = getTardisName();
+        String[] msgs = switch (personality) {
+            case AGGRESSIVE -> new String[] {
+                    String.format("§c§o[%s] 你会为此付出代价！", name),
+                    String.format("§c§o[%s] 找死！", name)
+            };
+            case BRAVE -> new String[] {
+                    String.format("§6§o[%s] 就这点力气？", name),
+                    String.format("§6§o[%s] 哼，不过如此。", name)
+            };
+            case DEFENSIVE -> new String[] {
+                    String.format("§e§o[%s] 啊！为什么...", name),
+                    String.format("§e§o[%s] 请住手！", name)
+            };
+            case TIMID -> new String[] {
+                    String.format("§e§o[%s] 好痛...呜呜...", name),
+                    String.format("§e§o[%s] 救命啊...", name)
+            };
+            case TRADER -> new String[] {
+                    String.format("§c§o[%s] 我的货！你打坏了我的货！", name),
+                    String.format("§c§o[%s] 哎哟！这得赔多少钱啊...", name)
+            };
+        };
+        if (msgs.length > 0) {
+            player.sendMessage(Text.literal(msgs[this.random.nextInt(msgs.length)]), true);
+        }
     }
 
     private void requestCeaseFire(LivingEntity attacker) {
         if (!(attacker instanceof ServerPlayerEntity player)) return;
 
-        String msg = switch (personality) {
-            case DEFENSIVE -> "§e§o[103型塔迪斯] 请停手！我不想与你为敌...";
-            case TIMID -> "§e§o[103型塔迪斯] 别、别打我！求你了...";
-            case TRADER -> "§c§o[103型塔迪斯] 嘿！顾客就是上帝，但上帝也不该打商人啊！";
-            case BRAVE -> "§6§o[103型塔迪斯] 你确定要这么做吗？";
-            default -> "";
+        String name = getTardisName();
+        String[] msgs = switch (personality) {
+            case DEFENSIVE -> new String[] {
+                    String.format("§e§o[%s] 请停手！我不想与你为敌...", name),
+                    String.format("§e§o[%s] 我们可以谈谈，暴力解决不了问题...", name)
+            };
+            case TIMID -> new String[] {
+                    String.format("§e§o[%s] 别、别打我！求你了...", name),
+                    String.format("§e§o[%s] 我、我只是路过...请不要伤害我...", name)
+            };
+            case TRADER -> new String[] {
+                    String.format("§c§o[%s] 嘿！顾客就是上帝，但上帝也不该打商人啊！", name),
+                    String.format("§c§o[%s] 停手！你打坏了我还怎么做生意？", name)
+            };
+            case BRAVE -> new String[] {
+                    String.format("§6§o[%s] 你确定要这么做吗？", name),
+                    String.format("§6§o[%s] 我劝你三思，这不是明智之举。", name)
+            };
+            default -> new String[0];
         };
 
-        if (!msg.isEmpty()) {
-            player.sendMessage(Text.literal(msg), false);
+        if (msgs.length > 0) {
+            player.sendMessage(Text.literal(msgs[this.random.nextInt(msgs.length)]), false);
         }
     }
 
@@ -293,15 +347,29 @@ public class Entity103Tardis extends PathAwareEntity {
         if (hasWarnedCurrentAggressor) return;
         hasWarnedCurrentAggressor = true;
 
-        String msg = switch (personality) {
-            case DEFENSIVE -> "§4§l[103型塔迪斯] §r§c这是最后的警告。再攻击我，你会被扔进时间涡旋！";
-            case TIMID -> "§4§l[103型塔迪斯] §r§c我、我不想的...但别逼我！时间涡旋可不是闹着玩的！";
-            case TRADER -> "§4§l[103型塔迪斯] §r§c我的耐心是有限的！时间涡旋可不是一个好去处，别逼我！";
-            default -> "";
+        String name = getTardisName();
+        String[] msgs = switch (personality) {
+            case DEFENSIVE -> new String[] {
+                    String.format("§4§l[%s] §r§c这是最后的警告。再攻击我，你会被扔进时间涡旋！", name),
+                    String.format("§4§l[%s] §r§c我的忍耐是有限度的，最后一次机会！", name)
+            };
+            case TIMID -> new String[] {
+                    String.format("§4§l[%s] §r§c我、我不想的...但别逼我！时间涡旋可不是闹着玩的！", name),
+                    String.format("§4§l[%s] §r§c请、请住手！我不想伤害任何人，但我会保护自己的...", name)
+            };
+            case TRADER -> new String[] {
+                    String.format("§4§l[%s] §r§c我的耐心是有限的！时间涡旋可不是一个好去处，别逼我！", name),
+                    String.format("§4§l[%s] §r§c你毁了一笔潜在的交易！这是最后一次警告！", name)
+            };
+            case BRAVE -> new String[] {
+                    String.format("§4§l[%s] §r§c你已经越界了。下一击，我不会再留情。", name),
+                    String.format("§4§l[%s] §r§c我的宽容到此为止。准备好承受后果吧。", name)
+            };
+            default -> new String[0];
         };
 
-        if (!msg.isEmpty()) {
-            player.sendMessage(Text.literal(msg), false);
+        if (msgs.length > 0) {
+            player.sendMessage(Text.literal(msgs[this.random.nextInt(msgs.length)]), false);
         }
     }
 
@@ -327,7 +395,12 @@ public class Entity103Tardis extends PathAwareEntity {
     private void retaliateMelee(LivingEntity attacker) {
         this.tryAttack(attacker);
         if (attacker instanceof ServerPlayerEntity player) {
-            player.sendMessage(Text.literal("§c§o103型塔迪斯狠狠地给了你一拳！"), true);
+            String name = getTardisName();
+            String[] msgs = {
+                    String.format("§c§o%s 狠狠地给了你一拳！", name),
+                    String.format("§c§o%s 用尽全力向你挥出一击！", name)
+            };
+            player.sendMessage(Text.literal(msgs[this.random.nextInt(msgs.length)]), true);
         }
     }
 
@@ -336,8 +409,13 @@ public class Entity103Tardis extends PathAwareEntity {
         attacker.damage(this.getWorld().getDamageSources().magic(), damage);
 
         if (attacker instanceof ServerPlayerEntity player) {
+            String name = getTardisName();
+            String[] msgs = {
+                    String.format("§b§o你被 %s 的能量束击中了！", name),
+                    String.format("§b§o%s 发射了一道耀眼的光束！", name)
+            };
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 0));
-            player.sendMessage(Text.literal("§b§o你被塔迪斯的能量束击中了！"), true);
+            player.sendMessage(Text.literal(msgs[this.random.nextInt(msgs.length)]), true);
         }
 
         if (this.getWorld() instanceof ServerWorld sw) {
@@ -353,11 +431,16 @@ public class Entity103Tardis extends PathAwareEntity {
 
     private void retaliateHighAltitude(LivingEntity attacker) {
         if (attacker instanceof ServerPlayerEntity player) {
+            String name = getTardisName();
             double targetY = player.getY() + 60 + random.nextInt(40);
             player.teleport(player.getServerWorld(), player.getX(), targetY, player.getZ(), player.getYaw(), player.getPitch());
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 100, 0));
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 160, 0));
-            player.sendMessage(Text.literal("§d§o你被抛向了高空...时间能量在你周围涌动！"), true);
+            String[] msgs = {
+                    String.format("§d§o你被 %s 抛向了高空...时间能量在你周围涌动！", name),
+                    String.format("§d§o%s 发动了重力反转，你感觉自己飞了起来！", name)
+            };
+            player.sendMessage(Text.literal(msgs[this.random.nextInt(msgs.length)]), true);
         } else {
             attacker.damage(this.getWorld().getDamageSources().fall(), 8.0f);
         }
@@ -365,19 +448,25 @@ public class Entity103Tardis extends PathAwareEntity {
 
     private void retaliateTeleportTrenzalore(LivingEntity attacker) {
         if (attacker instanceof ServerPlayerEntity player) {
+            String name = getTardisName();
             RegistryKey<World> targetDim = RegistryKey.of(RegistryKeys.WORLD, new Identifier("doctor_m", "trenzalore"));
             ServerWorld targetWorld = player.getServer().getWorld(targetDim);
             if (targetWorld != null) {
                 BlockPos safePos = findSafePos(targetWorld, 0, 65, 0, 10);
                 player.teleport(targetWorld, safePos.getX() + 0.5, safePos.getY(), safePos.getZ() + 0.5,
                         player.getYaw(), player.getPitch());
-                player.sendMessage(Text.literal("§4§o你被传送到了特兰泽洛！这是对你攻击的惩罚。"), true);
+                String[] msgs = {
+                        String.format("§4§o你被 %s 传送到了特兰泽洛！这是对你攻击的惩罚。", name),
+                        String.format("§4§o%s 打开了时空裂缝，你被吸入了特兰泽洛！", name)
+                };
+                player.sendMessage(Text.literal(msgs[this.random.nextInt(msgs.length)]), true);
             }
         }
     }
 
     private void retaliateTeleportVortex(LivingEntity attacker) {
         if (attacker instanceof ServerPlayerEntity player) {
+            String name = getTardisName();
             RegistryKey<World> vortexDim = RegistryKey.of(RegistryKeys.WORLD, new Identifier("ait", "time_vortex"));
             ServerWorld vortexWorld = player.getServer().getWorld(vortexDim);
 
@@ -390,7 +479,11 @@ public class Entity103Tardis extends PathAwareEntity {
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 200, 1));
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 0));
 
-            player.sendMessage(Text.literal("§4§l你被扔进了时间涡旋！"), true);
+            String[] msgs = {
+                    String.format("§4§l%s 将你扔进了时间涡旋！", name),
+                    String.format("§4§l时间涡旋在 %s 的召唤下吞噬了你！", name)
+            };
+            player.sendMessage(Text.literal(msgs[this.random.nextInt(msgs.length)]), true);
         } else {
             attacker.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 60, 1));
         }
@@ -400,16 +493,51 @@ public class Entity103Tardis extends PathAwareEntity {
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         if (!this.getWorld().isClient) {
+            String name = getTardisName();
             switch (personality) {
                 case TRADER -> {
-                    player.sendMessage(Text.literal("§a§l[103型塔迪斯商人] §r§7你想要什么？我这里有泽顿能量、阿特隆水晶..."), false);
+                    String[] msgs = {
+                            String.format("§a§l[%s] §r§7你想要什么？我这里有泽顿能量、阿特隆水晶...", name),
+                            String.format("§a§l[%s] §r§7来看看今天的特价货吧，走过路过不要错过！", name),
+                            String.format("§a§l[%s] §r§7我这儿可有不少好东西，你有足够的能量单元吗？", name),
+                            String.format("§a§l[%s] §r§7欢迎光临！今天的时间线波动有点大，进货可不容易。", name)
+                    };
+                    player.sendMessage(Text.literal(msgs[this.random.nextInt(msgs.length)]), false);
                     player.sendMessage(Text.literal("§8§o（子系统？那得看运气，不是每次都有货。）"), false);
                     setState(AIState.TRADING);
                 }
-                case TIMID -> player.sendMessage(Text.literal("§e§o她紧张地看着你，似乎随时准备逃跑..."), true);
-                case AGGRESSIVE -> player.sendMessage(Text.literal("§c§o她警惕地盯着你，最好不要惹她。"), true);
-                case DEFENSIVE -> player.sendMessage(Text.literal("§7§o她微微后退，保持着礼貌的距离。"), true);
-                case BRAVE -> player.sendMessage(Text.literal("§6§o她点了点头，目光中带着审视。"), true);
+                case TIMID -> {
+                    String[] msgs = {
+                            String.format("§e§o%s 紧张地看着你，似乎随时准备逃跑...", name),
+                            String.format("§e§o%s 缩了缩肩膀，小声嘀咕着什么...", name),
+                            String.format("§e§o%s 小心翼翼地打量着你...", name)
+                    };
+                    player.sendMessage(Text.literal(msgs[this.random.nextInt(msgs.length)]), true);
+                }
+                case AGGRESSIVE -> {
+                    String[] msgs = {
+                            String.format("§c§o%s 警惕地盯着你，最好不要惹她。", name),
+                            String.format("§c§o%s 眯起了眼睛，手已经按在了腰间的装置上...", name),
+                            String.format("§c§o%s 冷冷地看着你：\"离我远点。\"", name)
+                    };
+                    player.sendMessage(Text.literal(msgs[this.random.nextInt(msgs.length)]), true);
+                }
+                case DEFENSIVE -> {
+                    String[] msgs = {
+                            String.format("§7§o%s 微微后退，保持着礼貌的距离。", name),
+                            String.format("§7§o%s 谨慎地注视着你的一举一动...", name),
+                            String.format("§7§o%s 没有靠近，但也没有表现出敌意。", name)
+                    };
+                    player.sendMessage(Text.literal(msgs[this.random.nextInt(msgs.length)]), true);
+                }
+                case BRAVE -> {
+                    String[] msgs = {
+                            String.format("§6§o%s 点了点头，目光中带着审视。", name),
+                            String.format("§6§o%s 双手抱胸，饶有兴趣地看着你。", name),
+                            String.format("§6§o%s 微微一笑：\"想聊聊？我听着呢。\"", name)
+                    };
+                    player.sendMessage(Text.literal(msgs[this.random.nextInt(msgs.length)]), true);
+                }
             }
         }
         return ActionResult.SUCCESS;
@@ -426,7 +554,16 @@ public class Entity103Tardis extends PathAwareEntity {
 
     private void chooseRandomSkin() {
         List<SkinEntry> entries = loadSkinList();
-        if (entries.isEmpty()) return;
+        if (entries.isEmpty()) {
+            this.displayName = "103型塔迪斯";
+            this.selectedSkin = "default.png";
+            this.modelType = "slim";
+            this.setCustomName(Text.literal(this.displayName));
+            this.setCustomNameVisible(true);
+            this.dataTracker.set(SELECTED_SKIN, this.selectedSkin);
+            this.dataTracker.set(MODEL_TYPE, this.modelType);
+            return;
+        }
         SkinEntry chosen = entries.get(this.random.nextInt(entries.size()));
         this.selectedSkin = chosen.texture;
         this.displayName = chosen.display;
@@ -488,6 +625,18 @@ public class Entity103Tardis extends PathAwareEntity {
         return this.getWorld().isClient ? this.dataTracker.get(MODEL_TYPE) : modelType;
     }
 
+    /**
+     * 获取实体当前显示的名字，用于所有对话消息中替换硬编码名称。
+     * 如果 displayName 为空则回退到 "103型塔迪斯"。
+     * 注意：不能叫 getDisplayName()，因为 Nameable 接口已占用该方法并返回 Text。
+     */
+    public String getTardisName() {
+        String name = this.getWorld().isClient
+                ? (this.getCustomName() != null ? this.getCustomName().getString() : displayName)
+                : displayName;
+        return name == null || name.isEmpty() ? "103型塔迪斯" : name;
+    }
+
     // ==================== 状态管理 ====================
     public void setState(AIState state) {
         if (!this.getWorld().isClient) {
@@ -516,6 +665,7 @@ public class Entity103Tardis extends PathAwareEntity {
         }
         nbt.putLong("LastAggressionTime", lastAggressionTime);
         nbt.putBoolean("HasWarned", hasWarnedCurrentAggressor);
+        nbt.putInt("AggressionCount", aggressionCount);
     }
 
     @Override
@@ -542,6 +692,7 @@ public class Entity103Tardis extends PathAwareEntity {
         }
         lastAggressionTime = nbt.getLong("LastAggressionTime");
         hasWarnedCurrentAggressor = nbt.getBoolean("HasWarned");
+        aggressionCount = nbt.contains("AggressionCount") ? nbt.getInt("AggressionCount") : 0;
     }
 
     // ==================== 属性 ====================
@@ -569,7 +720,8 @@ public class Entity103Tardis extends PathAwareEntity {
             for (int dx = -r; dx <= r; dx++) {
                 for (int dz = -r; dz <= r; dz++) {
                     mutable.set(centerX + dx, centerY, centerZ + dz);
-                    if (world.getBlockState(mutable).isAir() && world.getBlockState(mutable.down()).isSolid()) {
+                    if (world.getBlockState(mutable).isAir()
+                            && world.getBlockState(mutable.down()).isSolidBlock(world, mutable.down())) {
                         return mutable.toImmutable();
                     }
                 }
