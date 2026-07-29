@@ -70,6 +70,7 @@ public class Entity103Tardis extends PathAwareEntity {
     private static final long AGGRESSION_MEMORY = 600L;
     private boolean hasWarnedCurrentAggressor = false;
     private int aggressionCount = 0;
+    private long lastDamageTime = 0;
 
     // ==================== 交易系统 ====================
     private List<TradeOffer> dailyTrades = new ArrayList<>();
@@ -182,13 +183,16 @@ public class Entity103Tardis extends PathAwareEntity {
                 break;
             case DEFENSIVE:
                 this.targetSelector.add(1, new RevengeGoal(this, PlayerEntity.class));
+                this.goalSelector.add(2, new FleeEntityGoal<>(this, HostileEntity.class, 10.0f, 1.0, 1.2));
                 break;
             case TIMID:
                 this.targetSelector.add(1, new RevengeGoal(this, PlayerEntity.class));
                 this.goalSelector.add(2, new FleeEntityGoal<>(this, PlayerEntity.class, 12.0f, 1.0, 1.4));
+                this.goalSelector.add(2, new FleeEntityGoal<>(this, HostileEntity.class, 10.0f, 1.0, 1.4));
                 break;
             case TRADER:
                 this.targetSelector.add(1, new RevengeGoal(this, PlayerEntity.class));
+                this.goalSelector.add(2, new FleeEntityGoal<>(this, HostileEntity.class, 10.0f, 0.8, 1.0));
                 break;
         }
     }
@@ -225,6 +229,15 @@ public class Entity103Tardis extends PathAwareEntity {
                 refreshTrades(sw.getServer());
             }
         }
+
+        if (!this.getWorld().isClient
+                && this.getHealth() < this.getMaxHealth()
+                && this.getTarget() == null) {
+            long now = this.getWorld().getTime();
+            if (now - lastDamageTime > 100 && this.age % 40 == 0) {
+                this.heal(2.0f);
+            }
+        }
     }
 
     private void refreshTrades(MinecraftServer server) {
@@ -238,6 +251,10 @@ public class Entity103Tardis extends PathAwareEntity {
     public boolean damage(DamageSource source, float amount) {
         boolean damaged = super.damage(source, amount);
         if (!damaged || this.getWorld().isClient) return damaged;
+
+        // 先记录受伤时间（不管什么伤害来源）
+        lastDamageTime = this.getWorld().getTime();
+
         if (this.isDead() || this.getHealth() <= 0.0f) return damaged;
         if (!(source.getAttacker() instanceof LivingEntity attacker)) return damaged;
 
@@ -599,7 +616,7 @@ public class Entity103Tardis extends PathAwareEntity {
         String name = this.getWorld().isClient
                 ? (this.getCustomName() != null ? this.getCustomName().getString() : displayName)
                 : displayName;
-        return name == null || name.isEmpty() ? "103型塔迪斯" : name;
+        return name == null || name.isEmpty() ? "Type-103" : name;
     }
 
     // ==================== 状态管理 ====================

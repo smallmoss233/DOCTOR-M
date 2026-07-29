@@ -28,6 +28,14 @@
       "outputCount": 1,
       "maxUses": 1,
       "outputNbt": "{Blueprint:\"doctor_m:de_mat_gun\"}"
+    },
+    {
+      "input": "minecraft:diamond",
+      "inputCount": 10,
+      "output": "ait:charged_zeiton_crystal",
+      "outputCount": 1,
+      "maxUses": 1,
+      "outputNbt": "{fuel:5000.0d}"
     }
   ]
 }

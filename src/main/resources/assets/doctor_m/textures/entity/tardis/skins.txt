@@ -1,9 +1,9 @@
 020.png|TC020|slim
 default.png|103|steve
 iris.png|Iris|slim
-maki_qinzez.png|maki (Qinzez)|slim
-omega.png|Омега|slim
-maki.png|纪|slim
+maki_qinzez.png|Maki (Qinzez)|slim
+omega.png|Omega|slim
+maki.png|Maki|slim
 smallmossold.png|SmallMoss(Old)|slim
 smallmoss.png|SmallMoss|slim
 evilmorty.png|Evil Morty (liyubee)|slim

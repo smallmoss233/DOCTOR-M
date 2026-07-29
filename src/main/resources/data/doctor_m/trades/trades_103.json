@@ -48,12 +48,14 @@
       "output": "ait:vortex_fluid_link",
       "outputCount": 1,
       "maxUses": 1
+    },
+    {
+      "input": "minecraft:diamond",
+      "inputCount": 10,
+      "output": "ait:charged_zeiton_crystal",
+      "outputCount": 1,
+      "maxUses": 1,
+      "outputNbt": "{fuel:5000.0d}"
     }
   ]
 }
-//  参数解析
-//  "input": "minecraft:iron_ingot", input：玩家需要付出的物品 ID
-//  "inputCount": 2, inputCount：玩家需要付出多少个 input 物品
-//  "output": "ait:hyperion_core_shaft", output：玩家能买到的物品 ID
-//  "outputCount": 1, outputCount：玩家能拿到多少个 output 物品
-//  "maxUses": 15  maxUses：这个交易条目每天最多能成交几次

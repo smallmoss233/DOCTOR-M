@@ -29,6 +29,7 @@ import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
 import net.minecraft.world.World
+import net.minecraft.entity.mob.HostileEntity
 import java.util.*
 
 class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: World) : PathAwareEntity(entityType, world) {
@@ -52,8 +53,8 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
 
         fun createMobAttributes(): DefaultAttributeContainer.Builder =
             PathAwareEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 60.0)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.1)
                 .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
                 .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.8)
@@ -67,12 +68,14 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
     private var lastAggressorUUID: UUID? = null
     private var lastAggressionTime = 0L
 
+    private var lastDamageTime = 0L
+
     private var aggressionCount = 0
     private var hasWarnedCurrentAggressor = false
 
     private val RETALIATE_COOLDOWN = 20
-    private val AGGRESSION_MEMORY = 600L
-    private val ANGER_DURATION = 400
+    private val AGGRESSION_MEMORY = 48000L   // 2 游戏日 = 2 * 24000 ticks
+    private val ANGER_DURATION = 7200        // 6 分钟 = 6 * 60 * 20 ticks
 
     // ==================== 交易系统 ====================
     private var dailyTrades: MutableList<TradeOffer> = ArrayList()
@@ -82,10 +85,11 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
     override fun initGoals() {
         super.initGoals()
         goalSelector.add(0, SwimGoal(this))
+        goalSelector.add(1, FleeEntityGoal(this, HostileEntity::class.java, 10.0f, 0.8, 0.4))
         goalSelector.add(2, LookAtEntityGoal(this, PlayerEntity::class.java, 12.0f))
         goalSelector.add(3, LookAroundGoal(this))
-        goalSelector.add(4, WanderAroundGoal(this, 0.6))
-        goalSelector.add(5, WanderAroundFarGoal(this, 0.5))
+        goalSelector.add(4, WanderAroundGoal(this, 0.25))
+        goalSelector.add(5, WanderAroundFarGoal(this, 0.4))
         targetSelector.add(1, RevengeGoal(this, PlayerEntity::class.java))
     }
 
@@ -104,6 +108,13 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
             val currentDay = sw.time / 24000L
             if (currentDay > lastTradeRefreshDay || dailyTrades.isEmpty()) {
                 refreshTrades(sw.server)
+            }
+        }
+
+        if (!world.isClient && health < maxHealth && target == null) {
+            val now = world.time
+            if (now - lastDamageTime > 100 && age % 40 == 0) {
+                heal(2.0f)
             }
         }
     }
@@ -126,6 +137,9 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
     override fun damage(source: DamageSource, amount: Float): Boolean {
         val damaged = super.damage(source, amount)
         if (!damaged || world.isClient) return damaged
+
+        lastDamageTime = world.time
+
         if (isDead || health <= 0.0f) return damaged
 
         val attacker = source.attacker as? LivingEntity ?: return damaged
