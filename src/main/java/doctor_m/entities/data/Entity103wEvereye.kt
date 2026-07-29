@@ -6,26 +6,75 @@ import net.minecraft.entity.ai.goal.*
 import net.minecraft.entity.attribute.DefaultAttributeContainer
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.damage.DamageSource
+import net.minecraft.entity.data.DataTracker
+import net.minecraft.entity.data.TrackedData
+import net.minecraft.entity.data.TrackedDataHandlerRegistry
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
-import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.mob.PathAwareEntity
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.particle.ParticleTypes
+import net.minecraft.registry.RegistryKey
+import net.minecraft.registry.RegistryKeys
+import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.world.ServerWorld
+import net.minecraft.sound.SoundCategory
+import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
+import net.minecraft.util.ActionResult
+import net.minecraft.util.Hand
+import net.minecraft.util.Identifier
 import net.minecraft.world.World
+import java.util.*
 
 class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: World) : PathAwareEntity(entityType, world) {
 
-    private var lastCounterAttackTime = 0L
+    enum class AIState { IDLE, TRADING, COMBAT, RETALIATING }
+
+    companion object {
+        val CURRENT_STATE: TrackedData<Int> = DataTracker.registerData(
+            Entity103wEvereye::class.java, TrackedDataHandlerRegistry.INTEGER
+        )
+
+        fun createMobAttributes(): DefaultAttributeContainer.Builder =
+            PathAwareEntity.createMobAttributes()
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 60.0)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0)
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
+                .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.8)
+                .add(EntityAttributes.GENERIC_ARMOR, 8.0)
+    }
+
+    private var lastRetaliateTime = 0L
     private var isAngry = false
     private var angerTimer = 0
+    private var lastAggressorUUID: UUID? = null
+    private var lastAggressionTime = 0L
+    private var hasTaunted = false
+
+    private val RETALIATE_COOLDOWN = 20
+    private val AGGRESSION_MEMORY = 600L
+    private val ANGER_DURATION = 400
+
+    private val taunts = listOf(
+        "§4§l[永恒之眼] §r§c你敢碰我？",
+        "§4§l[永恒之眼] §r§c你会后悔的，虫子。",
+        "§4§l[永恒之眼] §r§c我的耐心为零。",
+        "§4§l[永恒之眼] §r§c悖论会撕碎你。",
+        "§4§l[永恒之眼] §r§c你惹错人了。",
+        "§4§l[永恒之眼] §r§c知道什么叫不讲理吗？马上你就知道了。"
+    )
 
     override fun initGoals() {
         super.initGoals()
-        goalSelector.add(1, SwimGoal(this))
-        goalSelector.add(2, LookAtEntityGoal(this, PlayerEntity::class.java, 8.0f))
+        goalSelector.add(0, SwimGoal(this))
+        goalSelector.add(2, LookAtEntityGoal(this, PlayerEntity::class.java, 12.0f))
         goalSelector.add(3, LookAroundGoal(this))
-        goalSelector.add(4, WanderAroundGoal(this, 0.6, 20))
+        goalSelector.add(4, WanderAroundGoal(this, 0.6))
+        goalSelector.add(5, WanderAroundFarGoal(this, 0.5))
+        targetSelector.add(1, RevengeGoal(this, PlayerEntity::class.java))
     }
 
     override fun tick() {
@@ -34,60 +83,203 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
             if (angerTimer > 0) {
                 angerTimer--
             } else {
-                isAngry = false
-                setAttacker(null)
-                setTarget(null)
+                calmDown()
             }
         }
+    }
+
+    private fun calmDown() {
+        isAngry = false
+        hasTaunted = false
+        setAttacker(null)
+        setTarget(null)
+        if (!world.isClient) setState(AIState.IDLE)
     }
 
     override fun damage(source: DamageSource, amount: Float): Boolean {
         val damaged = super.damage(source, amount)
-        if (!damaged) return false
+        if (!damaged || world.isClient) return damaged
+        if (isDead || health <= 0.0f) return damaged
 
-        if (!world.isClient && source.attacker is LivingEntity) {
-            val now = world.time
-            if (now - lastCounterAttackTime < 30) return true
-            lastCounterAttackTime = now
+        val attacker = source.attacker as? LivingEntity ?: return damaged
+        val now = world.time
+        val attackerId = attacker.uuid
 
-            when (val attacker = source.attacker as LivingEntity) {
-                is PlayerEntity -> {
-                    if (!isAngry) {
-                        isAngry = true
-                        angerTimer = 20
-                        setTarget(attacker)
-                        tryAttack(attacker)
-                    }
-                }
-                is HostileEntity -> {
-                    if (health / maxHealth < 0.5) {
-                        applyParadoxDamage(attacker)
-                    } else {
-                        applyInvisibility(attacker)
-                    }
-                }
-            }
+        val isNewAggression = lastAggressorUUID == null
+                || lastAggressorUUID != attackerId
+                || (now - lastAggressionTime) > AGGRESSION_MEMORY
+
+        if (isNewAggression) {
+            lastAggressorUUID = attackerId
+            lastAggressionTime = now
+            hasTaunted = false
         }
-        return true
+
+        if (now - lastRetaliateTime < RETALIATE_COOLDOWN) return damaged
+        lastRetaliateTime = now
+        lastAggressionTime = now
+
+        if (!isAngry) {
+            isAngry = true
+            angerTimer = ANGER_DURATION
+            setTarget(attacker)
+            setState(AIState.COMBAT)
+        } else {
+            angerTimer = ANGER_DURATION
+        }
+
+        if (!hasTaunted) {
+            tauntAttacker(attacker)
+            hasTaunted = true
+        }
+
+        executeRetaliation(attacker)
+        return damaged
     }
 
-    private fun applyInvisibility(attacker: LivingEntity) {
-        addStatusEffect(StatusEffectInstance(StatusEffects.INVISIBILITY, 200, 0, false, false))
-        addStatusEffect(StatusEffectInstance(StatusEffects.SPEED, 200, 1, false, false))
+    private fun tauntAttacker(attacker: LivingEntity) {
+        if (attacker !is ServerPlayerEntity) return
+        attacker.sendMessage(Text.literal(taunts.random()), false)
+    }
+
+    private fun executeRetaliation(attacker: LivingEntity) {
+        if (world.isClient) return
+
+        world.sendEntityStatus(this, 4.toByte())
+        spawnRetaliateParticles()
+
+        applyParadoxDamage(attacker)
+        applyDebuffCombo(attacker)
+
+        when (random.nextInt(3)) {
+            0 -> retaliateTeleportVortex(attacker)
+            1 -> retaliateHighAltitude(attacker)
+        }
     }
 
     private fun applyParadoxDamage(attacker: LivingEntity) {
-        val damage = attacker.maxHealth
-        attacker.damage(damageSources.magic(), damage)
-        world.sendEntityStatus(this, 4)
-        (attacker as? PlayerEntity)?.sendMessage(Text.literal("§c你遭到了悖论打击！"), true)
+        val paradoxDamage = attacker.maxHealth * 0.2f + 8.0f
+        attacker.damage(damageSources.magic(), paradoxDamage)
+
+        if (attacker is ServerPlayerEntity) {
+            attacker.sendMessage(
+                Text.literal("§4§l你遭到了悖论打击！§r§7现实在你周围崩塌..."),
+                true
+            )
+        }
     }
 
-    companion object {
-        fun createMobAttributes(): DefaultAttributeContainer.Builder =
-            PathAwareEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 40.0)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.35)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 2.0)
+    private fun applyDebuffCombo(attacker: LivingEntity) {
+        if (attacker is ServerPlayerEntity) {
+            attacker.addStatusEffect(StatusEffectInstance(StatusEffects.WITHER, 120, 1))
+            attacker.addStatusEffect(StatusEffectInstance(StatusEffects.SLOWNESS, 300, 2))
+            attacker.addStatusEffect(StatusEffectInstance(StatusEffects.WEAKNESS, 300, 1))
+            attacker.addStatusEffect(StatusEffectInstance(StatusEffects.BLINDNESS, 100, 0))
+            attacker.addStatusEffect(StatusEffectInstance(StatusEffects.NAUSEA, 200, 0))
+            attacker.addStatusEffect(StatusEffectInstance(StatusEffects.MINING_FATIGUE, 400, 2))
+            attacker.addStatusEffect(StatusEffectInstance(StatusEffects.HUNGER, 200, 1))
+            attacker.sendMessage(Text.literal("§5§o时间悖论侵蚀了你的存在..."), true)
+        } else {
+            attacker.addStatusEffect(StatusEffectInstance(StatusEffects.WITHER, 100, 1))
+            attacker.addStatusEffect(StatusEffectInstance(StatusEffects.SLOWNESS, 200, 1))
+        }
+    }
+
+    private fun retaliateHighAltitude(attacker: LivingEntity) {
+        if (attacker !is ServerPlayerEntity) return
+        val targetY = attacker.y + 80 + random.nextInt(50)
+        attacker.teleport(attacker.serverWorld, attacker.x, targetY, attacker.z, attacker.yaw, attacker.pitch)
+        attacker.addStatusEffect(StatusEffectInstance(StatusEffects.NAUSEA, 200, 0))
+        attacker.sendMessage(Text.literal("§4§o被抛向高空，感受失重吧。"), true)
+    }
+
+    private fun retaliateTeleportVortex(attacker: LivingEntity) {
+        if (attacker !is ServerPlayerEntity) return
+        val vortexDim = RegistryKey.of(RegistryKeys.WORLD, Identifier("ait", "time_vortex"))
+        val vortexWorld = attacker.server.getWorld(vortexDim)
+
+        if (vortexWorld != null) {
+            attacker.teleport(vortexWorld, attacker.x, 350.0, attacker.z, attacker.yaw, attacker.pitch)
+        }
+
+        attacker.addStatusEffect(StatusEffectInstance(StatusEffects.WITHER, 160, 2))
+        attacker.addStatusEffect(StatusEffectInstance(StatusEffects.SLOWNESS, 300, 2))
+        attacker.addStatusEffect(StatusEffectInstance(StatusEffects.WEAKNESS, 300, 1))
+        attacker.addStatusEffect(StatusEffectInstance(StatusEffects.BLINDNESS, 120, 0))
+        attacker.sendMessage(Text.literal("§4§l§o时间涡旋会教你什么是敬畏。"), true)
+    }
+
+    override fun interactMob(player: PlayerEntity, hand: Hand): ActionResult {
+        if (!world.isClient) {
+            if (isAngry) {
+                player.sendMessage(
+                    Text.literal("§4§l[永恒之眼] §r§c我现在没心情做生意，滚。"),
+                    false
+                )
+            } else {
+                player.sendMessage(
+                    Text.literal("§5§l[永恒之眼] §r§7呵，想要完整的子系统？还是引擎？下界之星我也有不少..."),
+                    false
+                )
+                player.sendMessage(
+                    Text.literal("§8§o（她的眼神告诉你，最好别耍花样。）"),
+                    false
+                )
+                setState(AIState.TRADING)
+            }
+        }
+        return ActionResult.SUCCESS
+    }
+
+    override fun initDataTracker() {
+        super.initDataTracker()
+        // 修复：ordinal 是属性不是函数，去掉括号
+        dataTracker.startTracking(CURRENT_STATE, AIState.IDLE.ordinal)
+    }
+
+    fun setState(state: AIState) {
+        if (!world.isClient) {
+            // 修复：ordinal 是属性不是函数，去掉括号
+            dataTracker.set(CURRENT_STATE, state.ordinal)
+        }
+    }
+
+    fun getState(): AIState = AIState.entries[dataTracker.get(CURRENT_STATE)]
+
+    override fun writeCustomDataToNbt(nbt: NbtCompound) {
+        super.writeCustomDataToNbt(nbt)
+        nbt.putBoolean("IsAngry", isAngry)
+        nbt.putInt("AngerTimer", angerTimer)
+        nbt.putLong("LastRetaliateTime", lastRetaliateTime)
+        nbt.putLong("LastAggressionTime", lastAggressionTime)
+        nbt.putBoolean("HasTaunted", hasTaunted)
+        lastAggressorUUID?.let { nbt.putUuid("LastAggressor", it) }
+    }
+
+    override fun readCustomDataFromNbt(nbt: NbtCompound) {
+        super.readCustomDataFromNbt(nbt)
+        isAngry = nbt.getBoolean("IsAngry")
+        angerTimer = nbt.getInt("AngerTimer")
+        lastRetaliateTime = nbt.getLong("LastRetaliateTime")
+        lastAggressionTime = nbt.getLong("LastAggressionTime")
+        hasTaunted = nbt.getBoolean("HasTaunted")
+        if (nbt.contains("LastAggressor")) {
+            lastAggressorUUID = nbt.getUuid("LastAggressor")
+        }
+    }
+
+    private fun spawnRetaliateParticles() {
+        if (world !is ServerWorld) return
+        val sw = world as ServerWorld
+        sw.spawnParticles(
+            ParticleTypes.REVERSE_PORTAL,
+            x, y + 1.5, z,
+            30, 0.5, 0.5, 0.5, 0.2
+        )
+        sw.playSound(
+            null, blockPos,
+            SoundEvents.ENTITY_WITHER_AMBIENT,
+            SoundCategory.HOSTILE, 1.0f, 0.8f
+        )
     }
 }
