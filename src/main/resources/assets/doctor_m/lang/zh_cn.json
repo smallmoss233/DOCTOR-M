@@ -156,6 +156,7 @@
   "tooltip.doctor_m.hold_shift": "按住 Shift 查看详情",
   "tooltip.doctor_m.oxygen": "§b氧气: %.1f / %.0fL",
   "tooltip.doctor_m.vacuum_consuming": "你正在真空下吃东西！",
+  "tooltip.doctor_m.ait_tardisbuilder.error.unknown_executor": "未知的执行玩家：%s",
   "tooltip.doctor_m.ait_tardisbuilder.error.invalid_desktop_id": "无效的内饰 ID 格式：%s",
   "tooltip.doctor_m.ait_tardisbuilder.error.unknown_desktop": "未知的内饰：%s（解析为 %s）",
   "tooltip.doctor_m.ait_tardisbuilder.error.invalid_exterior_id": "无效的外观 ID 格式：%s",

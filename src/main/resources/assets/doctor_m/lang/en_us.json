@@ -156,6 +156,7 @@
   "tooltip.doctor_m.hold_shift": "Hold Shift for Details",
   "tooltip.doctor_m.oxygen": "§bOxygen: %.1f / %.0fL",
   "tooltip.doctor_m.vacuum_consuming": "You are eating in a vacuum!",
+  "tooltip.doctor_m.ait_tardisbuilder.error.unknown_executor": "Unknown executor player: %s",
   "tooltip.doctor_m.ait_tardisbuilder.error.invalid_desktop_id": "Invalid desktop ID format: %s",
   "tooltip.doctor_m.ait_tardisbuilder.error.unknown_desktop": "Unknown desktop: %s (resolved to %s)",
   "tooltip.doctor_m.ait_tardisbuilder.error.invalid_exterior_id": "Invalid exterior ID format: %s",
