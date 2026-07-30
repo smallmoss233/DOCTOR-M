@@ -13,6 +13,7 @@ import net.minecraft.entity.data.TrackedData
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
+import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.mob.PathAwareEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
@@ -29,7 +30,6 @@ import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
 import net.minecraft.world.World
-import net.minecraft.entity.mob.HostileEntity
 import java.util.*
 
 class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: World) : PathAwareEntity(entityType, world) {
@@ -106,15 +106,15 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
         if (!world.isClient && world is ServerWorld) {
             val sw = world as ServerWorld
             val currentDay = sw.time / 24000L
-            if (currentDay > lastTradeRefreshDay || dailyTrades.isEmpty()) {
+            if (currentDay > lastTradeRefreshDay) {
                 refreshTrades(sw.server)
             }
         }
 
-        if (!world.isClient && health < maxHealth && target == null) {
+        if (!world.isClient && health < maxHealth) {
             val now = world.time
             if (now - lastDamageTime > 100 && age % 40 == 0) {
-                heal(2.0f)
+                heal(1.0f)
             }
         }
     }

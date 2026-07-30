@@ -18,7 +18,6 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -225,14 +224,13 @@ public class Entity103Tardis extends PathAwareEntity {
         super.tick();
         if (!this.getWorld().isClient && this.getWorld() instanceof ServerWorld sw) {
             long currentDay = sw.getTime() / 24000L;
-            if (currentDay > lastTradeRefreshDay || dailyTrades.isEmpty()) {
+            if (currentDay > lastTradeRefreshDay) {
                 refreshTrades(sw.getServer());
             }
         }
 
         if (!this.getWorld().isClient
-                && this.getHealth() < this.getMaxHealth()
-                && this.getTarget() == null) {
+                && this.getHealth() < this.getMaxHealth()){
             long now = this.getWorld().getTime();
             if (now - lastDamageTime > 100 && this.age % 40 == 0) {
                 this.heal(2.0f);

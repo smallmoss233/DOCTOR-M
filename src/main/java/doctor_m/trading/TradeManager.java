@@ -83,7 +83,7 @@ public class TradeManager {
     public static List<TradeOffer> generateDailyTrades(List<TradeOffer> pool, Random random) {
         if (pool.isEmpty()) return new ArrayList<>();
         int max = Math.min(6, pool.size());
-        int count = 1 + random.nextInt(max);
+        int count = random.nextInt(max + 1);
         List<TradeOffer> shuffled = new ArrayList<>(pool);
 
         for (int i = shuffled.size() - 1; i > 0; i--) {
