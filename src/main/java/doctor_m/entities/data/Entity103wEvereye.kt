@@ -80,7 +80,7 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
     // ==================== 交易系统 ====================
     private var dailyTrades: MutableList<TradeOffer> = ArrayList()
     private var lastTradeRefreshDay = -1L
-    private val TRADE_POOL_FILE = "trades_evereye.json"
+    private val TRADE_POOL_FILE = "evereye_trade.json"
 
     override fun initGoals() {
         super.initGoals()

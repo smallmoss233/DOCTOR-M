@@ -74,7 +74,7 @@ public class Entity103Tardis extends PathAwareEntity {
     // ==================== 交易系统 ====================
     private List<TradeOffer> dailyTrades = new ArrayList<>();
     private long lastTradeRefreshDay = -1;
-    private static final String TRADE_POOL_FILE = "trades_103.json";
+    private static final String TRADE_POOL_FILE = "103tardis_trade.json";
 
     // ==================== AI 状态机 ====================
     public enum AIState {
