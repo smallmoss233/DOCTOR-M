@@ -3,6 +3,7 @@ package doctor_m.mixin.sonic_mode;
 import java.util.List;
 
 import doctor_m.module.sonic_plus.AmethystSonicModes;
+import doctor_m.module.sonic_plus.ChargedZeitonSonicModes;
 import net.minecraft.registry.Registries;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -82,6 +83,11 @@ public class SonicItemMixin {
             if (remapped != original) {
                 cir.setReturnValue(remapped);
             }
+        } else if (crystal.equals(CrystalManager.CHARGED_ZEITON_CRYSTAL)) {
+            SonicMode remapped = ChargedZeitonSonicModes.map(original);
+            if (remapped != original) {
+                cir.setReturnValue(remapped);
+            }
         }
     }
 
@@ -93,11 +99,12 @@ public class SonicItemMixin {
             )
     )
     private SonicMode doctor_m$remapAfterNext(SonicMode original, World world, PlayerEntity user, Hand hand) {
-        // original 是 mode.next() 返回的原版实例，这里替换成映射后的
         ItemStack stack = user.getStackInHand(hand);
         Identifier crystal = CrystalManager.getInstalledCrystal(stack);
         if (crystal.equals(CrystalManager.AMETHYST_CRYSTAL)) {
             return AmethystSonicModes.map(original);
+        } else if (crystal.equals(CrystalManager.CHARGED_ZEITON_CRYSTAL)) {
+            return ChargedZeitonSonicModes.map(original);
         }
         return original;
     }

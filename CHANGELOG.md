@@ -38,6 +38,16 @@
    航天服新增氧气阀值警告 / Added oxygen threshold warnings for the spacesuit.
    氧气机的算法优化，一个区域内放置多台氧气机有氧范围扩大，且修复了一些潜在BUG / Optimized oxygen generator algorithm; placing multiple generators in an area expands the oxygen coverage, and fixed some potential bugs.
 -  塔迪斯型号不再局限于50型！可在doctor_m/tardis_type.json当中填写内饰ID+型号来自定义你的塔迪斯型号！ / TARDIS types are no longer limited to Type 50! You can now customise your TARDIS type by adding interior IDs and type names in doctor_m/tardis_type.json!
+-  音速起子晶体系统 / Sonic Screwdriver Crystal System
+   来自AIT的iss，让音速起子可以替换端部晶体获得新功能 / Derived from AIT's ISS, allowing the Sonic Screwdriver to swap end crystals for new abilities.
+   紫水晶：引力 / Amethyst: Gravity
+   引力牵引：抓取一个实体，范围10格以内 / Gravitational Pull: Pulls an entity within 10 blocks.
+   引力护盾：推开周围所有实体 / Gravitational Shield: Pushes all nearby entities away.
+   引力拖拽：需预热，将玩家朝着视角方向拉过去 / Gravitational Swap: Requires warming up, pulls the player in the direction they are looking.
+   充能泽顿水晶：激光 / Charged Zeiton Crystal: Laser
+   脉冲：间歇性的激光 / Pulse: Intermittent laser bursts.
+   激光：持续性的激光 / Laser: Continuous laser beam.
+   冲击波：推开周围生物，冷却5s / Shockwave: Pushes nearby mobs away, 5s cooldown.
 
 ### 修复 / Repair
 

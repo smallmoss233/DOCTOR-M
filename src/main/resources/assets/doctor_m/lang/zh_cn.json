@@ -23,6 +23,9 @@
   "sonic_mode.doctor_m.gravitational_drag": "引力牵引",
   "sonic_mode.doctor_m.gravitational_shielding": "引力护盾",
   "sonic_mode.doctor_m.gravitational_swap": "引力拖拽",
+  "sonic_mode.doctor_m.pulse": "脉冲",
+  "sonic_mode.doctor_m.laser": "激光",
+  "sonic_mode.doctor_m.push": "冲击波",
   "sonic_mode.message.doctor_m.crystal_installed": "已安装晶体：%s",
   "sonic_mode.tooltip.doctor_m.installed_crystal": "已安装晶体：",
 

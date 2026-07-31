@@ -20,6 +20,15 @@
 
   "tardis.message.control.siege.confirm_prompt": "再次按下以啟用圍攻模式！（等待10秒再點擊）",
 
+  "sonic_mode.doctor_m.gravitational_drag": "引力牽引",
+  "sonic_mode.doctor_m.gravitational_shielding": "引力護盾",
+  "sonic_mode.doctor_m.gravitational_swap": "引力拖拽",
+  "sonic_mode.doctor_m.pulse": "脈衝",
+  "sonic_mode.doctor_m.laser": "激光",
+  "sonic_mode.doctor_m.push": "衝擊波",
+  "sonic_mode.message.doctor_m.crystal_installed": "已安裝晶體：%s",
+  "sonic_mode.tooltip.doctor_m.installed_crystal": "已安裝晶體：",
+
   "itemGroup.doctor_m": "DOCTOR M",
   "item.doctor_m.rassilon_key": "拉斯隆之鑰",
   "item.doctor_m.de_mat_gun": "去物質槍",

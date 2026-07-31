@@ -10,6 +10,7 @@ import net.minecraft.util.Identifier;
 public class CrystalManager {
     public static final Identifier DEFAULT_CRYSTAL = new Identifier("ait", "zeiton_shard");
     public static final Identifier AMETHYST_CRYSTAL = new Identifier("minecraft", "amethyst_shard");
+    public static final Identifier CHARGED_ZEITON_CRYSTAL = new Identifier("ait", "charged_zeiton_crystal");
 
     private static final String CRYSTAL_KEY = "doctor_m.installed_crystal";
 
@@ -35,7 +36,9 @@ public class CrystalManager {
     public static boolean isValidCrystal(ItemStack stack) {
         if (stack.isEmpty()) return false;
         Identifier id = Registries.ITEM.getId(stack.getItem());
-        return id.equals(AMETHYST_CRYSTAL) || id.equals(DEFAULT_CRYSTAL);
+        return id.equals(AMETHYST_CRYSTAL)
+                || id.equals(DEFAULT_CRYSTAL)
+                || id.equals(CHARGED_ZEITON_CRYSTAL);
     }
 
     public static ItemStack createCrystalStack(Identifier id) {
