@@ -97,6 +97,7 @@ public class TlipocaScythe extends SwordItem {
         ShiftTooltipInvoker.addShiftTooltip(tooltip,
                 Text.translatable("message.doctor_m.tlipoca_scythe.detail")
         );
+        tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
     }
     @Override
     public boolean isDamageable() {

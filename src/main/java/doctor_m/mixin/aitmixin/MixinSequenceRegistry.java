@@ -1,4 +1,4 @@
-package doctor_m.mixin;
+package doctor_m.mixin.aitmixin;
 
 import dev.amble.ait.AITMod;
 import dev.amble.ait.core.tardis.ServerTardis;
@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 @Mixin(SequenceRegistry.class)
 public abstract class MixinSequenceRegistry {
 
-    // ==================== 安全奖励池 ====================
+    // ==================== 飞行事件奖励池 ====================
     private static final List<Supplier<ItemStack>> REWARD_POOL;
     static {
         List<Supplier<ItemStack>> list = new ArrayList<>();

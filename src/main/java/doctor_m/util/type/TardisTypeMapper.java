@@ -1,4 +1,4 @@
-package doctor_m.util;
+package doctor_m.util.type;
 
 import net.minecraft.util.Identifier;
 

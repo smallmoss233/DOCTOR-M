@@ -15,6 +15,8 @@
   "advancement.doctor_m.scan_overload.description": "Scanned an entity that the Sonic Screwdriver finds incomprehensible",
   "advancement.doctor_m.not_a_hallucination.title": "This Is Not a Hallucination",
   "advancement.doctor_m.not_a_hallucination.description": "You threw the TARDIS key into lava, and doing so made the TARDIS feel uneasy.",
+  "advancements.doctor_m.de_mat_gun.title": "Past, Ancient, Dark, Forced to Take Up",
+  "advancements.doctor_m.de_mat_gun.description": "We had forgotten all this—violence, discord, disaster—yet that war compelled us to return to savagery. And now, farewell to time itself.",
 
   "tardis.message.control.siege.confirm_prompt": "Press again to enable Siege Mode! (Wait 10 seconds before clicking)",
 

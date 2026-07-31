@@ -1,6 +1,7 @@
 package doctor_m.Item.data_itme;
 
 import dev.amble.ait.module.gun.core.item.BaseGunItem;
+import doctor_m.util.creativity.DynamicColorHelper;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
@@ -12,6 +13,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.List;
 
 public class DeMatGunItem extends BaseGunItem {
@@ -22,13 +24,10 @@ public class DeMatGunItem extends BaseGunItem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        // 客户端逻辑已移至 DoctorMClient 的 ClientTickEvents
-        // 此处可保留服务端逻辑（如冷却同步等）
     }
 
     @Override
     public void tryShoot(World world, Entity entity, boolean selected) {
-        // 空实现，射击完全由客户端事件驱动
     }
 
     @Override
@@ -60,5 +59,19 @@ public class DeMatGunItem extends BaseGunItem {
         ShiftTooltipInvoker.addShiftTooltip(tooltip,
                 Text.translatable("message.doctor_m.de_mat_gun.detail")
         );
+    }
+
+    @Override
+    public Text getName(ItemStack stack) {
+        Text baseName = super.getName(stack);
+        List<Color> colors = List.of(
+                new Color(128, 0, 128),  // 紫色
+                Color.GRAY,              // 灰色
+                Color.GRAY,              // 灰色
+                new Color(128, 0, 128),  // 紫色
+                Color.GRAY,              // 灰色
+                Color.GRAY               // 灰色
+        );
+        return DynamicColorHelper.applyColorCycle(baseName, colors, 20000);
     }
 }

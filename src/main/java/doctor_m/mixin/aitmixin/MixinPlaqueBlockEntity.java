@@ -1,10 +1,10 @@
-package doctor_m.mixin;
+package doctor_m.mixin.aitmixin;
 
 import dev.amble.ait.api.tardis.link.v2.TardisRef;
 import dev.amble.ait.core.blockentities.PlaqueBlockEntity;
 import dev.amble.ait.core.tardis.Tardis;
 import dev.amble.ait.core.tardis.TardisDesktop;
-import doctor_m.util.TardisTypeMapper;
+import doctor_m.util.type.TardisTypeMapper;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,11 +17,11 @@ public abstract class MixinPlaqueBlockEntity {
     @Inject(method = "getPlaqueText", at = @At("HEAD"), cancellable = true)
     private void overridePlaqueText(CallbackInfoReturnable<String> cir) {
         PlaqueBlockEntity self = (PlaqueBlockEntity) (Object) this;
-        TardisRef ref = self.tardis(); // 返回 TardisRef
+        TardisRef ref = self.tardis();
 
         if (ref == null) return;
 
-        Tardis tardis = ref.get(); // 获取实际的 Tardis
+        Tardis tardis = ref.get();
         if (tardis == null) return;
 
         // 获取当前内饰 ID

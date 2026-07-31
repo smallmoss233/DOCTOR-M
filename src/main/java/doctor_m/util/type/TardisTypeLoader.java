@@ -1,4 +1,4 @@
-package doctor_m.util;
+package doctor_m.util.type;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -32,9 +32,8 @@ public class TardisTypeLoader implements SimpleSynchronousResourceReloadListener
     public void reload(ResourceManager manager) {
         Map<Identifier, String> newMap = new HashMap<>();
 
-        // 直接限定在 doctor_m 命名空间下搜索，减少遍历
-        Map<Identifier, Resource> resources = manager.findResources("doctor_m",
-                path -> path.getPath().equals("tardis_type.json"));
+        Map<Identifier, Resource> resources = manager.findResources("",
+                id -> id.getNamespace().equals("doctor_m") && id.getPath().equals("tardis_type.json"));
 
         System.out.println("[TardisTypeLoader] Found " + resources.size() + " resource(s) in doctor_m namespace");
 
