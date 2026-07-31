@@ -20,6 +20,12 @@
 
   "tardis.message.control.siege.confirm_prompt": "再次按下以启用围攻模式！（等待10秒再点击）",
 
+  "sonic_mode.doctor_m.gravitational_drag": "引力牵引",
+  "sonic_mode.doctor_m.gravitational_shielding": "引力护盾",
+  "sonic_mode.doctor_m.gravitational_swap": "引力拖拽",
+  "sonic_mode.message.doctor_m.crystal_installed": "已安装晶体：%s",
+  "sonic_mode.tooltip.doctor_m.installed_crystal": "已安装晶体：",
+
   "itemGroup.doctor_m": "DOCTOR M",
   "item.doctor_m.rassilon_key": "拉斯隆之钥",
   "item.doctor_m.de_mat_gun": "去物质枪",

@@ -19,6 +19,7 @@
     "aitmixin.SelfDestructHandlerMixin",
     "aitmixin.MixinSequenceRegistry",
     "aitmixin.MixinPlaqueBlockEntity",
+    "sonic_mode.SonicItemMixin",
     "sonic_mode.ScanningSonicOverloadMixin",
     "sonic_mode.OverloadSonicModeMixin",
     "sonic_mode.TardisSonicModeMixin",
