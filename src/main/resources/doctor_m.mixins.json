@@ -18,6 +18,7 @@
     "aitmixin.MixinInteriorTeleporterItem",
     "aitmixin.SelfDestructHandlerMixin",
     "MixinSequenceRegistry",
+    "MixinPlaqueBlockEntity",
     "sonic_mode.ScanningSonicOverloadMixin",
     "sonic_mode.OverloadSonicModeMixin",
     "sonic_mode.TardisSonicModeMixin",

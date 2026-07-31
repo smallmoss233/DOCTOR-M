@@ -12,6 +12,7 @@ import doctor_m.module.space_plus.block.ModBlockEntities;
 import doctor_m.module.space_plus.block.ModBlocks;
 import doctor_m.module.space_plus.system.VacuumEatingHandler;
 import doctor_m.network.DeMatGunNetwork;
+import doctor_m.util.TardisTypeLoader;
 import doctor_m.world_data.ShieldDamageHandler;
 import doctor_m.world_data.TimeKey.GemDeathSaveHandler;
 import doctor_m.world_data.TimeKey.GemTickHandler;
@@ -51,6 +52,7 @@ public class DOCTORM implements ModInitializer {
         PocketWatchFunction.INSTANCE.register();
         GemDeathSaveHandler.INSTANCE.register();
         GemTickHandler.INSTANCE.register();
+        TardisTypeLoader.init();
 
         items.registerAbilities();
         CreativityItems.registerAbilities();
