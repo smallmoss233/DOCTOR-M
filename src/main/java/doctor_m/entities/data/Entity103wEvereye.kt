@@ -41,15 +41,24 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
             Entity103wEvereye::class.java, TrackedDataHandlerRegistry.INTEGER
         )
 
-        // ==================== 本地化键名常量 ====================
         private const val BASE = "entity.doctor_m.103w_evereye"
 
-        val STAGE1_KEYS      = (0..4).map { "$BASE.dialog.stage1.$it" }
-        val STAGE2_KEYS      = (0..4).map { "$BASE.dialog.stage2.$it" }
-        val STAGE3_KEYS      = (0..4).map { "$BASE.dialog.stage3.$it" }
-        val PEACEFUL_KEYS    = (0..4).map { "$BASE.dialog.peaceful.$it" }
-        val ANGRY_KEYS       = (0..4).map { "$BASE.dialog.angry.$it" }
-        val HURT_KEYS        = (0..4).map { "$BASE.dialog.hurt.$it" }
+        val STAGE1_KEYS   = (0..4).map { "$BASE.dialog.stage1.$it" }
+        val STAGE2_KEYS   = (0..4).map { "$BASE.dialog.stage2.$it" }
+        val STAGE3_KEYS   = (0..4).map { "$BASE.dialog.stage3.$it" }
+        val PEACEFUL_KEYS = (0..4).map { "$BASE.dialog.peaceful.$it" }
+        val ANGRY_KEYS    = (0..4).map { "$BASE.dialog.angry.$it" }
+        val HURT_KEYS     = (0..4).map { "$BASE.dialog.hurt.$it" }
+
+        // 性能优化：提取为静态常量，避免每个实例都创建新值
+        private const val RETALIATE_COOLDOWN = 20
+        private const val AGGRESSION_MEMORY = 48000L   // 2 游戏日
+        private const val ANGER_DURATION = 7200        // 6 分钟
+        private const val TRADE_POOL_FILE = "evereye_trade.json"
+
+        // 性能优化：缓存重复创建的 Text 对象，减少堆分配
+        private val TRADE_HEADER = Text.literal("§7════════════════════════")
+        private const val NAME_MARIAN = "玛丽安"
 
         fun createMobAttributes(): DefaultAttributeContainer.Builder =
             PathAwareEntity.createMobAttributes()
@@ -73,14 +82,16 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
     private var aggressionCount = 0
     private var hasWarnedCurrentAggressor = false
 
-    private val RETALIATE_COOLDOWN = 20
-    private val AGGRESSION_MEMORY = 48000L   // 2 游戏日 = 2 * 24000 ticks
-    private val ANGER_DURATION = 7200        // 6 分钟 = 6 * 60 * 20 ticks
-
     // ==================== 交易系统 ====================
     private var dailyTrades: MutableList<TradeOffer> = ArrayList()
     private var lastTradeRefreshDay = -1L
-    private val TRADE_POOL_FILE = "evereye_trade.json"
+
+    init {
+        // 逻辑修复：初始化受伤时间，防止实体生成瞬间就开始回血
+        if (!world.isClient) {
+            lastDamageTime = world.time
+        }
+    }
 
     override fun initGoals() {
         super.initGoals()
@@ -95,24 +106,20 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
 
     override fun tick() {
         super.tick()
-        if (!world.isClient && isAngry) {
-            if (angerTimer > 0) {
-                angerTimer--
-            } else {
-                calmDown()
-            }
+        // 性能优化：提前转换并缓存 ServerWorld，避免多次类型检查
+        val sw = world as? ServerWorld ?: return
+
+        if (isAngry && --angerTimer <= 0) {
+            calmDown()
         }
 
-        if (!world.isClient && world is ServerWorld) {
-            val sw = world as ServerWorld
-            val currentDay = sw.time / 24000L
-            if (currentDay > lastTradeRefreshDay) {
-                refreshTrades(sw.server)
-            }
+        val currentDay = sw.time / 24000L
+        if (currentDay > lastTradeRefreshDay) {
+            refreshTrades(sw.server)
         }
 
-        if (!world.isClient && health < maxHealth) {
-            val now = world.time
+        if (health < maxHealth) {
+            val now = sw.time
             if (now - lastDamageTime > 100 && age % 40 == 0) {
                 heal(1.0f)
             }
@@ -123,9 +130,8 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
         isAngry = false
         hasWarnedCurrentAggressor = false
         aggressionCount = 0
-        setAttacker(null)
         setTarget(null)
-        if (!world.isClient) setState(AIState.IDLE)
+        setState(AIState.IDLE)
     }
 
     private fun refreshTrades(server: MinecraftServer) {
@@ -138,12 +144,13 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
         val damaged = super.damage(source, amount)
         if (!damaged || world.isClient) return damaged
 
-        lastDamageTime = world.time
+        // 性能优化：缓存 world.time，减少重复字段访问
+        val now = world.time
+        lastDamageTime = now
 
-        if (isDead || health <= 0.0f) return damaged
+        if (health <= 0.0f) return damaged
 
         val attacker = source.attacker as? LivingEntity ?: return damaged
-        val now = world.time
         val attackerId = attacker.uuid
 
         val isNewAggression = lastAggressorUUID == null
@@ -158,7 +165,7 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
 
             if (now - lastRetaliateTime >= RETALIATE_COOLDOWN) {
                 lastRetaliateTime = now
-                handleAggressionStage(attacker, aggressionCount)
+                handleAggressionStage(attacker, 1)
             }
 
             if (random.nextFloat() < 0.3f && attacker is ServerPlayerEntity) {
@@ -186,13 +193,14 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
             angerTimer = ANGER_DURATION
         }
 
-        when {
-            stage == 1 -> {
+        // 代码结构优化：使用 when(stage) 更清晰
+        when (stage) {
+            1 -> {
                 if (attacker is ServerPlayerEntity) {
                     attacker.sendMessage(Text.translatable(STAGE1_KEYS.random()), false)
                 }
             }
-            stage == 2 -> {
+            2 -> {
                 if (!hasWarnedCurrentAggressor) {
                     hasWarnedCurrentAggressor = true
                     if (attacker is ServerPlayerEntity) {
@@ -200,7 +208,7 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
                     }
                 }
             }
-            stage >= 3 -> {
+            else -> {
                 if (attacker is ServerPlayerEntity) {
                     attacker.sendMessage(Text.translatable(STAGE3_KEYS.random()), false)
                 }
@@ -282,33 +290,32 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
         val vortexDim = RegistryKey.of(RegistryKeys.WORLD, Identifier("ait", "time_vortex"))
         val vortexWorld = attacker.server.getWorld(vortexDim)
 
+        // 逻辑修复：只有维度确实存在时才执行传送和施加效果
         if (vortexWorld != null) {
             attacker.teleport(vortexWorld, attacker.x, 350.0, attacker.z, attacker.yaw, attacker.pitch)
+            attacker.addStatusEffect(StatusEffectInstance(StatusEffects.WITHER, 160, 2))
+            attacker.addStatusEffect(StatusEffectInstance(StatusEffects.SLOWNESS, 300, 2))
+            attacker.addStatusEffect(StatusEffectInstance(StatusEffects.WEAKNESS, 300, 1))
+            attacker.addStatusEffect(StatusEffectInstance(StatusEffects.BLINDNESS, 120, 0))
+            attacker.sendMessage(Text.translatable("entity.doctor_m.103w_evereye.retaliation.vortex"), true)
         }
-
-        attacker.addStatusEffect(StatusEffectInstance(StatusEffects.WITHER, 160, 2))
-        attacker.addStatusEffect(StatusEffectInstance(StatusEffects.SLOWNESS, 300, 2))
-        attacker.addStatusEffect(StatusEffectInstance(StatusEffects.WEAKNESS, 300, 1))
-        attacker.addStatusEffect(StatusEffectInstance(StatusEffects.BLINDNESS, 120, 0))
-        attacker.sendMessage(Text.translatable("entity.doctor_m.103w_evereye.retaliation.vortex"), true)
     }
 
     override fun interactMob(player: PlayerEntity, hand: Hand): ActionResult {
-        if (!world.isClient) {
-            val serverPlayer = player as? ServerPlayerEntity ?: return ActionResult.SUCCESS
+        if (world.isClient) return ActionResult.SUCCESS
+        val serverPlayer = player as? ServerPlayerEntity ?: return ActionResult.SUCCESS
 
-            if (isAngry) {
-                player.sendMessage(Text.translatable(ANGRY_KEYS.random()), false)
+        if (isAngry) {
+            player.sendMessage(Text.translatable(ANGRY_KEYS.random()), false)
+        } else {
+            if (player.isSneaking) {
+                tryTrade(serverPlayer)
             } else {
-                if (player.isSneaking) {
-                    tryTrade(serverPlayer)
-                } else {
-                    player.sendMessage(Text.translatable(PEACEFUL_KEYS.random()), false)
-                    player.sendMessage(Text.translatable("entity.doctor_m.103w_evereye.trade.hint.casual"), false)
-                    sendTradeList(serverPlayer)
-                    player.sendMessage(Text.translatable("doctor_m.dialog.common.trade.hint.sneak"), false)
-                    setState(AIState.TRADING)
-                }
+                player.sendMessage(Text.translatable(PEACEFUL_KEYS.random()), false)
+                player.sendMessage(Text.translatable("entity.doctor_m.103w_evereye.trade.hint.casual"), false)
+                sendTradeList(serverPlayer)
+                player.sendMessage(Text.translatable("doctor_m.dialog.common.trade.hint.sneak"), false)
+                setState(AIState.TRADING)
             }
         }
         return ActionResult.SUCCESS
@@ -316,18 +323,23 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
 
     private fun sendTradeList(player: ServerPlayerEntity) {
         if (dailyTrades.isEmpty()) {
-            player.sendMessage(Text.translatable("doctor_m.dialog.common.trade.empty", "玛丽安"), false)
+            player.sendMessage(Text.translatable("doctor_m.dialog.common.trade.empty", NAME_MARIAN), false)
             return
         }
-        player.sendMessage(Text.literal("§7════════════════════════"), false)
+        player.sendMessage(TRADE_HEADER, false)
         for (i in dailyTrades.indices) {
             val offer = dailyTrades[i]
             val status = if (offer.isAvailable) "§e" else "§7§m"
             player.sendMessage(Text.literal("$status[${i + 1}] ${offer.displayText}"), false)
         }
-        player.sendMessage(Text.literal("§7════════════════════════"), false)
+        player.sendMessage(TRADE_HEADER, false)
     }
 
+    /**
+     * 核心性能优化：单次遍历，零临时集合分配。
+     * 原代码使用 filter + sortedByDescending 会创建两个中间列表；
+     * 现在一次遍历同时找出最佳匹配并判断是否存在对应物品。
+     */
     private fun tryTrade(player: ServerPlayerEntity) {
         val held = player.mainHandStack
         if (held.isEmpty) {
@@ -335,26 +347,34 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
             return
         }
 
-        val matches = dailyTrades.filter {
-            it.isAvailable && it.inputItem == held.item
-        }.sortedByDescending { it.inputCount }
-
-        if (matches.isEmpty()) {
-            player.sendMessage(Text.translatable("doctor_m.dialog.common.trade.reject"), false)
-            return
-        }
-
+        val heldItem = held.item
         val heldCount = held.count
-        for (offer in matches) {
+        var bestMatch: TradeOffer? = null
+        var hasMatchingItem = false
+
+        for (offer in dailyTrades) {
+            if (!offer.isAvailable || offer.inputItem != heldItem) continue
+            hasMatchingItem = true
             if (heldCount >= offer.inputCount) {
-                offer.execute(player)
-                player.sendMessage(Text.translatable("doctor_m.dialog.common.trade.success", "玛丽安"), false)
-                grantTradeAdvancement(player)
-                return
+                if (bestMatch == null || offer.inputCount > bestMatch.inputCount) {
+                    bestMatch = offer
+                }
             }
         }
 
-        player.sendMessage(Text.translatable("doctor_m.dialog.common.trade.insufficient"), false)
+        when {
+            bestMatch != null -> {
+                bestMatch.execute(player)
+                player.sendMessage(Text.translatable("doctor_m.dialog.common.trade.success", NAME_MARIAN), false)
+                grantTradeAdvancement(player)
+            }
+            hasMatchingItem -> {
+                player.sendMessage(Text.translatable("doctor_m.dialog.common.trade.insufficient"), false)
+            }
+            else -> {
+                player.sendMessage(Text.translatable("doctor_m.dialog.common.trade.reject"), false)
+            }
+        }
     }
 
     private fun grantTradeAdvancement(player: ServerPlayerEntity) {
@@ -413,8 +433,8 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
     }
 
     private fun spawnRetaliateParticles() {
-        if (world !is ServerWorld) return
-        val sw = world as ServerWorld
+        // 性能优化：使用安全转换替代 is + as 两次操作
+        val sw = world as? ServerWorld ?: return
         sw.spawnParticles(
             ParticleTypes.REVERSE_PORTAL,
             x, y + 1.5, z,

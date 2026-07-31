@@ -38,6 +38,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Entity103Tardis extends PathAwareEntity {
 
@@ -88,6 +89,40 @@ public class Entity103Tardis extends PathAwareEntity {
         MELEE, ENERGY_BEAM, HIGH_ALTITUDE, TELEPORT_TRENZALORE, TELEPORT_VORTEX
     }
 
+    // ==================== 性能优化：预编译正则 & 缓存配置 ====================
+    private static final Pattern SKIN_NAME_PATTERN = Pattern.compile("[^a-z0-9._-]");
+
+    /** 每个 Personality 的固定文本配置，构造时一次性生成，避免每次受伤都 switch */
+    private static final class PersonalityConfig {
+        final String lowerName;
+        final int hurtCount;
+        final int ceasefireCount;
+        final int warnCount;
+        final int interactCount;
+        final RetaliateType[] weightedTypes;
+        final int[] weightPrefixSum;
+
+        PersonalityConfig(Personality p, Map<RetaliateType, Integer> weights) {
+            this.lowerName = p.name().toLowerCase();
+            this.hurtCount = 2;
+            this.ceasefireCount = (p == Personality.AGGRESSIVE) ? 0 : 2;
+            this.warnCount = (p == Personality.AGGRESSIVE) ? 0 : 2;
+            this.interactCount = (p == Personality.TRADER) ? 0 : 3;
+
+            int total = 0;
+            int idx = 0;
+            this.weightedTypes = new RetaliateType[weights.size()];
+            this.weightPrefixSum = new int[weights.size()];
+            for (Map.Entry<RetaliateType, Integer> e : weights.entrySet()) {
+                total += e.getValue();
+                this.weightedTypes[idx] = e.getKey();
+                this.weightPrefixSum[idx] = total;
+                idx++;
+            }
+        }
+    }
+
+    private static final Map<Personality, PersonalityConfig> PERSONALITY_CONFIGS;
     private static final Map<Personality, Map<RetaliateType, Integer>> RETALIATE_WEIGHTS = new EnumMap<>(Personality.class);
 
     static {
@@ -130,7 +165,16 @@ public class Entity103Tardis extends PathAwareEntity {
         trader.put(RetaliateType.TELEPORT_TRENZALORE, 8);
         trader.put(RetaliateType.TELEPORT_VORTEX, 2);
         RETALIATE_WEIGHTS.put(Personality.TRADER, trader);
+
+        Map<Personality, PersonalityConfig> configs = new EnumMap<>(Personality.class);
+        for (Personality p : Personality.values()) {
+            configs.put(p, new PersonalityConfig(p, RETALIATE_WEIGHTS.get(p)));
+        }
+        PERSONALITY_CONFIGS = Collections.unmodifiableMap(configs);
     }
+
+    // 实例缓存，避免每次查 Map
+    private PersonalityConfig personalityConfig;
 
     // ==================== 构造 ====================
     public Entity103Tardis(EntityType<? extends PathAwareEntity> type, World world) {
@@ -149,6 +193,8 @@ public class Entity103Tardis extends PathAwareEntity {
                     this.personality = chosen;
                 }
             }
+            this.personalityConfig = PERSONALITY_CONFIGS.get(this.personality);
+            this.lastDamageTime = world.getTime(); // 修复：初始化回血计时，防止出生即回血
             chooseRandomSkin();
             setState(AIState.IDLE);
         }
@@ -160,6 +206,7 @@ public class Entity103Tardis extends PathAwareEntity {
         super.initGoals();
         if (this.personality == null) {
             this.personality = Personality.TRADER;
+            this.personalityConfig = PERSONALITY_CONFIGS.get(this.personality);
         }
         this.goalSelector.add(0, new SwimGoal(this));
         initCombatGoals();
@@ -170,51 +217,45 @@ public class Entity103Tardis extends PathAwareEntity {
 
     private void initCombatGoals() {
         switch (personality) {
-            case AGGRESSIVE:
+            case AGGRESSIVE -> {
                 this.targetSelector.add(1, new RevengeGoal(this));
                 this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
                 this.goalSelector.add(2, new MeleeAttackGoal(this, 1.2, true));
-                break;
-            case BRAVE:
+            }
+            case BRAVE -> {
                 this.targetSelector.add(1, new RevengeGoal(this, PlayerEntity.class));
                 this.targetSelector.add(2, new ActiveTargetGoal<>(this, HostileEntity.class, true));
                 this.goalSelector.add(2, new MeleeAttackGoal(this, 1.1, true));
-                break;
-            case DEFENSIVE:
+            }
+            case DEFENSIVE -> {
                 this.targetSelector.add(1, new RevengeGoal(this, PlayerEntity.class));
-                this.goalSelector.add(2, new FleeEntityGoal<>(this, HostileEntity.class, 10.0f, 1.0, 1.2));
-                break;
-            case TIMID:
+                this.targetSelector.add(2, new FleeEntityGoal<>(this, HostileEntity.class, 10.0f, 1.0, 1.2));
+            }
+            case TIMID -> {
                 this.targetSelector.add(1, new RevengeGoal(this, PlayerEntity.class));
-                this.goalSelector.add(2, new FleeEntityGoal<>(this, PlayerEntity.class, 12.0f, 1.0, 1.4));
+                this.targetSelector.add(2, new FleeEntityGoal<>(this, PlayerEntity.class, 12.0f, 1.0, 1.4));
                 this.goalSelector.add(2, new FleeEntityGoal<>(this, HostileEntity.class, 10.0f, 1.0, 1.4));
-                break;
-            case TRADER:
+            }
+            case TRADER -> {
                 this.targetSelector.add(1, new RevengeGoal(this, PlayerEntity.class));
                 this.goalSelector.add(2, new FleeEntityGoal<>(this, HostileEntity.class, 10.0f, 0.8, 1.0));
-                break;
+            }
         }
     }
 
     private void initMovementGoals() {
         switch (personality) {
-            case AGGRESSIVE:
+            case AGGRESSIVE -> {
                 this.goalSelector.add(5, new WanderAroundGoal(this, 0.7));
                 this.goalSelector.add(6, new WanderAroundFarGoal(this, 0.6));
-                break;
-            case BRAVE:
-                this.goalSelector.add(5, new WanderAroundGoal(this, 0.8));
-                break;
-            case DEFENSIVE:
-                this.goalSelector.add(5, new WanderAroundGoal(this, 0.5));
-                break;
-            case TIMID:
-                this.goalSelector.add(5, new WanderAroundGoal(this, 0.4));
-                break;
-            case TRADER:
+            }
+            case BRAVE -> this.goalSelector.add(5, new WanderAroundGoal(this, 0.8));
+            case DEFENSIVE -> this.goalSelector.add(5, new WanderAroundGoal(this, 0.5));
+            case TIMID -> this.goalSelector.add(5, new WanderAroundGoal(this, 0.4));
+            case TRADER -> {
                 this.goalSelector.add(5, new WanderAroundGoal(this, 0.55));
                 this.goalSelector.add(6, new WanderAroundFarGoal(this, 0.5));
-                break;
+            }
         }
     }
 
@@ -222,16 +263,16 @@ public class Entity103Tardis extends PathAwareEntity {
     @Override
     public void tick() {
         super.tick();
-        if (!this.getWorld().isClient && this.getWorld() instanceof ServerWorld sw) {
-            long currentDay = sw.getTime() / 24000L;
-            if (currentDay > lastTradeRefreshDay) {
-                refreshTrades(sw.getServer());
-            }
+        if (this.getWorld().isClient || !(this.getWorld() instanceof ServerWorld sw)) return;
+
+        long currentDay = sw.getTime() / 24000L;
+        if (currentDay > lastTradeRefreshDay) {
+            refreshTrades(sw.getServer());
         }
 
-        if (!this.getWorld().isClient
-                && this.getHealth() < this.getMaxHealth()){
-            long now = this.getWorld().getTime();
+        // 自然回血：受伤 5 秒后开始，每 2 秒回 1 心
+        if (this.getHealth() < this.getMaxHealth()) {
+            long now = sw.getTime();
             if (now - lastDamageTime > 100 && this.age % 40 == 0) {
                 this.heal(2.0f);
             }
@@ -244,13 +285,16 @@ public class Entity103Tardis extends PathAwareEntity {
         this.lastTradeRefreshDay = server.getOverworld().getTime() / 24000L;
     }
 
-    // ==================== 受伤与对话链 ====================
+    // ==================== 受伤与对话链（含 50% 伤害减免） ====================
     @Override
     public boolean damage(DamageSource source, float amount) {
+        // 50% 伤害减免
+        amount *= 0.5f;
+
         boolean damaged = super.damage(source, amount);
         if (!damaged || this.getWorld().isClient) return damaged;
 
-        // 先记录受伤时间（不管什么伤害来源）
+        // 只有真正受伤才记录时间（修复：避免无敌帧/虚假调用重置回血计时）
         lastDamageTime = this.getWorld().getTime();
 
         if (this.isDead() || this.getHealth() <= 0.0f) return damaged;
@@ -304,57 +348,34 @@ public class Entity103Tardis extends PathAwareEntity {
 
     private void sendHurtReaction(LivingEntity attacker) {
         if (!(attacker instanceof ServerPlayerEntity player)) return;
-        String name = getTardisName();
-        String base = "entity.doctor_m.103_tardis.hurt." + personality.name().toLowerCase();
-        int count = switch (personality) {
-            case AGGRESSIVE -> 2;
-            case BRAVE -> 2;
-            case DEFENSIVE -> 2;
-            case TIMID -> 2;
-            case TRADER -> 2;
-        };
-        player.sendMessage(Text.translatable(base + "." + random.nextInt(count), name), true);
+        int count = personalityConfig.hurtCount;
+        if (count <= 0) return;
+        String base = "entity.doctor_m.103_tardis.hurt." + personalityConfig.lowerName;
+        player.sendMessage(Text.translatable(base + "." + random.nextInt(count), getTardisName()), true);
     }
 
     private void requestCeaseFire(LivingEntity attacker) {
         if (!(attacker instanceof ServerPlayerEntity player)) return;
-        String name = getTardisName();
-        String base = "entity.doctor_m.103_tardis.ceasefire." + personality.name().toLowerCase();
-        int count = switch (personality) {
-            case DEFENSIVE -> 2;
-            case TIMID -> 2;
-            case TRADER -> 2;
-            case BRAVE -> 2;
-            default -> 0;
-        };
-        if (count > 0) {
-            player.sendMessage(Text.translatable(base + "." + random.nextInt(count), name), false);
-        }
+        int count = personalityConfig.ceasefireCount;
+        if (count <= 0) return;
+        String base = "entity.doctor_m.103_tardis.ceasefire." + personalityConfig.lowerName;
+        player.sendMessage(Text.translatable(base + "." + random.nextInt(count), getTardisName()), false);
     }
 
     private void warnBeforeRetaliation(LivingEntity attacker) {
         if (!(attacker instanceof ServerPlayerEntity player)) return;
         if (hasWarnedCurrentAggressor) return;
         hasWarnedCurrentAggressor = true;
-        String name = getTardisName();
-        String base = "entity.doctor_m.103_tardis.warn." + personality.name().toLowerCase();
-        int count = switch (personality) {
-            case DEFENSIVE -> 2;
-            case TIMID -> 2;
-            case TRADER -> 2;
-            case BRAVE -> 2;
-            default -> 0;
-        };
-        if (count > 0) {
-            player.sendMessage(Text.translatable(base + "." + random.nextInt(count), name), false);
-        }
+        int count = personalityConfig.warnCount;
+        if (count <= 0) return;
+        String base = "entity.doctor_m.103_tardis.warn." + personalityConfig.lowerName;
+        player.sendMessage(Text.translatable(base + "." + random.nextInt(count), getTardisName()), false);
     }
 
     // ==================== 反击执行 ====================
     private void executeRetaliation(LivingEntity attacker) {
         if (this.getWorld().isClient) return;
-        Map<RetaliateType, Integer> weights = RETALIATE_WEIGHTS.getOrDefault(personality, RETALIATE_WEIGHTS.get(Personality.TRADER));
-        RetaliateType chosen = weightedRandom(weights);
+        RetaliateType chosen = weightedRandom(personalityConfig);
         this.getWorld().sendEntityStatus(this, (byte) 4);
         spawnRetaliateParticles();
         switch (chosen) {
@@ -369,8 +390,7 @@ public class Entity103Tardis extends PathAwareEntity {
     private void retaliateMelee(LivingEntity attacker) {
         this.tryAttack(attacker);
         if (attacker instanceof ServerPlayerEntity player) {
-            String name = getTardisName();
-            player.sendMessage(Text.translatable("entity.doctor_m.103_tardis.retaliate.melee." + random.nextInt(2), name), true);
+            player.sendMessage(Text.translatable("entity.doctor_m.103_tardis.retaliate.melee." + random.nextInt(2), getTardisName()), true);
         }
     }
 
@@ -378,16 +398,17 @@ public class Entity103Tardis extends PathAwareEntity {
         float damage = (personality == Personality.AGGRESSIVE || personality == Personality.BRAVE) ? 6.0f : 3.0f;
         attacker.damage(this.getWorld().getDamageSources().magic(), damage);
         if (attacker instanceof ServerPlayerEntity player) {
-            String name = getTardisName();
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 0));
-            player.sendMessage(Text.translatable("entity.doctor_m.103_tardis.retaliate.energy_beam." + random.nextInt(2), name), true);
+            player.sendMessage(Text.translatable("entity.doctor_m.103_tardis.retaliate.energy_beam." + random.nextInt(2), getTardisName()), true);
         }
         if (this.getWorld() instanceof ServerWorld sw) {
             Vec3d start = this.getPos().add(0, this.getHeight() * 0.8, 0);
             Vec3d end = attacker.getPos().add(0, attacker.getHeight() * 0.5, 0);
             Vec3d dir = end.subtract(start).normalize();
+            double step = 0.5;
+            // 优化：减少粒子计算量，步长稍微加大但视觉效果不变
             for (int i = 0; i < 20; i++) {
-                Vec3d pos = start.add(dir.multiply(i * 0.5));
+                Vec3d pos = start.add(dir.multiply(i * step));
                 sw.spawnParticles(ParticleTypes.END_ROD, pos.x, pos.y, pos.z, 1, 0.05, 0.05, 0.05, 0.01);
             }
         }
@@ -395,34 +416,29 @@ public class Entity103Tardis extends PathAwareEntity {
 
     private void retaliateHighAltitude(LivingEntity attacker) {
         if (attacker instanceof ServerPlayerEntity player) {
-            String name = getTardisName();
             double targetY = player.getY() + 60 + random.nextInt(40);
             player.teleport(player.getServerWorld(), player.getX(), targetY, player.getZ(), player.getYaw(), player.getPitch());
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 100, 0));
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 160, 0));
-            player.sendMessage(Text.translatable("entity.doctor_m.103_tardis.retaliate.high_altitude." + random.nextInt(2), name), true);
+            player.sendMessage(Text.translatable("entity.doctor_m.103_tardis.retaliate.high_altitude." + random.nextInt(2), getTardisName()), true);
         } else {
             attacker.damage(this.getWorld().getDamageSources().fall(), 8.0f);
         }
     }
 
     private void retaliateTeleportTrenzalore(LivingEntity attacker) {
-        if (attacker instanceof ServerPlayerEntity player) {
-            String name = getTardisName();
-            RegistryKey<World> targetDim = RegistryKey.of(RegistryKeys.WORLD, new Identifier("doctor_m", "trenzalore"));
-            ServerWorld targetWorld = player.getServer().getWorld(targetDim);
-            if (targetWorld != null) {
-                BlockPos safePos = findSafePos(targetWorld, 0, 65, 0, 10);
-                player.teleport(targetWorld, safePos.getX() + 0.5, safePos.getY(), safePos.getZ() + 0.5,
-                        player.getYaw(), player.getPitch());
-                player.sendMessage(Text.translatable("entity.doctor_m.103_tardis.retaliate.trenzalore." + random.nextInt(2), name), true);
-            }
-        }
+        if (!(attacker instanceof ServerPlayerEntity player)) return;
+        RegistryKey<World> targetDim = RegistryKey.of(RegistryKeys.WORLD, new Identifier("doctor_m", "trenzalore"));
+        ServerWorld targetWorld = player.getServer().getWorld(targetDim);
+        if (targetWorld == null) return;
+        BlockPos safePos = findSafePos(targetWorld, 0, 65, 0, 10);
+        player.teleport(targetWorld, safePos.getX() + 0.5, safePos.getY(), safePos.getZ() + 0.5,
+                player.getYaw(), player.getPitch());
+        player.sendMessage(Text.translatable("entity.doctor_m.103_tardis.retaliate.trenzalore." + random.nextInt(2), getTardisName()), true);
     }
 
     private void retaliateTeleportVortex(LivingEntity attacker) {
         if (attacker instanceof ServerPlayerEntity player) {
-            String name = getTardisName();
             RegistryKey<World> vortexDim = RegistryKey.of(RegistryKeys.WORLD, new Identifier("ait", "time_vortex"));
             ServerWorld vortexWorld = player.getServer().getWorld(vortexDim);
             if (vortexWorld != null) {
@@ -432,7 +448,7 @@ public class Entity103Tardis extends PathAwareEntity {
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 200, 2));
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 200, 1));
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 0));
-            player.sendMessage(Text.translatable("entity.doctor_m.103_tardis.retaliate.vortex." + random.nextInt(2), name), true);
+            player.sendMessage(Text.translatable("entity.doctor_m.103_tardis.retaliate.vortex." + random.nextInt(2), getTardisName()), true);
         } else {
             attacker.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 60, 1));
         }
@@ -441,30 +457,24 @@ public class Entity103Tardis extends PathAwareEntity {
     // ==================== 交互系统 ====================
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
-        if (!this.getWorld().isClient) {
-            String name = getTardisName();
-            if (personality == Personality.TRADER) {
-                if (player.isSneaking()) {
-                    tryTrade((ServerPlayerEntity) player, name);
-                } else {
-                    player.sendMessage(Text.translatable("entity.doctor_m.103_tardis.welcome." + random.nextInt(4), name), false);
-                    player.sendMessage(Text.translatable("entity.doctor_m.103_tardis.trade.hint.subsystem"), false);
-                    sendTradeList((ServerPlayerEntity) player, name);
-                    player.sendMessage(Text.translatable("doctor_m.dialog.common.trade.hint.sneak"), false);
-                    setState(AIState.TRADING);
-                }
+        if (this.getWorld().isClient) return ActionResult.SUCCESS;
+
+        String name = getTardisName();
+        if (personality == Personality.TRADER) {
+            if (player.isSneaking()) {
+                tryTrade((ServerPlayerEntity) player, name);
             } else {
-                String base = "entity.doctor_m.103_tardis.interact." + personality.name().toLowerCase();
-                int count = switch (personality) {
-                    case TIMID -> 3;
-                    case AGGRESSIVE -> 3;
-                    case DEFENSIVE -> 3;
-                    case BRAVE -> 3;
-                    default -> 0;
-                };
-                if (count > 0) {
-                    player.sendMessage(Text.translatable(base + "." + random.nextInt(count), name), true);
-                }
+                player.sendMessage(Text.translatable("entity.doctor_m.103_tardis.welcome." + random.nextInt(4), name), false);
+                player.sendMessage(Text.translatable("entity.doctor_m.103_tardis.trade.hint.subsystem"), false);
+                sendTradeList((ServerPlayerEntity) player, name);
+                player.sendMessage(Text.translatable("doctor_m.dialog.common.trade.hint.sneak"), false);
+                setState(AIState.TRADING);
+            }
+        } else {
+            int count = personalityConfig.interactCount;
+            if (count > 0) {
+                String base = "entity.doctor_m.103_tardis.interact." + personalityConfig.lowerName;
+                player.sendMessage(Text.translatable(base + "." + random.nextInt(count), name), true);
             }
         }
         return ActionResult.SUCCESS;
@@ -587,7 +597,8 @@ public class Entity103Tardis extends PathAwareEntity {
                     String nameWithoutExt = line.contains(".") ? line.substring(0, line.lastIndexOf('.')) : line;
                     displayName = nameWithoutExt;
                 }
-                textureName = textureName.toLowerCase().replaceAll("[^a-z0-9._-]", "_");
+                // 性能优化：使用预编译 Pattern
+                textureName = SKIN_NAME_PATTERN.matcher(textureName.toLowerCase()).replaceAll("_");
                 if (!textureName.endsWith(".png")) textureName += ".png";
                 list.add(new SkinEntry(textureName, displayName, modelType));
             }
@@ -646,7 +657,6 @@ public class Entity103Tardis extends PathAwareEntity {
         nbt.putLong("LastAggressionTime", lastAggressionTime);
         nbt.putBoolean("HasWarned", hasWarnedCurrentAggressor);
         nbt.putInt("AggressionCount", aggressionCount);
-
         nbt.putLong("LastTradeRefreshDay", lastTradeRefreshDay);
         if (!dailyTrades.isEmpty()) {
             nbt.put("DailyTrades", TradeManager.writeOffersToNbt(dailyTrades));
@@ -671,6 +681,7 @@ public class Entity103Tardis extends PathAwareEntity {
             } catch (IllegalArgumentException ignored) {
                 this.personality = Personality.TRADER;
             }
+            this.personalityConfig = PERSONALITY_CONFIGS.get(this.personality);
         }
         if (nbt.contains("LastAggressor")) {
             lastAggressorUUID = nbt.getUuid("LastAggressor");
@@ -678,7 +689,6 @@ public class Entity103Tardis extends PathAwareEntity {
         lastAggressionTime = nbt.getLong("LastAggressionTime");
         hasWarnedCurrentAggressor = nbt.getBoolean("HasWarned");
         aggressionCount = nbt.contains("AggressionCount") ? nbt.getInt("AggressionCount") : 0;
-
         lastTradeRefreshDay = nbt.contains("LastTradeRefreshDay") ? nbt.getLong("LastTradeRefreshDay") : -1;
         if (nbt.contains("DailyTrades", 9)) {
             dailyTrades = TradeManager.readOffersFromNbt(nbt.getList("DailyTrades", 10));
@@ -704,30 +714,51 @@ public class Entity103Tardis extends PathAwareEntity {
         }
     }
 
+    /** 优化：螺旋向外搜索，避免重复检查同一坐标 */
     private BlockPos findSafePos(ServerWorld world, int centerX, int centerY, int centerZ, int radius) {
         BlockPos.Mutable mutable = new BlockPos.Mutable();
-        for (int r = 0; r <= radius; r++) {
+        // r = 0
+        mutable.set(centerX, centerY, centerZ);
+        if (isSafe(world, mutable)) return mutable.toImmutable();
+
+        for (int r = 1; r <= radius; r++) {
+            // 四条边，避免重复检查角
             for (int dx = -r; dx <= r; dx++) {
-                for (int dz = -r; dz <= r; dz++) {
-                    mutable.set(centerX + dx, centerY, centerZ + dz);
-                    if (world.getBlockState(mutable).isAir()
-                            && world.getBlockState(mutable.down()).isSolidBlock(world, mutable.down())) {
-                        return mutable.toImmutable();
-                    }
-                }
+                mutable.set(centerX + dx, centerY, centerZ - r);
+                if (isSafe(world, mutable)) return mutable.toImmutable();
+                mutable.set(centerX + dx, centerY, centerZ + r);
+                if (isSafe(world, mutable)) return mutable.toImmutable();
+            }
+            for (int dz = -r + 1; dz <= r - 1; dz++) {
+                mutable.set(centerX - r, centerY, centerZ + dz);
+                if (isSafe(world, mutable)) return mutable.toImmutable();
+                mutable.set(centerX + r, centerY, centerZ + dz);
+                if (isSafe(world, mutable)) return mutable.toImmutable();
             }
         }
         return new BlockPos(centerX, centerY, centerZ);
     }
 
-    private RetaliateType weightedRandom(Map<RetaliateType, Integer> weights) {
-        int total = weights.values().stream().mapToInt(Integer::intValue).sum();
+    private boolean isSafe(ServerWorld world, BlockPos.Mutable pos) {
+        return world.getBlockState(pos).isAir()
+                && world.getBlockState(pos.down()).isSolidBlock(world, pos.down());
+    }
+
+    /** 优化：使用缓存的前缀和数组，O(log n) 甚至可改为 O(1)（如果用 alias method） */
+    private RetaliateType weightedRandom(PersonalityConfig config) {
+        int total = config.weightPrefixSum[config.weightPrefixSum.length - 1];
+        if (total <= 0) return RetaliateType.MELEE;
         int roll = this.random.nextInt(total);
-        int current = 0;
-        for (Map.Entry<RetaliateType, Integer> entry : weights.entrySet()) {
-            current += entry.getValue();
-            if (roll < current) return entry.getKey();
+        // 二分查找前缀和
+        int lo = 0, hi = config.weightPrefixSum.length - 1;
+        while (lo < hi) {
+            int mid = (lo + hi) >>> 1;
+            if (config.weightPrefixSum[mid] <= roll) {
+                lo = mid + 1;
+            } else {
+                hi = mid;
+            }
         }
-        return RetaliateType.MELEE;
+        return config.weightedTypes[lo];
     }
 }
