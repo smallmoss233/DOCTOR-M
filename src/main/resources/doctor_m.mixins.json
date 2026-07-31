@@ -17,6 +17,7 @@
     "aitmixin.MixinAITMod",
     "aitmixin.MixinInteriorTeleporterItem",
     "aitmixin.SelfDestructHandlerMixin",
+    "MixinSequenceRegistry",
     "sonic_mode.ScanningSonicOverloadMixin",
     "sonic_mode.OverloadSonicModeMixin",
     "sonic_mode.TardisSonicModeMixin",
