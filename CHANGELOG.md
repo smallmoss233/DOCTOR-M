@@ -49,6 +49,8 @@
    激光：持续性的激光 / Laser: Continuous laser beam.
    冲击波：推开周围生物，冷却5s / Shockwave: Pushes nearby mobs away, 5s cooldown.
 
+---
+
 ### 修复 / Repair
 
 -  fabric.mod.json中贡献者:今悄修改为：贡献者:Siletonight / In fabric.mod.json, change the contributor from "今悄" to "Siletonight".
