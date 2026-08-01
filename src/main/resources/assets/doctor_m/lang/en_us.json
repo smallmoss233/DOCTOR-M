@@ -47,6 +47,7 @@
   "item.doctor_m.shield_core": "Shield Generator",
   "item.doctor_m.energy_upgrade_module": "Energy Expansion Module",
   "item.doctor_m.regeneration_module": "Energy Regeneration Core",
+  "item.doctor_m.force_field_shield": "Force Field Shield",
 
   "block.doctor_m.oxygen_charger": "Oxygen Recharger",
 
@@ -293,6 +294,10 @@
   "message.tooltip.doctor_m.removed_upgrade": "Hold an interaction-mode Sonic Screwdriver in off-hand and the Sonic Screwdriver in main hand, then sneak + right-click to remove.",
   "message.tooltip.doctor_m.energy_upgrade.desc": "Increases the Sonic Screwdriver's maximum energy capacity when installed.",
   "message.tooltip.doctor_m.regeneration_module.desc": "Lowers the maximum energy capacity but slowly regenerates energy over time.",
+  "message.doctor_m.force_field_shield.energy": "Force Field Energy: %d / %d",
+  "message.doctor_m.force_field_shield.detail": "§7Hold §eRight Click§7 to deploy a force field shield, incinerating projectiles and pushing away nearby entities.*§7Releasing Right Click triggers a brief cooldown, during which only basic blocking is provided.*§7When energy is depleted, the shield must be fully recharged before it can be deployed again.",
+  "message.doctor_m.force_field_shield.active": "Force Field Active",
+  "message.doctor_m.force_field_shield.blocking": "Shield Blocking",
 
   "dimension.doctor_m.trenzalore": "§3Trenzalore",
   "dimension.doctor_m.titan": "Saturn VI-Titan"

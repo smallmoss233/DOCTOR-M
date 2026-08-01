@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
@@ -20,7 +21,7 @@ public class ShieldCoreItem extends TrinketItem {
         super(settings);
     }
 
-    // ===== 配置值的便捷访问方法（改为 public） =====
+    // ===== 配置值 =====
     public static int getMaxEnergy() {
         return ConfigManager.getConfig().shieldMaxEnergy;
     }
@@ -31,6 +32,22 @@ public class ShieldCoreItem extends TrinketItem {
 
     public static int getCostPerDamage() {
         return ConfigManager.getConfig().shieldCostPerDamage;
+    }
+
+    // ===== 能量条（耐久条样式）=====
+    @Override
+    public boolean isItemBarVisible(ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public int getItemBarStep(ItemStack stack) {
+        return Math.round((float) getEnergy(stack) * 13.0F / (float) getMaxEnergy());
+    }
+
+    @Override
+    public int getItemBarColor(ItemStack stack) {
+        return 0x00FFFF; // 青色，和力场盾牌的红色区分
     }
 
     // ===== 充能逻辑 =====
@@ -57,14 +74,18 @@ public class ShieldCoreItem extends TrinketItem {
         }
     }
 
-    // ===== 静态工具方法 =====
+    // ===== NBT 工具方法（加"值不同才写"保护，避免客户端抖动）=====
     public static int getEnergy(ItemStack stack) {
         return stack.getOrCreateNbt().getInt("Energy");
     }
 
     public static void setEnergy(ItemStack stack, int amount) {
         int maxEnergy = getMaxEnergy();
-        stack.getOrCreateNbt().putInt("Energy", Math.max(0, Math.min(amount, maxEnergy)));
+        int clamped = Math.max(0, Math.min(amount, maxEnergy));
+        NbtCompound nbt = stack.getOrCreateNbt();
+        if (nbt.getInt("Energy") != clamped) {
+            nbt.putInt("Energy", clamped);
+        }
     }
 
     public static boolean consumeEnergy(ItemStack stack, int amount) {
@@ -74,7 +95,7 @@ public class ShieldCoreItem extends TrinketItem {
         return true;
     }
 
-    // ===== 能量提示 =====
+    // ===== 提示 =====
     @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);

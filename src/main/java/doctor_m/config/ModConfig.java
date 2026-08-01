@@ -8,6 +8,16 @@ public class ModConfig {
     //TT护盾半径
     public double shieldHalfSize = 4.0;  // 护盾立方体半边长（总边长 = 2 * 此值），默认 4 格
 
+    //力场盾牌
+    public int forceFieldMaxEnergy = 1500;            // 能量上限
+    public int forceFieldDrainPerTick = 2;              // 开启时每 tick 消耗
+    public int forceFieldRechargePerTick = 1;           // 未使用时每 tick 恢复
+    public double forceFieldPushStrength = 0.25;        // 持续力场推开力度
+    public double forceFieldReleaseRadius = 5.0;        // 关闭时弹开半径
+    public double forceFieldReleaseStrength = 1.2;      // 关闭时水平弹开力度
+    public double forceFieldReleaseUpward = 0.4;        // 关闭时向上击飞力度
+    public int forceFieldCooldownTicks = 40;            // 主动关闭后冷却时间（tick，40=2秒）
+
     //护盾生成器
     public int shieldMaxEnergy = 1000;              // 护盾能量总容量
     public int shieldRechargePerTick = 1;           // 每 tick 恢复的能量

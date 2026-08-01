@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "T T",
+    "IAI",
+    "T T"
+  ],
+  "key": {
+    "T": {
+      "item": "ait:transwarp_resonator"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "A": {
+      "item": "ait:artron_collector"
+    }
+  },
+  "result": {
+    "item": "doctor_m:shield_core"
+  }
+}

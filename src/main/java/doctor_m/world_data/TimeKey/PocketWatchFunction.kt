@@ -1,6 +1,5 @@
 package doctor_m.world_data.TimeKey
 
-import com.ibm.icu.impl.Pair
 import dev.emi.trinkets.api.TrinketsApi
 import doctor_m.Item.data_itme.TimeKyeFragment.PocketWatchItem
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
@@ -38,7 +37,8 @@ object PocketWatchFunction {
             val newHealth = player.health - amount
             if (newHealth <= 0) {
                 revivePlayer(player)
-                nbt.putLong(COOLDOWN_KEY, System.currentTimeMillis() + COOLDOWN_MILLIS)
+                // ===== 修改：使用 startCooldown 写入结束时间 + 总时长，耐久条才能正确显示进度 =====
+                PocketWatchItem.startCooldown(watchStack, COOLDOWN_MILLIS)
                 return@register false
             }
             true

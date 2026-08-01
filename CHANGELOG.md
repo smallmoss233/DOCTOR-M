@@ -17,6 +17,7 @@
 -  护盾生成器，能提供99.99%的伤害减免并消耗能量，默认1000点能量，每次受伤消耗5点（可配置） / Shield Generator: Provides 99.99% damage reduction while consuming energy. Default energy capacity is 1000, and each hit consumes 5 energy (configurable)
 -  去物质枪！现在终于完成了！去物质枪会抹除击中的目标的物品栏/末影箱/成就，同时强制抹杀玩家，复活后玩家约等于重开新号（时间线级别抹除是这样的） / It's done—the De‑Mat Gun is finally finished! It wipes the target's inventory, ender chest, and achievements, and kills the player outright. When they respawn, it's like starting from scratch (that's timeline‑level erasure for you)
 -  103型塔迪斯和玛丽安NPC / Type-103-TARDIS and Marian NPC
+-  力场盾牌，长按右键展开力场护盾，焚毁弹射物并推开周围实体，松开右键后进入短暂冷却，期间仅提供基础格挡。能量耗尽后需回满才可再次开启力场。 / Force Field Shield: Hold right-click to deploy a force field, incinerating projectiles and pushing away nearby entities. Releasing right-click triggers a brief cooldown, during which only basic blocking is provided. Once energy is depleted, it must be fully recharged before the shield can be deployed again.
 
 ---
 

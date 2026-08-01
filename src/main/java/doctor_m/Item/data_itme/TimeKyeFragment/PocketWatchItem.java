@@ -29,13 +29,71 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
     private static final String OWNER_KEY = "MarkedOwner";
     private static final String CHARGES_KEY = "Charges";
 
+    // 新增：用于耐久条显示冷却总时长
+    private static final String COOLDOWN_DURATION_KEY = "PocketWatchCooldownDuration";
+
     public PocketWatchItem(Settings settings) {
         super(settings);
     }
 
+    /* ========== 复活冷却耐久条（金色）========== */
+
+    @Override
+    public boolean isItemBarVisible(ItemStack stack) {
+        return isInCooldown(stack);
+    }
+
+    @Override
+    public int getItemBarStep(ItemStack stack) {
+        long remaining = getCooldownRemaining(stack);
+        long total = getCooldownDuration(stack);
+        if (total <= 0) return 0;
+        // 显示"已恢复"比例：冷却越接近结束，条越满
+        return Math.round((float) (total - remaining) * 13.0F / (float) total);
+    }
+
+    @Override
+    public int getItemBarColor(ItemStack stack) {
+        return 0xFFD700; // 金色，怀表主题
+    }
+
+    /* ========== 冷却辅助方法 ========== */
+
+    /** 供外部调用：同时写入结束时间和总时长，这样耐久条才能正确显示进度 */
+    public static void startCooldown(ItemStack stack, long durationMillis) {
+        long end = System.currentTimeMillis() + durationMillis;
+        NbtCompound nbt = stack.getOrCreateNbt();
+        nbt.putLong(PocketWatchFunction.COOLDOWN_KEY, end);
+        nbt.putLong(COOLDOWN_DURATION_KEY, durationMillis);
+    }
+
+    private static boolean isInCooldown(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        if (nbt == null || !nbt.contains(PocketWatchFunction.COOLDOWN_KEY)) return false;
+        long end = nbt.getLong(PocketWatchFunction.COOLDOWN_KEY);
+        return System.currentTimeMillis() < end;
+    }
+
+    private static long getCooldownRemaining(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        if (nbt == null || !nbt.contains(PocketWatchFunction.COOLDOWN_KEY)) return 0;
+        long end = nbt.getLong(PocketWatchFunction.COOLDOWN_KEY);
+        return Math.max(0, end - System.currentTimeMillis());
+    }
+
+    private static long getCooldownDuration(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        if (nbt == null || !nbt.contains(COOLDOWN_DURATION_KEY)) {
+            // 兼容旧物品：如果没有总时长，返回剩余时间，让条显示为满（表示刚开始）
+            return getCooldownRemaining(stack);
+        }
+        return nbt.getLong(COOLDOWN_DURATION_KEY);
+    }
+
+    /* ========== 原有 use 方法（不变）========== */
+
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        // 没装 timelordregen → 走默认行为（就当普通物品右键）
         if (!TimelordRegenCompat.isLoaded()) {
             return super.use(world, user, hand);
         }
@@ -47,14 +105,12 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
             return TypedActionResult.success(stack);
         }
 
-        // 不是时间领主
         if (!TimelordRegenCompat.isTimelord(user)) {
             world.playSound(null, user.getX(), user.getY(), user.getZ(),
                     SoundEvents.ENTITY_WITHER_SPAWN, user.getSoundCategory(), 1.0F, 1.0F);
             return TypedActionResult.fail(stack);
         }
 
-        // 所有权检查
         UUID owner = getOwner(stack);
         if (owner != null && !owner.equals(user.getUuid())) {
             world.playSound(null, user.getX(), user.getY(), user.getZ(),
@@ -62,7 +118,6 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
             return TypedActionResult.fail(stack);
         }
 
-        // 首次使用标记主人
         if (owner == null) {
             markOwner(stack, user);
         }
@@ -78,23 +133,19 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
 
         int transferable;
         if (charges > usesLeft) {
-            // 怀表次数多 → 传给玩家
             transferable = Math.min(charges - usesLeft, max - usesLeft);
             charges -= transferable;
             usesLeft += transferable;
         } else if (usesLeft > charges) {
-            // 玩家次数多 → 传给怀表
             transferable = Math.min(usesLeft - charges, max - charges);
             usesLeft -= transferable;
             charges += transferable;
         } else {
-            // 两边相等，无需传输
             world.playSound(null, user.getX(), user.getY(), user.getZ(),
                     SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), user.getSoundCategory(), 0.5F, 1.0F);
             return TypedActionResult.success(stack, false);
         }
 
-        // 应用变更
         info.setUsesLeft(usesLeft);
         setCharges(stack, charges);
 
@@ -104,11 +155,12 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
         return TypedActionResult.success(stack, false);
     }
 
+    /* ========== 提示（不变）========== */
+
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         NbtCompound nbt = stack.getNbt();
 
-        // ========== 联动提示：只有装了 timelordregen 才显示 ==========
         if (FabricLoader.getInstance().isModLoaded("timelordregen")) {
             int charges = (nbt != null && nbt.contains(CHARGES_KEY)) ? nbt.getInt(CHARGES_KEY) : 0;
             int max = TimelordRegenCompat.getMaxRegenerations();
@@ -128,7 +180,6 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
             tooltip.add(Text.translatable("item.timelordregen.pocket_watch.desc")
                     .setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY).withItalic(true)));
         }
-        // ===========================================================
 
         // 原有的冷却时间显示
         if (nbt != null && nbt.contains(PocketWatchFunction.COOLDOWN_KEY)) {
@@ -144,7 +195,6 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
             }
         }
 
-        // 原有的说明文字
         Text longDescription = Text.translatable("message.doctor_m.pocket_watch.tip");
         TooltipHelper.addWrappedTooltip(tooltip, longDescription);
         ShiftTooltipInvoker.addShiftTooltip(tooltip,
@@ -152,7 +202,7 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
         );
     }
 
-    // ---------- NBT 辅助 ----------
+    // ---------- NBT 辅助（不变）----------
     private static void markOwner(ItemStack stack, PlayerEntity p) {
         stack.getOrCreateNbt().putUuid(OWNER_KEY, p.getUuid());
     }

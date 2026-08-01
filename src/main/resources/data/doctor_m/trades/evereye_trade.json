@@ -50,6 +50,20 @@
       "output": "doctor_m:regeneration_module",
       "outputCount": 1,
       "maxUses": 1
+    },
+    {
+      "input": "ait:blueprint",
+      "inputCount": 1,
+      "output": "doctor_m:force_field_shield",
+      "outputCount": 1,
+      "maxUses": 1
+    },
+    {
+      "input": "minecraft:gold_ingot",
+      "inputCount": 18,
+      "output": "doctor_m:shield_core",
+      "outputCount": 1,
+      "maxUses": 1
     }
   ]
 }

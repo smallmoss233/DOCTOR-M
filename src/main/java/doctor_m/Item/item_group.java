@@ -31,6 +31,7 @@ public static void registerItems() {
                                 entries.add(SHIELD_CORE);
                                 entries.add(ENERGY_UPGRADE_MODULE);
                                 entries.add(REGENERATION_MODULE);
+                                entries.add(FORCE_FIELD_SHIELD);
                             })
                             .build());
         }

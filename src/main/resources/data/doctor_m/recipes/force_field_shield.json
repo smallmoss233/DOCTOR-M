@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DAD",
+    "EBE",
+    "DCD"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "ait:shields_circuit"
+    },
+    "C": {
+      "item": "ait:artron_collector"
+    },
+    "D": {
+      "item": "minecraft:netherite_scrap"
+    },
+    "E": {
+      "item": "minecraft:netherite_ingot"
+    }
+  },
+  "result": {
+    "item": "doctor_m:force_field_shield"
+  }
+}

@@ -1,10 +1,7 @@
 package doctor_m.Item;
 
 import dev.amble.lib.container.impl.ItemContainer;
-import doctor_m.Item.data_itme.DeMatGunItem;
-import doctor_m.Item.data_itme.RassilonKeyItem;
-import doctor_m.Item.data_itme.ShieldCoreItem;
-import doctor_m.Item.data_itme.TimeKeyItem;
+import doctor_m.Item.data_itme.*;
 import doctor_m.Item.data_itme.TimeKyeFragment.EternalCrystalItem;
 import doctor_m.Item.data_itme.TimeKyeFragment.PocketWatchItem;
 import doctor_m.Item.data_itme.TimeKyeFragment.RelicGemItem;
@@ -31,6 +28,7 @@ public class items extends ItemContainer {
     public static final Item SHIELD_CORE = new ShieldCoreItem(new Item.Settings().maxCount(1));
     public static final Item ENERGY_UPGRADE_MODULE = new Item(new Item.Settings().maxCount(1));
     public static final Item REGENERATION_MODULE = new Item(new Item.Settings().maxCount(1));
+    public static final Item FORCE_FIELD_SHIELD = new ForceFieldShieldItem(new Item.Settings());
 
     //氧气相关
     public static final Item OXYGEN_CHARGER_ITEM = new BlockItem(ModBlocks.OXYGEN_CHARGER, new Item.Settings());

@@ -47,6 +47,7 @@
   "item.doctor_m.shield_core": "护盾生成器",
   "item.doctor_m.energy_upgrade_module": "能量擴容模組",
   "item.doctor_m.regeneration_module": "能量再生核心",
+  "item.doctor_m.force_field_shield": "力場盾牌",
 
   "block.doctor_m.oxygen_charger": "氧氣補充機",
 
@@ -293,6 +294,10 @@
   "message.tooltip.doctor_m.removed_upgrade": "副手持交互模式起子，主手持有音速起子，潛行右鍵拆卸",
   "message.tooltip.doctor_m.energy_upgrade.desc": "安裝後提升音速起子能量上限",
   "message.tooltip.doctor_m.regeneration_module.desc": "安裝後能量上限降低，但可緩慢恢復能量",
+  "message.doctor_m.force_field_shield.energy": "力場緩存能量：%d / %d",
+  "message.doctor_m.force_field_shield.detail": "§7按住 §e右鍵 §7展開力場護盾，焚燬彈射物並推開周圍實體。*§7鬆開右鍵後進入短暫冷卻，期間僅提供基礎格擋。*§7能量耗盡後需回滿才可再次開啟力場。",
+  "message.doctor_m.force_field_shield.active": "力場已開啟",
+  "message.doctor_m.force_field_shield.blocking": "舉盾防禦",
 
   "dimension.doctor_m.trenzalore": "§3特蘭澤洛",
   "dimension.doctor_m.titan": "土衛六-泰坦"
