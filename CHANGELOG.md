@@ -48,6 +48,10 @@
    脉冲：间歇性的激光 / Pulse: Intermittent laser bursts.
    激光：持续性的激光 / Laser: Continuous laser beam.
    冲击波：推开周围生物，冷却5s / Shockwave: Pushes nearby mobs away, 5s cooldown.
+-  音速起子升级模块 / Sonic Screwdriver Upgrade Modules
+   相互冲突的起子升级，只能从103型塔迪斯和玛丽安那买到 / Conflicting upgrades that can only be purchased from the Type 103 TARDIS and Marian.
+   能量扩容模块：提升音速起子能量上限到两倍（2000点） / Energy Expansion Module: Increases the Sonic Screwdriver's maximum energy capacity to double (2000 points).
+   能量再生核心：降低起子的能量上限为500，但是音速起子能量会每5秒再生1点 / Energy Regeneration Core: Reduces the maximum energy capacity to 500, but the Sonic Screwdriver regenerates 1 point of energy every 5 seconds.
 
 ---
 

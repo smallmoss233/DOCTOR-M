@@ -28,6 +28,9 @@
   "sonic_mode.doctor_m.push": "Shockwave",
   "sonic_mode.message.doctor_m.crystal_installed": "Installed Crystal: %s",
   "sonic_mode.tooltip.doctor_m.installed_crystal": "Installed Crystal:",
+  "sonic_mode.message.doctor_m.module_installed": "Installed Module:",
+  "sonic_mode.tooltip.doctor_m.installed_module": "Module:",
+  "sonic_mode.message.doctor_m.module_removed": "Module Removed",
 
   "itemGroup.doctor_m": "DOCTOR M",
   "item.doctor_m.rassilon_key": "Key of Rassilon",
@@ -42,6 +45,8 @@
   "item.doctor_m.oxygen_charger_item": "Oxygen Recharger",
   "item.doctor_m.tlipoca_scythe": "Tlipoca's Scythe",
   "item.doctor_m.shield_core": "Shield Generator",
+  "item.doctor_m.energy_upgrade_module": "Energy Expansion Module",
+  "item.doctor_m.regeneration_module": "Energy Regeneration Core",
 
   "block.doctor_m.oxygen_charger": "Oxygen Recharger",
 
@@ -284,6 +289,10 @@
   "message.doctor_m.tlipoca_scythe.detail": "§dThe slash of the apprentice reaper's scythe can steal the souls of all living beings.",
   "message.doctor_m.shield_core.energy": "§7Energy: %s/%s",
   "message.doctor_m.de_mat_gun.detail": "§7All targets hit by the De-Mat Gun will be completely erased from the timeline* They will lose all information and items of their existence and die.",
+  "message.tooltip.doctor_m.upgrade": "Hold this module in off-hand and the Sonic Screwdriver in main hand, then sneak + right-click to install.",
+  "message.tooltip.doctor_m.removed_upgrade": "Hold an interaction-mode Sonic Screwdriver in off-hand and the Sonic Screwdriver in main hand, then sneak + right-click to remove.",
+  "message.tooltip.doctor_m.energy_upgrade.desc": "Increases the Sonic Screwdriver's maximum energy capacity when installed.",
+  "message.tooltip.doctor_m.regeneration_module.desc": "Lowers the maximum energy capacity but slowly regenerates energy over time.",
 
   "dimension.doctor_m.trenzalore": "§3Trenzalore",
   "dimension.doctor_m.titan": "Saturn VI-Titan"

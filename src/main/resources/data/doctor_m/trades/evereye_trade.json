@@ -36,6 +36,20 @@
       "outputCount": 1,
       "maxUses": 1,
       "outputNbt": "{fuel:5000.0d}"
+    },
+    {
+      "input": "ait:zeiton_shard",
+      "inputCount": 3,
+      "output": "doctor_m:energy_upgrade_module",
+      "outputCount": 1,
+      "maxUses": 1
+    },
+    {
+      "input": "ait:zeiton_shard",
+      "inputCount": 5,
+      "output": "doctor_m:regeneration_module",
+      "outputCount": 1,
+      "maxUses": 1
     }
   ]
 }

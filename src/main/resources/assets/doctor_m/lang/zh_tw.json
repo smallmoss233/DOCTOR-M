@@ -28,6 +28,9 @@
   "sonic_mode.doctor_m.push": "衝擊波",
   "sonic_mode.message.doctor_m.crystal_installed": "已安裝晶體：%s",
   "sonic_mode.tooltip.doctor_m.installed_crystal": "已安裝晶體：",
+  "sonic_mode.message.doctor_m.module_installed": "已安裝模組：",
+  "sonic_mode.tooltip.doctor_m.installed_module": "模組：",
+  "sonic_mode.message.doctor_m.module_removed": "已卸下模組",
 
   "itemGroup.doctor_m": "DOCTOR M",
   "item.doctor_m.rassilon_key": "拉斯隆之鑰",
@@ -42,6 +45,8 @@
   "item.doctor_m.oxygen_charger_item": "氧氣補充機",
   "item.doctor_m.tlipoca_scythe": "特莉波卡的鐮刀",
   "item.doctor_m.shield_core": "护盾生成器",
+  "item.doctor_m.energy_upgrade_module": "能量擴容模組",
+  "item.doctor_m.regeneration_module": "能量再生核心",
 
   "block.doctor_m.oxygen_charger": "氧氣補充機",
 
@@ -284,6 +289,10 @@
   "message.doctor_m.tlipoca_scythe.detail": "§d見習死神鐮刀的斬擊能將世間生靈的靈魂奪走",
   "message.doctor_m.shield_core.energy": "§7能量: %s/%s",
   "message.doctor_m.de_mat_gun.detail": "§7所有被去物質槍擊中的目標都會被從時間線上徹底抹除*被擊中的目標會失去存在的資訊和物品並死亡。",
+  "message.tooltip.doctor_m.upgrade": "副手持有該模組，主手持有音速起子，潛行右鍵安裝",
+  "message.tooltip.doctor_m.removed_upgrade": "副手持交互模式起子，主手持有音速起子，潛行右鍵拆卸",
+  "message.tooltip.doctor_m.energy_upgrade.desc": "安裝後提升音速起子能量上限",
+  "message.tooltip.doctor_m.regeneration_module.desc": "安裝後能量上限降低，但可緩慢恢復能量",
 
   "dimension.doctor_m.trenzalore": "§3特蘭澤洛",
   "dimension.doctor_m.titan": "土衛六-泰坦"

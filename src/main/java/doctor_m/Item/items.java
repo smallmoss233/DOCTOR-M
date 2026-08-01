@@ -27,7 +27,10 @@ public class items extends ItemContainer {
     public static final Item RELIC_GEM = new RelicGemItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
     public static final Item ETERNAL_CRYSTAL = new EternalCrystalItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
 
+    //道具
     public static final Item SHIELD_CORE = new ShieldCoreItem(new Item.Settings().maxCount(1));
+    public static final Item ENERGY_UPGRADE_MODULE = new Item(new Item.Settings().maxCount(1));
+    public static final Item REGENERATION_MODULE = new Item(new Item.Settings().maxCount(1));
 
     //氧气相关
     public static final Item OXYGEN_CHARGER_ITEM = new BlockItem(ModBlocks.OXYGEN_CHARGER, new Item.Settings());
