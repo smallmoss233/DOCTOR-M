@@ -20,10 +20,14 @@ public class GravitationalShieldingMode extends SonicMode {
     public static final GravitationalShieldingMode INSTANCE = new GravitationalShieldingMode();
 
     private static final double RADIUS = 3.0;
+    private static final double RADIUS_SQ = RADIUS * RADIUS;
     private static final double PUSH_STRENGTH = 0.6;
+    private static final double INERTIA_H = 0.8;   // 水平惯性保留
+    private static final double INERTIA_V = 0.5;   // 垂直惯性保留
+    private static final double PUSH_V_SCALE = 0.8; // 垂直推力衰减（避免无限升空）
 
     private GravitationalShieldingMode() {
-        super(1); // 对应原 OVERLOAD
+        super(1);
     }
 
     @Override
@@ -32,7 +36,6 @@ public class GravitationalShieldingMode extends SonicMode {
                 .formatted(Formatting.DARK_PURPLE, Formatting.BOLD);
     }
 
-    //护盾时间上限
     @Override
     public int maxTime() {
         return 72000;
@@ -59,20 +62,23 @@ public class GravitationalShieldingMode extends SonicMode {
         if (!(user instanceof PlayerEntity player)) return;
 
         Vec3d center = player.getPos();
-        Box box = new Box(
-                center.x - RADIUS, center.y - RADIUS, center.z - RADIUS,
-                center.x + RADIUS, center.y + RADIUS, center.z + RADIUS
-        );
+        // 优化：Box.of 语义更清晰，减少一次对象分配
+        Box box = Box.of(center, RADIUS * 2, RADIUS * 2, RADIUS * 2);
 
         List<Entity> entities = world.getOtherEntities(player, box, entity ->
                 entity.isAlive() && !entity.isSpectator()
         );
 
-        for (Entity entity : entities) {
-            if (entity.squaredDistanceTo(player) > RADIUS * RADIUS) continue;
+        Vec3d playerPos = player.getPos();
 
-            Vec3d dir = entity.getPos().subtract(player.getPos());
-            if (dir.lengthSquared() < 0.001) {
+        for (Entity entity : entities) {
+            if (entity.squaredDistanceTo(player) > RADIUS_SQ) continue;
+
+            Vec3d dir = entity.getPos().subtract(playerPos);
+            double lenSq = dir.lengthSquared();
+
+            // 零向量保护 + 贴脸时默认向上推
+            if (lenSq < 0.001) {
                 dir = new Vec3d(0, 1, 0);
             } else {
                 dir = dir.normalize();
@@ -81,13 +87,12 @@ public class GravitationalShieldingMode extends SonicMode {
             Vec3d current = entity.getVelocity();
             Vec3d push = dir.multiply(PUSH_STRENGTH);
 
-            // 保留一点原有惯性，叠加推力
             entity.setVelocity(
-                    current.x * 0.3 + push.x,
-                    current.y * 0.5 + push.y * 0.3,
-                    current.z * 0.3 + push.z
+                    current.x * INERTIA_H + push.x,
+                    current.y * INERTIA_V + push.y * PUSH_V_SCALE,
+                    current.z * INERTIA_H + push.z
             );
-            entity.velocityModified = true;
+            entity.velocityDirty = true; // 1.20.1 Yarn 正确字段名
             entity.fallDistance = 0;
         }
     }

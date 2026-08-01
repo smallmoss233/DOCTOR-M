@@ -28,6 +28,14 @@ public class GravitationalDragMode extends SonicMode {
     private static final String DRAG_TARGET_KEY = "doctor_m.drag_target_uuid";
     private static final String DRAG_DISTANCE_KEY = "doctor_m.drag_distance";
 
+    // 提取魔法数字，方便调参
+    private static final double TELEPORT_THRESHOLD_SQ = 25.0; // 5^2
+    private static final double DRAG_LERP = 0.4;
+    private static final double ANTI_GRAVITY = 0.08;
+    private static final double MAX_REACH = 10.0;
+    private static final double DIST_MIN = 2.0;
+    private static final double DIST_MAX = 5.0;
+
     private GravitationalDragMode() {
         super(0);
     }
@@ -38,7 +46,6 @@ public class GravitationalDragMode extends SonicMode {
                 .formatted(Formatting.BLUE, Formatting.BOLD);
     }
 
-    //最大牵引时间
     @Override
     public int maxTime() {
         return 72000;
@@ -56,17 +63,16 @@ public class GravitationalDragMode extends SonicMode {
 
     @Override
     public boolean startUsing(ItemStack stack, World world, PlayerEntity user, Hand hand) {
-        if (!(user instanceof PlayerEntity player)) return false;
-
-        Entity target = findTargetEntity(player, 10);
+        // 修复：user 已经是 PlayerEntity，无需重复 instanceof
+        Entity target = findTargetEntity(user, MAX_REACH);
         if (target == null) return false;
 
         if (!world.isClient()) {
             NbtCompound nbt = stack.getOrCreateNbt();
             nbt.putString(DRAG_TARGET_KEY, target.getUuidAsString());
-            nbt.putDouble(DRAG_DISTANCE_KEY, MathHelper.clamp(player.distanceTo(target), 2.0, 5.0));
+            nbt.putDouble(DRAG_DISTANCE_KEY, MathHelper.clamp(
+                    user.distanceTo(target), DIST_MIN, DIST_MAX));
         }
-
         return true;
     }
 
@@ -74,29 +80,39 @@ public class GravitationalDragMode extends SonicMode {
     public void tick(ItemStack stack, World world, LivingEntity user, int ticks, int ticksLeft) {
         if (world.isClient()) return;
         if (!(user instanceof PlayerEntity player)) return;
+        if (!(world instanceof ServerWorld serverWorld)) return;
 
-        Entity target = getDragTarget(stack, world);
+        // 性能优化：单次 NBT 读取，避免每 tick 3 次 getNbt()
+        NbtCompound nbt = stack.getNbt();
+        if (nbt == null || !nbt.contains(DRAG_TARGET_KEY, NbtCompound.STRING_TYPE)) {
+            return;
+        }
+
+        Entity target = resolveTarget(nbt, serverWorld);
         if (target == null || !target.isAlive()) {
             clearDragData(stack);
             return;
         }
 
+        double distance = nbt.contains(DRAG_DISTANCE_KEY, NbtCompound.DOUBLE_TYPE)
+                ? MathHelper.clamp(nbt.getDouble(DRAG_DISTANCE_KEY), DIST_MIN, DIST_MAX)
+                : 3.0;
+
         Vec3d eyePos = player.getCameraPosVec(1.0F);
         Vec3d lookVec = player.getRotationVec(1.0F);
-        double distance = getDragDistance(stack);
+        Vec3d targetPos = eyePos.add(lookVec.multiply(distance))
+                .subtract(0, target.getHeight() * 0.5, 0);
 
-        Vec3d targetPos = eyePos.add(lookVec.multiply(distance));
-        targetPos = targetPos.subtract(0, target.getHeight() * 0.5, 0);
+        Vec3d diff = targetPos.subtract(target.getPos());
+        double distSq = diff.lengthSquared();
 
-        Vec3d currentPos = target.getPos();
-        Vec3d diff = targetPos.subtract(currentPos);
-
-        if (diff.lengthSquared() > 25.0) {
+        if (distSq > TELEPORT_THRESHOLD_SQ) {
+            // 距离过远直接瞬移（保留朝向）
             target.teleport(targetPos.x, targetPos.y, targetPos.z);
         } else {
-            Vec3d velocity = diff.multiply(0.4).add(0, 0.08, 0);
+            Vec3d velocity = diff.multiply(DRAG_LERP).add(0, ANTI_GRAVITY, 0);
             target.setVelocity(velocity);
-            target.velocityModified = true;
+            target.velocityDirty = true; // 1.20.1 Yarn 正确字段名
         }
 
         target.fallDistance = 0;
@@ -115,43 +131,38 @@ public class GravitationalDragMode extends SonicMode {
     /* ==========================================
        内部工具方法
        ========================================== */
-    private static @Nullable Entity getDragTarget(ItemStack stack, World world) {
-        NbtCompound nbt = stack.getNbt();
-        if (nbt == null || !nbt.contains(DRAG_TARGET_KEY)) return null;
 
+    @Nullable
+    private static Entity resolveTarget(NbtCompound nbt, ServerWorld world) {
         UUID uuid;
         try {
             uuid = UUID.fromString(nbt.getString(DRAG_TARGET_KEY));
         } catch (IllegalArgumentException e) {
             return null;
         }
-
-        if (!(world instanceof ServerWorld serverWorld)) return null;
-        return serverWorld.getEntity(uuid);
-    }
-
-    private static double getDragDistance(ItemStack stack) {
-        NbtCompound nbt = stack.getNbt();
-        if (nbt == null || !nbt.contains(DRAG_DISTANCE_KEY)) return 3.0;
-        return MathHelper.clamp(nbt.getDouble(DRAG_DISTANCE_KEY), 2.0, 5.0);
+        return world.getEntity(uuid);
     }
 
     private static void clearDragData(ItemStack stack) {
         NbtCompound nbt = stack.getNbt();
-        if (nbt != null) {
-            nbt.remove(DRAG_TARGET_KEY);
-            nbt.remove(DRAG_DISTANCE_KEY);
+        if (nbt == null) return;
+        nbt.remove(DRAG_TARGET_KEY);
+        nbt.remove(DRAG_DISTANCE_KEY);
+        // 防御性：若 NBT 已空，清理空 tag 减少物品序列化体积和客户端同步开销
+        if (nbt.isEmpty()) {
+            stack.setNbt(null);
         }
     }
 
-    private static @Nullable Entity findTargetEntity(PlayerEntity player, double reach) {
+    @Nullable
+    private static Entity findTargetEntity(PlayerEntity player, double reach) {
         Vec3d eyePos = player.getCameraPosVec(1.0F);
         Vec3d lookVec = player.getRotationVec(1.0F);
         Vec3d end = eyePos.add(lookVec.multiply(reach));
 
         Box searchBox = player.getBoundingBox()
                 .stretch(lookVec.multiply(reach))
-                .expand(1.0, 1.0, 1.0);
+                .expand(1.0);
 
         EntityHitResult result = ProjectileUtil.raycast(
                 player, eyePos, end, searchBox,

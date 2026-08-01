@@ -24,9 +24,11 @@ public class PushMode extends SonicMode {
     public static final PushMode INSTANCE = new PushMode();
 
     private static final String COOLDOWN_KEY = "doctor_m.push_cooldown";
-    private static final int COOLDOWN_TICKS = 100; // 5秒
+    private static final int COOLDOWN_TICKS = 100;
     private static final double RANGE = 5.0;
+    private static final double RANGE_Y = 2.0;
     private static final double PUSH_STRENGTH = 2.8;
+    private static final double PUSH_UPWARD = 0.6;
 
     private PushMode() {
         super(2);
@@ -35,12 +37,12 @@ public class PushMode extends SonicMode {
     @Override
     public Text text() {
         return Text.translatable("sonic_mode.doctor_m.push")
-                .formatted(Formatting.YELLOW, Formatting.BOLD); // 金色
+                .formatted(Formatting.YELLOW, Formatting.BOLD);
     }
 
     @Override
     public int maxTime() {
-        return 1; // 瞬间释放
+        return 1;
     }
 
     @Override
@@ -50,24 +52,25 @@ public class PushMode extends SonicMode {
 
     @Override
     public int fuelCost() {
-        return 0; // 手动扣除，避免 usageTick 扣费逻辑干扰
+        return 0;
     }
 
     @Override
     public boolean startUsing(ItemStack stack, World world, PlayerEntity user, Hand hand) {
         if (!(user instanceof PlayerEntity player)) return false;
 
+        long now = world.getTime();
         NbtCompound nbt = stack.getOrCreateNbt();
-        long currentTick = world.getTime();
 
-        // 检查冷却
+        // 冷却检查（两端都拦，防止动画不同步）
         if (nbt.contains(COOLDOWN_KEY)) {
-            long lastUse = nbt.getLong(COOLDOWN_KEY);
-            long remaining = (lastUse + COOLDOWN_TICKS) - currentTick;
-            if (remaining > 0) {
+            long end = nbt.getLong(COOLDOWN_KEY);
+            if (now < end) {
                 if (!world.isClient()) {
-                    player.sendMessage(Text.literal("冷却中: " + (remaining / 20 + 1) + "s")
-                            .formatted(Formatting.RED), true);
+                    long sec = (end - now + 19) / 20;
+                    player.sendMessage(
+                            Text.translatable("message.doctor_m.sonic.cooldown", sec)
+                                    .formatted(Formatting.RED), true);
                 }
                 return false;
             }
@@ -75,43 +78,44 @@ public class PushMode extends SonicMode {
 
         if (world.isClient()) return true;
 
-        // 手动扣除 25 AU
+        // 手动扣费
         if (stack.getItem() instanceof ArtronHolderItem holder) {
             if (holder.getCurrentFuel(stack) < 25) {
-                player.sendMessage(Text.literal("能量不足！").formatted(Formatting.RED), true);
+                player.sendMessage(
+                        Text.translatable("message.doctor_m.sonic.insufficient_energy")
+                                .formatted(Formatting.RED), true);
                 return false;
             }
             holder.removeFuel(25, stack);
         }
 
-        // 猛地推开周围实体
+        // 推开周围实体
         Vec3d center = player.getPos();
-        Box box = new Box(
-                center.x - RANGE, center.y - 2, center.z - RANGE,
-                center.x + RANGE, center.y + 2, center.z + RANGE
-        );
+        Box box = Box.of(center, RANGE * 2, RANGE_Y * 2, RANGE * 2);
 
         List<Entity> entities = world.getOtherEntities(player, box,
                 e -> e.isAlive() && !e.isSpectator());
 
+        Vec3d playerPos = player.getPos();
+
         for (Entity entity : entities) {
-            Vec3d dir = entity.getPos().subtract(player.getPos());
-            if (dir.lengthSquared() < 0.001) {
+            Vec3d dir = entity.getPos().subtract(playerPos);
+            double lenSq = dir.lengthSquared();
+            if (lenSq < 0.001) {
                 dir = new Vec3d(0, 1, 0);
             } else {
                 dir = dir.normalize();
             }
 
-            Vec3d push = dir.multiply(PUSH_STRENGTH).add(0, 0.6, 0);
+            Vec3d push = dir.multiply(PUSH_STRENGTH).add(0, PUSH_UPWARD, 0);
             entity.setVelocity(push);
-            entity.velocityModified = true;
+            entity.velocityDirty = true; // 1.20.1 Yarn 正确字段名
             entity.fallDistance = 0;
         }
 
-        // 记录冷却
-        nbt.putLong(COOLDOWN_KEY, currentTick);
+        // 记录冷却结束时间（与 PulseMode 统一，避免时间跳跃导致异常）
+        nbt.putLong(COOLDOWN_KEY, now + COOLDOWN_TICKS);
 
-        // 音效
         world.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 0.5f, 1.5f);
 

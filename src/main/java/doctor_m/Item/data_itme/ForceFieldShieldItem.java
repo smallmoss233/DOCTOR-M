@@ -18,7 +18,6 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -33,12 +32,11 @@ public class ForceFieldShieldItem extends Item {
     private static final String COOLING_KEY = "force_field_cooling";
     private static final String COOLDOWN_KEY = "force_field_cooldown";
 
+    // 性能优化：缓存配置引用（若你的 ConfigManager 支持热重载，可去掉）
+    private static final ModConfig CONFIG = ConfigManager.getConfig();
+
     public ForceFieldShieldItem(Settings settings) {
         super(settings.maxCount(1));
-    }
-
-    private static ModConfig cfg() {
-        return ConfigManager.getConfig();
     }
 
     /* ========== 使用逻辑 ========== */
@@ -53,35 +51,26 @@ public class ForceFieldShieldItem extends Item {
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         if (world.isClient || !(user instanceof PlayerEntity player)) return;
 
-        // ===== 每秒提示一次（20 tick）=====
-        if (world.getTime() % 20 == 0) {
-            boolean fieldActive = !isCooling(stack) && getCooldown(stack) <= 0 && getEnergy(stack) > 0;
-
-            if (fieldActive) {
-                player.sendMessage(
-                        Text.translatable("message.doctor_m.force_field_shield.active")
-                                .formatted(Formatting.RED),
-                        true
-                );
-            } else {
-                player.sendMessage(
-                        Text.translatable("message.doctor_m.force_field_shield.blocking")
-                                .formatted(Formatting.GRAY),
-                        true
-                );
-            }
+        long time = world.getTime();
+        if (time % 20 == 0) {
+            boolean active = !isCooling(stack) && getCooldown(stack) <= 0 && getEnergy(stack) > 0;
+            player.sendMessage(
+                    Text.translatable(active
+                                    ? "message.doctor_m.force_field_shield.active"
+                                    : "message.doctor_m.force_field_shield.blocking")
+                            .formatted(active ? Formatting.RED : Formatting.GRAY),
+                    true
+            );
         }
 
-        // 原有逻辑：冷却/耗尽期间只格挡，不耗能不力场
         if (isCooling(stack) || getCooldown(stack) > 0) return;
 
         int energy = getEnergy(stack);
-        int drain = cfg().forceFieldDrainPerTick;
+        int drain = CONFIG.forceFieldDrainPerTick;
         if (energy >= drain) {
             int newEnergy = energy - drain;
             setEnergy(stack, newEnergy);
             applyForceFieldEffects(world, player);
-
             if (newEnergy < drain) {
                 setCooling(stack, true);
             }
@@ -95,42 +84,40 @@ public class ForceFieldShieldItem extends Item {
         super.onStoppedUsing(stack, world, user, remainingUseTicks);
         if (world.isClient || !(user instanceof PlayerEntity player)) return;
 
-        if (isCooling(stack)) return;
-        if (getCooldown(stack) > 0) return;
-        if (getEnergy(stack) <= 0) return;
+        if (isCooling(stack) || getCooldown(stack) > 0 || getEnergy(stack) <= 0) return;
 
         applyReleasePush(world, player);
-        setCooldown(stack, cfg().forceFieldCooldownTicks);
+        setCooldown(stack, CONFIG.forceFieldCooldownTicks);
     }
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         super.inventoryTick(stack, world, entity, slot, selected);
         if (world.isClient || !(entity instanceof PlayerEntity player)) return;
-
-        // ===== 核心修复：每 4 tick 处理一次，避免手持动画乱跳 =====
         if (world.getTime() % 4 != 0) return;
 
-        // 主动冷却倒计时（每 4 tick 减 4）
-        int cd = getCooldown(stack);
+        // 性能优化：批量 NBT 读写，一次 getOrCreateNbt 解决本 tick 所有字段
+        NbtCompound nbt = stack.getOrCreateNbt();
+
+        int cd = nbt.getInt(COOLDOWN_KEY);
         if (cd > 0) {
-            setCooldown(stack, cd - 4);
+            nbt.putInt(COOLDOWN_KEY, cd - 4);
         }
 
         boolean isUsingThis = player.isUsingItem() && player.getActiveItem().getItem() == this;
+        boolean cooling = nbt.getBoolean(COOLING_KEY);
 
-        // 力场正常运行中 → 不回能量
-        if (!isCooling(stack) && getCooldown(stack) <= 0 && isUsingThis) return;
+        // 力场正常运行中 → 不回能
+        if (!cooling && cd <= 0 && isUsingThis) return;
 
-        // 回能
-        int current = getEnergy(stack);
-        int max = cfg().forceFieldMaxEnergy;
+        int current = nbt.contains(ENERGY_KEY) ? nbt.getInt(ENERGY_KEY) : CONFIG.forceFieldMaxEnergy;
+        int max = CONFIG.forceFieldMaxEnergy;
         if (current < max) {
-            int newEnergy = Math.min(max, current + cfg().forceFieldRechargePerTick * 4);
+            int newEnergy = Math.min(max, current + CONFIG.forceFieldRechargePerTick * 4);
             if (newEnergy != current) {
-                setEnergy(stack, newEnergy);
-                if (newEnergy >= max && isCooling(stack)) {
-                    setCooling(stack, false);
+                nbt.putInt(ENERGY_KEY, newEnergy);
+                if (newEnergy >= max && cooling) {
+                    nbt.putBoolean(COOLING_KEY, false);
                 }
             }
         }
@@ -151,13 +138,8 @@ public class ForceFieldShieldItem extends Item {
     @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
-
-        int energy = getEnergy(stack);
-        int max = cfg().forceFieldMaxEnergy;
-
-        tooltip.add(Text.translatable("message.doctor_m.force_field_shield.energy", energy, max)
-                .formatted(Formatting.GRAY));
-
+        tooltip.add(Text.translatable("message.doctor_m.force_field_shield.energy",
+                getEnergy(stack), CONFIG.forceFieldMaxEnergy).formatted(Formatting.GRAY));
         ShiftTooltipInvoker.addShiftTooltip(tooltip,
                 Text.translatable("message.doctor_m.force_field_shield.detail"));
     }
@@ -171,7 +153,7 @@ public class ForceFieldShieldItem extends Item {
 
     @Override
     public int getItemBarStep(ItemStack stack) {
-        return Math.round((float) getEnergy(stack) * 13.0F / (float) cfg().forceFieldMaxEnergy);
+        return Math.round((float) getEnergy(stack) * 13.0F / (float) CONFIG.forceFieldMaxEnergy);
     }
 
     @Override
@@ -181,15 +163,15 @@ public class ForceFieldShieldItem extends Item {
         return 0xFF0000;
     }
 
-    /* ========== NBT（全部加"值不同才写"保护） ========== */
+    /* ========== NBT（只读场景改用 getNbt，避免创建空 tag） ========== */
 
     public static int getEnergy(ItemStack stack) {
-        NbtCompound nbt = stack.getOrCreateNbt();
-        return nbt.contains(ENERGY_KEY) ? nbt.getInt(ENERGY_KEY) : cfg().forceFieldMaxEnergy;
+        NbtCompound nbt = stack.getNbt();
+        return (nbt != null && nbt.contains(ENERGY_KEY)) ? nbt.getInt(ENERGY_KEY) : CONFIG.forceFieldMaxEnergy;
     }
 
     public static void setEnergy(ItemStack stack, int energy) {
-        int clamped = Math.min(cfg().forceFieldMaxEnergy, Math.max(0, energy));
+        int clamped = Math.min(CONFIG.forceFieldMaxEnergy, Math.max(0, energy));
         NbtCompound nbt = stack.getOrCreateNbt();
         if (nbt.getInt(ENERGY_KEY) != clamped) {
             nbt.putInt(ENERGY_KEY, clamped);
@@ -197,7 +179,8 @@ public class ForceFieldShieldItem extends Item {
     }
 
     public static boolean isCooling(ItemStack stack) {
-        return stack.getOrCreateNbt().getBoolean(COOLING_KEY);
+        NbtCompound nbt = stack.getNbt();
+        return nbt != null && nbt.getBoolean(COOLING_KEY);
     }
 
     public static void setCooling(ItemStack stack, boolean cooling) {
@@ -208,7 +191,8 @@ public class ForceFieldShieldItem extends Item {
     }
 
     public static int getCooldown(ItemStack stack) {
-        return stack.getOrCreateNbt().getInt(COOLDOWN_KEY);
+        NbtCompound nbt = stack.getNbt();
+        return nbt != null ? nbt.getInt(COOLDOWN_KEY) : 0;
     }
 
     public static void setCooldown(ItemStack stack, int ticks) {
@@ -230,45 +214,56 @@ public class ForceFieldShieldItem extends Item {
 
     private void applyForceFieldEffects(World world, PlayerEntity player) {
         Vec3d centerPos = player.getPos().add(0, player.getHeight() / 2.0, 0);
-        Box box = new Box(centerPos, centerPos).expand(SHIELD_RADIUS);
+        // 使用 Box.of 语义更清晰，且避免 new Box(center, center).expand 的临时对象
+        Box box = Box.of(centerPos, SHIELD_RADIUS * 2, SHIELD_RADIUS * 2, SHIELD_RADIUS * 2);
 
-        world.getOtherEntities(player, box).stream()
-                .filter(e -> e.isPushable() || e instanceof ProjectileEntity)
-                .forEach(entity -> {
-                    Vec3d pushDir = entity.getPos().subtract(centerPos).normalize();
+        boolean playedSoundThisTick = false;
+        for (Entity entity : world.getOtherEntities(player, box)) {
+            if (!entity.isPushable() && !(entity instanceof ProjectileEntity)) continue;
 
-                    if (entity instanceof ProjectileEntity projectile) {
-                        BlockPos pos = projectile.getBlockPos();
-                        world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_BURN,
-                                SoundCategory.PLAYERS, 0.8f, 1.2f);
-                        projectile.discard();
-                        return;
-                    }
+            Vec3d diff = entity.getPos().subtract(centerPos);
+            double distSq = diff.lengthSquared();
+            if (distSq < 1.0E-4) continue; // 零向量保护：normalize() 不会炸出 NaN
 
-                    Vec3d motion = pushDir.multiply(cfg().forceFieldPushStrength);
-                    entity.setVelocity(entity.getVelocity().add(motion));
-                    entity.velocityDirty = true;
-                    entity.velocityModified = true;
-                });
+            Vec3d pushDir = diff.normalize();
+
+            if (entity instanceof ProjectileEntity projectile) {
+                if (!playedSoundThisTick) {
+                    world.playSound(null, projectile.getBlockPos(), SoundEvents.ENTITY_GENERIC_BURN,
+                            SoundCategory.PLAYERS, 0.8f, 1.2f);
+                    playedSoundThisTick = true;
+                }
+                projectile.discard();
+                continue;
+            }
+
+            Vec3d motion = pushDir.multiply(CONFIG.forceFieldPushStrength);
+            entity.setVelocity(entity.getVelocity().add(motion));
+            entity.velocityDirty = true;
+            // 注意：1.20.1 Fabric Yarn 映射中没有 velocityModified，只保留 velocityDirty 即可
+        }
     }
 
     private void applyReleasePush(World world, PlayerEntity player) {
         Vec3d centerPos = player.getPos().add(0, player.getHeight() / 2.0, 0);
-        Box box = new Box(centerPos, centerPos).expand(cfg().forceFieldReleaseRadius);
+        double radius = CONFIG.forceFieldReleaseRadius;
+        Box box = Box.of(centerPos, radius * 2, radius * 2, radius * 2);
 
-        world.getOtherEntities(player, box).stream()
-                .filter(e -> e.isPushable() && !(e instanceof PlayerEntity))
-                .forEach(entity -> {
-                    Vec3d dir = entity.getPos().subtract(centerPos).normalize();
-                    Vec3d motion = new Vec3d(
-                            dir.x * cfg().forceFieldReleaseStrength,
-                            cfg().forceFieldReleaseUpward,
-                            dir.z * cfg().forceFieldReleaseStrength
-                    );
-                    entity.setVelocity(entity.getVelocity().add(motion));
-                    entity.velocityDirty = true;
-                    entity.velocityModified = true;
-                });
+        for (Entity entity : world.getOtherEntities(player, box)) {
+            if (!entity.isPushable() || entity instanceof PlayerEntity) continue;
+
+            Vec3d diff = entity.getPos().subtract(centerPos);
+            if (diff.lengthSquared() < 1.0E-4) continue;
+
+            Vec3d dir = diff.normalize();
+            Vec3d motion = new Vec3d(
+                    dir.x * CONFIG.forceFieldReleaseStrength,
+                    CONFIG.forceFieldReleaseUpward,
+                    dir.z * CONFIG.forceFieldReleaseStrength
+            );
+            entity.setVelocity(entity.getVelocity().add(motion));
+            entity.velocityDirty = true;
+        }
 
         world.playSound(null, player.getBlockPos(), SoundEvents.ENTITY_IRON_GOLEM_ATTACK,
                 SoundCategory.PLAYERS, 1.0f, 0.8f);
