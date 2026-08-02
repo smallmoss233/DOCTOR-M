@@ -11,13 +11,14 @@ import net.minecraft.item.ShieldItem;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.UUID;
 
 public class ShieldDamageHandler {
-
-    private static final Map<PlayerEntity, Integer> LAST_SHIELD_TICK = new WeakHashMap<>();
-    private static final int SHIELD_FX_COOLDOWN = 4;
+    // 护盾特效冷却：避免高频受伤导致高频发包
+    private static final Map<UUID, Integer> LAST_SHIELD_TICK = new HashMap<>();
+    private static final int SHIELD_FX_COOLDOWN = 4; // 0.2秒
 
     public static void register() {
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
@@ -40,52 +41,48 @@ public class ShieldDamageHandler {
                 return true; // 让力场盾牌自己处理，饰品栏护盾生成器不抢
             }
 
-            // 4. 查找饰品栏护盾生成器
             ItemStack shield = findShield(player);
             if (shield.isEmpty()) return true;
 
-            // 5. 计算消耗
-            int cost = (int) (amount * ShieldCoreItem.getCostPerDamage());
             int energy = ShieldCoreItem.getEnergy(shield);
-            if (energy < cost) return true; // 能量不足，击穿
+            int cost = (int) (amount * ShieldCoreItem.getCostPerDamage());
+            if (energy < cost) return true;
 
-            // 6. 扣能量
             if (!ShieldCoreItem.consumeEnergy(shield, cost)) return true;
 
-            // 7. 0.01% 穿透伤害
+            // 扣除 0.01% 穿透伤害
             float actualDamage = amount * 0.0001f;
             if (actualDamage > 0) {
                 float newHealth = player.getHealth() - actualDamage;
-                player.setHealth(Math.max(newHealth, 0.01f));
+                player.setHealth(Math.max(newHealth, 0));
             }
 
-            // 8. 特效冷却发包
-            int currentTick = player.server.getTicks();
-            Integer lastTick = LAST_SHIELD_TICK.get(player);
+            // 特效冷却：挡伤害逻辑每 tick 都走，但发包/声音有冷却
+            int currentTick = player.getWorld().getServer().getTicks();
+            Integer lastTick = LAST_SHIELD_TICK.get(player.getUuid());
             if (lastTick == null || currentTick - lastTick >= SHIELD_FX_COOLDOWN) {
-                LAST_SHIELD_TICK.put(player, currentTick);
+                LAST_SHIELD_TICK.put(player.getUuid(), currentTick);
                 ShieldNetworking.sendShieldActivation(player);
             }
 
-            return false;
+            return false; // 取消原伤害
         });
     }
 
     private static ItemStack findShield(PlayerEntity player) {
-        return TrinketsApi.getTrinketComponent(player)
-                .map(component -> {
-                    for (var group : component.getInventory().values()) {
-                        for (var slot : group.values()) {
-                            for (int i = 0; i < slot.size(); i++) {
-                                ItemStack stack = slot.getStack(i);
-                                if (stack.getItem() instanceof ShieldCoreItem) {
-                                    return stack;
-                                }
-                            }
-                        }
+        var component = TrinketsApi.getTrinketComponent(player).orElse(null);
+        if (component == null) return ItemStack.EMPTY;
+
+        for (var group : component.getInventory().values()) {
+            for (var slot : group.values()) {
+                for (int i = 0; i < slot.size(); i++) {
+                    ItemStack stack = slot.getStack(i);
+                    if (stack.getItem() instanceof ShieldCoreItem) {
+                        return stack;
                     }
-                    return ItemStack.EMPTY;
-                })
-                .orElse(ItemStack.EMPTY);
+                }
+            }
+        }
+        return ItemStack.EMPTY;
     }
 }
