@@ -48,74 +48,70 @@ repositories {
         name = "JEI"
         url = "https://maven.blamejared.com/"
     }
-    maven {
-        name = "Ladysnake Libs"
-        url = 'https://maven.ladysnake.org/releases'
+
+    dependencies {
+        minecraft "com.mojang:minecraft:${project.minecraft_version}"
+        mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+        modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+        modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+        modImplementation "dev.amble:lib:${project.amblekit_version}"
+        modImplementation "dev.amblelabs:ait:${project.ait_version}"
+        modImplementation "net.fabricmc:fabric-language-kotlin:${project.kotlin_version}"
+        modImplementation "maven.modrinth:5aaWibi9:AHxQGtuC"//trinkets
     }
-}
 
-dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-    modImplementation "dev.amble:lib:${project.amblekit_version}"
-    modImplementation "dev.amblelabs:ait:${project.ait_version}"
-    modImplementation "dev.emi:trinkets:${trinkets_version}"
-    modImplementation "net.fabricmc:fabric-language-kotlin:${project.kotlin_version}"
-}
-
-loom {
-    splitEnvironmentSourceSets()
-    mods {
-        "doctor_m" {
-            sourceSet sourceSets.main
-            sourceSet sourceSets.client
+    loom {
+        splitEnvironmentSourceSets()
+        mods {
+            "doctor_m" {
+                sourceSet sourceSets.main
+                sourceSet sourceSets.client
+            }
+        }
+        fabricApi {
+            configureDataGeneration {
+                client = true
+            }
         }
     }
-    fabricApi {
-        configureDataGeneration {
-            client = true
+
+    processResources {
+        inputs.property "version", project.version
+        filesMatching("fabric.mod.json") {
+            expand "version": project.version
         }
     }
-}
 
-processResources {
-    inputs.property "version", project.version
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
     }
-}
 
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
     }
-}
 
-jar {
-    manifest {
-        attributes(
-                'Specification-Title': project.name,
-                'Specification-Version': project.version,
-                'Implementation-Title': project.name,
-                'Implementation-Version': project.version,
-                'Implementation-Vendor': 'DOCTOR M',
-                'Fabric-Loader': project.loader_version,
-                'Fabric-Api': project.fabric_api_version
-        )
+    jar {
+        manifest {
+            attributes(
+                    'Specification-Title': project.name,
+                    'Specification-Version': project.version,
+                    'Implementation-Title': project.name,
+                    'Implementation-Version': project.version,
+                    'Implementation-Vendor': 'DOCTOR M',
+                    'Fabric-Loader': project.loader_version,
+                    'Fabric-Api': project.fabric_api_version
+            )
+        }
     }
-}
 
-publishing {
-    publications {
-        create("mavenJava", MavenPublication) {
-            artifactId = project.archives_base_name
-            from components.java
+    publishing {
+        publications {
+            create("mavenJava", MavenPublication) {
+                artifactId = project.archives_base_name
+                from components.java
+            }
         }
     }
 }
