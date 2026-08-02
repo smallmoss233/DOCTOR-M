@@ -18,6 +18,7 @@ import doctor_m.world_data.TimeKey.GemDeathSaveHandler;
 import doctor_m.world_data.TimeKey.GemTickHandler;
 import doctor_m.world_data.TimeKey.PocketWatchFunction;
 import doctor_m.world_data.TimeKey.TimeKeyFunction;
+import doctor_m.world_data.VMServerHandler;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.registry.Registries;
@@ -38,6 +39,10 @@ public class DOCTORM implements ModInitializer {
         return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
     }
 
+    public static Identifier id(String path) {
+        return new Identifier(MOD_ID, path);
+    }
+
     @Override
     public void onInitialize() {
         RegistryContainer.register(items.class, MOD_ID);
@@ -47,6 +52,7 @@ public class DOCTORM implements ModInitializer {
         ModBlocks.register();
         ModBlockEntities.register();
         VacuumEatingHandler.register();
+        VMServerHandler.register();
 
         TimeKeyFunction.INSTANCE.register();
         PocketWatchFunction.INSTANCE.register();

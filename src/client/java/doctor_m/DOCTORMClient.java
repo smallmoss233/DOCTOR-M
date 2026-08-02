@@ -4,10 +4,12 @@ import doctor_m.Item.data_itme.DeMatGunItem;
 import doctor_m.client.Shield.ForceFieldClientRenderer;
 import doctor_m.client.Shield.ShieldNetworkingClient;
 import doctor_m.client.Shield.ShieldOverlay;
+import doctor_m.util.VMClientScreenOpener;
 import doctor_m.client.dimension.TitanDimensionEffects;
 import doctor_m.client.entity.EvereyeRenderer;
 import doctor_m.client.entity.Type103Renderer;
 import doctor_m.client.network.DeMatGunClientNetwork;
+import doctor_m.client.render.VortexManipulatorScreen;
 import doctor_m.entities.Entities;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -17,9 +19,9 @@ import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
@@ -66,5 +68,8 @@ public class DOCTORMClient implements ClientModInitializer {
                 (stack, world, entity, seed) ->
                         entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F
         );
+
+        VMClientScreenOpener.opener = (player, stack) ->
+                MinecraftClient.getInstance().setScreen(new VortexManipulatorScreen(player, stack));
     }
 }

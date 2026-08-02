@@ -17,6 +17,8 @@
   "advancement.doctor_m.not_a_hallucination.description": "你把塔迪斯的鑰匙扔到了岩漿裡，這麼做讓塔迪斯感到不適",
   "advancements.doctor_m.de_mat_gun.title": "過去的，古老的，黑暗的，被迫撿起來的",
   "advancements.doctor_m.de_mat_gun.description": "我們遺忘這些，遺忘暴力，遺忘不和，災難，而那戰爭卻逼迫我們回歸野蠻，事已至此，和時間本身說再見吧",
+  "advancements.doctor_m.vortex_manipulator.title": "非比尋常的科技",
+  "advancements.doctor_m.vortex_manipulator.description": "小心使用，不要成為第二個安德森少校",
 
   "tardis.message.control.siege.confirm_prompt": "再次按下以啟用圍攻模式！（等待10秒再點擊）",
 
@@ -31,6 +33,19 @@
   "sonic_mode.message.doctor_m.module_installed": "已安裝模組：",
   "sonic_mode.tooltip.doctor_m.installed_module": "模組：",
   "sonic_mode.message.doctor_m.module_removed": "已卸下模組",
+
+  "gui.doctor_m.vm.title": "渦旋操縱器",
+  "gui.doctor_m.vm.dimension": "目標維度",
+  "gui.doctor_m.vm.set_current": "設為目前位置",
+  "gui.doctor_m.vm.set_prev": "設為上一位置",
+  "gui.doctor_m.vm.close": "關閉",
+  "gui.doctor_m.vm.go": "前往",
+  "gui.doctor_m.vm.label.x": "X",
+  "gui.doctor_m.vm.label.y": "Y",
+  "gui.doctor_m.vm.label.z": "Z",
+  "gui.doctor_m.vm.fuel_label": "能量：%s/%s",
+  "gui.doctor_m.vm.heat_label": "過熱：%s%%",
+  "gui.doctor_m.vm.broken_label": "已損壞",
 
   "itemGroup.doctor_m": "DOCTOR M",
   "item.doctor_m.rassilon_key": "拉斯隆之鑰",
@@ -48,6 +63,7 @@
   "item.doctor_m.energy_upgrade_module": "能量擴容模組",
   "item.doctor_m.regeneration_module": "能量再生核心",
   "item.doctor_m.force_field_shield": "力場盾牌",
+  "item.doctor_m.vortex_manipulator": "渦旋操縱器",
 
   "block.doctor_m.oxygen_charger": "氧氣補充機",
 
@@ -241,6 +257,11 @@
   "tooltip.doctor_m.oxygen_low": "氧氣容量低於安全閾值，請注意補充！",
   "tooltip.doctor_m.oxygen_critical": "警告！氧氣容量極低！生命維持系統即將停擺！",
   "tooltip.doctor_m.oxygen_empty": "警告！生命維持系統停擺！警告！",
+  "tooltip.doctor_m.vm.destination": "目的地：%s, %s, %s",
+  "tooltip.doctor_m.vm.fuel": "能量：%s/%s",
+  "tooltip.doctor_m.vm.heat": "過熱：%s%%",
+  "tooltip.doctor_m.vm.cooldown": "冷卻中：%s秒",
+  "tooltip.doctor_m.vm.broken": "損壞冷卻：%s天 %s小時",
 
   "hud.doctor_m.environment.oxygenated": "有氧，可脫下太空衣",
   "hud.doctor_m.environment.deoxygenated": "無氧，不可脫下太空衣",
@@ -298,6 +319,20 @@
   "message.doctor_m.force_field_shield.detail": "§7按住 §e右鍵 §7展開力場護盾，焚燬彈射物並推開周圍實體。*§7鬆開右鍵後進入短暫冷卻，期間僅提供基礎格擋。*§7能量耗盡後需回滿才可再次開啟力場。",
   "message.doctor_m.force_field_shield.active": "力場已開啟",
   "message.doctor_m.force_field_shield.blocking": "舉盾防禦",
+  "message.doctor_m.vm.cooled_down": "渦旋操縱器冷卻結束，可以再次使用。",
+  "message.doctor_m.vm.waypoint_loaded": "已載入航點「%s」",
+  "message.doctor_m.vm.fully_charged": "渦旋操縱器已充滿能量！",
+  "message.doctor_m.vm.collector_empty": "阿特隆收集單元為空！",
+  "message.doctor_m.vm.charged": "充能：+%s 阿特隆能量 (VM：%s/%s)",
+  "message.doctor_m.vm.broken_use_injured": "渦旋操縱器過熱！",
+  "message.doctor_m.vm.broken_days": "渦旋操縱器已損壞！冷卻：%s 天",
+  "message.doctor_m.vm.cooldown": "冷卻中：%s秒",
+  "message.doctor_m.vm.invalid_dimension": "無效維度！",
+  "message.doctor_m.vm.dimension_locked": "維度已鎖定！",
+  "message.doctor_m.vm.not_enough_fuel": "能量不足！需要：%s",
+  "message.doctor_m.vm.teleported": "能量 -%s，過熱 +%s%%",
+  "message.doctor_m.vm.overheated_3days": "渦旋操縱器過熱！將在3天內無法使用。",
+  "message.doctor_m.vm.detail": "§7廉價的時間旅行設備，雖然快速但無任何防護，如果填錯座標還可能CosPlay安德森上校*(BT，我找到安德森了，他在……天花板裡)*副手持有阿特隆能量收集單元潛行右鍵補充能量",
 
   "dimension.doctor_m.trenzalore": "§3特蘭澤洛",
   "dimension.doctor_m.titan": "土衛六-泰坦"

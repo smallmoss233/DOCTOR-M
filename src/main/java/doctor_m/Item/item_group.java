@@ -29,9 +29,10 @@ public static void registerItems() {
                                 entries.add(OXYGEN_TANK);
                                 //entries.add(TLIPOCA_SCYTHE);
                                 entries.add(SHIELD_CORE);
+                                entries.add(FORCE_FIELD_SHIELD);
+                                entries.add(VORTEX_MANIPULATOR);
                                 entries.add(ENERGY_UPGRADE_MODULE);
                                 entries.add(REGENERATION_MODULE);
-                                entries.add(FORCE_FIELD_SHIELD);
                             })
                             .build());
         }

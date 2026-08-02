@@ -1,0 +1,35 @@
+{
+  "parent": "doctor_m:root",
+  "display": {
+    "icon": {
+      "item": "doctor_m:vortex_manipulator"
+    },
+    "title": {
+      "translate": "advancements.doctor_m.vortex_manipulator.title"
+    },
+    "description": {
+      "translate": "advancements.doctor_m.vortex_manipulator.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_vortex_manipulator": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "doctor_m:vortex_manipulator"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_vortex_manipulator"]
+  ]
+}

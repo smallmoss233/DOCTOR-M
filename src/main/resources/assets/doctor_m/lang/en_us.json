@@ -17,6 +17,8 @@
   "advancement.doctor_m.not_a_hallucination.description": "You threw the TARDIS key into lava, and doing so made the TARDIS feel uneasy.",
   "advancements.doctor_m.de_mat_gun.title": "Past, Ancient, Dark, Forced to Take Up",
   "advancements.doctor_m.de_mat_gun.description": "We had forgotten all this—violence, discord, disaster—yet that war compelled us to return to savagery. And now, farewell to time itself.",
+  "advancements.doctor_m.vortex_manipulator.title": "Extraordinary Technology",
+  "advancements.doctor_m.vortex_manipulator.description": "Use with care. Don't become the second Major Anderson.",
 
   "tardis.message.control.siege.confirm_prompt": "Press again to enable Siege Mode! (Wait 10 seconds before clicking)",
 
@@ -31,6 +33,19 @@
   "sonic_mode.message.doctor_m.module_installed": "Installed Module:",
   "sonic_mode.tooltip.doctor_m.installed_module": "Module:",
   "sonic_mode.message.doctor_m.module_removed": "Module Removed",
+
+  "gui.doctor_m.vm.title": "Vortex Manipulator",
+  "gui.doctor_m.vm.dimension": "Target Dimension",
+  "gui.doctor_m.vm.set_current": "Set to Current Position",
+  "gui.doctor_m.vm.set_prev": "Set to Previous Position",
+  "gui.doctor_m.vm.close": "Close",
+  "gui.doctor_m.vm.go": "Go",
+  "gui.doctor_m.vm.label.x": "X",
+  "gui.doctor_m.vm.label.y": "Y",
+  "gui.doctor_m.vm.label.z": "Z",
+  "gui.doctor_m.vm.fuel_label": "Energy: %s/%s",
+  "gui.doctor_m.vm.heat_label": "Overheat: %s%%",
+  "gui.doctor_m.vm.broken_label": "Broken",
 
   "itemGroup.doctor_m": "DOCTOR M",
   "item.doctor_m.rassilon_key": "Key of Rassilon",
@@ -48,6 +63,7 @@
   "item.doctor_m.energy_upgrade_module": "Energy Expansion Module",
   "item.doctor_m.regeneration_module": "Energy Regeneration Core",
   "item.doctor_m.force_field_shield": "Force Field Shield",
+  "item.doctor_m.vortex_manipulator": "Vortex Manipulator",
 
   "block.doctor_m.oxygen_charger": "Oxygen Recharger",
 
@@ -241,6 +257,11 @@
   "tooltip.doctor_m.oxygen_low": "Oxygen level below the safety threshold, please refill!",
   "tooltip.doctor_m.oxygen_critical": "Warning! Oxygen level critically low! Life support system is about to shut down!",
   "tooltip.doctor_m.oxygen_empty": "Warning! Life support system shut down! Warning!",
+  "tooltip.doctor_m.vm.destination": "Destination: %s, %s, %s",
+  "tooltip.doctor_m.vm.fuel": "Energy: %s/%s",
+  "tooltip.doctor_m.vm.heat": "Overheat: %s%%",
+  "tooltip.doctor_m.vm.cooldown": "Cooldown: %ss",
+  "tooltip.doctor_m.vm.broken": "Broken Cooldown: %sd %sh",
 
   "hud.doctor_m.environment.oxygenated": "Oxygenated, can take off spacesuit",
   "hud.doctor_m.environment.deoxygenated": "Deoxygenated, cannot take off spacesuit",
@@ -298,6 +319,20 @@
   "message.doctor_m.force_field_shield.detail": "§7Hold §eRight Click§7 to deploy a force field shield, incinerating projectiles and pushing away nearby entities.*§7Releasing Right Click triggers a brief cooldown, during which only basic blocking is provided.*§7When energy is depleted, the shield must be fully recharged before it can be deployed again.",
   "message.doctor_m.force_field_shield.active": "Force Field Active",
   "message.doctor_m.force_field_shield.blocking": "Shield Blocking",
+  "message.doctor_m.vm.cooled_down": "Vortex Manipulator has cooled down and is ready to use again.",
+  "message.doctor_m.vm.waypoint_loaded": "Waypoint \"%s\" loaded.",
+  "message.doctor_m.vm.fully_charged": "Vortex Manipulator fully charged!",
+  "message.doctor_m.vm.collector_empty": "Artron Collector is empty!",
+  "message.doctor_m.vm.charged": "Charged: +%s Artron Energy (VM: %s/%s)",
+  "message.doctor_m.vm.broken_use_injured": "Vortex Manipulator overheated!",
+  "message.doctor_m.vm.broken_days": "Vortex Manipulator is broken! Cooldown: %s days",
+  "message.doctor_m.vm.cooldown": "Cooldown: %ss",
+  "message.doctor_m.vm.invalid_dimension": "Invalid dimension!",
+  "message.doctor_m.vm.dimension_locked": "Dimension locked!",
+  "message.doctor_m.vm.not_enough_fuel": "Insufficient Energy! Need: %s",
+  "message.doctor_m.vm.teleported": "Energy -%s, Overheat +%s%%",
+  "message.doctor_m.vm.overheated_3days": "Vortex Manipulator overheated! It will be unusable for 3 days.",
+  "message.doctor_m.vm.detail": "§7A cheap time travel device—fast, but offers no protection. *Enter the wrong coordinates and you might end up cosplaying as Colonel Anderson.*(BT, I found Anderson. He's... in the ceiling.)*Hold an Artron Collector in your off-hand and sneak + right-click to recharge.",
 
   "dimension.doctor_m.trenzalore": "§3Trenzalore",
   "dimension.doctor_m.titan": "Saturn VI-Titan"

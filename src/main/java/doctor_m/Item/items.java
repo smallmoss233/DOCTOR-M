@@ -28,7 +28,8 @@ public class items extends ItemContainer {
     public static final Item SHIELD_CORE = new ShieldCoreItem(new Item.Settings().maxCount(1));
     public static final Item ENERGY_UPGRADE_MODULE = new Item(new Item.Settings().maxCount(1));
     public static final Item REGENERATION_MODULE = new Item(new Item.Settings().maxCount(1));
-    public static final Item FORCE_FIELD_SHIELD = new ForceFieldShieldItem(new Item.Settings());
+    public static final Item FORCE_FIELD_SHIELD = new ForceFieldShieldItem(new Item.Settings().maxCount(1));
+    public static final Item VORTEX_MANIPULATOR = new VortexManipulatorItem(new Item.Settings().maxCount(1));
 
     //氧气相关
     public static final Item OXYGEN_CHARGER_ITEM = new BlockItem(ModBlocks.OXYGEN_CHARGER, new Item.Settings());
