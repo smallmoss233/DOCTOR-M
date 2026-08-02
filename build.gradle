@@ -12,27 +12,32 @@ base {
 }
 
 repositories {
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = "Modrinth"
-                url = "https://api.modrinth.com/maven"
-            }
-        }
-        filter {
-            includeGroup "maven.modrinth"
-        }
-    }
     mavenCentral()
+
+    //fabric API和MC
     maven { url = "https://maven.fabricmc.net/" }
     maven { url = "https://maven.saps.dev/minecraft" }
     maven { url = "https://maven.isxander.dev/releases" }
+
+    //饰品API
+    maven {
+        name = "Sleeping Town"
+        url = "https://repo.sleeping.town/"
+    }
+    maven {
+        name = "Ladysnake Libs"
+        url = 'https://maven.ladysnake.org/releases'
+    }
+
+    //模组菜单
     maven {
         url "https://theo.is-a.dev/maven/"
         content {
             includeGroup "dev.drtheo"
         }
     }
+
+    //AIT与Amblekit
     maven {
         url "https://amblelabs.dev/maven"
         content {
@@ -40,17 +45,11 @@ repositories {
             includeGroup "dev.amblelabs"
         }
     }
-    maven {
-        name = "Terraformers"
-        url = "https://maven.terraformersmc.com/"
-    }
+
+    //JEI物品管理器
     maven {
         name = "JEI"
         url = "https://maven.blamejared.com/"
-    }
-    maven {
-        name = "Ladysnake Libs"
-        url = 'https://maven.ladysnake.org/releases'
     }
 }
 
@@ -59,10 +58,10 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    modImplementation "net.fabricmc:fabric-language-kotlin:${project.kotlin_version}"
     modImplementation "dev.amble:lib:${project.amblekit_version}"
     modImplementation "dev.amblelabs:ait:${project.ait_version}"
     modImplementation "dev.emi:trinkets:${trinkets_version}"
-    modImplementation "net.fabricmc:fabric-language-kotlin:${project.kotlin_version}"
 }
 
 loom {
