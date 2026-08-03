@@ -7,6 +7,7 @@
     "doctor_m.PlanetRegistryMixin",
     "doctor_m.ItemEntityMixin",
     "doctor_m.ItemMixin",
+    "doctor_m.LivingEntityMixin",
     "ait_oxygenatedmixin.MixinSpacesuitItem",
     "ait_oxygenatedmixin.MixinOxygenatedEffect",
     "ait_oxygenatedmixin.MixinOxygenatorBlockEntity",

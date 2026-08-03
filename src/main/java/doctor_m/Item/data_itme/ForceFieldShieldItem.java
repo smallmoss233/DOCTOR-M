@@ -5,6 +5,7 @@ import doctor_m.config.ModConfig;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -21,6 +22,8 @@ import net.minecraft.util.UseAction;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 
 import java.util.List;
 
@@ -32,7 +35,6 @@ public class ForceFieldShieldItem extends Item {
     private static final String COOLING_KEY = "force_field_cooling";
     private static final String COOLDOWN_KEY = "force_field_cooldown";
 
-    // 性能优化：缓存配置引用（若你的 ConfigManager 支持热重载，可去掉）
     private static final ModConfig CONFIG = ConfigManager.getConfig();
 
     public ForceFieldShieldItem(Settings settings) {
@@ -96,7 +98,6 @@ public class ForceFieldShieldItem extends Item {
         if (world.isClient || !(entity instanceof PlayerEntity player)) return;
         if (world.getTime() % 4 != 0) return;
 
-        // 性能优化：批量 NBT 读写，一次 getOrCreateNbt 解决本 tick 所有字段
         NbtCompound nbt = stack.getOrCreateNbt();
 
         int cd = nbt.getInt(COOLDOWN_KEY);
@@ -107,7 +108,6 @@ public class ForceFieldShieldItem extends Item {
         boolean isUsingThis = player.isUsingItem() && player.getActiveItem().getItem() == this;
         boolean cooling = nbt.getBoolean(COOLING_KEY);
 
-        // 力场正常运行中 → 不回能
         if (!cooling && cd <= 0 && isUsingThis) return;
 
         int current = nbt.contains(ENERGY_KEY) ? nbt.getInt(ENERGY_KEY) : CONFIG.forceFieldMaxEnergy;
@@ -163,7 +163,7 @@ public class ForceFieldShieldItem extends Item {
         return 0xFF0000;
     }
 
-    /* ========== NBT（只读场景改用 getNbt，避免创建空 tag） ========== */
+    /* ========== NBT ========== */
 
     public static int getEnergy(ItemStack stack) {
         NbtCompound nbt = stack.getNbt();
@@ -210,23 +210,57 @@ public class ForceFieldShieldItem extends Item {
         return !isCooling(stack) && getCooldown(stack) <= 0 && getEnergy(stack) > 0;
     }
 
-    /* ========== 力场效果 ========== */
+    /* ========== 伤害类型判断（供 Mixin 调用） ========== */
+
+    public static boolean isEnvironmentalOrSpecialDamage(DamageSource source) {
+        return source.isOf(DamageTypes.IN_FIRE)
+                || source.isOf(DamageTypes.ON_FIRE)
+                || source.isOf(DamageTypes.LAVA)
+                || source.isOf(DamageTypes.HOT_FLOOR)
+                || source.isOf(DamageTypes.IN_WALL)
+                || source.isOf(DamageTypes.CRAMMING)
+                || source.isOf(DamageTypes.DROWN)
+                || source.isOf(DamageTypes.STARVE)
+                || source.isOf(DamageTypes.CACTUS)
+                || source.isOf(DamageTypes.FALL)
+                || source.isOf(DamageTypes.FLY_INTO_WALL)
+                || source.isOf(DamageTypes.OUT_OF_WORLD)
+                || source.isOf(DamageTypes.GENERIC)
+                || source.isOf(DamageTypes.MAGIC)
+                || source.isOf(DamageTypes.WITHER)
+                || source.isOf(DamageTypes.DRAGON_BREATH)
+                || source.isOf(DamageTypes.SWEET_BERRY_BUSH)
+                || source.isOf(DamageTypes.FREEZE)
+                || source.isOf(DamageTypes.STALAGMITE)
+                || source.isOf(DamageTypes.OUTSIDE_BORDER)
+                || source.isOf(DamageTypes.GENERIC_KILL)
+                || source.isOf(DamageTypes.LIGHTNING_BOLT);
+    }
+
+    /* ========== 力场效果（圆形范围 + 推开一切非掉落物） ========== */
 
     private void applyForceFieldEffects(World world, PlayerEntity player) {
         Vec3d centerPos = player.getPos().add(0, player.getHeight() / 2.0, 0);
-        // 使用 Box.of 语义更清晰，且避免 new Box(center, center).expand 的临时对象
-        Box box = Box.of(centerPos, SHIELD_RADIUS * 2, SHIELD_RADIUS * 2, SHIELD_RADIUS * 2);
+        double radius = SHIELD_RADIUS;
+        // Box 粗筛，再用距离精筛实现真圆形
+        Box box = Box.of(centerPos, radius * 2, radius * 2, radius * 2);
+        double radiusSq = radius * radius;
 
         boolean playedSoundThisTick = false;
         for (Entity entity : world.getOtherEntities(player, box)) {
-            if (!entity.isPushable() && !(entity instanceof ProjectileEntity)) continue;
+            // 排除掉落物，其余全部处理
+            if (entity instanceof ItemEntity) continue;
 
             Vec3d diff = entity.getPos().subtract(centerPos);
             double distSq = diff.lengthSquared();
-            if (distSq < 1.0E-4) continue; // 零向量保护：normalize() 不会炸出 NaN
+
+            // 圆形范围过滤
+            if (distSq > radiusSq) continue;
+            if (distSq < 1.0E-4) continue;
 
             Vec3d pushDir = diff.normalize();
 
+            // 弹射物直接销毁
             if (entity instanceof ProjectileEntity projectile) {
                 if (!playedSoundThisTick) {
                     world.playSound(null, projectile.getBlockPos(), SoundEvents.ENTITY_GENERIC_BURN,
@@ -237,23 +271,29 @@ public class ForceFieldShieldItem extends Item {
                 continue;
             }
 
+            // 推开一切其他实体（包括玩家、不可推动的实体等）
             Vec3d motion = pushDir.multiply(CONFIG.forceFieldPushStrength);
             entity.setVelocity(entity.getVelocity().add(motion));
             entity.velocityDirty = true;
-            // 注意：1.20.1 Fabric Yarn 映射中没有 velocityModified，只保留 velocityDirty 即可
         }
     }
+
+    /* ========== 释放推力（也改成圆形） ========== */
 
     private void applyReleasePush(World world, PlayerEntity player) {
         Vec3d centerPos = player.getPos().add(0, player.getHeight() / 2.0, 0);
         double radius = CONFIG.forceFieldReleaseRadius;
         Box box = Box.of(centerPos, radius * 2, radius * 2, radius * 2);
+        double radiusSq = radius * radius;
 
         for (Entity entity : world.getOtherEntities(player, box)) {
-            if (!entity.isPushable() || entity instanceof PlayerEntity) continue;
+            if (entity instanceof ItemEntity) continue;
+            if (entity instanceof PlayerEntity) continue;
 
             Vec3d diff = entity.getPos().subtract(centerPos);
-            if (diff.lengthSquared() < 1.0E-4) continue;
+            double distSq = diff.lengthSquared();
+            if (distSq > radiusSq) continue;
+            if (distSq < 1.0E-4) continue;
 
             Vec3d dir = diff.normalize();
             Vec3d motion = new Vec3d(
