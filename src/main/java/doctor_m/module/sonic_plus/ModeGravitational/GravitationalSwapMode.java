@@ -16,15 +16,12 @@ import net.minecraft.world.World;
 public class GravitationalSwapMode extends SonicMode {
     public static final GravitationalSwapMode INSTANCE = new GravitationalSwapMode();
 
-    private static final int WINDUP_TICKS = 30;
-    private static final double PULL_SPEED = 0.15;
-    private static final double INERTIA = 0.78;
-    private static final double INERTIA_INV = 1.0 - INERTIA; // 0.22
-    private static final double GRAVITY_OFFSET = 0.08;
-    private static final double WINDUP_DRAG = 0.82;
+    private static final int WINDUP_TICKS = 30;        // 前摇
+    private static final double PULL_SPEED = 0.15;   // 飞行速度
+    private static final double INERTIA = 0.78;        // 保留 78% 原有速度
 
     private GravitationalSwapMode() {
-        super(2);
+        super(2); // 对应原 SCANNING
     }
 
     @Override
@@ -33,6 +30,7 @@ public class GravitationalSwapMode extends SonicMode {
                 .formatted(Formatting.LIGHT_PURPLE, Formatting.BOLD);
     }
 
+    //飞行时间上限
     @Override
     public int maxTime() {
         return 72000;
@@ -69,26 +67,27 @@ public class GravitationalSwapMode extends SonicMode {
             return;
         }
 
-        Vec3d current = player.getVelocity();
-
-        // 前摇阶段：减速蓄力
+        // 前摇阶段：不施加推力，只缓慢减速并蓄力
         if (ticks < WINDUP_TICKS) {
-            player.setVelocity(current.multiply(WINDUP_DRAG));
-            player.velocityDirty = true;
+            Vec3d current = player.getVelocity();
+            player.setVelocity(current.multiply(0.82));
+            player.velocityModified = true;
             player.fallDistance = 0;
             return;
         }
 
-        // 正式拖拽
+        // 正式拖拽：大惯性 + 慢速
         Vec3d look = player.getRotationVec(1.0F);
         Vec3d targetVel = look.multiply(PULL_SPEED);
 
+        Vec3d current = player.getVelocity();
+
         player.setVelocity(
-                current.x * INERTIA + targetVel.x * INERTIA_INV,
-                current.y * INERTIA + targetVel.y * INERTIA_INV + GRAVITY_OFFSET,
-                current.z * INERTIA + targetVel.z * INERTIA_INV
+                current.x * INERTIA + targetVel.x * (1.0 - INERTIA),
+                current.y * INERTIA + targetVel.y * (1.0 - INERTIA) + 0.08, // 抵消重力
+                current.z * INERTIA + targetVel.z * (1.0 - INERTIA)
         );
-        player.velocityDirty = true;
+        player.velocityModified = true;
         player.fallDistance = 0;
     }
 

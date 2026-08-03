@@ -28,6 +28,7 @@ import dev.amble.ait.core.item.ArtronCollectorItem;
 
 public class VortexManipulatorItem extends Item {
 
+    // ========== NBT Keys ==========
     public static final String DEST_X = "DestX";
     public static final String DEST_Y = "DestY";
     public static final String DEST_Z = "DestZ";
@@ -42,6 +43,7 @@ public class VortexManipulatorItem extends Item {
     public static final String BROKEN_UNTIL = "BrokenUntil";
     public static final String COOLDOWN_END_SYS = "CooldownEndSys";
 
+    // ========== Constants ==========
     public static final int MAX_FUEL = 1500;
     public static final int MAX_OVERHEAT = 100;
     public static final int COOLDOWN_TICKS = 60 * 20;
@@ -55,6 +57,7 @@ public class VortexManipulatorItem extends Item {
         super(settings);
     }
 
+    // ========== Client: Item Bar ==========
     @Override
     public boolean isItemBarVisible(ItemStack stack) {
         return true;
@@ -63,8 +66,7 @@ public class VortexManipulatorItem extends Item {
     @Override
     public int getItemBarStep(ItemStack stack) {
         if (getBrokenUntil(stack) > 0) return 13;
-        int fuel = getFuel(stack);
-        return Math.round(13f * fuel / MAX_FUEL);
+        return Math.round(13f * getFuel(stack) / MAX_FUEL);
     }
 
     @Override
@@ -74,13 +76,14 @@ public class VortexManipulatorItem extends Item {
         return COLOR_FUEL;
     }
 
+    // ========== Client: Tooltip ==========
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         String dimId = getDestDim(stack);
         if (!dimId.isEmpty()) {
             Text dimText = getDimensionDisplayText(dimId);
             tooltip.add(Text.translatable("tooltip.doctor_m.vm.destination",
-                            (int)getDestX(stack), (int)getDestY(stack), (int)getDestZ(stack))
+                            (int) getDestX(stack), (int) getDestY(stack), (int) getDestZ(stack))
                     .append(Text.literal(" @ ")).append(dimText)
                     .formatted(Formatting.GRAY));
         }
@@ -95,6 +98,7 @@ public class VortexManipulatorItem extends Item {
         tooltip.add(Text.translatable("tooltip.doctor_m.vm.heat", overheat)
                 .formatted(overheat > 80 ? Formatting.DARK_RED : Formatting.YELLOW));
 
+        // 客户端冷却显示（基于真实时间，不受维度影响）
         if (isOnCooldownSys(stack) && brokenUntil == 0) {
             long remainingMs = getCooldownEndSys(stack) - System.currentTimeMillis();
             int sec = Math.max(0, (int) (remainingMs / 1000));
@@ -103,7 +107,7 @@ public class VortexManipulatorItem extends Item {
         }
 
         if (brokenUntil > 0 && world != null) {
-            long remaining = brokenUntil - world.getTime();
+            long remaining = brokenUntil - getOverworldTime(world);
             if (remaining > 0) {
                 int days = (int) (remaining / 24000);
                 int hours = (int) ((remaining % 24000) / 1000);
@@ -111,29 +115,25 @@ public class VortexManipulatorItem extends Item {
                         .formatted(Formatting.DARK_RED, Formatting.BOLD));
             }
         }
-        //详情提示
+
         ShiftTooltipInvoker.addShiftTooltip(tooltip,
-                Text.translatable("message.doctor_m.vm.detail")
-        );
+                Text.translatable("message.doctor_m.vm.detail"));
 
         super.appendTooltip(stack, world, tooltip, context);
     }
 
+    // ========== Use ==========
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
 
-        if (!world.isClient) {
-            long brokenUntil = getBrokenUntil(stack);
-            if (brokenUntil != 0 && brokenUntil <= world.getTime()) {
-                setBrokenUntil(stack, 0);
-                setOverheat(stack, 0);
-                player.sendMessage(Text.translatable("message.doctor_m.vm.cooled_down")
-                        .formatted(Formatting.GREEN), true);
-            }
+        // 服务端：自动修复检测（统一使用 Overworld 时间）
+        if (!world.isClient()) {
+            tryAutoRepair(stack, world);
         }
 
-        if (!world.isClient && player.isSneaking() && hand == Hand.MAIN_HAND) {
+        // 潜行主手：尝试加载路径点 / 充电
+        if (!world.isClient() && player.isSneaking() && hand == Hand.MAIN_HAND) {
             ItemStack offhand = player.getOffHandStack();
             if (tryLoadWaypoint(player, stack, offhand)) {
                 return TypedActionResult.success(stack);
@@ -143,15 +143,33 @@ public class VortexManipulatorItem extends Item {
             }
         }
 
-        if (!world.isClient && getDestDim(stack).isEmpty()) {
+        // 目的地为空时自动保存当前位置
+        if (!world.isClient() && getDestDim(stack).isEmpty()) {
             saveCurrentAsDest(player, stack);
         }
 
-        if (world.isClient) {
+        if (world.isClient()) {
             openScreen(player, stack);
         }
         return TypedActionResult.success(stack);
     }
+
+    // ========== Server: Inventory Tick (散热) ==========
+    @Override
+    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+        if (world.isClient || !(entity instanceof ServerPlayerEntity player)) return;
+        if (getBrokenUntil(stack) != 0) return; // 已损坏不散热
+
+        long time = getOverworldTime(world);
+        if (time % 80 != 0) return; // 每秒执行一次
+
+        int overheat = getOverheat(stack);
+        if (overheat > 0) {
+            setOverheat(stack, overheat - 1);
+        }
+    }
+
+    // ========== Logic Helpers ==========
 
     private static boolean tryLoadWaypoint(PlayerEntity player, ItemStack vmStack, ItemStack offhand) {
         if (offhand.isEmpty()) return false;
@@ -159,14 +177,18 @@ public class VortexManipulatorItem extends Item {
         if (nbt == null || !nbt.contains("pos", net.minecraft.nbt.NbtElement.COMPOUND_TYPE)) return false;
 
         NbtCompound pos = nbt.getCompound("pos");
-        if (!pos.contains("X") || !pos.contains("Y") || !pos.contains("Z") || !pos.contains("dimension")) return false;
+        if (!pos.contains("X") || !pos.contains("Y") || !pos.contains("Z") || !pos.contains("dimension")) {
+            return false;
+        }
 
         setDestX(vmStack, pos.getInt("X"));
         setDestY(vmStack, pos.getInt("Y"));
         setDestZ(vmStack, pos.getInt("Z"));
         setDestDim(vmStack, pos.getString("dimension"));
 
-        String name = offhand.hasCustomName() ? offhand.getName().getString() : offhand.getItem().getName(offhand).getString();
+        String name = offhand.hasCustomName()
+                ? offhand.getName().getString()
+                : offhand.getItem().getName(offhand).getString();
         player.sendMessage(Text.translatable("message.doctor_m.vm.waypoint_loaded", name)
                 .formatted(Formatting.GREEN), true);
         return true;
@@ -215,58 +237,175 @@ public class VortexManipulatorItem extends Item {
         }
     }
 
-    @Override
-    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (world.isClient || !(entity instanceof ServerPlayerEntity)) return;
-        if (getBrokenUntil(stack) == 0 && world.getTime() % 20 == 0 && getOverheat(stack) > 0) {
-            setOverheat(stack, getOverheat(stack) - 1);
+    // ========== Time Utilities ==========
+
+    /** 获取 Overworld 时间，作为跨维度统一时间基准 */
+    public static long getOverworldTime(World world) {
+        if (world instanceof net.minecraft.server.world.ServerWorld sw && sw.getServer() != null) {
+            return sw.getServer().getOverworld().getTime();
+        }
+        return world.getTime(); // fallback
+    }
+
+    /** 尝试自动修复（损坏时间到期） */
+    public static void tryAutoRepair(ItemStack stack, World world) {
+        long brokenUntil = getBrokenUntil(stack);
+        if (brokenUntil == 0) return;
+        long time = getOverworldTime(world);
+        if (brokenUntil <= time) {
+            setBrokenUntil(stack, 0);
+            setOverheat(stack, 0);
         }
     }
 
-    // NBT 方法省略（与之前相同）
-    public static double getDestX(ItemStack stack) { return stack.getOrCreateNbt().getDouble(DEST_X); }
-    public static void setDestX(ItemStack stack, double v) { stack.getOrCreateNbt().putDouble(DEST_X, v); }
-    public static double getDestY(ItemStack stack) { return stack.getOrCreateNbt().getDouble(DEST_Y); }
-    public static void setDestY(ItemStack stack, double v) { stack.getOrCreateNbt().putDouble(DEST_Y, v); }
-    public static double getDestZ(ItemStack stack) { return stack.getOrCreateNbt().getDouble(DEST_Z); }
-    public static void setDestZ(ItemStack stack, double v) { stack.getOrCreateNbt().putDouble(DEST_Z, v); }
-    public static String getDestDim(ItemStack stack) { return stack.getOrCreateNbt().getString(DEST_DIM); }
-    public static void setDestDim(ItemStack stack, String v) { stack.getOrCreateNbt().putString(DEST_DIM, v); }
-    public static double getPrevX(ItemStack stack) { return stack.getOrCreateNbt().getDouble(PREV_X); }
-    public static void setPrevX(ItemStack stack, double v) { stack.getOrCreateNbt().putDouble(PREV_X, v); }
-    public static double getPrevY(ItemStack stack) { return stack.getOrCreateNbt().getDouble(PREV_Y); }
-    public static void setPrevY(ItemStack stack, double v) { stack.getOrCreateNbt().putDouble(PREV_Y, v); }
-    public static double getPrevZ(ItemStack stack) { return stack.getOrCreateNbt().getDouble(PREV_Z); }
-    public static void setPrevZ(ItemStack stack, double v) { stack.getOrCreateNbt().putDouble(PREV_Z, v); }
-    public static String getPrevDim(ItemStack stack) { return stack.getOrCreateNbt().getString(PREV_DIM); }
-    public static void setPrevDim(ItemStack stack, String v) { stack.getOrCreateNbt().putString(PREV_DIM, v); }
-    public static int getFuel(ItemStack stack) { return stack.getOrCreateNbt().getInt(FUEL); }
-    public static void setFuel(ItemStack stack, int v) { stack.getOrCreateNbt().putInt(FUEL, Math.min(v, MAX_FUEL)); }
-    public static int getOverheat(ItemStack stack) { return stack.getOrCreateNbt().getInt(OVERHEAT); }
-    public static void setOverheat(ItemStack stack, int v) { stack.getOrCreateNbt().putInt(OVERHEAT, Math.min(v, MAX_OVERHEAT)); }
-    public static long getLastUsed(ItemStack stack) { return stack.getOrCreateNbt().getLong(LAST_USED); }
-    public static void setLastUsed(ItemStack stack, long v) { stack.getOrCreateNbt().putLong(LAST_USED, v); }
-    public static long getBrokenUntil(ItemStack stack) { return stack.getOrCreateNbt().getLong(BROKEN_UNTIL); }
-    public static void setBrokenUntil(ItemStack stack, long v) { stack.getOrCreateNbt().putLong(BROKEN_UNTIL, v); }
-    public static long getCooldownEndSys(ItemStack stack) { return stack.getOrCreateNbt().getLong(COOLDOWN_END_SYS); }
-    public static void setCooldownEndSys(ItemStack stack, long v) { stack.getOrCreateNbt().putLong(COOLDOWN_END_SYS, v); }
-    public static boolean isOnCooldownSys(ItemStack stack) { return getCooldownEndSys(stack) > System.currentTimeMillis(); }
-    public static boolean isBroken(ItemStack stack) { return getOverheat(stack) >= MAX_OVERHEAT; }
-    public static boolean isOnCooldown(ItemStack stack, long time) { return time - getLastUsed(stack) < COOLDOWN_TICKS; }
-    public static int getCooldownRemaining(ItemStack stack, long time) { return (int) Math.max(0, (COOLDOWN_TICKS - (time - getLastUsed(stack))) / 20); }
-    public static int calcFuelCost(double dist) { return 10 + (int) (dist / 5.0); }
-    public static int calcOverheat(double dist) { return (int) (dist / 200) * 2; }
-    public static ItemStack findInHands(PlayerEntity player) {
-        if (player.getMainHandStack().isOf(items.VORTEX_MANIPULATOR)) return player.getMainHandStack();
-        if (player.getOffHandStack().isOf(items.VORTEX_MANIPULATOR)) return player.getOffHandStack();
-        return ItemStack.EMPTY;
+    // ========== NBT Accessors（只读用 getNbt，避免空 Tag 污染） ==========
+
+    public static double getDestX(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        return nbt != null ? nbt.getDouble(DEST_X) : 0;
     }
+    public static void setDestX(ItemStack stack, double v) {
+        stack.getOrCreateNbt().putDouble(DEST_X, v);
+    }
+
+    public static double getDestY(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        return nbt != null ? nbt.getDouble(DEST_Y) : 0;
+    }
+    public static void setDestY(ItemStack stack, double v) {
+        stack.getOrCreateNbt().putDouble(DEST_Y, v);
+    }
+
+    public static double getDestZ(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        return nbt != null ? nbt.getDouble(DEST_Z) : 0;
+    }
+    public static void setDestZ(ItemStack stack, double v) {
+        stack.getOrCreateNbt().putDouble(DEST_Z, v);
+    }
+
+    public static String getDestDim(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        return nbt != null ? nbt.getString(DEST_DIM) : "";
+    }
+    public static void setDestDim(ItemStack stack, String v) {
+        stack.getOrCreateNbt().putString(DEST_DIM, v);
+    }
+
+    public static double getPrevX(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        return nbt != null ? nbt.getDouble(PREV_X) : 0;
+    }
+    public static void setPrevX(ItemStack stack, double v) {
+        stack.getOrCreateNbt().putDouble(PREV_X, v);
+    }
+
+    public static double getPrevY(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        return nbt != null ? nbt.getDouble(PREV_Y) : 0;
+    }
+    public static void setPrevY(ItemStack stack, double v) {
+        stack.getOrCreateNbt().putDouble(PREV_Y, v);
+    }
+
+    public static double getPrevZ(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        return nbt != null ? nbt.getDouble(PREV_Z) : 0;
+    }
+    public static void setPrevZ(ItemStack stack, double v) {
+        stack.getOrCreateNbt().putDouble(PREV_Z, v);
+    }
+
+    public static String getPrevDim(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        return nbt != null ? nbt.getString(PREV_DIM) : "";
+    }
+    public static void setPrevDim(ItemStack stack, String v) {
+        stack.getOrCreateNbt().putString(PREV_DIM, v);
+    }
+
+    public static int getFuel(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        return nbt != null ? nbt.getInt(FUEL) : 0;
+    }
+    public static void setFuel(ItemStack stack, int v) {
+        stack.getOrCreateNbt().putInt(FUEL, Math.min(v, MAX_FUEL));
+    }
+
+    public static int getOverheat(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        return nbt != null ? nbt.getInt(OVERHEAT) : 0;
+    }
+    public static void setOverheat(ItemStack stack, int v) {
+        stack.getOrCreateNbt().putInt(OVERHEAT, Math.min(v, MAX_OVERHEAT));
+    }
+
+    public static long getLastUsed(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        return nbt != null ? nbt.getLong(LAST_USED) : 0;
+    }
+    public static void setLastUsed(ItemStack stack, long v) {
+        stack.getOrCreateNbt().putLong(LAST_USED, v);
+    }
+
+    public static long getBrokenUntil(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        return nbt != null ? nbt.getLong(BROKEN_UNTIL) : 0;
+    }
+    public static void setBrokenUntil(ItemStack stack, long v) {
+        stack.getOrCreateNbt().putLong(BROKEN_UNTIL, v);
+    }
+
+    public static long getCooldownEndSys(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        return nbt != null ? nbt.getLong(COOLDOWN_END_SYS) : 0;
+    }
+    public static void setCooldownEndSys(ItemStack stack, long v) {
+        stack.getOrCreateNbt().putLong(COOLDOWN_END_SYS, v);
+    }
+
+    // ========== Derived State ==========
+
+    /** 客户端专用：基于真实时间的冷却显示 */
+    public static boolean isOnCooldownSys(ItemStack stack) {
+        return getCooldownEndSys(stack) > System.currentTimeMillis();
+    }
+
+    /** 服务端权威：基于 Overworld tick 的冷却判定 */
+    public static boolean isOnCooldown(ItemStack stack, long overworldTime) {
+        return overworldTime - getLastUsed(stack) < COOLDOWN_TICKS;
+    }
+
+    public static int getCooldownRemaining(ItemStack stack, long overworldTime) {
+        return (int) Math.max(0, (COOLDOWN_TICKS - (overworldTime - getLastUsed(stack))) / 20);
+    }
+
+    public static boolean isBroken(ItemStack stack) {
+        return getOverheat(stack) >= MAX_OVERHEAT;
+    }
+
+    public static int calcFuelCost(double dist) {
+        return 1 + (int) (dist / 100);
+    }
+
+    public static int calcOverheat(double dist) {
+        return (int) (dist / 200) * 2;
+    }
+
+    public static ItemStack findInHands(PlayerEntity player) {
+        ItemStack main = player.getMainHandStack();
+        if (main.isOf(items.VORTEX_MANIPULATOR)) return main;
+        ItemStack off = player.getOffHandStack();
+        return off.isOf(items.VORTEX_MANIPULATOR) ? off : ItemStack.EMPTY;
+    }
+
     public static void saveCurrentAsDest(PlayerEntity player, ItemStack stack) {
         setDestX(stack, player.getX());
         setDestY(stack, player.getY());
         setDestZ(stack, player.getZ());
         setDestDim(stack, player.getWorld().getRegistryKey().getValue().toString());
     }
+
     public static void swapDestWithPrev(ItemStack stack) {
         double tx = getDestX(stack), ty = getDestY(stack), tz = getDestZ(stack);
         String td = getDestDim(stack);
@@ -279,6 +418,7 @@ public class VortexManipulatorItem extends Item {
         setPrevZ(stack, tz);
         setPrevDim(stack, td);
     }
+
     private static Text getDimensionDisplayText(String dimId) {
         if (dimId == null || dimId.isEmpty()) return Text.literal("-");
         try {

@@ -69,7 +69,7 @@ public class PushMode extends SonicMode {
                 if (!world.isClient()) {
                     long sec = (end - now + 19) / 20;
                     player.sendMessage(
-                            Text.translatable("message.doctor_m.sonic.cooldown", sec)
+                            Text.translatable("tooltip.doctor_m.sonic.cooldown", sec)
                                     .formatted(Formatting.RED), true);
                 }
                 return false;
@@ -82,7 +82,7 @@ public class PushMode extends SonicMode {
         if (stack.getItem() instanceof ArtronHolderItem holder) {
             if (holder.getCurrentFuel(stack) < 25) {
                 player.sendMessage(
-                        Text.translatable("message.doctor_m.sonic.insufficient_energy")
+                        Text.translatable("tooltip.doctor_m.sonic.insufficient_energy")
                                 .formatted(Formatting.RED), true);
                 return false;
             }

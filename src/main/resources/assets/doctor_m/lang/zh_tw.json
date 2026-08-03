@@ -262,6 +262,8 @@
   "tooltip.doctor_m.vm.heat": "過熱：%s%%",
   "tooltip.doctor_m.vm.cooldown": "冷卻中：%s秒",
   "tooltip.doctor_m.vm.broken": "損壞冷卻：%s天 %s小時",
+  "tooltip.doctor_m.sonic.insufficient_energy": "能量不足！",
+  "tooltip.doctor_m.sonic.cooldown": "冷卻中",
 
   "hud.doctor_m.environment.oxygenated": "有氧，可脫下太空衣",
   "hud.doctor_m.environment.deoxygenated": "無氧，不可脫下太空衣",

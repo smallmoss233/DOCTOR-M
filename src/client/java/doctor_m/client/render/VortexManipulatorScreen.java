@@ -21,7 +21,8 @@ public class VortexManipulatorScreen extends Screen {
     private final PlayerEntity player;
     private TextFieldWidget xField, yField, zField;
 
-    private double lastX = Double.NaN, lastY = Double.NaN, lastZ = Double.NaN;
+    // 用 int 避免浮点抖动，但初始值要设成不可能出现的值
+    private int lastX = Integer.MIN_VALUE, lastY = Integer.MIN_VALUE, lastZ = Integer.MIN_VALUE;
     private String lastDim = null;
 
     public VortexManipulatorScreen(PlayerEntity player, ItemStack stack) {
@@ -29,9 +30,12 @@ public class VortexManipulatorScreen extends Screen {
         this.player = player;
     }
 
+    /** 关键修复：每次实时从玩家手中获取，不缓存 ItemStack 引用 */
     private ItemStack getVMStack() {
-        if (player.getMainHandStack().isOf(items.VORTEX_MANIPULATOR)) return player.getMainHandStack();
-        if (player.getOffHandStack().isOf(items.VORTEX_MANIPULATOR)) return player.getOffHandStack();
+        ItemStack main = player.getMainHandStack();
+        if (main.isOf(items.VORTEX_MANIPULATOR)) return main;
+        ItemStack off = player.getOffHandStack();
+        if (off.isOf(items.VORTEX_MANIPULATOR)) return off;
         return ItemStack.EMPTY;
     }
 
@@ -97,9 +101,13 @@ public class VortexManipulatorScreen extends Screen {
                 btn -> attemptTeleport()
         ).position(centerX + 10, bottomY).size(90, 20).build());
 
-        lastX = VortexManipulatorItem.getDestX(stack);
-        lastY = VortexManipulatorItem.getDestY(stack);
-        lastZ = VortexManipulatorItem.getDestZ(stack);
+        syncLastValues(stack);
+    }
+
+    private void syncLastValues(ItemStack stack) {
+        lastX = (int) VortexManipulatorItem.getDestX(stack);
+        lastY = (int) VortexManipulatorItem.getDestY(stack);
+        lastZ = (int) VortexManipulatorItem.getDestZ(stack);
         lastDim = VortexManipulatorItem.getDestDim(stack);
     }
 
@@ -116,6 +124,7 @@ public class VortexManipulatorScreen extends Screen {
             ClientPlayNetworking.send(VMNetwork.TELEPORT, buf);
             this.close();
         } catch (NumberFormatException e) {
+            // 可选：播放错误音效
         }
     }
 
@@ -129,21 +138,22 @@ public class VortexManipulatorScreen extends Screen {
             return;
         }
 
-        double cx = VortexManipulatorItem.getDestX(current);
-        double cy = VortexManipulatorItem.getDestY(current);
-        double cz = VortexManipulatorItem.getDestZ(current);
+        int cx = (int) VortexManipulatorItem.getDestX(current);
+        int cy = (int) VortexManipulatorItem.getDestY(current);
+        int cz = (int) VortexManipulatorItem.getDestZ(current);
         String cdim = VortexManipulatorItem.getDestDim(current);
 
+        // 关键修复：只要数值变了（且输入框没焦点），就实时刷新显示
         if (cx != lastX && !this.xField.isFocused()) {
-            this.xField.setText(String.valueOf((int) cx));
+            this.xField.setText(String.valueOf(cx));
             lastX = cx;
         }
         if (cy != lastY && !this.yField.isFocused()) {
-            this.yField.setText(String.valueOf((int) cy));
+            this.yField.setText(String.valueOf(cy));
             lastY = cy;
         }
         if (cz != lastZ && !this.zField.isFocused()) {
-            this.zField.setText(String.valueOf((int) cz));
+            this.zField.setText(String.valueOf(cz));
             lastZ = cz;
         }
 
@@ -176,11 +186,11 @@ public class VortexManipulatorScreen extends Screen {
 
         context.drawTextWithShadow(this.textRenderer,
                 Text.translatable("gui.doctor_m.vm.dimension"),
-                centerX + 10, startY - 14, 0xAAAAAA);
+                rightX, startY - 14, 0xAAAAAA);
 
         Text dimText = getDimensionText(dimId);
         int dimTextWidth = this.textRenderer.getWidth(dimText);
-        int dimAreaCenter = rightX + 24 + 50;
+        int dimAreaCenter = rightX + 74;
         context.drawTextWithShadow(this.textRenderer, dimText,
                 dimAreaCenter - (dimTextWidth / 2), startY + 4, 0xFFFFFF);
 
@@ -216,7 +226,6 @@ public class VortexManipulatorScreen extends Screen {
             if (translated.equals(key)) {
                 return Text.literal(dimId);
             }
-
             return parseFormattingCodes(translated);
         } catch (Exception e) {
             return Text.literal(dimId);

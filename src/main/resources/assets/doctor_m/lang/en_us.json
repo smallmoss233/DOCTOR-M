@@ -262,6 +262,8 @@
   "tooltip.doctor_m.vm.heat": "Overheat: %s%%",
   "tooltip.doctor_m.vm.cooldown": "Cooldown: %ss",
   "tooltip.doctor_m.vm.broken": "Broken Cooldown: %sd %sh",
+  "tooltip.doctor_m.sonic.insufficient_energy": "Insufficient Energy!",
+  "tooltip.doctor_m.sonic.cooldown": "Cooldown",
 
   "hud.doctor_m.environment.oxygenated": "Oxygenated, can take off spacesuit",
   "hud.doctor_m.environment.deoxygenated": "Deoxygenated, cannot take off spacesuit",

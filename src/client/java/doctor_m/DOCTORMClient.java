@@ -4,6 +4,7 @@ import doctor_m.Item.data_itme.DeMatGunItem;
 import doctor_m.client.Shield.ForceFieldClientRenderer;
 import doctor_m.client.Shield.ShieldNetworkingClient;
 import doctor_m.client.Shield.ShieldOverlay;
+import doctor_m.client.render.VMTrinketRenderer;
 import doctor_m.util.VMClientScreenOpener;
 import doctor_m.client.dimension.TitanDimensionEffects;
 import doctor_m.client.entity.EvereyeRenderer;
@@ -43,6 +44,7 @@ public class DOCTORMClient implements ClientModInitializer {
 
         ShieldNetworkingClient.register();
         ForceFieldClientRenderer.register();
+        VMTrinketRenderer.register();
         HudRenderCallback.EVENT.register(new ShieldOverlay());
 
         EntityRendererRegistry.register(Entities.TYPE_103_TARDIS, Type103Renderer::new);
