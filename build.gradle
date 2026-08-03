@@ -17,24 +17,6 @@ repositories {
     maven { url = "https://maven.saps.dev/minecraft" }
     maven { url = "https://maven.isxander.dev/releases" }
     maven {
-        name = "Sleeping Town"
-        url = "https://repo.sleeping.town/"
-    }
-    maven {
-        name = "Ladysnake Libs"
-        url = 'https://maven.ladysnake.org/releases'
-    }
-    maven {
-        url "https://theo.is-a.dev/maven/"
-        content {
-            includeGroup "dev.drtheo"
-        }
-    }
-    maven {
-        name = "Terraformers"
-        url = "https://maven.terraformersmc.com/"
-    }
-    maven {
         url "https://amblelabs.dev/maven"
         content {
             includeGroup "dev.amble"
@@ -44,6 +26,24 @@ repositories {
     maven {
         name = "JEI"
         url = "https://maven.blamejared.com/"
+    }
+    maven {
+        url "https://theo.is-a.dev/maven/"
+        content {
+            includeGroup "dev.drtheo"
+        }
+    }
+    maven {
+        name = "Ladysnake Libs"
+        url = 'https://maven.ladysnake.org/releases'
+    }
+    maven {
+        name = "Terraformers"
+        url = "https://maven.terraformersmc.com/"
+    }
+    maven {
+        name = "Sleeping Town"
+        url = "https://repo.sleeping.town/"
     }
 }
 
