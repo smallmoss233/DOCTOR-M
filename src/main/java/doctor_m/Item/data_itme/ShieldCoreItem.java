@@ -3,6 +3,7 @@ package doctor_m.Item.data_itme;
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketItem;
 import doctor_m.config.ConfigManager;
+import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -118,5 +119,9 @@ public class ShieldCoreItem extends TrinketItem {
         super.appendTooltip(stack, world, tooltip, context);
         tooltip.add(Text.translatable("message.doctor_m.shield_core.energy",
                 getEnergy(stack), getMaxEnergy()).formatted(Formatting.GRAY));
+
+        ShiftTooltipInvoker.addShiftTooltip(tooltip,
+                Text.translatable("message.doctor_m.shield_core.detail")
+        );
     }
 }

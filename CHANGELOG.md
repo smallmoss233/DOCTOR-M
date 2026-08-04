@@ -19,6 +19,7 @@
 -  103型塔迪斯和玛丽安NPC / Type-103-TARDIS and Marian NPC
 -  力场盾牌，长按右键展开力场护盾，焚毁弹射物并推开周围实体，松开右键后进入短暂冷却，期间仅提供基础格挡。能量耗尽后需回满才可再次开启力场。 / Force Field Shield: Hold right-click to deploy a force field, incinerating projectiles and pushing away nearby entities. Releasing right-click triggers a brief cooldown, during which only basic blocking is provided. Once energy is depleted, it must be fully recharged before the shield can be deployed again.
 -  涡旋操纵器，廉价的时间旅行设备，虽然快速但无任何防护，长途旅行会过热，每次使用后都有60s冷却，如果填错坐标还可能CosPlay安德森上校，副手持有阿特隆能量收集单元潜行右键补充能量 / Vortex Manipulator — a cheap time travel device. Fast, but offers no protection; long journeys cause overheating, with a 60s cooldown after each use. Enter the wrong coordinates and you might end up cosplaying as Colonel Anderson. Hold an Artron Collector in your off-hand and sneak + right-click to recharge.
+-  特莉波卡的镰刀，攻击距离延长，对亡灵造成五倍伤害，附带强制百分比扣血与 35% 血线处决，处决可范围溅射并恢复大量生命；右键蓄力进入无敌状态，释放最高 30 格范围的灵魂收割斩击。 / Tlipoca's Scythe features extended reach, 5× damage to undead, max-HP-based forced damage with execution below 35% HP, AoE splash and healing on execute; right-click to charge into invincibility, then unleash Soul Reap with up to a 30-block range.
 
 ---
 

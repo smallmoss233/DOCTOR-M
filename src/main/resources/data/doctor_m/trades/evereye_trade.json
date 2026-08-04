@@ -64,6 +64,13 @@
       "output": "doctor_m:shield_core",
       "outputCount": 1,
       "maxUses": 1
+    },
+    {
+      "input": "ait:blueprint",
+      "inputCount": 1,
+      "output": "doctor_m:vortex_manipulator",
+      "outputCount": 1,
+      "maxUses": 1
     }
   ]
 }

@@ -25,13 +25,18 @@ public class LivingEntityMixin {
     private static final ThreadLocal<Boolean> TLIPOCA_AOE_LOCK = ThreadLocal.withInitial(() -> false);
     private static final double TLIPOCA_AOE_RADIUS = 5.0;
 
-    // ========== 力场盾（完全保留）==========
+    // ========== 力场盾==========
+    /** 只要正在举盾就生效（不需要有能量） */
+    private static boolean isHoldingForceFieldShield(PlayerEntity player) {
+        if (!player.isUsingItem()) return false;
+        return player.getActiveItem().getItem() instanceof ForceFieldShieldItem;
+    }
 
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
     private void doctor_m$onShieldDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         LivingEntity self = (LivingEntity) (Object) this;
         if (!(self instanceof PlayerEntity player)) return;
-        if (!ForceFieldShieldItem.isForceFieldActive(player)) return;
+        if (!isHoldingForceFieldShield(player)) return;
         if (ForceFieldShieldItem.isEnvironmentalOrSpecialDamage(source)) return;
         cir.setReturnValue(false);
     }
@@ -40,7 +45,7 @@ public class LivingEntityMixin {
     private float doctor_m$reduceEnvironmentalDamage(float amount, DamageSource source) {
         LivingEntity self = (LivingEntity) (Object) this;
         if (!(self instanceof PlayerEntity player)) return amount;
-        if (!ForceFieldShieldItem.isForceFieldActive(player)) return amount;
+        if (!isHoldingForceFieldShield(player)) return amount;
         if (ForceFieldShieldItem.isEnvironmentalOrSpecialDamage(source)) {
             return amount * 0.1f;
         }

@@ -48,20 +48,19 @@ public class ItemMixin {
                                          CallbackInfo ci) {
         Identifier id = Registries.ITEM.getId(stack.getItem());
 
-        if (id.equals(UpgradeModuleManager.ENERGY_UPGRADE)) {
+        if (id.equals(UpgradeModuleManager.ENERGY_UPGRADE) || id.equals(UpgradeModuleManager.REGENERATION_MODULE)) {
             tooltip.add(Text.translatable("message.tooltip.doctor_m.upgrade")
                     .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
             tooltip.add(Text.translatable("message.tooltip.doctor_m.removed_upgrade")
                     .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
-            tooltip.add(Text.translatable("message.tooltip.doctor_m.energy_upgrade.desc")
-                    .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
-        } else if (id.equals(UpgradeModuleManager.REGENERATION_MODULE)) {
-            tooltip.add(Text.translatable("message.tooltip.doctor_m.upgrade")
-                    .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
-            tooltip.add(Text.translatable("message.tooltip.doctor_m.removed_upgrade")
-                    .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
-            tooltip.add(Text.translatable("message.tooltip.doctor_m.regeneration_module.desc")
-                    .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
+
+            if (id.equals(UpgradeModuleManager.ENERGY_UPGRADE)) {
+                tooltip.add(Text.translatable("message.tooltip.doctor_m.energy_upgrade.desc")
+                        .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
+            } else {
+                tooltip.add(Text.translatable("message.tooltip.doctor_m.regeneration_module.desc")
+                        .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
+            }
         }
     }
 }

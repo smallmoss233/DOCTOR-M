@@ -162,7 +162,6 @@ public class TlipocaScytheItem extends SwordItem {
         TooltipHelper.addWrappedTooltip(tooltip, longDescription);
         ShiftTooltipInvoker.addShiftTooltip(tooltip,
                 Text.translatable("message.doctor_m.tlipoca_scythe.detail"));
-        tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
     }
 
     // ========== 彻底删除耐久 ==========
