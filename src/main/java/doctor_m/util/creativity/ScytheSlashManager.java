@@ -59,6 +59,11 @@ public class ScytheSlashManager {
         List<LivingEntity> targets = world.getEntitiesByClass(LivingEntity.class, box,
                 e -> e != player && e.isAlive());
 
+        // 红色扇形轨迹（斩击范围更大更夸张）
+        spawnSlashArcParticles(world, player);
+        // 再补一层远距离红色粉尘
+        spawnSlashArcParticles(world, player, reach * 0.8, 40);
+
         int hitCount = 0;
 
         for (LivingEntity target : targets) {
@@ -219,10 +224,39 @@ public class ScytheSlashManager {
         }
     }
 
-    // 兼容旧方法
-    public static void performSlash(ServerWorld world, ServerPlayerEntity player, ItemStack stack) {
-        performChargedSlash(world, player, stack, 1);
+    // ========== 扇形挥砍轨迹粒子（红色） ==========
+
+    public static void spawnSlashArcParticles(ServerWorld world, PlayerEntity player) {
+        spawnSlashArcParticles(world, player, 3.8, 28);
     }
 
-    public static void spawnParticlesClient(PlayerEntity player) {}
+    public static void spawnSlashArcParticles(ServerWorld world, PlayerEntity player,
+                                              double reach, int particles) {
+        Vec3d eyePos = player.getEyePos();
+        Vec3d look = player.getRotationVec(1.0f);
+
+        Vec3d up = new Vec3d(0, 1, 0);
+        Vec3d right = look.crossProduct(up).normalize();
+        if (right.lengthSquared() < 0.001) right = new Vec3d(1, 0, 0);
+
+        var dust = new net.minecraft.particle.DustParticleEffect(
+                new org.joml.Vector3f(1.0f, 0.0f, 0.0f), 1.2f);
+
+        double arcAngle = Math.PI / 1.8; // 100度扇形
+
+        for (int i = 0; i < particles; i++) {
+            double t = (double) i / (particles - 1);
+            double angle = -arcAngle / 2 + t * arcAngle;
+
+            Vec3d dir = look.multiply(Math.cos(angle))
+                    .add(right.multiply(Math.sin(angle)))
+                    .normalize();
+
+            double dist = 0.8 + world.random.nextDouble() * (reach - 0.8);
+            Vec3d pos = eyePos.add(dir.multiply(dist));
+            pos = pos.add(0, -0.3 + world.random.nextDouble() * 0.5, 0);
+
+            world.spawnParticles(dust, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0);
+        }
+    }
 }
