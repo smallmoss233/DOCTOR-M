@@ -5,6 +5,7 @@ import doctor_m.util.creativity.ScytheSlashManager;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import doctor_m.util.tooltip.TooltipHelper;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -22,18 +23,18 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.UUID;
 
-public class TlipocaScythe extends SwordItem {
+public class TlipocaScytheItem extends SwordItem {
     private static final String INIT_KEY = "TlipocaInit";
 
     private static final UUID DAMAGE_UUID = UUID.fromString("12345678-1234-1234-1234-123456789014");
     private static final UUID SPEED_UUID = UUID.fromString("12345678-1234-1234-1234-123456789016");
+    private static final UUID REACH_UUID = UUID.fromString("12345678-1234-1234-1234-123456789017");
     public static final UUID TLIPOCA_HEALTH_UUID = UUID.fromString("12345678-1234-1234-1234-123456789012");
 
-    // 单例引用（用于冷却管理）
-    private static TlipocaScythe INSTANCE;
-    public static TlipocaScythe getInstance() { return INSTANCE; }
+    private static TlipocaScytheItem INSTANCE;
+    public static TlipocaScytheItem getInstance() { return INSTANCE; }
 
-    public TlipocaScythe(Settings settings) {
+    public TlipocaScytheItem(Settings settings) {
         super(TlipocaMaterial.INSTANCE, 0, -3.2f, settings);
         INSTANCE = this;
     }
@@ -42,9 +43,7 @@ public class TlipocaScythe extends SwordItem {
     public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
         return super.getAttributeModifiers(slot);
     }
-    /**
-     * 写入 AttributeModifiers（固定伤害 20，速度 -3.6）
-     */
+
     public static void writeAttributeModifiers(ItemStack stack, float damage) {
         NbtCompound nbt = stack.getOrCreateNbt();
         NbtList list = new NbtList();
@@ -67,40 +66,63 @@ public class TlipocaScythe extends SwordItem {
         spd.putString("Slot", "mainhand");
         list.add(spd);
 
+        // 新增：攻击距离 +1.5 格（镰刀比剑长）
+        NbtCompound reach = new NbtCompound();
+        reach.putString("AttributeName", "minecraft:player.entity_interaction_range");
+        reach.putString("Name", "tlipoca_reach");
+        reach.putDouble("Amount", 1.5);
+        reach.putInt("Operation", 0);
+        reach.putUuid("UUID", REACH_UUID);
+        reach.putString("Slot", "mainhand");
+        list.add(reach);
+
         nbt.put("AttributeModifiers", list);
     }
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
-
         if (!world.isClient) {
             if (user instanceof ServerPlayerEntity serverPlayer) {
-                // ⭐ 传入 stack 作为第三个参数
                 ScytheSlashManager.performSlash((net.minecraft.server.world.ServerWorld) world, serverPlayer, stack);
             }
         } else {
             ScytheSlashManager.spawnParticlesClient(user);
         }
-
         return TypedActionResult.success(stack);
     }
-
-    // ========== Tooltip ==========
 
     @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
-
         Text longDescription = Text.translatable("message.doctor_m.tlipoca_scythe.tip");
         TooltipHelper.addWrappedTooltip(tooltip, longDescription);
         ShiftTooltipInvoker.addShiftTooltip(tooltip,
-                Text.translatable("message.doctor_m.tlipoca_scythe.detail")
-        );
+                Text.translatable("message.doctor_m.tlipoca_scythe.detail"));
         tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
     }
+
+    // ========== 彻底删除耐久系统 ==========
+
     @Override
     public boolean isDamageable() {
         return false;
+    }
+
+    @Override
+    public boolean isItemBarVisible(ItemStack stack) {
+        return false;
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+        super.inventoryTick(stack, world, entity, slot, selected);
+        if (world.isClient) return;
+
+        NbtCompound nbt = stack.getOrCreateNbt();
+        if (!nbt.getBoolean(INIT_KEY)) {
+            nbt.putBoolean(INIT_KEY, true);
+            writeAttributeModifiers(stack, 20.0f);
+        }
     }
 }

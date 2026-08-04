@@ -39,7 +39,7 @@ public class ModConfig {
     public static final double DEFAULT_TLIPOCA_SCYTHE_EXTRA = 25.0;//最低扣血量（百分比）
     public boolean enableSlashSystem = true;         // 总开关
     public long slashCooldownTicks = 60;             // 冷却时间（tick）
-    public float slashDamage = 400.0f;               // 伤害值
+    public float slashDamage = 500.0f;               // 右键伤害值
     public double slashReach = 8.0;                  // 攻击距离
     public double slashWidth = 5.0;                  // 攻击范围宽度
     public double slashHeight = 3.0;                 // 攻击范围高度

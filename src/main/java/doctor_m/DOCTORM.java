@@ -8,6 +8,7 @@ import doctor_m.config.ConfigManager;
 import doctor_m.dimension.DimensionRegister;
 import doctor_m.entities.Entities;
 import doctor_m.module.creativity.CreativityItems;
+import doctor_m.module.creativity.creativity_data.TlipocaScytheEvents;
 import doctor_m.module.space_plus.block.ModBlockEntities;
 import doctor_m.module.space_plus.block.ModBlocks;
 import doctor_m.module.space_plus.system.VacuumEatingHandler;
@@ -53,6 +54,7 @@ public class DOCTORM implements ModInitializer {
         ModBlockEntities.register();
         VacuumEatingHandler.register();
         VMServerHandler.register();
+        TlipocaScytheEvents.register();
 
         TimeKeyFunction.INSTANCE.register();
         PocketWatchFunction.INSTANCE.register();

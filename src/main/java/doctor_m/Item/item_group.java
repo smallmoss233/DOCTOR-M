@@ -27,10 +27,10 @@ public static void registerItems() {
                                 entries.add(TYPE_103_SPAWN);
                                 entries.add(EVEREYE_SPAWN);
                                 entries.add(OXYGEN_TANK);
-                                //entries.add(TLIPOCA_SCYTHE);
                                 entries.add(SHIELD_CORE);
                                 entries.add(FORCE_FIELD_SHIELD);
                                 entries.add(VORTEX_MANIPULATOR);
+                                entries.add(TLIPOCA_SCYTHE);
                                 entries.add(ENERGY_UPGRADE_MODULE);
                                 entries.add(REGENERATION_MODULE);
                             })

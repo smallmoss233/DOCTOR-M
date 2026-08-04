@@ -1,7 +1,7 @@
 package doctor_m.util.creativity;
 
 import doctor_m.config.ConfigManager;
-import doctor_m.module.creativity.creativity_data.TlipocaScythe;
+import doctor_m.module.creativity.creativity_data.TlipocaScytheItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -94,7 +94,7 @@ public class ScytheSlashManager {
     public static void setCooldown(World world, PlayerEntity player, long cooldownTicks) {
         lastSlashTime.put(player.getUuid(), world.getTime());
         player.getItemCooldownManager().set(
-                TlipocaScythe.getInstance(),
+                TlipocaScytheItem.getInstance(),
                 (int) cooldownTicks
         );
     }
