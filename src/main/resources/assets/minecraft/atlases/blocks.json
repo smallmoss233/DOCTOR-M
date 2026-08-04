@@ -1,0 +1,12 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "doctor_m:item/tlipoca_scythe_emissive"
+    },
+    {
+      "type": "single",
+      "resource": "doctor_m:item/tlipoca_scythe_blade_emissive"
+    }
+  ]
+}
