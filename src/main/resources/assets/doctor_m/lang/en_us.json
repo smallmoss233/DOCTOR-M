@@ -335,6 +335,7 @@
   "message.doctor_m.vm.teleported": "Energy -%s, Overheat +%s%%",
   "message.doctor_m.vm.overheated_3days": "Vortex Manipulator overheated! It will be unusable for 3 days.",
   "message.doctor_m.vm.detail": "§7A cheap time travel device—fast, but offers no protection. *Enter the wrong coordinates and you might end up cosplaying as Colonel Anderson.*(BT, I found Anderson. He's... in the ceiling.)*Hold an Artron Collector in your off-hand and sneak + right-click to recharge.",
+  "message.doctor_m.vm.time_sickness": "Unprotected time travel is taking a toll on your body... %ds",
 
   "dimension.doctor_m.trenzalore": "§3Trenzalore",
   "dimension.doctor_m.titan": "Saturn VI-Titan"

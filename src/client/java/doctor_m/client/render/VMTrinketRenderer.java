@@ -42,6 +42,7 @@ public class VMTrinketRenderer implements TrinketRenderer {
         TrinketRenderer.translateToRightArm(matrices, playerModel, player);
         matrices.translate(0.01, -0.47, -0.12);
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90));
+        matrices.scale(1.1f, 1.1f, 1.1f);
 
         MinecraftClient.getInstance().getItemRenderer().renderItem(
                 stack,

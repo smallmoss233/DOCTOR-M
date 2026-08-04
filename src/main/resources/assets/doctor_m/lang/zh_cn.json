@@ -335,6 +335,7 @@
   "message.doctor_m.vm.teleported": "能量 -%s, 过热 +%s%%",
   "message.doctor_m.vm.overheated_3days": "涡旋操纵器过热! 将在3天内无法使用。",
   "message.doctor_m.vm.detail": "§7廉价的时间旅行设备，虽然快速但无任何防护，如果填错坐标还可能CosPlay安德森上校*(BT，我找到安德森了，他在……天花板里)*副手持有阿特隆能量收集单元潜行右键补充能量",
+  "message.doctor_m.vm.time_sickness": "无防护的时间旅行对你的身体产生了负面影响... %d秒",
 
   "dimension.doctor_m.trenzalore": "§3特兰泽洛",
   "dimension.doctor_m.titan": "土卫六-泰坦"

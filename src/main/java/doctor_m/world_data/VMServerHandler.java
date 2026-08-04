@@ -158,7 +158,7 @@ public class VMServerHandler {
         }
 
         // 6. 执行
-        performTeleport(player, stack, targetWorld, x, y, z, fuel, fuelCost, overheatCost, time);
+        performTeleport(player, stack, targetWorld, x, y, z, fuel, fuelCost, overheatCost, time, dist);
     }
 
     private static boolean handleBrokenState(ServerPlayerEntity player, ItemStack stack, long time) {
@@ -183,7 +183,7 @@ public class VMServerHandler {
 
     private static void performTeleport(ServerPlayerEntity player, ItemStack stack, ServerWorld targetWorld,
                                         double x, double y, double z,
-                                        int fuel, int fuelCost, int overheatCost, long time) {
+                                        int fuel, int fuelCost, int overheatCost, long time, double dist) {
         // 保存 prev
         VortexManipulatorItem.setPrevX(stack, VortexManipulatorItem.getDestX(stack));
         VortexManipulatorItem.setPrevY(stack, VortexManipulatorItem.getDestY(stack));
@@ -210,6 +210,35 @@ public class VMServerHandler {
 
         player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.teleported", fuelCost, overheatCost)
                 .formatted(Formatting.GREEN), true);
+
+        if (dist > 500.0) {
+            double chance = dist > 5000.0 ? 0.15 : 0.10;
+            if (player.getRandom().nextDouble() < chance) {
+                // 持续时间：每 50 格 1 秒（20 ticks）
+                int durationTicks = (int) (dist / 50.0) * 20;
+                int durationSec = durationTicks / 20;
+
+                // 凋零 I
+                player.addStatusEffect(new net.minecraft.entity.effect.StatusEffectInstance(
+                        net.minecraft.entity.effect.StatusEffects.WITHER, durationTicks, 0, false, false, true));
+                // 反胃 I
+                player.addStatusEffect(new net.minecraft.entity.effect.StatusEffectInstance(
+                        net.minecraft.entity.effect.StatusEffects.NAUSEA, durationTicks, 0, false, false, true));
+                // 虚弱 V
+                player.addStatusEffect(new net.minecraft.entity.effect.StatusEffectInstance(
+                        net.minecraft.entity.effect.StatusEffects.WEAKNESS, durationTicks, 4, false, false, true));
+                // 缓慢 IV
+                player.addStatusEffect(new net.minecraft.entity.effect.StatusEffectInstance(
+                        net.minecraft.entity.effect.StatusEffects.SLOWNESS, durationTicks, 3, false, false, true));
+                // 饥饿 II
+                player.addStatusEffect(new net.minecraft.entity.effect.StatusEffectInstance(
+                        net.minecraft.entity.effect.StatusEffects.HUNGER, durationTicks, 1, false, false, true));
+
+                player.sendMessage(net.minecraft.text.Text.translatable(
+                                "message.doctor_m.vm.time_sickness", durationSec)
+                        .formatted(Formatting.DARK_PURPLE), true);
+            }
+        }
 
         // 过热损坏判定
         if (newOverheat >= VortexManipulatorItem.MAX_OVERHEAT) {
