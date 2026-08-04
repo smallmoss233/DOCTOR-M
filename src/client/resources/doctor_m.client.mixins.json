@@ -7,7 +7,6 @@
       "ait.MixinSpaceSuitOverlay",
       "doctor_m.MixinTitleScreenBackground",
       "doctor_m.AbstractClientPlayerEntityMixin",
-      "doctor_m.ItemRendererMixin"
     ],
 	"injectors": {
 		"defaultRequire": 1
