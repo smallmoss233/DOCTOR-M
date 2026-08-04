@@ -2,6 +2,7 @@ package doctor_m.mixin.doctor_m;
 
 import doctor_m.Item.data_itme.ForceFieldShieldItem;
 import doctor_m.module.creativity.creativity_data.TlipocaScytheItem;
+import doctor_m.util.creativity.ScytheChargingManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -21,7 +22,7 @@ public class LivingEntityMixin {
 
     // 防止伤害共享递归
     private static final ThreadLocal<Boolean> TLIPOCA_AOE_LOCK = ThreadLocal.withInitial(() -> false);
-    private static final double TLIPOCA_AOE_RADIUS = 4.0;
+    private static final double TLIPOCA_AOE_RADIUS = 5.0;
 
     // ========== 力场盾（完全保留）==========
 
@@ -159,5 +160,16 @@ public class LivingEntityMixin {
         world.spawnParticles(ParticleTypes.DAMAGE_INDICATOR,
                 victim.getX(), victim.getY() + victim.getHeight() * 0.6, victim.getZ(),
                 5, 0.3, 0.2, 0.3, 0.0);
+    }
+
+    /**
+     * 镰刀蓄力期间完全无敌
+     */
+    @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
+    private void doctor_m$chargingInvulnerable(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        LivingEntity self = (LivingEntity) (Object) this;
+        if (self instanceof PlayerEntity player && ScytheChargingManager.isCharging(player)) {
+            cir.setReturnValue(false);
+        }
     }
 }

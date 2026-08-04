@@ -1,12 +1,14 @@
 package doctor_m.module.creativity.creativity_data;
 
 import com.google.common.collect.Multimap;
+import doctor_m.util.creativity.ScytheChargingManager;
 import doctor_m.util.creativity.ScytheSlashManager;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import doctor_m.util.tooltip.TooltipHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,9 +17,13 @@ import net.minecraft.item.SwordItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -66,7 +72,6 @@ public class TlipocaScytheItem extends SwordItem {
         spd.putString("Slot", "mainhand");
         list.add(spd);
 
-        // 新增：攻击距离 +1.5 格（镰刀比剑长）
         NbtCompound reach = new NbtCompound();
         reach.putString("AttributeName", "minecraft:player.entity_interaction_range");
         reach.putString("Name", "tlipoca_reach");
@@ -79,18 +84,76 @@ public class TlipocaScytheItem extends SwordItem {
         nbt.put("AttributeModifiers", list);
     }
 
+    // ========== 多层蓄力斩击 ==========
+
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
-        if (!world.isClient) {
-            if (user instanceof ServerPlayerEntity serverPlayer) {
-                ScytheSlashManager.performSlash((net.minecraft.server.world.ServerWorld) world, serverPlayer, stack);
-            }
-        } else {
-            ScytheSlashManager.spawnParticlesClient(user);
+        user.setCurrentHand(hand);
+
+        // 客户端服务端都重置蓄力状态
+        ScytheChargingManager.startCharging(user);
+
+        if (!world.isClient && user instanceof ServerPlayerEntity serverPlayer) {
+            world.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),
+                    SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.PLAYERS, 0.5f, 1.8f);
         }
-        return TypedActionResult.success(stack);
+        return TypedActionResult.consume(stack);
     }
+
+    @Override
+    public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+        if (!world.isClient || !(user instanceof PlayerEntity player)) return;
+
+        int useTicks = this.getMaxUseTime(stack) - remainingUseTicks;
+        int level = Math.min(useTicks / ScytheChargingManager.TICKS_PER_LEVEL,
+                ScytheChargingManager.MAX_CHARGE_LEVEL);
+
+        // 实时显示蓄力等级（变化时更新，避免刷屏）
+        int prevLevel = ScytheChargingManager.getChargeLevel(player);
+        if (level != prevLevel) {
+            ScytheChargingManager.setChargeLevel(player, level);
+            if (level > 0) {
+                player.sendMessage(
+                        Text.translatable("message.doctor_m.scythe.charging_level", level, ScytheChargingManager.MAX_CHARGE_LEVEL)
+                                .formatted(Formatting.DARK_RED, Formatting.BOLD),
+                        true
+                );
+                ScytheSlashManager.spawnLevelUpParticlesClient(player, level);
+                player.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 0.4f, 1.5f - level * 0.12f);
+            }
+        }
+
+        ScytheSlashManager.spawnChargeParticlesClient(player, useTicks);
+    }
+
+    @Override
+    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+        if (world.isClient || !(user instanceof ServerPlayerEntity player)) return;
+
+        ScytheChargingManager.stopCharging(player);
+
+        int useTicks = this.getMaxUseTime(stack) - remainingUseTicks;
+        int level = Math.min(useTicks / ScytheChargingManager.TICKS_PER_LEVEL,
+                ScytheChargingManager.MAX_CHARGE_LEVEL);
+
+        if (level <= 0) return;
+
+        ScytheSlashManager.performChargedSlash(
+                (net.minecraft.server.world.ServerWorld) world, player, stack, level);
+    }
+
+    @Override
+    public int getMaxUseTime(ItemStack stack) {
+        return 72000;
+    }
+
+    @Override
+    public UseAction getUseAction(ItemStack stack) {
+        return UseAction.NONE;
+    }
+
+    // ========== Tooltip ==========
 
     @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
@@ -102,7 +165,7 @@ public class TlipocaScytheItem extends SwordItem {
         tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
     }
 
-    // ========== 彻底删除耐久系统 ==========
+    // ========== 彻底删除耐久 ==========
 
     @Override
     public boolean isDamageable() {
