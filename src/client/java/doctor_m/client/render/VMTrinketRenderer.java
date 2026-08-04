@@ -37,12 +37,22 @@ public class VMTrinketRenderer implements TrinketRenderer {
         PlayerEntityModel<AbstractClientPlayerEntity> playerModel =
                 (PlayerEntityModel<AbstractClientPlayerEntity>) contextModel;
 
+        boolean isSlim = "slim".equals(player.getModel());
+
         matrices.push();
 
         TrinketRenderer.translateToRightArm(matrices, playerModel, player);
-        matrices.translate(0.01, -0.47, -0.12);
+
+        if (isSlim) {
+            matrices.translate(0.03, -0.1, -0.12);
+            matrices.scale(1f, 1f, 1f);
+        } else {
+            matrices.translate(0.0, -0.1, -0.12);
+            matrices.scale(1.1f, 1.1f, 1.1f);
+        }
+
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90));
-        matrices.scale(1.1f, 1.1f, 1.1f);
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
 
         MinecraftClient.getInstance().getItemRenderer().renderItem(
                 stack,
