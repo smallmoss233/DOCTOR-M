@@ -13,6 +13,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -142,9 +143,46 @@ public class VMServerHandler {
             }
         }
 
-        // 5. 燃料计算
+        // ===== 5. 坐标硬边界检查（防止世界生成崩溃） =====
+        if (Math.abs(x) > 30_000_000 || Math.abs(z) > 30_000_000 || y < -128 || y > 512) {
+            player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.out_of_bounds")
+                    .formatted(Formatting.RED), true);
+            return;
+        }
+
+        // ===== 6. 燃料计算（含各种附加费） =====
         double dist = distance(player.getX(), player.getY(), player.getZ(), x, y, z);
+        boolean crossDimension = !player.getWorld().getRegistryKey().getValue().toString().equals(dimId);
+
         int fuelCost = VortexManipulatorItem.calcFuelCost(dist);
+
+        // 跨维度附加费
+        if (crossDimension) {
+            fuelCost = (int) Math.ceil(fuelCost * 1.5);
+        }
+
+        // 极端海拔附加费（高空或深地）
+        if (y > 200 || y < 16) {
+            fuelCost = (int) Math.ceil(fuelCost * 1.15);
+        }
+
+        // 移动中惩罚（锁定高速目标更耗能）
+        if (player.getVelocity().lengthSquared() > 0.01) {
+            fuelCost = (int) Math.ceil(fuelCost * 1.1);
+        }
+
+        // 危险着陆附加费（脚下没方块，需要额外能量稳定）
+        if (!isSafeLanding(targetWorld, (int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z))) {
+            fuelCost = (int) Math.ceil(fuelCost * 1.2);
+        }
+
+        // 超距拒绝：超过能量上限2倍直接不给传
+        if (fuelCost > VortexManipulatorItem.MAX_FUEL * 2) {
+            player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.distance_too_far", fuelCost)
+                    .formatted(Formatting.RED), true);
+            return;
+        }
+
         int overheatCost = VortexManipulatorItem.calcOverheat(dist);
         int fuel = VortexManipulatorItem.getFuel(stack);
 
@@ -154,8 +192,18 @@ public class VMServerHandler {
             return;
         }
 
-        // 6. 执行
+        // 7. 执行
         performTeleport(player, stack, targetWorld, x, y, z, fuel, fuelCost, overheatCost, time, dist);
+    }
+
+    private static boolean isSafeLanding(ServerWorld world, int x, int y, int z) {
+        for (int i = 0; i < 5; i++) {
+            if (y - i < world.getBottomY()) return false;
+            if (!world.getBlockState(new BlockPos(x, y - i, z)).isAir()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean handleBrokenState(ServerPlayerEntity player, ItemStack stack, long time) {
@@ -237,7 +285,7 @@ public class VMServerHandler {
             }
         }
 
-        // 过热损坏判定
+        // 过热损坏判定（不预检，传完再看炸没炸）
         if (newOverheat >= VortexManipulatorItem.MAX_OVERHEAT) {
             VortexManipulatorItem.setBrokenUntil(stack, time + VortexManipulatorItem.BROKEN_COOLDOWN_TICKS);
             player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.overheated_3days")

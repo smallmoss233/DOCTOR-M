@@ -1,7 +1,8 @@
 package doctor_m.mixin.doctor_m;
 
 import doctor_m.Item.data_itme.ForceFieldShieldItem;
-import doctor_m.module.creativity.creativity_data.TlipocaScytheItem;
+import doctor_m.Item.stcs.STCSItem;
+import doctor_m.module.creativity.creativity_data.Tlipoca.TlipocaScytheItem;
 import doctor_m.util.creativity.ScytheChargingManager;
 import doctor_m.util.creativity.ScytheSlashManager;
 import net.minecraft.entity.Entity;
@@ -9,8 +10,12 @@ import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,6 +29,7 @@ public class LivingEntityMixin {
 
     private static final ThreadLocal<Boolean> TLIPOCA_AOE_LOCK = ThreadLocal.withInitial(() -> false);
     private static final double TLIPOCA_AOE_RADIUS = 5.0;
+    private static final ThreadLocal<Boolean> STCS_BLOCK_LOCK = ThreadLocal.withInitial(() -> false);
 
     // ========== 力场盾==========
     /** 只要正在举盾就生效（不需要有能量） */
@@ -203,5 +209,78 @@ public class LivingEntityMixin {
                     victim.getX(), victim.getY() + 0.3, victim.getZ(),
                     8, 0.3, 0.3, 0.3, 0.03);
         }
+    }
+
+    // ========== STCS 剑封锁（潜行触发） ==========
+
+    @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
+    private void doctor_m$stcsBlock(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        if (STCS_BLOCK_LOCK.get()) return;
+
+        LivingEntity self = (LivingEntity) (Object) this;
+        if (!(self instanceof ServerPlayerEntity player)) return;
+
+        // 潜行才触发
+        if (!player.isSneaking()) return;
+
+        // 主手或副手持有 STCS 即可
+        ItemStack stcsStack = null;
+        STCSItem stcsItem = null;
+
+        ItemStack main = player.getMainHandStack();
+        ItemStack off = player.getOffHandStack();
+
+        if (main.getItem() instanceof STCSItem s) {
+            stcsStack = main;
+            stcsItem = s;
+        } else if (off.getItem() instanceof STCSItem s) {
+            stcsStack = off;
+            stcsItem = s;
+        }
+
+        if (stcsItem == null || stcsStack == null) return;
+
+        // 能量不足：不格挡，不扣能量，静默失败
+        int energy = stcsItem.getEnergy(stcsStack);
+        if (energy < STCSItem.BLOCK_ENERGY_COST) return;
+
+        stcsItem.addEnergy(stcsStack, -STCSItem.BLOCK_ENERGY_COST);
+
+        float reduction = stcsItem.isCoreActive(stcsStack) ? 1.0f : stcsItem.getBlockDamageReduction();
+
+        if (reduction >= 0.8f) spawnStcsBlockEffect(player);
+
+        // 完全免疫
+        if (reduction >= 0.999f) {
+            cir.setReturnValue(false);
+            return;
+        }
+
+        // 部分减伤
+        float newAmount = amount * (1.0f - reduction);
+        if (newAmount <= 0.01f) {
+            cir.setReturnValue(false);
+            return;
+        }
+
+        STCS_BLOCK_LOCK.set(true);
+        try {
+            player.damage(source, newAmount);
+        } finally {
+            STCS_BLOCK_LOCK.set(false);
+        }
+        cir.setReturnValue(false);
+    }
+
+    private static void spawnStcsBlockEffect(ServerPlayerEntity player) {
+        ServerWorld world = player.getServerWorld();
+        world.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.PLAYERS, 1.0f, 1.0f);
+        world.spawnParticles(ParticleTypes.CRIT,
+                player.getX(), player.getY() + 1.0, player.getZ(),
+                8, 0.4, 0.4, 0.4, 0.3);
+        world.spawnParticles(ParticleTypes.WAX_ON,
+                player.getX(), player.getY() + 1.0, player.getZ(),
+                4, 0.3, 0.3, 0.3, 0.1);
     }
 }

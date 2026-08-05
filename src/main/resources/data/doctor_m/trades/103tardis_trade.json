@@ -86,9 +86,16 @@
       "maxUses": 1
     },
     {
+      "input": "minecraft:diamond",
+      "inputCount": 48,
+      "output": "doctor_m:vortex_manipulator",
+      "outputCount": 1,
+      "maxUses": 1
+    },
+    {
       "input": "ait:blueprint",
       "inputCount": 1,
-      "output": "doctor_m:vortex_manipulator",
+      "output": "doctor_m:stca",
       "outputCount": 1,
       "maxUses": 1
     }

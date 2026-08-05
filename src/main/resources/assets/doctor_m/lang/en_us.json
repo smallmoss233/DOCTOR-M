@@ -19,6 +19,8 @@
   "advancements.doctor_m.de_mat_gun.description": "We had forgotten all this—violence, discord, disaster—yet that war compelled us to return to savagery. And now, farewell to time itself.",
   "advancements.doctor_m.vortex_manipulator.title": "Extraordinary Technology",
   "advancements.doctor_m.vortex_manipulator.description": "Use with care. Don't become the second Major Anderson.",
+  "advancements.doctor_m.tlipoca_scythe.title": "A Scythe?",
+  "advancements.doctor_m.tlipoca_scythe.description": "Now I have become Death, the reaper of souls in this world.",
 
   "tardis.message.control.siege.confirm_prompt": "Press again to enable Siege Mode! (Wait 10 seconds before clicking)",
 
@@ -79,6 +81,9 @@
   "item.doctor_m.regeneration_module": "Energy Regeneration Core",
   "item.doctor_m.force_field_shield": "Force Field Shield",
   "item.doctor_m.vortex_manipulator": "Vortex Manipulator",
+  "item.doctor_m.stch": "STCS|STC-07H \"Troll\"",
+  "item.doctor_m.stca": "STCS|STC-08A \"Sky Chart\"",
+  "item.doctor_m.stcl": "STCS|STC-09L \"Ranger\"",
 
   "block.doctor_m.oxygen_charger": "Oxygen Recharger",
 
@@ -197,8 +202,8 @@
 
   "key.doctor_m.mode.on": "§aOn",
   "key.doctor_m.mode.off": "§cOff",
-  "key.doctor_m.toggle_passive_a": "Toggle Passive Switch A (Hold Shift)",
-  "key.doctor_m.toggle_passive_b": "Toggle Passive Switch B (Hold Shift)",
+  "key.doctor_m.toggle_passive_a": "Toggle Passive A",
+  "key.doctor_m.toggle_passive_b": "Toggle Passive B",
   "category.doctor_m": "DOCTOR M",
 
   "tooltip.doctor_m.hold_shift": "Hold Shift for Details",
@@ -279,6 +284,16 @@
   "tooltip.doctor_m.vm.broken": "Broken Cooldown: %sd %sh",
   "tooltip.doctor_m.sonic.insufficient_energy": "Insufficient Energy!",
   "tooltip.doctor_m.sonic.cooldown": "Cooldown",
+  "tooltip.doctor_m.stcs.title": "§b[STCS] §f%s",
+  "tooltip.doctor_m.stcs.damage": "§7Damage: §c%d",
+  "tooltip.doctor_m.stcs.attack_speed": "§7Attack Speed: §e%s",
+  "tooltip.doctor_m.stcs.max_energy": "§7Max Energy: §a%d",
+  "tooltip.doctor_m.stcs.block_reduction": "§7Block Damage Reduction: §b%d%%",
+  "tooltip.doctor_m.stcs.kit": "§dKit: %s",
+  "tooltip.doctor_m.stcs.special": "§5Special: %s",
+  "tooltip.name.doctor_m.stcs.weapon_modifier": "Weapon Modifier",
+  "tooltip.name.doctor_m.stcs.core_damage": "STCS Core Damage",
+  "tooltip.name.doctor_m.stcs.core_speed": "STCS Core Speed",
 
   "hud.doctor_m.environment.oxygenated": "Oxygenated, can take off spacesuit",
   "hud.doctor_m.environment.deoxygenated": "Deoxygenated, cannot take off spacesuit",
@@ -348,6 +363,23 @@
   "message.doctor_m.vm.overheated_3days": "§4Warning: Core meltdown. Vortex Manipulator locked. Forced cooling protocol initiated. Estimated recovery time: 3 days.",
   "message.doctor_m.vm.detail": "§7A cheap time-travel device, so fast your stomach can't keep up.§r*§7No protective structure whatsoever; enter the wrong coordinates and... you'll end up like Colonel Anderson, §cstuck in the ceiling§7.§r*§7(\"BT, I found Anderson... he's... in the ceiling.\")§r* *§7Hold an Artron Energy Collector in off-hand, sneak + right-click to refuel.",
   "message.doctor_m.vm.time_sickness": "§4Warning: The time stream has torn your physiology. Unprotected jump sequelae active, expected to last %d seconds.",
+  "message.doctor_m.vm.out_of_bounds": "§cTarget coordinates exceed safe boundaries. System safety lock engaged.",
+  "message.doctor_m.vm.distance_too_far": "§cEstimated fuel cost: %d — exceeds device limit. System safety lock engaged.",
+  "message.doctor_m.stca.description": "Protocol verified. Control transferred.",
+  "message.doctor_m.stch.description": "Maybe you need a better set of bones to wield this?",
+  "message.doctor_m.stcl.description": "Focus. Plan. Strike!",
+  "message.doctor_m.stcs.stc_08a_detail": "§7STC-08A Support Type — heavier, slower, but strong in defense and damage.",
+  "message.doctor_m.stcs.stc_07h_detail": "§7STCS series standard model STC-08A — well-balanced in all aspects, widely used as the base platform for STC-09L and STC-07H. Highly rated.",
+  "message.doctor_m.stcs.stc_09l_detail": "§7STC-08A Assault Type — lightweight without sacrificing power. Remember: Focus. Plan. Strike.",
+  "message.doctor_m.stcs.core_low_energy": "Insufficient energy to maintain the blade core. At least 800 energy required.",
+  "message.doctor_m.stcs.prefix": "§b[STCS]§f",
+  "message.doctor_m.stcs.energy_format": "§7%s/%s",
+  "message.doctor_m.stcs.core.active": "§a●Core Active",
+  "message.doctor_m.stcs.core.cooldown": "§c●Core %ds",
+  "message.doctor_m.stcs.core.ready": "§7●Ready",
+  "message.doctor_m.stcs.skill.cooldown": "§c●Skill %ds",
+  "message.doctor_m.stcs.skill.ready": "§a●Ready",
+  "message.doctor_m.stcs.blocking": " §b[Blocking]",
 
   "dimension.doctor_m.trenzalore": "§3Trenzalore",
   "dimension.doctor_m.titan": "Saturn VI-Titan"

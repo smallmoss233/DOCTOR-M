@@ -1,0 +1,35 @@
+{
+  "parent": "doctor_m:root",
+  "display": {
+    "icon": {
+      "item": "doctor_m:tlipoca_scythe"
+    },
+    "title": {
+      "translate": "advancements.doctor_m.tlipoca_scythe.title"
+    },
+    "description": {
+      "translate": "advancements.doctor_m.tlipoca_scythe.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_tlipoca_scythe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "doctor_m:tlipoca_scythe"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_tlipoca_scythe"]
+  ]
+}

@@ -1,7 +1,7 @@
 package doctor_m.util.creativity;
 
 import doctor_m.config.ConfigManager;
-import doctor_m.module.creativity.creativity_data.TlipocaScytheItem;
+import doctor_m.module.creativity.creativity_data.Tlipoca.TlipocaScytheItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

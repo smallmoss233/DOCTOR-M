@@ -8,7 +8,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import static doctor_m.Item.items.*;
-import static doctor_m.module.creativity.CreativityItems.TLIPOCA_SCYTHE;
+import static doctor_m.module.creativity.CreativityItems.*;
 
 public class item_group {
 public static void registerItems() {
@@ -21,6 +21,7 @@ public static void registerItems() {
                                 entries.add(POCKET_WATCH);
                                 entries.add(RELIC_GEM);
                                 entries.add(ETERNAL_CRYSTAL);
+                                entries.add(TRACER);
                                 entries.add(DE_MAT_GUN);
                                 entries.add(RASSILON_KEY);
                                 entries.add(OXYGEN_CHARGER_ITEM);
@@ -31,6 +32,9 @@ public static void registerItems() {
                                 entries.add(FORCE_FIELD_SHIELD);
                                 entries.add(VORTEX_MANIPULATOR);
                                 entries.add(TLIPOCA_SCYTHE);
+                                entries.add(STCA);
+                                entries.add(STCH);
+                                entries.add(STCL);
                                 entries.add(ENERGY_UPGRADE_MODULE);
                                 entries.add(REGENERATION_MODULE);
                             })

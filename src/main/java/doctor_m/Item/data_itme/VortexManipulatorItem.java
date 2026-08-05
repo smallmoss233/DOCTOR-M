@@ -384,11 +384,17 @@ public class VortexManipulatorItem extends Item {
     }
 
     public static int calcFuelCost(double dist) {
-        return 1 + (int) (dist / 100);
+        // 基础5 + 线性增长(每50格1点) + 二次项(每1000万格² 1点)
+        // 短距离便宜，长距离急剧上升
+        double base = 5.0 + dist / 50.0 + (dist * dist) / 10_000_000.0;
+        return (int) Math.ceil(base);
     }
 
     public static int calcOverheat(double dist) {
-        return (int) (dist / 200) * 2;
+        // 线性项极缓(每800格1点) + 二次项主导(每400万格² 1点)
+        // 短距离几乎不涨，长距离过热爆炸，形成软天花板
+        double base = dist / 800.0 + (dist * dist) / 4_000_000.0;
+        return (int) Math.ceil(base);
     }
 
     public static ItemStack findInHands(PlayerEntity player) {

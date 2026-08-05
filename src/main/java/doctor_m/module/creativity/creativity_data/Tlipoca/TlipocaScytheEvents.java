@@ -1,4 +1,4 @@
-package doctor_m.module.creativity.creativity_data;
+package doctor_m.module.creativity.creativity_data.Tlipoca;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.LivingEntity;

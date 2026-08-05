@@ -19,6 +19,8 @@
   "advancements.doctor_m.de_mat_gun.description": "我们遗忘这些，遗忘暴力，遗忘不和，灾难，而那战争却逼迫我们回归野蛮，事已至此，和时间本身说再见吧",
   "advancements.doctor_m.vortex_manipulator.title": "非比寻常的科技",
   "advancements.doctor_m.vortex_manipulator.description": "小心使用，不要成为第二个安德森少校",
+  "advancements.doctor_m.tlipoca_scythe.title": "一把镰刀？",
+  "advancements.doctor_m.tlipoca_scythe.description": "现在我成为了死神，世间灵魂的收割者",
 
   "tardis.message.control.siege.confirm_prompt": "再次按下以启用围攻模式！（等待10秒再点击）",
 
@@ -79,6 +81,9 @@
   "item.doctor_m.regeneration_module": "能量再生核心",
   "item.doctor_m.force_field_shield": "力场盾牌",
   "item.doctor_m.vortex_manipulator": "涡旋操纵器",
+  "item.doctor_m.stch": "STCS|STC-07H“巨妖”",
+  "item.doctor_m.stca": "STCS|STC-08A“天图”",
+  "item.doctor_m.stcl": "STCS|STC-09L“游侠”",
 
   "block.doctor_m.oxygen_charger": "氧气补充机",
 
@@ -197,8 +202,8 @@
 
   "key.doctor_m.mode.on": "§a开启",
   "key.doctor_m.mode.off": "§c关闭",
-  "key.doctor_m.toggle_passive_a": "切换被动开关A(按住Shift)",
-  "key.doctor_m.toggle_passive_b": "切换被动开关B(按住Shift)",
+  "key.doctor_m.toggle_passive_a": "功能键A",
+  "key.doctor_m.toggle_passive_b": "功能键B",
   "category.doctor_m": "DOCTOR M",
 
   "tooltip.doctor_m.hold_shift": "按住 Shift 查看详情",
@@ -279,6 +284,16 @@
   "tooltip.doctor_m.vm.broken": "损坏冷却: %s天 %s小时",
   "tooltip.doctor_m.sonic.insufficient_energy": "能量不足！",
   "tooltip.doctor_m.sonic.cooldown": "冷却中",
+  "tooltip.doctor_m.stcs.title": "§b[STCS] §f%s",
+  "tooltip.doctor_m.stcs.damage": "§7伤害: §c%d",
+  "tooltip.doctor_m.stcs.attack_speed": "§7攻速: §e%s",
+  "tooltip.doctor_m.stcs.max_energy": "§7能量上限: §a%d",
+  "tooltip.doctor_m.stcs.block_reduction": "§7剑封锁减伤: §b%d%%",
+  "tooltip.doctor_m.stcs.kit": "§d套件: %s",
+  "tooltip.doctor_m.stcs.special": "§5特殊: %s",
+  "tooltip.name.doctor_m.stcs.weapon_modifier": "武器修正",
+  "tooltip.name.doctor_m.stcs.core_damage": "STCS 核心伤害",
+  "tooltip.name.doctor_m.stcs.core_speed": "STCS 核心速度",
 
   "hud.doctor_m.environment.oxygenated": "有氧，可脱下航天服",
   "hud.doctor_m.environment.deoxygenated": "无氧，不可脱下航天服",
@@ -347,6 +362,23 @@
   "message.doctor_m.vm.overheated_3days": "§4警告：核心熔毁。涡旋操纵器已锁定，强制冷却程序启动。预计恢复时间：3天。",
   "message.doctor_m.vm.detail": "§7廉价的时间旅行设备，速度快到让你的胃来不及跟上。§r*§7没有任何防护结构，填错坐标的话……你会和安德森上校一样，§c卡在天花板里§7。§r*§7（BT，我找到安德森了...他在...天花板里。）§r* *§7副手持有阿特隆能量收集单元，潜行右键补充燃料。",
   "message.doctor_m.vm.time_sickness": "§4警告：时间流撕裂了你的生理结构。无防护跃迁后遗症发作，预计持续 %d 秒。",
+  "message.doctor_m.vm.out_of_bounds": "§c目标坐标超出安全边界，系统安全锁定启动。",
+  "message.doctor_m.vm.distance_too_far": "§c预计消耗 %d 能量，超出设备能量极限，系统安全锁定启动。",
+  "message.doctor_m.stca.description": "协议已验证，转交控制权。",
+  "message.doctor_m.stch.description": "或许你需要一套好点的骨骼使用它？",
+  "message.doctor_m.stcl.description": "专注，计划，攻击！",
+  "message.doctor_m.stcs.stc_08a_detail": "§7STC-08A支援型，更重，更慢，但强防御与伤害",
+  "message.doctor_m.stcs.stc_07h_detail": "§7STCS系列标准型号STC-08A，各方面平衡，是STC-09L和STC-07H使用的标准平台，备受好评",
+  "message.doctor_m.stcs.stc_09l_detail": "§7STC-08A突袭型，轻量而不失强度。使用时牢记：专注，计划，攻击",
+  "message.doctor_m.stcs.core_low_energy": "能量不足以维持剑核心，至少需要 800 能量",
+  "message.doctor_m.stcs.prefix": "§b[STCS]§f",
+  "message.doctor_m.stcs.energy_format": "§7%s/%s",
+  "message.doctor_m.stcs.core.active": "§a●核心",
+  "message.doctor_m.stcs.core.cooldown": "§c●核心%ds",
+  "message.doctor_m.stcs.core.ready": "§7●就绪",
+  "message.doctor_m.stcs.skill.cooldown": "§c●技能%ds",
+  "message.doctor_m.stcs.skill.ready": "§a●就绪",
+  "message.doctor_m.stcs.blocking": " §b[格挡]",
 
   "dimension.doctor_m.trenzalore": "§3特兰泽洛",
   "dimension.doctor_m.titan": "土卫六-泰坦"

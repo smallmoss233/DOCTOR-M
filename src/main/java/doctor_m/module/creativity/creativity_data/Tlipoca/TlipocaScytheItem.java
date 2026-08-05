@@ -1,4 +1,4 @@
-package doctor_m.module.creativity.creativity_data;
+package doctor_m.module.creativity.creativity_data.Tlipoca;
 
 import doctor_m.util.creativity.ScytheChargingManager;
 import doctor_m.util.creativity.ScytheSlashManager;

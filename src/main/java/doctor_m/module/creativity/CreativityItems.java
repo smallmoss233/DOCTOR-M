@@ -1,9 +1,12 @@
 package doctor_m.module.creativity;
 
 import dev.amble.lib.container.impl.ItemContainer;
+import doctor_m.Item.stcs.STCAItem;
+import doctor_m.Item.stcs.STCHItem;
+import doctor_m.Item.stcs.STCLItem;
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
-import doctor_m.module.creativity.creativity_data.TlipocaScytheItem;
+import doctor_m.module.creativity.creativity_data.Tlipoca.TlipocaScytheItem;
 import doctor_m.util.creativity.PercentageDamageHelper;
 import net.minecraft.item.Item;
 import net.minecraft.util.Rarity;
@@ -27,4 +30,9 @@ public class CreativityItems extends ItemContainer {
                 }
         ));
     }
+
+    //STCS系列武器
+    public static final Item STCA = new STCAItem();
+    public static final Item STCH = new STCHItem();
+    public static final Item STCL = new STCLItem();
 }

@@ -54,7 +54,7 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
         private const val RETALIATE_COOLDOWN = 20
         private const val AGGRESSION_MEMORY = 48000L   // 2 游戏日
         private const val ANGER_DURATION = 7200        // 6 分钟
-        private const val TRADE_POOL_FILE = "evereye_trade.json"
+        private const val TRADE_POOL_FILE = "marian_trade.json"
 
         // 性能优化：缓存重复创建的 Text 对象，减少堆分配
         private val TRADE_HEADER = Text.literal("§7════════════════════════")

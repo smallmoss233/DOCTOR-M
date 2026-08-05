@@ -1,0 +1,6 @@
+{
+  "id": "everye:romantic",
+  "parent": "ait:console/renaissance",
+  "texture": "evereye:textures/consoles/romantic.png",
+  "emission": "evereye:textures/consoles/romantic_emission.png"
+}

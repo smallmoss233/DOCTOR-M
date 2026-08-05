@@ -9,7 +9,7 @@ public class TimeKeyNetwork {
 
     public static void register() {
         ServerPlayNetworking.registerGlobalReceiver(TOGGLE_PASSIVE, (server, player, handler, buf, responseSender) -> {
-            int feature = buf.readInt(); // 0=godmode, 1=neutral, 2=slash
+            int feature = buf.readInt();
             server.execute(() -> TimeKeyPassive.toggleFeature(player, feature));
         });
     }
