@@ -1,23 +1,15 @@
 package doctor_m.mixin.sonic_mode;
 
-import java.util.List;
-
+import dev.amble.ait.core.item.SonicItem;
+import dev.amble.ait.core.item.sonic.SonicMode;
 import doctor_m.module.sonic_plus.AmethystSonicModes;
 import doctor_m.module.sonic_plus.ChargedZeitonSonicModes;
 import doctor_m.module.sonic_plus.CrystalManager;
 import doctor_m.module.sonic_plus.UpgradeModuleManager;
-import net.minecraft.registry.Registries;
-import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -26,9 +18,15 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import dev.amble.ait.core.item.SonicItem;
-import dev.amble.ait.core.item.sonic.SonicMode;
+import java.util.List;
 
 @Mixin(SonicItem.class)
 public class SonicItemMixin {

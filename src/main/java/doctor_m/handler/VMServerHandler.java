@@ -1,5 +1,10 @@
 package doctor_m.handler;
 
+import dev.amble.ait.AITMod;
+import dev.amble.ait.core.lock.LockedDimensionRegistry;
+import dev.amble.ait.core.util.WorldUtil;
+import doctor_m.Item.data_itme.VortexManipulatorItem;
+import doctor_m.network.VMNetwork;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKey;
@@ -12,13 +17,6 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import dev.amble.ait.AITMod;
-import dev.amble.ait.core.lock.LockedDimensionRegistry;
-import dev.amble.ait.core.util.WorldUtil;
-
-import doctor_m.Item.data_itme.VortexManipulatorItem;
-import doctor_m.network.VMNetwork;
 
 public class VMServerHandler {
 

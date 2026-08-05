@@ -1,5 +1,8 @@
 package doctor_m.client.gui;
 
+import doctor_m.Item.data_itme.VortexManipulatorItem;
+import doctor_m.Item.items;
+import doctor_m.network.VMNetwork;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.gui.DrawContext;
@@ -12,10 +15,6 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-
-import doctor_m.Item.data_itme.VortexManipulatorItem;
-import doctor_m.Item.items;
-import doctor_m.network.VMNetwork;
 
 public class VortexManipulatorScreen extends Screen {
     private final PlayerEntity player;

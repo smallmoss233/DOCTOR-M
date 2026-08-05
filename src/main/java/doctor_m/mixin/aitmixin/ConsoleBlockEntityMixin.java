@@ -1,14 +1,12 @@
 package doctor_m.mixin.aitmixin;
 
+import dev.amble.ait.core.blockentities.ConsoleBlockEntity;
+import dev.amble.ait.core.item.SonicItem;
+import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import net.minecraft.item.ItemStack;
-
-import dev.amble.ait.core.blockentities.ConsoleBlockEntity;
-import dev.amble.ait.core.item.SonicItem;
 
 @Mixin(ConsoleBlockEntity.class)
 public class ConsoleBlockEntityMixin {

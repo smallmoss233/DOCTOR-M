@@ -1,7 +1,5 @@
 package doctor_m.module.sonic_plus.ModeGravitational;
 
-import java.util.List;
-
 import dev.amble.ait.core.item.sonic.SonicMode;
 import dev.amble.ait.data.schema.sonic.SonicSchema;
 import net.minecraft.entity.Entity;
@@ -15,6 +13,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public class GravitationalShieldingMode extends SonicMode {
     public static final GravitationalShieldingMode INSTANCE = new GravitationalShieldingMode();

@@ -43,7 +43,11 @@ object TimeKeyFunction {
     fun register() {
         // ===== 1. 伤害拦截 =====
         ServerLivingEntityEvents.ALLOW_DAMAGE.register { entity, source, amount ->
-            customDamage.get().also { if (it) customDamage.set(false) }
+            if (customDamage.get()) {
+                customDamage.set(false)
+                return@register true
+            }
+
             (entity as? ServerPlayerEntity)?.let { player ->
                 if (!isTimeKeyEquipped(player)) return@register true
 

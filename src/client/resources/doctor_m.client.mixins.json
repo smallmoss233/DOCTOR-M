@@ -5,8 +5,8 @@
 	"client": [
       "ait.MixinShieldsModel",
       "ait.MixinSpaceSuitOverlay",
-      "doctor_m.MixinTitleScreenBackground",
       "doctor_m.AbstractClientPlayerEntityMixin",
+      "doctor_m.MixinTitleScreenBackground",
       "doctor_m.ScytheFirstPersonMixin"
     ],
 	"injectors": {

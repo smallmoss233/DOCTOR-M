@@ -1,8 +1,8 @@
 package doctor_m.client.gui;
 
-import doctor_m.network.TimeKeyNetwork;
 import doctor_m.handler.TimeKey.TimeKeyFunction;
 import doctor_m.handler.TimeKey.TimeKeyPassive;
+import doctor_m.network.TimeKeyNetwork;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.gui.DrawContext;

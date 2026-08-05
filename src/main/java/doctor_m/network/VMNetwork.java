@@ -1,7 +1,7 @@
 package doctor_m.network;
 
+import doctor_m.DOCTORM;
 import net.minecraft.util.Identifier;
-import doctor_m.DOCTORM;  // ← 改成你的主类
 
 public class VMNetwork {
     public static final Identifier CYCLE_DIM = DOCTORM.id("vm/cycle_dim");

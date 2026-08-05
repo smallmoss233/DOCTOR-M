@@ -1,7 +1,5 @@
 package doctor_m.module.sonic_plus.ModeGravitational;
 
-import java.util.UUID;
-
 import dev.amble.ait.core.item.sonic.SonicMode;
 import dev.amble.ait.data.schema.sonic.SonicSchema;
 import net.minecraft.entity.Entity;
@@ -21,6 +19,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public class GravitationalDragMode extends SonicMode {
     public static final GravitationalDragMode INSTANCE = new GravitationalDragMode();

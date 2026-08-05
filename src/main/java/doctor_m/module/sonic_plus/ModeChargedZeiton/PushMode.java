@@ -1,7 +1,5 @@
 package doctor_m.module.sonic_plus.ModeChargedZeiton;
 
-import java.util.List;
-
 import dev.amble.ait.api.ArtronHolderItem;
 import dev.amble.ait.core.item.sonic.SonicMode;
 import dev.amble.ait.data.schema.sonic.SonicSchema;
@@ -19,6 +17,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public class PushMode extends SonicMode {
     public static final PushMode INSTANCE = new PushMode();

@@ -4,14 +4,15 @@ import doctor_m.Item.data_itme.DeMatGunItem;
 import doctor_m.client.Shield.ForceFieldClientRenderer;
 import doctor_m.client.Shield.ShieldNetworkingClient;
 import doctor_m.client.Shield.ShieldOverlay;
-import doctor_m.client.render.VMTrinketRenderer;
-import doctor_m.util.VMClientScreenOpener;
 import doctor_m.client.dimension.TitanDimensionEffects;
 import doctor_m.client.entity.EvereyeRenderer;
 import doctor_m.client.entity.Type103Renderer;
-import doctor_m.client.network.DeMatGunClientNetwork;
 import doctor_m.client.gui.VortexManipulatorScreen;
+import doctor_m.client.network.DeMatGunClientNetwork;
+import doctor_m.client.network.TimeKeyTeleportClient;
+import doctor_m.client.render.VMTrinketRenderer;
 import doctor_m.entities.Entities;
+import doctor_m.util.VMClientScreenOpener;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -42,6 +43,7 @@ public class DOCTORMClient implements ClientModInitializer {
                 new TitanDimensionEffects()
         );
 
+        TimeKeyTeleportClient.register();
         ShieldNetworkingClient.register();
         ForceFieldClientRenderer.register();
         VMTrinketRenderer.register();

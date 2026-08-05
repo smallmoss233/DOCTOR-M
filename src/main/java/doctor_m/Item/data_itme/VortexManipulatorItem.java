@@ -1,5 +1,7 @@
 package doctor_m.Item.data_itme;
 
+import dev.amble.ait.core.item.ArtronCollectorItem;
+import doctor_m.Item.items;
 import doctor_m.util.VMClientScreenOpener;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import net.fabricmc.api.EnvType;
@@ -22,9 +24,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import doctor_m.Item.items;
-import dev.amble.ait.core.item.ArtronCollectorItem;
 
 public class VortexManipulatorItem extends Item {
 

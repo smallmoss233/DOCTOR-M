@@ -1,5 +1,6 @@
 package doctor_m.mixin.doctor_m;
 
+import dev.amble.ait.core.item.SonicItem;
 import doctor_m.module.sonic_plus.UpgradeModuleManager;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
@@ -15,8 +16,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import dev.amble.ait.core.item.SonicItem;
 
 import java.util.List;
 
