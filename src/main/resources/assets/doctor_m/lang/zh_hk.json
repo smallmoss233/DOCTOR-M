@@ -202,8 +202,8 @@
 
   "key.doctor_m.mode.on": "§a開啟",
   "key.doctor_m.mode.off": "§c關閉",
-  "key.doctor_m.toggle_passive_a": "功能鍵A",
-  "key.doctor_m.toggle_passive_b": "功能鍵B",
+  "key.doctor_m.passive_a": "功能鍵A",
+  "key.doctor_m.passive_b": "功能鍵B",
   "category.doctor_m": "DOCTOR M",
 
   "tooltip.doctor_m.hold_shift": "按住 Shift 查看詳情",

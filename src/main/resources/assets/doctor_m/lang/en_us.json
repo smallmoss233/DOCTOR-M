@@ -202,8 +202,8 @@
 
   "key.doctor_m.mode.on": "§aOn",
   "key.doctor_m.mode.off": "§cOff",
-  "key.doctor_m.toggle_passive_a": "Toggle Passive A",
-  "key.doctor_m.toggle_passive_b": "Toggle Passive B",
+  "key.doctor_m.passive_a": "Toggle Passive A",
+  "key.doctor_m.passive_b": "Toggle Passive B",
   "category.doctor_m": "DOCTOR M",
 
   "tooltip.doctor_m.hold_shift": "Hold Shift for Details",
