@@ -1,19 +1,15 @@
 package doctor_m.module.creativity.creativity_data;
 
-import com.google.common.collect.Multimap;
 import doctor_m.util.creativity.ScytheChargingManager;
 import doctor_m.util.creativity.ScytheSlashManager;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import doctor_m.util.tooltip.TooltipHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.SwordItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -29,7 +25,7 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.UUID;
 
-public class TlipocaScytheItem extends SwordItem {
+public class TlipocaScytheItem extends Item {
     private static final String INIT_KEY = "TlipocaInit";
 
     private static final UUID DAMAGE_UUID = UUID.fromString("12345678-1234-1234-1234-123456789014");
@@ -41,13 +37,8 @@ public class TlipocaScytheItem extends SwordItem {
     public static TlipocaScytheItem getInstance() { return INSTANCE; }
 
     public TlipocaScytheItem(Settings settings) {
-        super(TlipocaMaterial.INSTANCE, 0, -3.2f, settings);
+        super(settings.maxCount(1));
         INSTANCE = this;
-    }
-
-    @Override
-    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
-        return super.getAttributeModifiers(slot);
     }
 
     public static void writeAttributeModifiers(ItemStack stack, float damage) {
@@ -91,7 +82,6 @@ public class TlipocaScytheItem extends SwordItem {
         ItemStack stack = user.getStackInHand(hand);
         user.setCurrentHand(hand);
 
-        // 客户端服务端都重置蓄力状态
         ScytheChargingManager.startCharging(user);
 
         if (!world.isClient && user instanceof ServerPlayerEntity serverPlayer) {
@@ -109,7 +99,6 @@ public class TlipocaScytheItem extends SwordItem {
         int level = Math.min(useTicks / ScytheChargingManager.TICKS_PER_LEVEL,
                 ScytheChargingManager.MAX_CHARGE_LEVEL);
 
-        // 实时显示蓄力等级（变化时更新，避免刷屏）
         int prevLevel = ScytheChargingManager.getChargeLevel(player);
         if (level != prevLevel) {
             ScytheChargingManager.setChargeLevel(player, level);
@@ -164,17 +153,7 @@ public class TlipocaScytheItem extends SwordItem {
                 Text.translatable("message.doctor_m.tlipoca_scythe.detail"));
     }
 
-    // ========== 彻底删除耐久 ==========
-
-    @Override
-    public boolean isDamageable() {
-        return false;
-    }
-
-    @Override
-    public boolean isItemBarVisible(ItemStack stack) {
-        return false;
-    }
+    // ========== 初始化属性 ==========
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
