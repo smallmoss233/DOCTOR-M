@@ -1,5 +1,7 @@
 package doctor_m.client.util;
 
+import doctor_m.client.gui.TimeKeyActiveScreen;
+import doctor_m.client.gui.TimeKeyPassiveScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -18,24 +20,22 @@ public class AccessoryPassiveButton implements ClientModInitializer {
     public void onInitializeClient() {
         keyPassiveA = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.doctor_m.toggle_passive_a",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_Z,
-                "category.doctor_m"
+                InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_Z, "category.doctor_m"
         ));
         keyPassiveB = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.doctor_m.toggle_passive_b",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_X,
-                "category.doctor_m"
+                InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_X, "category.doctor_m"
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null) return;
-            if (keyPassiveA.wasPressed() && client.player.isSneaking()) {
-                client.player.networkHandler.sendCommand("passive a");
+
+            // 直接开 UI，不再发指令
+            if (keyPassiveA.wasPressed()) {
+                client.setScreen(new TimeKeyPassiveScreen(client.player));
             }
-            if (keyPassiveB.wasPressed() && client.player.isSneaking()) {
-                client.player.networkHandler.sendCommand("passive b");
+            if (keyPassiveB.wasPressed()) {
+                client.setScreen(new TimeKeyActiveScreen(client.player));
             }
         });
     }

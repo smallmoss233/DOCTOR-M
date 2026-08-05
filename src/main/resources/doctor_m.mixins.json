@@ -8,6 +8,7 @@
     "doctor_m.ItemEntityMixin",
     "doctor_m.ItemMixin",
     "doctor_m.LivingEntityMixin",
+    "doctor_m.AbsoluteProtectionMixin",
     "ait_oxygenatedmixin.MixinSpacesuitItem",
     "ait_oxygenatedmixin.MixinOxygenatedEffect",
     "ait_oxygenatedmixin.MixinOxygenatorBlockEntity",

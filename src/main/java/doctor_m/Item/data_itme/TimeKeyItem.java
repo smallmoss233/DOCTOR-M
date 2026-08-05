@@ -27,30 +27,12 @@ public class TimeKeyItem extends TrinketItem implements KeytoTime {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        NbtCompound nbt = stack.getNbt();
-        boolean neutral = nbt != null && nbt.getBoolean("neutral_mode");
-        boolean godmode = nbt != null && nbt.getBoolean("godmode");
-
-        tooltip.add(Text.translatable("message.doctor_m.time_key.neutral_status",
-                        neutral ? Text.translatable("key.doctor_m.mode.on") : Text.translatable("key.doctor_m.mode.off"))
-                .formatted(Formatting.GRAY));
-        tooltip.add(Text.translatable("message.doctor_m.time_key.godmode_status",
-                        godmode ? Text.translatable("key.doctor_m.mode.on") : Text.translatable("key.doctor_m.mode.off"))
-                .formatted(Formatting.GRAY));
-
         Text longDescription = Text.translatable("message.doctor_m.time_key.tip");
         TooltipHelper.addWrappedTooltip(tooltip, longDescription);
         tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
-        //实验性[渐变详情文本]
-        Text detailText = DynamicColorHelper.applyColorCycle(
-                Text.translatable("message.doctor_m.time_key.detail"),
-                List.of(
-                        new Color(128, 0, 128),  // 紫色
-                        Color.WHITE
-                ),
-                8500
+        ShiftTooltipInvoker.addShiftTooltip(tooltip,
+        Text.translatable("message.doctor_m.time_key.detail")
         );
-        ShiftTooltipInvoker.addShiftTooltip(tooltip, detailText);
     }
 
     @Override

@@ -5,7 +5,7 @@ import doctor_m.Item.KeytoTime;
 import doctor_m.compat.TimelordRegenCompat;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import doctor_m.util.tooltip.TooltipHelper;
-import doctor_m.world_data.TimeKey.PocketWatchFunction;
+import doctor_m.handler.TimeKey.PocketWatchFunction;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;

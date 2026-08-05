@@ -10,7 +10,7 @@ import doctor_m.client.dimension.TitanDimensionEffects;
 import doctor_m.client.entity.EvereyeRenderer;
 import doctor_m.client.entity.Type103Renderer;
 import doctor_m.client.network.DeMatGunClientNetwork;
-import doctor_m.client.render.VortexManipulatorScreen;
+import doctor_m.client.gui.VortexManipulatorScreen;
 import doctor_m.entities.Entities;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -24,7 +24,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.Identifier;
 
 import static doctor_m.Item.items.FORCE_FIELD_SHIELD;

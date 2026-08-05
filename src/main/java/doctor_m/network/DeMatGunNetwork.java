@@ -1,7 +1,7 @@
 package doctor_m.network;
 
 import doctor_m.Item.data_itme.DeMatGunItem;
-import doctor_m.world_data.DeMatGunEntityEraser;
+import doctor_m.handler.DeMatGunEntityEraser;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;

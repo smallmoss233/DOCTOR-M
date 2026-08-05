@@ -11,6 +11,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -27,7 +28,7 @@ public class ScytheSlashManager {
     // 层数冷却表（ticks）：1层5秒，2层10秒，3层20秒，4层40秒，5层60秒
     private static final long[] LEVEL_COOLDOWNS = {0, 100, 200, 400, 800, 1200};
 
-    // ========== 服务端：多层蓄力斩击 ==========
+    // ========== 服务端：多层蓄力斩击（镰刀专用：效果 + 冷却 + 突进）==========
 
     public static void performChargedSlash(ServerWorld world, ServerPlayerEntity player,
                                            ItemStack stack, int level) {
@@ -39,60 +40,15 @@ public class ScytheSlashManager {
         if (end != null && now < end) {
             int sec = (int) Math.ceil((end - now) / 20.0);
             player.sendMessage(Text.translatable("message.doctor_m.scythe.cooldown", sec)
-                    .formatted(net.minecraft.util.Formatting.RED), true);
+                    .formatted(Formatting.RED), true);
             return;
         }
 
-        var config = ConfigManager.getConfig();
+        // 调用纯效果（粒子、伤害、音效、消息都在里面）
+        performSlashEffect(world, player, level);
 
-        // 范围：每层+6，最高30格半径
-        double reach = level * 6.0;
-        float damageMultiplier = 1.0f + level * 0.8f; // 1.8x ~ 5.0x
-        float damage = config.slashDamage * damageMultiplier;
-        double knockbackStrength = 0.6 + level * 0.5;
-
-        Vec3d eyePos = player.getEyePos();
+        // 镰刀专属突进
         Vec3d look = player.getRotationVec(1.0f);
-        Vec3d slashCenter = eyePos.add(look.multiply(reach * 0.5));
-
-        Box box = new Box(eyePos, eyePos).expand(reach);
-        List<LivingEntity> targets = world.getEntitiesByClass(LivingEntity.class, box,
-                e -> e != player && e.isAlive());
-
-        // 红色扇形轨迹（斩击范围更大更夸张）
-        spawnSlashArcParticles(world, player);
-        // 再补一层远距离红色粉尘
-        spawnSlashArcParticles(world, player, reach * 0.8, 40);
-
-        int hitCount = 0;
-
-        for (LivingEntity target : targets) {
-            double distSq = target.squaredDistanceTo(eyePos);
-            if (distSq > reach * reach) continue;
-
-            Vec3d toTarget = target.getPos().subtract(eyePos).normalize();
-            double angle = Math.acos(look.dotProduct(toTarget));
-            if (angle > Math.PI / 1.5) continue; // 前方120度
-
-            target.damage(world.getDamageSources().playerAttack(player), damage);
-
-            Vec3d kb = look.multiply(knockbackStrength).add(0, 0.4 + level * 0.15, 0);
-            target.setVelocity(target.getVelocity().add(kb));
-            target.velocityDirty = true;
-
-            hitCount++;
-        }
-
-        // 大范围黑红粒子爆发
-        spawnSlashBurstParticles(world, slashCenter, look, reach, level);
-
-        // 威慑音效：凋灵生成 + 凋灵死亡
-        world.playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.ENTITY_WITHER_SPAWN, SoundCategory.PLAYERS, 1.0f, 0.5f);
-        world.playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.ENTITY_WITHER_DEATH, SoundCategory.PLAYERS, 1.2f, 0.6f);
-
-        // 玩家突进
         Vec3d dash = look.multiply(0.5 + level * 0.4);
         player.setVelocity(player.getVelocity().add(dash.x, 0.1, dash.z));
         player.velocityDirty = true;
@@ -101,14 +57,6 @@ public class ScytheSlashManager {
         long cooldown = LEVEL_COOLDOWNS[level];
         COOLDOWN_ENDS.put(player.getUuid(), now + cooldown);
         player.getItemCooldownManager().set(TlipocaScytheItem.getInstance(), (int) cooldown);
-
-        if (hitCount > 0) {
-            player.sendMessage(Text.translatable("message.doctor_m.scythe.charged_hit", level, hitCount)
-                    .formatted(net.minecraft.util.Formatting.DARK_RED), true);
-        } else {
-            player.sendMessage(Text.translatable("message.doctor_m.scythe.charged_miss", level)
-                    .formatted(net.minecraft.util.Formatting.GRAY), true);
-        }
     }
 
     // ========== 客户端：蓄力粒子（黑红主题） ==========
@@ -257,6 +205,63 @@ public class ScytheSlashManager {
             pos = pos.add(0, -0.3 + world.random.nextDouble() * 0.5, 0);
 
             world.spawnParticles(dust, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0);
+        }
+    }
+    // ========== 新增：纯斩击效果（无冷却、无突进，供 KTT 调用）==========
+
+    public static void performSlashEffect(ServerWorld world, ServerPlayerEntity player, int level) {
+        if (level <= 0 || level > ScytheChargingManager.MAX_CHARGE_LEVEL) return;
+
+        var config = ConfigManager.getConfig();
+
+        double reach = level * 6.0;
+        float damageMultiplier = 1.0f + level * 0.8f;
+        float damage = config.slashDamage * damageMultiplier;
+        double knockbackStrength = 0.6 + level * 0.5;
+
+        Vec3d eyePos = player.getEyePos();
+        Vec3d look = player.getRotationVec(1.0f);
+        Vec3d slashCenter = eyePos.add(look.multiply(reach * 0.5));
+
+        Box box = new Box(eyePos, eyePos).expand(reach);
+        List<LivingEntity> targets = world.getEntitiesByClass(LivingEntity.class, box,
+                e -> e != player && e.isAlive());
+
+        spawnSlashArcParticles(world, player);
+        spawnSlashArcParticles(world, player, reach * 0.8, 40);
+
+        int hitCount = 0;
+
+        for (LivingEntity target : targets) {
+            double distSq = target.squaredDistanceTo(eyePos);
+            if (distSq > reach * reach) continue;
+
+            Vec3d toTarget = target.getPos().subtract(eyePos).normalize();
+            double angle = Math.acos(look.dotProduct(toTarget));
+            if (angle > Math.PI / 1.5) continue;
+
+            target.damage(world.getDamageSources().playerAttack(player), damage);
+
+            Vec3d kb = look.multiply(knockbackStrength).add(0, 0.4 + level * 0.15, 0);
+            target.setVelocity(target.getVelocity().add(kb));
+            target.velocityDirty = true;
+
+            hitCount++;
+        }
+
+        spawnSlashBurstParticles(world, slashCenter, look, reach, level);
+
+        world.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.ENTITY_WITHER_SPAWN, SoundCategory.PLAYERS, 1.0f, 0.5f);
+        world.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.ENTITY_WITHER_DEATH, SoundCategory.PLAYERS, 1.2f, 0.6f);
+
+        if (hitCount > 0) {
+            player.sendMessage(Text.translatable("message.doctor_m.scythe.charged_hit", level, hitCount)
+                    .formatted(Formatting.DARK_RED), true);
+        } else {
+            player.sendMessage(Text.translatable("message.doctor_m.scythe.charged_miss", level)
+                    .formatted(Formatting.GRAY), true);
         }
     }
 }
