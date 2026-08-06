@@ -9,6 +9,8 @@
     "doctor_m.ItemMixin",
     "doctor_m.LivingEntityMixin",
     "doctor_m.AbsoluteProtectionMixin",
+    "doctor_m.SonicPortControlMixin",
+    "doctor_m.TelepathicControlMixin",
     "ait_oxygenatedmixin.MixinSpacesuitItem",
     "ait_oxygenatedmixin.MixinOxygenatedEffect",
     "ait_oxygenatedmixin.MixinOxygenatorBlockEntity",

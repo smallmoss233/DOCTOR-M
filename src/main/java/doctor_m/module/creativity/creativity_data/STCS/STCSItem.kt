@@ -61,7 +61,7 @@ abstract class STCSItem(
 
         const val STCL_SKILL_DASH = 6.0
         const val STCL_SKILL_COST = 200
-        const val STCL_SKILL_COOLDOWN = 2 * 20
+        const val STCL_SKILL_COOLDOWN = 1 * 20
 
         private val CORE_DAMAGE_UUID = UUID.fromString("11111111-1111-1111-1111-111111111111")
         private val CORE_SPEED_UUID = UUID.fromString("22222222-2222-2222-2222-222222222222")

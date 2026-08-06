@@ -84,6 +84,7 @@
   "item.doctor_m.stch": "STCS|STC-07H“巨妖”",
   "item.doctor_m.stca": "STCS|STC-08A“天图”",
   "item.doctor_m.stcl": "STCS|STC-09L“游侠”",
+  "item.doctor_m.tracer": "追踪器",
 
   "block.doctor_m.oxygen_charger": "氧气补充机",
 
@@ -379,6 +380,21 @@
   "message.doctor_m.stcs.skill.cooldown": "§c●技能%ds",
   "message.doctor_m.stcs.skill.ready": "§a●就绪",
   "message.doctor_m.stcs.blocking": " §b[格挡]",
+  "message.doctor_m.tracer.tooltip": "§7一把对时间钥匙的每一块碎片的扰动都极度敏感的探测器",
+  "message.doctor_m.tracer.detail": "§7手持时，它将以微妙的脉冲回应附近掉落的碎片*右键可进行定向扫描，穿透容器与地层，精确丈量你与碎片之间的每一格距离",
+  "message.doctor_m.tracer.tardis_position_unknown": "§b[追踪器] §7塔迪斯外部坐标丢失。",
+  "message.doctor_m.tracer.exterior_unavailable": "§b[追踪器] §7目标维度不可访问。",
+  "message.doctor_m.tracer.scanning_structures": "§b[追踪器] §7本地信号静默。正在向深层结构发送探测波……",
+  "message.doctor_m.tracer.signal_locked.container": "§b[追踪器] §f容器信号已锁定。",
+  "message.doctor_m.tracer.signal_locked.surface": "§b[追踪器] §f地表信号已锁定。",
+  "message.doctor_m.tracer.no_structure_tag": "§b[追踪器] §7结构标签 §o%s§7 中未配置有效目标。",
+  "message.doctor_m.tracer.no_structure_signal": "§b[追踪器] §7%s 格范围内未检测到远古结构回响。",
+  "message.doctor_m.tracer.structure_locked": "§b[追踪器] §f远古结构信号已锁定！",
+  "message.doctor_m.tracer.scan_found_container": "§b[追踪器] §f容器内检测到碎片回响 §7| §e%s §7格",
+  "message.doctor_m.tracer.scan_found_ground": "§b[追踪器] §f地表发现碎片信号 §7| §e%s §7格",
+  "message.doctor_m.tracer.scan_found_frame": "§b[追踪器] §f展示框内发现碎片信号 §7| §e%s §7格",
+  "message.doctor_m.tracer.scan_found_entity": "§b[追踪器] §f生物携带碎片信号 §7| §e%s §7格",
+  "message.doctor_m.tracer.scan_none": "§7[追踪器] §8扫描范围内未发现碎片痕迹。",
 
   "dimension.doctor_m.trenzalore": "§3特兰泽洛",
   "dimension.doctor_m.titan": "土卫六-泰坦"

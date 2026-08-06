@@ -84,6 +84,7 @@
   "item.doctor_m.stch": "STCS|STC-07H \"Troll\"",
   "item.doctor_m.stca": "STCS|STC-08A \"Sky Chart\"",
   "item.doctor_m.stcl": "STCS|STC-09L \"Ranger\"",
+  "item.doctor_m.tracer": "Tracer",
 
   "block.doctor_m.oxygen_charger": "Oxygen Recharger",
 
@@ -380,6 +381,21 @@
   "message.doctor_m.stcs.skill.cooldown": "§c●Skill %ds",
   "message.doctor_m.stcs.skill.ready": "§a●Ready",
   "message.doctor_m.stcs.blocking": " §b[Blocking]",
+  "message.doctor_m.tracer.tooltip": "§7A detector extremely sensitive to disturbances from every fragment of the Time Key.",
+  "message.doctor_m.tracer.detail": "§7When held, it responds with subtle pulses to nearby dropped fragments.*Right-click to perform a directional scan, penetrating containers and strata, precisely measuring the distance between you and any fragment.",
+  "message.doctor_m.tracer.tardis_position_unknown": "§b[Tracer] §7TARDIS exterior coordinates lost.",
+  "message.doctor_m.tracer.exterior_unavailable": "§b[Tracer] §7Target dimension is unreachable.",
+  "message.doctor_m.tracer.scanning_structures": "§b[Tracer] §7Local signal silent. Sending probe waves into deep structures...",
+  "message.doctor_m.tracer.signal_locked.container": "§b[Tracer] §fContainer signal locked.",
+  "message.doctor_m.tracer.signal_locked.surface": "§b[Tracer] §fSurface signal locked.",
+  "message.doctor_m.tracer.no_structure_tag": "§b[Tracer] §7Structure tag §o%s§7 contains no valid target.",
+  "message.doctor_m.tracer.no_structure_signal": "§b[Tracer] §7No ancient structure echo detected within %s blocks.",
+  "message.doctor_m.tracer.structure_locked": "§b[Tracer] §fAncient structure signal locked!",
+  "message.doctor_m.tracer.scan_found_container": "§b[Tracer] §fFragment echo detected inside container §7| §e%s §7blocks",
+  "message.doctor_m.tracer.scan_found_ground": "§b[Tracer] §fFragment signal found on the surface §7| §e%s §7blocks",
+  "message.doctor_m.tracer.scan_found_frame": "§b[Tracer] §fFragment signal found in item frame §7| §e%s §7blocks",
+  "message.doctor_m.tracer.scan_found_entity": "§b[Tracer] §fFragment signal carried by entity §7| §e%s §7blocks",
+  "message.doctor_m.tracer.scan_none": "§7[Tracer] §8No fragment traces found within scan range.",
 
   "dimension.doctor_m.trenzalore": "§3Trenzalore",
   "dimension.doctor_m.titan": "Saturn VI-Titan"

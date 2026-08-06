@@ -15,7 +15,7 @@ import net.minecraft.world.RaycastContext
 class STCHItem : STCSItem(
     settings = Item.Settings().rarity(Rarity.EPIC),
     variantId = "STC-07H",
-    baseDamage = 24f,
+    baseDamage = 30f,
     baseAttackSpeed = 1.2f,
     maxEnergy = 10000,
     blockDamageReduction = 0.90f,
@@ -49,7 +49,7 @@ class STCHItem : STCSItem(
 class STCAItem : STCSItem(
     settings = Item.Settings().rarity(Rarity.EPIC),
     variantId = "STC-08A",
-    baseDamage = 20f,
+    baseDamage = 24f,
     baseAttackSpeed = 2.0f,
     maxEnergy = 10000,
     blockDamageReduction = 0.85f,
@@ -89,7 +89,7 @@ class STCAItem : STCSItem(
 class STCLItem : STCSItem(
     settings = Item.Settings().rarity(Rarity.EPIC),
     variantId = "STC-09L",
-    baseDamage = 18f,
+    baseDamage = 20f,
     baseAttackSpeed = 2.8f,
     maxEnergy = 10000,
     blockDamageReduction = 0.80f,
@@ -130,7 +130,8 @@ class STCLItem : STCSItem(
             SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0f, 1.0f)
 
         var finalCd = STCL_SKILL_COOLDOWN
-        if (isCoreActive(stack)) finalCd -= 40
+        if (isCoreActive(stack)) finalCd -= 20
+        finalCd = finalCd.coerceAtLeast(0)
         setSkillCooldown(stack, finalCd)
     }
 }

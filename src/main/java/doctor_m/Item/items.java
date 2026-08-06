@@ -30,7 +30,7 @@ public class items extends ItemContainer {
     public static final Item REGENERATION_MODULE = new Item(new Item.Settings().maxCount(1));
     public static final Item FORCE_FIELD_SHIELD = new ForceFieldShieldItem(new Item.Settings().maxCount(1));
     public static final Item VORTEX_MANIPULATOR = new VortexManipulatorItem(new Item.Settings().maxCount(1));
-    public static final Item TRACER = new Item(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
+    public static final Item TRACER = new TracerItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
 
     //氧气相关
     public static final Item OXYGEN_CHARGER_ITEM = new BlockItem(ModBlocks.OXYGEN_CHARGER, new Item.Settings());

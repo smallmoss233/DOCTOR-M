@@ -84,6 +84,7 @@
   "item.doctor_m.stch": "STCS|STC-07H「巨妖」",
   "item.doctor_m.stca": "STCS|STC-08A「天圖」",
   "item.doctor_m.stcl": "STCS|STC-09L「遊俠」",
+  "item.doctor_m.tracer": "追蹤器",
 
   "block.doctor_m.oxygen_charger": "氧氣補充機",
 
@@ -380,6 +381,21 @@
   "message.doctor_m.stcs.skill.cooldown": "§c●技能%ds",
   "message.doctor_m.stcs.skill.ready": "§a●就緒",
   "message.doctor_m.stcs.blocking": " §b[格擋]",
+  "message.doctor_m.tracer.tooltip": "§7一把對時間鑰匙的每一塊碎片的擾動都極度敏感的探測器",
+  "message.doctor_m.tracer.detail": "§7手持時，它將以微妙的脈衝回應附近掉落的碎片*右鍵可進行定向掃描，穿透容器與地層，精確丈量你與碎片之間的每一格距離",
+  "message.doctor_m.tracer.tardis_position_unknown": "§b[追蹤器] §7塔迪斯外部座標丟失。",
+  "message.doctor_m.tracer.exterior_unavailable": "§b[追蹤器] §7目標維度不可訪問。",
+  "message.doctor_m.tracer.scanning_structures": "§b[追蹤器] §7本地信號靜默。正在向深層結構發送探測波……",
+  "message.doctor_m.tracer.signal_locked.container": "§b[追蹤器] §f容器信號已鎖定。",
+  "message.doctor_m.tracer.signal_locked.surface": "§b[追蹤器] §f地表信號已鎖定。",
+  "message.doctor_m.tracer.no_structure_tag": "§b[追蹤器] §7結構標籤 §o%s§7 中未配置有效目標。",
+  "message.doctor_m.tracer.no_structure_signal": "§b[追蹤器] §7%s 格範圍內未檢測到遠古結構迴響。",
+  "message.doctor_m.tracer.structure_locked": "§b[追蹤器] §f遠古結構信號已鎖定！",
+  "message.doctor_m.tracer.scan_found_container": "§b[追蹤器] §f容器內檢測到碎片迴響 §7| §e%s §7格",
+  "message.doctor_m.tracer.scan_found_ground": "§b[追蹤器] §f地表發現碎片信號 §7| §e%s §7格",
+  "message.doctor_m.tracer.scan_found_frame": "§b[追蹤器] §f展示框內發現碎片信號 §7| §e%s §7格",
+  "message.doctor_m.tracer.scan_found_entity": "§b[追蹤器] §f生物攜帶碎片信號 §7| §e%s §7格",
+  "message.doctor_m.tracer.scan_none": "§7[追蹤器] §8掃描範圍內未發現碎片痕跡。",
 
   "dimension.doctor_m.trenzalore": "§3特蘭澤洛",
   "dimension.doctor_m.titan": "土衛六-泰坦"

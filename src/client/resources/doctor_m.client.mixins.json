@@ -7,7 +7,8 @@
       "ait.MixinSpaceSuitOverlay",
       "doctor_m.AbstractClientPlayerEntityMixin",
       "doctor_m.MixinTitleScreenBackground",
-      "doctor_m.ScytheFirstPersonMixin"
+      "doctor_m.ScytheFirstPersonMixin",
+      "doctor_m.SonicSettingsScreenMixin"
     ],
 	"injectors": {
 		"defaultRequire": 1
