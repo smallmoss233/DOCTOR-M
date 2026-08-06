@@ -382,7 +382,7 @@
   "message.doctor_m.stcs.skill.ready": "§a●就緒",
   "message.doctor_m.stcs.blocking": " §b[格擋]",
   "message.doctor_m.tracer.tooltip": "§7一把對時間鑰匙的每一塊碎片的擾動都極度敏感的探測器",
-  "message.doctor_m.tracer.detail": "§7手持時，它將以微妙的脈衝回應附近掉落的碎片*右鍵可進行定向掃描，穿透容器與地層，精確丈量你與碎片之間的每一格距離",
+  "message.doctor_m.tracer.detail": "§7手持時，它將以微妙的脈衝回應附近掉落的碎片*右鍵可進行定向掃描，穿透容器與地層，精確丈量你與碎片之間的每一格距離*插入音速端口時，控制台上的心靈感應將被替換為追蹤遠古遺跡或時間鑰匙碎片",
   "message.doctor_m.tracer.tardis_position_unknown": "§b[追蹤器] §7塔迪斯外部座標丟失。",
   "message.doctor_m.tracer.exterior_unavailable": "§b[追蹤器] §7目標維度不可訪問。",
   "message.doctor_m.tracer.scanning_structures": "§b[追蹤器] §7本地信號靜默。正在向深層結構發送探測波……",
@@ -396,6 +396,11 @@
   "message.doctor_m.tracer.scan_found_frame": "§b[追蹤器] §f展示框內發現碎片信號 §7| §e%s §7格",
   "message.doctor_m.tracer.scan_found_entity": "§b[追蹤器] §f生物攜帶碎片信號 §7| §e%s §7格",
   "message.doctor_m.tracer.scan_none": "§7[追蹤器] §8掃描範圍內未發現碎片痕跡。",
+  "message.doctor_m.tracer.marking": "§b[追蹤器] §7正在掃描目前區域結構特徵……",
+  "message.doctor_m.tracer.structure_marked": "§b[追蹤器] §f已將座標 §e%s, %s, %s §f處的遠古結構標記為已探索。",
+  "message.doctor_m.tracer.no_structure_to_mark": "§b[追蹤器] §7目前區域未偵測到可標記的遠古結構。",
+  "message.doctor_m.tracer.skipping_explored": "§b[追蹤器] §7偵測到已探索結構，正在跳過……",
+  "message.doctor_m.tracer.all_structures_explored": "§b[追蹤器] §7搜尋半徑內所有遠古結構均已被標記。請移動塔迪斯至其他區域。",
 
   "dimension.doctor_m.trenzalore": "§3特蘭澤洛",
   "dimension.doctor_m.titan": "土衛六-泰坦"

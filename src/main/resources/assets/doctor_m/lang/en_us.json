@@ -382,7 +382,7 @@
   "message.doctor_m.stcs.skill.ready": "§a●Ready",
   "message.doctor_m.stcs.blocking": " §b[Blocking]",
   "message.doctor_m.tracer.tooltip": "§7A detector extremely sensitive to disturbances from every fragment of the Time Key.",
-  "message.doctor_m.tracer.detail": "§7When held, it responds with subtle pulses to nearby dropped fragments.*Right-click to perform a directional scan, penetrating containers and strata, precisely measuring the distance between you and any fragment.",
+  "message.doctor_m.tracer.detail": "§7When held, it responds with subtle pulses to nearby dropped fragments.*Right-click to perform a directional scan, penetrating containers and strata, precisely measuring the distance between you and any fragment.*When inserted into the Sonic Port, the telepathic interface on the console will be replaced with a tracker for ancient ruins or Time Key fragments.",
   "message.doctor_m.tracer.tardis_position_unknown": "§b[Tracer] §7TARDIS exterior coordinates lost.",
   "message.doctor_m.tracer.exterior_unavailable": "§b[Tracer] §7Target dimension is unreachable.",
   "message.doctor_m.tracer.scanning_structures": "§b[Tracer] §7Local signal silent. Sending probe waves into deep structures...",
@@ -396,6 +396,11 @@
   "message.doctor_m.tracer.scan_found_frame": "§b[Tracer] §fFragment signal found in item frame §7| §e%s §7blocks",
   "message.doctor_m.tracer.scan_found_entity": "§b[Tracer] §fFragment signal carried by entity §7| §e%s §7blocks",
   "message.doctor_m.tracer.scan_none": "§7[Tracer] §8No fragment traces found within scan range.",
+  "message.doctor_m.tracer.marking": "§b[Tracer] §7Scanning the current area for structure features...",
+  "message.doctor_m.tracer.structure_marked": "§b[Tracer] §fAncient structure at coordinates §e%s, %s, %s §fhas been marked as explored.",
+  "message.doctor_m.tracer.no_structure_to_mark": "§b[Tracer] §7No ancient structure eligible for marking detected in the current area.",
+  "message.doctor_m.tracer.skipping_explored": "§b[Tracer] §7Explored structure detected, skipping...",
+  "message.doctor_m.tracer.all_structures_explored": "§b[Tracer] §7All ancient structures within search radius have been marked. Please move your TARDIS to another area.",
 
   "dimension.doctor_m.trenzalore": "§3Trenzalore",
   "dimension.doctor_m.titan": "Saturn VI-Titan"

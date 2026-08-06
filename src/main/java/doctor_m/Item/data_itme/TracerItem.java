@@ -28,8 +28,8 @@ import java.util.List;
 
 public class TracerItem extends Item {
 
-    private static final double SCAN_RANGE = 100;
-    private static final int CONTAINER_SCAN_RANGE = 100;
+    private static final double SCAN_RANGE = 45;
+    private static final int CONTAINER_SCAN_RANGE = 45;
     private static final double SCAN_RANGE_SQ = SCAN_RANGE * SCAN_RANGE;
 
     private int tickCooldown = 0;
