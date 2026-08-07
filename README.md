@@ -27,9 +27,9 @@ DOCTOR M isn't just about making your journey more entertaining—it's about mak
 
 DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom interiors use blocks from the following mods, so besides AIT, it is recommended to install them as well:
 
-[**AIT Extras**](https://modrinth.com/mod/ait-extras) – The Cloister, Claresco and Clara’s TARDIS need content from this mod.
+[**AIT Extras**](https://modrinth.com/mod/ait-extras) – The Cloister need content from this mod.
 
-[**Create**](https://modrinth.com/mod/create-fabric) – **Permanence** , Claresco and Clara’s TARDIS need content from this mod.
+[**Create**](https://modrinth.com/mod/create-fabric) – **Permanence**  need content from this mod.
 
 [**Tough as nails**](https://modrinth.com/mod/tough-as-nails) - AIT's spacesuit will provide warmth.
 
@@ -44,8 +44,6 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 *霓虹(Rainbow), 烈火(Fire) , 泽顿水晶(Crystalline Zeiton) , 立方(Cube)interiors*: 名游茶
 
 *斯格(Sig) interior*: [斯格尔特(Sigeerte)](https://modrinth.com/user/Sigeerte)
-
-*归途(Way Home), 克拉拉的塔迪斯(Clara’s TARDIS), Type 50/55, 霁光(Claresco) interior*: [Siletonight](https://modrinth.com/user/Siletonight)
 
 *时隙(Rift) interior*: [TC020](https://modrinth.com/user/TC020)
 
