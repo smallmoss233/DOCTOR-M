@@ -410,8 +410,8 @@
   "message.doctor_m.stcs.blocking": " §b[格挡]",
   "message.doctor_m.tracer.tooltip": "§7一把对时间钥匙的每一块碎片的扰动都极度敏感的探测器",
   "message.doctor_m.tracer.detail": "§7手持时，它将以微妙的脉冲回应附近掉落的碎片*右键可进行定向扫描，穿透容器与地层，精确丈量你与碎片之间的每一格距离*插入音速端口时，控制台上的心灵感应将被替换为追踪远古遗迹或时间钥匙碎片",
-  "message.doctor_m.toymaker_hammer.tip": "§7你的愿望的具象化，一把锤子，能够实现你的一个愿望...*§c获得一台新的塔迪斯",
-  "message.doctor_m.toymaker_hammer.detail": "§7对准一台塔迪斯的外壳，长按右键蓄力至少2秒后松开*即可在其后方完整复制出一台相同的塔迪斯。",
+  "message.doctor_m.toymaker_hammer.tip": "§7没有裂隙，没有火光。锤头落下的瞬间，塔迪斯像被某种法则一分为二——*§c一台留在原地，另一台被抛到了一旁稳稳地停着",
+  "message.doctor_m.toymaker_hammer.detail": "§7将它对准塔迪斯的 §c外壳§7，长按右键 §c蓄力两秒§7 你会感觉到某种古老的力量正在回应你§r*§7松手的刹那，眼前的塔迪斯像被某种 §c法则§7 一分为二：一台留在原地，另一台被 §c抛向一旁§7，稳稳落地§r*§7两台塔迪斯 §c完全相同§7，连里面的每一把椅子、每一道划痕都分毫不差",
 
   "dimension.doctor_m.trenzalore": "§3特兰泽洛",
   "dimension.doctor_m.titan": "土卫六-泰坦"

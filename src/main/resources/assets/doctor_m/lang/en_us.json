@@ -63,6 +63,9 @@
   "gui.doctor_m.time_key.active.gamemode": "Toggle Game Mode",
   "gui.doctor_m.time_key.active.difficulty": "Toggle World Difficulty",
   "gui.doctor_m.time_key.active.teleport": "Teleport",
+  "gui.doctor_m.tracer.sonic_screen_title": "§d§lTime Key Tracker",
+  "gui.doctor_m.tracer.sonic_screen_status": "§7Temporal tracking active",
+  "gui.doctor_m.tracer.sonic_screen_hint": "§8Use telepathic circuit to locate fragments",
 
   "itemGroup.doctor_m": "DOCTOR M",
   "item.doctor_m.rassilon_key": "Key of Rassilon",
@@ -85,6 +88,7 @@
   "item.doctor_m.stca": "STCS|STC-08A \"Sky Chart\"",
   "item.doctor_m.stcl": "STCS|STC-09L \"Ranger\"",
   "item.doctor_m.tracer": "Tracer",
+  "item.doctor_m.toymaker_hammer": "Toymaker's Hammer",
 
   "block.doctor_m.oxygen_charger": "Oxygen Recharger",
 
@@ -313,6 +317,11 @@
   "tooltip.doctor_m.tracer.no_structure_to_mark": "§b[Tracer] §7No ancient structure eligible for marking detected in the current area.",
   "tooltip.doctor_m.tracer.skipping_explored": "§b[Tracer] §7Explored structure detected, skipping...",
   "tooltip.doctor_m.tracer.all_structures_explored": "§b[Tracer] §7All ancient structures within search radius have been marked. Please move your TARDIS to another area.",
+  "tooltip.doctorm.toymaker_hammer.not_tardis": "§cTarget is not a TARDIS exterior.",
+  "tooltip.doctorm.toymaker_hammer.cloning_start": "§eCloning TARDIS, please wait...",
+  "tooltip.doctorm.toymaker_hammer.success": "§aSuccessfully cloned TARDIS: %s",
+  "tooltip.doctorm.toymaker_hammer.error": "§cAn error occurred during cloning. Please check the server console.",
+  "tooltip.doctorm.toymaker_hammer.manager_full": "§cTARDIS count has reached the server limit. Cannot create more.",
 
   "hud.doctor_m.environment.oxygenated": "Oxygenated, can take off spacesuit",
   "hud.doctor_m.environment.deoxygenated": "Deoxygenated, cannot take off spacesuit",
@@ -401,6 +410,8 @@
   "message.doctor_m.stcs.blocking": " §b[Blocking]",
   "message.doctor_m.tracer.tooltip": "§7A detector extremely sensitive to disturbances from every fragment of the Time Key.",
   "message.doctor_m.tracer.detail": "§7When held, it responds with subtle pulses to nearby dropped fragments.*Right-click to perform a directional scan, penetrating containers and strata, precisely measuring the distance between you and any fragment.*When inserted into the Sonic Port, the telepathic interface on the console will be replaced with a tracker for ancient ruins or Time Key fragments.",
+  "message.doctor_m.toymaker_hammer.tip": "§7No rift. No fire. The moment the hammer falls, the TARDIS is split apart by some kind of law—*§cone remains in place, while the other is cast aside and lands steadily.",
+  "message.doctor_m.toymaker_hammer.detail": "§7Aim it at the TARDIS's §cexterior§7, hold right-click to §ccharge for 2 seconds§7—you'll feel an ancient power responding to you.§r*§7The moment you release, the TARDIS before you is split by some §claw§7: one stays put, the other is §cthrown aside§7 and lands safely.§r*§7Both TARDISes are §cidentical§7—down to every chair and every scratch inside.",
 
   "dimension.doctor_m.trenzalore": "§3Trenzalore",
   "dimension.doctor_m.titan": "Saturn VI-Titan"
