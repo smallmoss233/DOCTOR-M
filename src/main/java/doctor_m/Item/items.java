@@ -14,7 +14,6 @@ import doctor_m.util.creativity.PercentageDamageHelper;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.SpawnEggItem;
-import net.minecraft.registry.Registries;
 import net.minecraft.util.Rarity;
 
 public class items extends ItemContainer {

@@ -35,9 +35,9 @@ public static void registerItems() {
                                 entries.add(STCA);
                                 entries.add(STCH);
                                 entries.add(STCL);
+                                entries.add(TOYMAKER_HAMMER);
                                 entries.add(ENERGY_UPGRADE_MODULE);
                                 entries.add(REGENERATION_MODULE);
-                                entries.add(TOYMAKER_HAMMER);
                             })
                             .build());
         }

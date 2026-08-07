@@ -3,7 +3,6 @@ package doctor_m;
 import dev.amble.lib.container.RegistryContainer;
 import doctor_m.Item.item_group;
 import doctor_m.Item.items;
-import doctor_m.Item.stcs.STCSItem;
 import doctor_m.command.AITTardisBuilderCommand;
 import doctor_m.config.ConfigManager;
 import doctor_m.dimension.DimensionRegister;
@@ -62,8 +61,8 @@ public class DOCTORM implements ModInitializer {
         PocketWatchFunction.INSTANCE.register();
         GemDeathSaveHandler.INSTANCE.register();
         GemTickHandler.INSTANCE.register();
+        STCSNetworking.INSTANCE.register();
         TardisTypeLoader.init();
-        STCSNetworking.register();
 
         items.registerAbilities();
         CreativityItems.registerAbilities();
