@@ -88,17 +88,17 @@ public abstract class TelepathicControlMixin {
                                                           ServerWorld consoleWorld, BlockPos console) {
         CachedDirectedGlobalPos exterior = tardis.travel().position();
         if (exterior == null) {
-            player.sendMessage(Text.translatable("message.doctor_m.tracer.tardis_position_unknown"), true);
+            player.sendMessage(Text.translatable("tooltip.doctor_m.tracer.tardis_position_unknown"), true);
             return Control.Result.FAILURE;
         }
 
         ServerWorld extWorld = exterior.getWorld();
         if (extWorld == null) {
-            player.sendMessage(Text.translatable("message.doctor_m.tracer.exterior_unavailable"), true);
+            player.sendMessage(Text.translatable("tooltip.doctor_m.tracer.exterior_unavailable"), true);
             return Control.Result.FAILURE;
         }
 
-        player.sendMessage(Text.translatable("message.doctor_m.tracer.marking"), true);
+        player.sendMessage(Text.translatable("tooltip.doctor_m.tracer.marking"), true);
         consoleWorld.playSound(null, console,
                 SoundEvents.BLOCK_BEACON_AMBIENT, SoundCategory.BLOCKS, 0.8f, 1.2f);
 
@@ -106,14 +106,14 @@ public abstract class TelepathicControlMixin {
                 STRUCTURE_SEARCH_RADIUS, false).thenOnServerThread(result -> {
 
             if (result == null) {
-                player.sendMessage(Text.translatable("message.doctor_m.tracer.no_structure_to_mark"), true);
+                player.sendMessage(Text.translatable("tooltip.doctor_m.tracer.no_structure_to_mark"), true);
                 return;
             }
 
             addToBlacklist(tardis, result);
             consoleWorld.playSound(null, console,
                     SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), SoundCategory.BLOCKS, 1f, 2f);
-            player.sendMessage(Text.translatable("message.doctor_m.tracer.structure_marked",
+            player.sendMessage(Text.translatable("tooltip.doctor_m.tracer.structure_marked",
                     result.getX(), result.getY(), result.getZ()), true);
         });
 
@@ -151,13 +151,13 @@ public abstract class TelepathicControlMixin {
                                                          ServerWorld consoleWorld, BlockPos console) {
         CachedDirectedGlobalPos exterior = tardis.travel().position();
         if (exterior == null) {
-            player.sendMessage(Text.translatable("message.doctor_m.tracer.tardis_position_unknown"), true);
+            player.sendMessage(Text.translatable("tooltip.doctor_m.tracer.tardis_position_unknown"), true);
             return Control.Result.FAILURE;
         }
 
         ServerWorld extWorld = exterior.getWorld();
         if (extWorld == null) {
-            player.sendMessage(Text.translatable("message.doctor_m.tracer.exterior_unavailable"), true);
+            player.sendMessage(Text.translatable("tooltip.doctor_m.tracer.exterior_unavailable"), true);
             return Control.Result.FAILURE;
         }
 
@@ -253,7 +253,7 @@ public abstract class TelepathicControlMixin {
         }
 
         // 4. 没找到 → 异步链式搜结构（自动跳过已标记）
-        player.sendMessage(Text.translatable("message.doctor_m.tracer.scanning_structures"), true);
+        player.sendMessage(Text.translatable("tooltip.doctor_m.tracer.scanning_structures"), true);
         consoleWorld.playSound(null, console,
                 SoundEvents.BLOCK_BEACON_AMBIENT, SoundCategory.BLOCKS, 1f, 0.7f);
 
@@ -284,8 +284,8 @@ public abstract class TelepathicControlMixin {
                 SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.BLOCKS, 1f, 2f);
 
         String typeKey = inContainer
-                ? "message.doctor_m.tracer.signal_locked.container"
-                : "message.doctor_m.tracer.signal_locked.surface";
+                ? "tooltip.doctor_m.tracer.signal_locked.container"
+                : "tooltip.doctor_m.tracer.signal_locked.surface";
         player.sendMessage(Text.translatable(typeKey), true);
     }
 
@@ -300,7 +300,7 @@ public abstract class TelepathicControlMixin {
 
         if (holderSet.isEmpty() || holderSet.get().size() == 0) {
             player.sendMessage(Text.translatable(
-                    "message.doctor_m.tracer.no_structure_tag",
+                    "tooltip.doctor_m.tracer.no_structure_tag",
                     "doctor_m:ktt_fragment_structures"
             ), true);
             return;
@@ -319,7 +319,7 @@ public abstract class TelepathicControlMixin {
         if (attemptsLeft <= 0) {
             consoleWorld.playSound(null, console,
                     SoundEvents.BLOCK_NOTE_BLOCK_DIDGERIDOO.value(), SoundCategory.BLOCKS, 1f, 0.5f);
-            player.sendMessage(Text.translatable("message.doctor_m.tracer.all_structures_explored"), true);
+            player.sendMessage(Text.translatable("tooltip.doctor_m.tracer.all_structures_explored"), true);
             return;
         }
 
@@ -329,7 +329,7 @@ public abstract class TelepathicControlMixin {
                         consoleWorld.playSound(null, console,
                                 SoundEvents.BLOCK_NOTE_BLOCK_DIDGERIDOO.value(), SoundCategory.BLOCKS, 1f, 0.5f);
                         player.sendMessage(Text.translatable(
-                                "message.doctor_m.tracer.no_structure_signal",
+                                "tooltip.doctor_m.tracer.no_structure_signal",
                                 STRUCTURE_SEARCH_RADIUS
                         ), true);
                         return;
@@ -355,7 +355,7 @@ public abstract class TelepathicControlMixin {
                         consoleWorld.playSound(null, console,
                                 SoundEvents.BLOCK_NOTE_BLOCK_DIDGERIDOO.value(), SoundCategory.BLOCKS, 1f, 0.5f);
                         player.sendMessage(Text.translatable(
-                                "message.doctor_m.tracer.no_structure_signal",
+                                "tooltip.doctor_m.tracer.no_structure_signal",
                                 STRUCTURE_SEARCH_RADIUS
                         ), true);
                         return;
@@ -363,7 +363,7 @@ public abstract class TelepathicControlMixin {
 
                     // 检查黑名单
                     if (isBlacklisted(tardis, result)) {
-                        player.sendMessage(Text.translatable("message.doctor_m.tracer.skipping_explored"), true);
+                        player.sendMessage(Text.translatable("tooltip.doctor_m.tracer.skipping_explored"), true);
                         // 以该结构为中心继续搜索下一个
                         tryLocateNext(tardis, player, consoleWorld, console, extWorld,
                                 originalCenter, result, radius, result, attemptsLeft - 1);
@@ -388,7 +388,7 @@ public abstract class TelepathicControlMixin {
 
                     consoleWorld.playSound(null, console,
                             SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.BLOCKS, 1f, 1.8f);
-                    player.sendMessage(Text.translatable("message.doctor_m.tracer.structure_locked"), true);
+                    player.sendMessage(Text.translatable("tooltip.doctor_m.tracer.structure_locked"), true);
                 });
     }
 }

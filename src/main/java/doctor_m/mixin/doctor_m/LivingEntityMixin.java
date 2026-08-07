@@ -30,6 +30,8 @@ public class LivingEntityMixin {
     private static final ThreadLocal<Boolean> TLIPOCA_AOE_LOCK = ThreadLocal.withInitial(() -> false);
     private static final double TLIPOCA_AOE_RADIUS = 5.0;
     private static final ThreadLocal<Boolean> STCS_BLOCK_LOCK = ThreadLocal.withInitial(() -> false);
+    private static final ThreadLocal<Boolean> STCS_AOE_LOCK = ThreadLocal.withInitial(() -> false);
+    private static final double STCS_AOE_RADIUS = 3.0;
 
     // ========== 力场盾==========
     /** 只要正在举盾就生效（不需要有能量） */
@@ -282,5 +284,57 @@ public class LivingEntityMixin {
         world.spawnParticles(ParticleTypes.WAX_ON,
                 player.getX(), player.getY() + 1.0, player.getZ(),
                 4, 0.3, 0.3, 0.3, 0.1);
+    }
+
+    // ========== STCS 范围伤害共享（AoE） ==========
+
+    /**
+     * 判断玩家是否持有 STCS 武器（主手或副手）
+     */
+    private static boolean isHoldingSTCS(PlayerEntity player) {
+        return player.getMainHandStack().getItem() instanceof STCSItem
+                || player.getOffHandStack().getItem() instanceof STCSItem;
+    }
+
+    /**
+     * STCS 专属 AoE 伤害（普通伤害，可被减免，无强制扣血）
+     */
+    private static void applyStcsAoE(LivingEntity victim, LivingEntity attacker, float amount) {
+        // 防止递归触发（如 AoE 伤害再次触发本方法）
+        if (STCS_AOE_LOCK.get()) return;
+        if (!(victim.getWorld() instanceof ServerWorld world)) return;
+
+        STCS_AOE_LOCK.set(true);
+        try {
+            double radiusSq = STCS_AOE_RADIUS * STCS_AOE_RADIUS;
+            Box aoeBox = new Box(victim.getPos(), victim.getPos()).expand(STCS_AOE_RADIUS);
+
+            for (Entity entity : world.getOtherEntities(victim, aoeBox)) {
+                if (entity == attacker) continue;
+                if (!(entity instanceof LivingEntity living)) continue;
+                if (entity.squaredDistanceTo(victim) > radiusSq) continue;
+
+                // 普通伤害，可被护甲、抗性、限伤等减免
+                living.damage(victim.getDamageSources().generic(), amount);
+            }
+        } finally {
+            STCS_AOE_LOCK.set(false);
+        }
+    }
+
+    /**
+     * 当 STCS 成功造成伤害后，触发范围 AoE
+     */
+    @Inject(method = "damage", at = @At("RETURN"))
+    private void doctor_m$stcsAoE(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        // 只有伤害成功（未被取消）才触发
+        if (!cir.getReturnValue()) return;
+        if (STCS_AOE_LOCK.get()) return;
+
+        LivingEntity self = (LivingEntity) (Object) this;
+        if (!(source.getAttacker() instanceof PlayerEntity player)) return;
+        if (!isHoldingSTCS(player)) return;
+
+        applyStcsAoE(self, player, amount);
     }
 }

@@ -28,9 +28,9 @@ object TimeKeyPassive {
         nbt.putBoolean(key, !current)
 
         val msgKey = when (featureId) {
-            0 -> "message.doctor_m.time_key.godmode"
-            1 -> "message.doctor_m.time_key.neutral_mode"
-            2 -> "message.doctor_m.time_key.slash_mode"
+            0 -> "gui.doctor_m.time_key.godmode"
+            1 -> "gui.doctor_m.time_key.neutral_mode"
+            2 -> "gui.doctor_m.time_key.slash_mode"
             else -> return
         }
         player.sendMessage(Text.translatable("$msgKey.${if (!current) "on" else "off"}"), true)

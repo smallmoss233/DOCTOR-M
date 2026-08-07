@@ -216,17 +216,17 @@ public class TracerItem extends Item {
 
             String key;
             if (inContainer) {
-                key = "message.doctor_m.tracer.scan_found_container";
+                key = "tooltip.doctor_m.tracer.scan_found_container";
             } else if (inFrame) {
-                key = "message.doctor_m.tracer.scan_found_frame";
+                key = "tooltip.doctor_m.tracer.scan_found_frame";
             } else if (inEntity) {
-                key = "message.doctor_m.tracer.scan_found_entity";
+                key = "tooltip.doctor_m.tracer.scan_found_entity";
             } else {
-                key = "message.doctor_m.tracer.scan_found_ground";
+                key = "tooltip.doctor_m.tracer.scan_found_ground";
             }
             user.sendMessage(Text.translatable(key, distance), true);
         } else {
-            user.sendMessage(Text.translatable("message.doctor_m.tracer.scan_none"), true);
+            user.sendMessage(Text.translatable("tooltip.doctor_m.tracer.scan_none"), true);
         }
 
         return TypedActionResult.success(stack);
