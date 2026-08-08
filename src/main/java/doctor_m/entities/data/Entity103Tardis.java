@@ -532,7 +532,7 @@ public class Entity103Tardis extends PathAwareEntity {
     private void grantTradeAdvancement(ServerPlayerEntity player) {
         MinecraftServer server = player.getServer();
         if (server == null) return;
-        var advancement = server.getAdvancementLoader().get(new Identifier("doctor_m", "trading/cross_time_trade"));
+        var advancement = server.getAdvancementLoader().get(new Identifier("doctor_m", "cross_time_trade"));
         if (advancement != null) {
             player.getAdvancementTracker().grantCriterion(advancement, "impossible");
         }

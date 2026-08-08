@@ -379,7 +379,7 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
 
     private fun grantTradeAdvancement(player: ServerPlayerEntity) {
         val server = player.server ?: return
-        val advancement = server.advancementLoader.get(Identifier("doctor_m", "trading/cross_time_trade"))
+        val advancement = server.advancementLoader.get(Identifier("doctor_m", "marian_trade"))
         if (advancement != null) {
             player.advancementTracker.grantCriterion(advancement, "impossible")
         }

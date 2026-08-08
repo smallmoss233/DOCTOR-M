@@ -1,0 +1,26 @@
+{
+  "parent": "doctor_m:root",
+  "display": {
+    "icon": {
+      "item": "doctor_m:type_103_spawn"
+    },
+    "title": {
+      "translate": "advancements.doctor_m.cross_time_trade.title"
+    },
+    "description": {
+      "translate": "advancements.doctor_m.cross_time_trade.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    ["impossible"]
+  ]
+}

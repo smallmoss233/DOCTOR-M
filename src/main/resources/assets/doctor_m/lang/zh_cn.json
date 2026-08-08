@@ -21,6 +21,12 @@
   "advancements.doctor_m.vortex_manipulator.description": "小心使用，不要成为第二个安德森少校",
   "advancements.doctor_m.tlipoca_scythe.title": "一把镰刀？",
   "advancements.doctor_m.tlipoca_scythe.description": "现在我成为了死神，世间灵魂的收割者",
+  "advancements.doctor_m.cross_time_trade.title": "跨时空贸易",
+  "advancements.doctor_m.cross_time_trade.description": "与一位103型塔迪斯商人进行交易",
+  "advancements.doctor_m.marian_trade.title": "好的！成交！",
+  "advancements.doctor_m.marian_trade.description": "与玛丽安.谨进行一次交易。",
+  "advancements.doctor_m.tech_next_gen.title": "次世代科技！",
+  "advancements.doctor_m.tech_next_gen.description": "获得STCS系列武器的任意一把。",
 
   "tardis.message.control.siege.confirm_prompt": "再次按下以启用围攻模式！（等待10秒再点击）",
 
