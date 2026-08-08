@@ -38,51 +38,121 @@ GNU 通用公共许可证旨在保障你分享和修改程序所有版本的自�
 This mod, DOCTOR M, is the collective work of a dedicated team of developers
 who have contributed their creativity and effort over several years.
 
-本模组，DOCTOR M，是一个专注的开发团队的集体作品，他们在数年间贡献了自己的创造力和努力。
+本模组 DOCTOR M 是一个专注的开发团队的集体作品，他们在数年间贡献了自己的创造力和努力。
 
-Small Moss: 
-  - Main author / 主要作者
-  - Responsible for Evereye interior & exterior design
-  - 负责永恒之眼内饰&外观设计
+---
 
-白桦树下的赤俄:
-  - Watcher interior concepts & console design
-  - 守望内饰想法&控制台设计
+### Project Lead / 项目负责人
+- **Smallmoss**：项目发起人及主要维护者。
+  Project founder and primary maintainer.
 
-zhujianX_Offical:
-  - Fire and neon interior designs
-  - 烈火和霓虹内饰设计
+---
 
-斯格.尔特:
-  - Mad Evil, Sige, Eternal Decay, and other interior designs
-  - 疯恶、斯格、恒朽等内饰设计
+### Core Contributors / 核心贡献者
 
-慢跑者:
-  - Author of Redstone Screwdriver
-  - 红石起子作者
+- **白桦树下的赤俄 (Kilin_Mus)**：参与「守望 (Watcher)」内饰概念设计及控制台纹理制作。
+  Contributed to the "Watcher" interior concept and console texture design.
+
+- **zhujianX_Offical**（后更名为 名游茶 / Asnit_PnQing）：创作了「烈火 (Fire)」、「霓虹 (Rainbow)」内饰。
+  Created the "Fire" and "Rainbow" interiors.
+
+- **斯格尔特 (Sigeerte)**（原 Sig. Erd）：创作了「疯恶 (Mad Evil)」、「斯格 (Sig)」、「恒朽 (Eternal Decay)」等内饰。
+  Created the "Mad Evil", "Sig", "Eternal Decay", and other interiors.
+
+- **慢跑者**：创作了「红石火把音速起子」模型。
+  Created the "Redstone Torch Sonic Screwdriver" model.
+
+---
+
+### Additional Contributions / 其他贡献
+
+- **[TC020](https://modrinth.com/user/TC020)**：创作了「时隙 (Rift)」内饰。
+  Created the "Rift" interior.
+- **[Tsinafs-Bcim](https://modrinth.com/user/Tsinafs-Bcim)**：提供了部分物品模型。
+  Provided partial item models.
+- **斯格尔特 (Sigeerte)、[asdjdfk](https://modrinth.com/user/asdjdfk)、T天玄X**：协助撰写了部分成就文本和物品提示文本。
+  Assisted with writing some advancement texts and item tooltip texts.
+
+---
+
+### Special Thanks / 特别感谢
+
+**在此特别感谢 [Amble Labs](https://modrinth.com/organization/amble-labs) 团队**，感谢他们创作了 **AIT (Adventures In Time)** 模组，为 DOCTOR M 提供了坚实的基础。
+**Special thanks to the [Amble Labs](https://modrinth.com/organization/amble-labs) team** for creating the **AIT (Adventures In Time)** mod, which provided a solid foundation for DOCTOR M.
+
+---
 
 ================================================================================
-This is a summary of the GNU GPL v3. For the full legal text, please see the
-complete license agreement above.
+                     TERMS AND CONDITIONS
+                       条款与条件
 
-这是 GNU GPL v3 的概要。完整的法律文本请参阅上方的完整许可证协议。
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-YOUR FREEDOMS AND OBLIGATIONS / 你的自由与义务:
+本程序是自由软件：你可以根据自由软件基金会发布的 GNU 通用公共许可证的
+条款重新发布或修改它，无论是许可证的第3版，还是（按你的选择）任何更高版本。
 
-YOU ARE FREE TO / 你可以自由地:
-- Use the software commercially / 商业性使用本软件
-- Modify and adapt the software / 修改和适配本软件  
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+本程序按原样分发，希望它有用，但不提供任何担保；甚至没有适销性或
+特定用途适用性的默示担保。详情请参阅 GNU 通用公共许可证。
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+你应该已经随本程序收到了一份 GNU 通用公共许可证的副本。
+如果没有，请访问 <https://www.gnu.org/licenses/>。
+
+================================================================================
+                     SUMMARY OF YOUR RIGHTS
+                        权利摘要
+
+**You are free to / 你可以自由地：**
+- Use the software for any purpose / 以任何目的使用本软件
+- Modify and adapt the software / 修改和适配本软件
 - Distribute the software / 分发本软件
 
-UNDER THESE CONDITIONS / 在以下条件下:
+**Under these conditions / 在以下条件下：**
 - You must keep the original copyright notices and this license / 必须保留原始版权声明和本许可证
 - You must disclose the source code of any modifications / 必须披露任何修改的源代码
 - You must license derivative works under the same GPL v3 license / 必须使用相同的 GPL v3 许可证授权衍生作品
 - You must include a copy of this license with any distributions / 必须在任何分发中包含本许可证的副本
 
-NO WARRANTY / 无担保:
+**No Warranty / 无担保：**
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE.
 
 本程序按原样分发，希望它有用，但不提供任何担保；甚至没有适销性或特定用途适用性的默示担保。
+
+================================================================================
+                     ADDITIONAL NOTES
+                        附加说明
+
+**Artistic Assets (interiors, models, textures, etc.) / 艺术资源（内饰、模型、纹理等）**：
+The artistic assets created by the contributors listed above are also covered
+by GPL-3.0, but please note that they **may not** be ported to other mods or
+redistributed without explicit permission from the respective creators.
+
+上述贡献者创作的艺术资源也受 GPL-3.0 保护，但请注意：未经相应创作者明确允许，
+**不得**将其移植到其他模组或进行二次分发。
+
+**Modpack Distribution / 整合包分发**：
+You are welcome to include DOCTOR M in a modpack, provided that you comply with
+GPL-3.0 and clearly credit the source and contributors of this mod.
+
+欢迎将 DOCTOR M 包含在整合包中，前提是你遵守 GPL-3.0 协议，并明确标明本模组的
+来源及贡献者。
+
+================================================================================
+
+For the full GPL-3.0 legal text, please refer to the official GNU website:
+<https://www.gnu.org/licenses/gpl-3.0.html>
+
+完整的 GPL-3.0 法律文本请参阅 GNU 官方网站：
+<https://www.gnu.org/licenses/gpl-3.0.html>

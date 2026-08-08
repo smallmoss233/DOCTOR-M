@@ -11,7 +11,7 @@
 -  修改：时隙 / Edit : rift
 -  修改：永恒之眼/永恒之眼 45型 / Edit : Evereye/Evereye Type45
 
--  新增：立方（作者：Asnit_PnQing） / New addition: Cube (Author: Asnit_PnQing)
+-  新增：幻方（作者：Asnit_PnQing/名游茶） / New addition: Magic Square (Author: Asnit_PnQing/名游茶)
 -  新增：时隙[战争往事]（作者：TC020） / New addition: The rift [War Stories](Author: TC020)
 
 -  护盾生成器，能提供99.99%的伤害减免并消耗能量，默认1000点能量，每次受伤消耗5点（可配置） / Shield Generator: Provides 99.99% damage reduction while consuming energy. Default energy capacity is 1000, and each hit consumes 5 energy (configurable)

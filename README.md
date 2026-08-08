@@ -37,11 +37,11 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 
 **Credits for Custom Content**
 
-*永恒之眼(Evereye) interior & exterior , 玛丽.谨(Mary.Jin) Sonic Screwdriver , 守望(Watcher) interior & console texture, 恶疯(Madness) interior & exterior, 回廊(Cloister) , 恒朽(Permanence) interior*: [Smallmoss](https://modrinth.com/user/SmallMoss)
+*永恒之眼(Evereye) interior & exterior , 玛丽.谨(Mary.Jin) Sonic Screwdriver , 守望(Watcher) interior & console texture, 恶疯(Madness) interior & exterior, 回廊(Cloister) , 恒朽(Permanence) , 古图书馆(Ancient Library) , 永恒之钟(Eternal Bell) interior*: [Smallmoss](https://modrinth.com/user/SmallMoss)
 
 *守望(Watcher) console texture*: [白桦下的赤俄(Kilin_Mus)](https://modrinth.com/user/Kilin_Mus)
 
-*霓虹(Rainbow), 烈火(Fire) , 泽顿水晶(Crystalline Zeiton) , 立方(Cube)interiors*: 名游茶
+*霓虹(Rainbow), 烈火(Fire) , 泽顿水晶(Crystalline Zeiton) , 幻方(Magic Square) , 浪漫(Romantic)interiors*: 名游茶
 
 *斯格(Sig) interior*: [斯格尔特(Sigeerte)](https://modrinth.com/user/Sigeerte)
 
