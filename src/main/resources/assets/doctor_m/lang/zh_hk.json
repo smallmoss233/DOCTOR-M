@@ -89,8 +89,10 @@
   "item.doctor_m.stcl": "STCS|STC-09L「遊俠」",
   "item.doctor_m.tracer": "追蹤器",
   "item.doctor_m.toymaker_hammer": "玩具匠的錘子",
+  "item.doctor_m.underwater_oxygen_generator": "水下製氧機",
 
   "block.doctor_m.oxygen_charger": "氧氣補充機",
+  "block.doctor_m.underwater_oxygen_generator": "水下製氧機",
 
   "entity.doctor_m.type_103w_evereye": "瑪麗安.謹",
   "entity.doctor_m.103_tardis.name.default": "103型塔迪斯",
@@ -338,6 +340,7 @@
   "message.doctor_m.oxygen_charger.suit_full": "§a太空衣氧氣已滿！",
   "message.doctor_m.oxygen_charger.invalid_item": "無效物品！",
   "message.doctor_m.oxygen_charger.cooldown": "氧氣補充機冷卻中...還剩 %d 秒...",
+  "message.doctor_m.oxygen_charger": "§7特別為太空探索準備的氧氣補充機，效率極高且能無限制氧👍*能瞬間布滿你的氧氣瓶或航天服，每次使用後都有10s的製氧時間",
   "message.doctor_m.oxygen_tank": "看上去像個保溫杯",
   "message.doctor_m.rassilon_key.tooltip.line": "§7除了拉斯隆，從未有時間領主總統能得到過拉斯隆之鑰...",
   "message.doctor_m.de_mat_gun.tooltip.line1": "來自時間領主的忠告：",
@@ -412,6 +415,18 @@
   "message.doctor_m.tracer.detail": "§7手持時，它將以微妙的脈衝回應附近掉落的碎片*右鍵可進行定向掃描，穿透容器與地層，精確丈量你與碎片之間的每一格距離*插入音速端口時，控制台上的心靈感應將被替換為追蹤遠古遺跡或時間鑰匙碎片",
   "message.doctor_m.toymaker_hammer.tip": "§7沒有裂隙，沒有火光。錘頭落下的瞬間，塔迪斯像被某種法則一分為二——*§c一台留在原地，另一台被拋到了一旁穩穩地停著",
   "message.doctor_m.toymaker_hammer.detail": "§7將它對準塔迪斯的 §c外殼§7，長按右鍵 §c蓄力兩秒§7 你會感覺到某種古老的力量正在回應你§r*§7鬆手的剎那，眼前的塔迪斯像被某種 §c法則§7 一分為二：一台留在原地，另一台被 §c拋向一旁§7，穩穩落地§r*§7兩台塔迪斯 §c完全相同§7，連裡面的每一把椅子、每一道劃痕都分毫不差",
+  "message.doctor_m.underwater_oxygen_generator.cooldown": "水下製氧機冷卻中，還需 %s 秒",
+  "message.doctor_m.underwater_oxygen_generator.water_added": "已加水，製氧機準備就緒",
+  "message.doctor_m.underwater_oxygen_generator.water_full": "儲水已滿",
+  "message.doctor_m.underwater_oxygen_generator.no_water": "製氧機缺水，請使用水桶加水",
+  "message.doctor_m.underwater_oxygen_generator.tank_fill": "氧氣瓶已充滿",
+  "message.doctor_m.underwater_oxygen_generator.tank_fill_partial": "氧氣瓶已補充 25%%",
+  "message.doctor_m.underwater_oxygen_generator.tank_full": "氧氣瓶已滿",
+  "message.doctor_m.underwater_oxygen_generator.suit_fill": "宇航服氧氣已充滿",
+  "message.doctor_m.underwater_oxygen_generator.suit_fill_partial": "宇航服氧氣已補充 25%%",
+  "message.doctor_m.underwater_oxygen_generator.suit_full": "宇航服氧氣已滿",
+  "message.doctor_m.underwater_oxygen_generator.invalid_item": "無法為此物品充氧",
+  "message.doctor_m.underwater_oxygen_generator": "§7一台製氧機，初為水下環境設計，通過電解水(H2O)製取氧氣*水下可在一定範圍內供氧，非水下環境可通過手動加入水進行製氧",
 
   "dimension.doctor_m.trenzalore": "§3特蘭澤洛",
   "dimension.doctor_m.titan": "土衛六-泰坦"

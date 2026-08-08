@@ -89,8 +89,10 @@
   "item.doctor_m.stcl": "STCS|STC-09L \"Ranger\"",
   "item.doctor_m.tracer": "Tracer",
   "item.doctor_m.toymaker_hammer": "Toymaker's Hammer",
+  "item.doctor_m.underwater_oxygen_generator": "Underwater Oxygen Generator",
 
   "block.doctor_m.oxygen_charger": "Oxygen Recharger",
+  "block.doctor_m.underwater_oxygen_generator": "Underwater Oxygen Generator",
 
   "entity.doctor_m.type_103w_evereye": "Marian.Jin",
   "entity.doctor_m.103_tardis.name.default": "Type 103 TARDIS",
@@ -338,6 +340,7 @@
   "message.doctor_m.oxygen_charger.suit_full": "§aSpacesuit oxygen is already full!",
   "message.doctor_m.oxygen_charger.invalid_item": "Invalid item!",
   "message.doctor_m.oxygen_charger.cooldown": "Oxygen Recharger cooling down... %d seconds remaining...",
+  "message.doctor_m.oxygen_charger": "§7An oxygen recharger specially designed for space exploration—highly efficient and capable of unlimited oxygen production 👍.*Instantly fills your oxygen tank or spacesuit, with a 10s cooldown after each use.",
   "message.doctor_m.oxygen_tank": "Looks like a thermos",
   "message.doctor_m.rassilon_key.tooltip.line": "§7No Time Lord president has ever obtained the Key of Rassilon except Rassilon himself...",
   "message.doctor_m.de_mat_gun.tooltip.line1": "Advice from the Time Lords:",
@@ -412,6 +415,18 @@
   "message.doctor_m.tracer.detail": "§7When held, it responds with subtle pulses to nearby dropped fragments.*Right-click to perform a directional scan, penetrating containers and strata, precisely measuring the distance between you and any fragment.*When inserted into the Sonic Port, the telepathic interface on the console will be replaced with a tracker for ancient ruins or Time Key fragments.",
   "message.doctor_m.toymaker_hammer.tip": "§7No rift. No fire. The moment the hammer falls, the TARDIS is split apart by some kind of law—*§cone remains in place, while the other is cast aside and lands steadily.",
   "message.doctor_m.toymaker_hammer.detail": "§7Aim it at the TARDIS's §cexterior§7, hold right-click to §ccharge for 2 seconds§7—you'll feel an ancient power responding to you.§r*§7The moment you release, the TARDIS before you is split by some §claw§7: one stays put, the other is §cthrown aside§7 and lands safely.§r*§7Both TARDISes are §cidentical§7—down to every chair and every scratch inside.",
+  "message.doctor_m.underwater_oxygen_generator.cooldown": "Underwater Oxygen Generator cooldown: %ss remaining",
+  "message.doctor_m.underwater_oxygen_generator.water_added": "Water added. Generator ready.",
+  "message.doctor_m.underwater_oxygen_generator.water_full": "Water tank full.",
+  "message.doctor_m.underwater_oxygen_generator.no_water": "Generator out of water. Add water with a bucket.",
+  "message.doctor_m.underwater_oxygen_generator.tank_fill": "Oxygen tank fully filled.",
+  "message.doctor_m.underwater_oxygen_generator.tank_fill_partial": "Oxygen tank refilled by 25%%.",
+  "message.doctor_m.underwater_oxygen_generator.tank_full": "Oxygen tank is full.",
+  "message.doctor_m.underwater_oxygen_generator.suit_fill": "Spacesuit oxygen fully replenished.",
+  "message.doctor_m.underwater_oxygen_generator.suit_fill_partial": "Spacesuit oxygen refilled by 25%%.",
+  "message.doctor_m.underwater_oxygen_generator.suit_full": "Spacesuit oxygen is full.",
+  "message.doctor_m.underwater_oxygen_generator.invalid_item": "Cannot fill oxygen for this item.",
+  "message.doctor_m.underwater_oxygen_generator": "§7An oxygen generator, originally designed for underwater environments, producing oxygen through electrolysis of water (H2O).*Underwater, it supplies oxygen within a certain radius; outside of water, it can be manually refilled with water to generate oxygen.",
 
   "dimension.doctor_m.trenzalore": "§3Trenzalore",
   "dimension.doctor_m.titan": "Saturn VI-Titan"
