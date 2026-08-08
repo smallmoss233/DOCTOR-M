@@ -67,7 +67,7 @@ class Marian_Jin(entityType: EntityType<out PathAwareEntity>, world: World) : Pa
                 .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
                 .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.8)
-                .add(EntityAttributes.GENERIC_ARMOR, 8.0)
+                .add(EntityAttributes.GENERIC_ARMOR, 0.0)
     }
 
     // ==================== 反击与记忆系统 ====================
