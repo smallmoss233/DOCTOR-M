@@ -2,7 +2,7 @@
   "parent": "doctor_m:cross_time_trade",
   "display": {
     "icon": {
-      "item": "doctor_m:evereye_spawn"
+      "item": "doctor_m:marian_jin_spawn"
     },
     "title": {
       "translate": "advancements.doctor_m.marian_trade.title"

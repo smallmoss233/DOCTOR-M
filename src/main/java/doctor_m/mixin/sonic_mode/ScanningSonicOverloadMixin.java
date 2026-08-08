@@ -27,7 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ScanningSonicMode.class)
 public abstract class ScanningSonicOverloadMixin extends SonicMode {
 
-    private static final Identifier TARGET_ENTITY = new Identifier("doctor_m", "type_103w_evereye");
+    private static final Identifier TARGET_ENTITY = new Identifier("doctor_m", "marian_jin");
     private static final Identifier OVERLOAD_ADVANCEMENT = new Identifier("doctor_m", "scan_overload");
     private static final int COOLDOWN_TICKS = 60;
 

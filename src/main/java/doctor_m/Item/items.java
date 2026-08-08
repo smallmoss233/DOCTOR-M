@@ -45,8 +45,8 @@ public class items extends ItemContainer {
             0xFFFFFFFF,
             new Item.Settings()
     );
-    public static final Item EVEREYE_SPAWN = new SpawnEggItem(
-            Entities.TYPE_103W_EVEREYE,
+    public static final Item MARIAN_JIN_SPAWN = new SpawnEggItem(
+            Entities.MARIAN_JIN,
             0xFFFFFFFF,
             0xFFFFFFFF,
             new Item.Settings()

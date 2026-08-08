@@ -5,7 +5,7 @@ import doctor_m.client.Shield.ForceFieldClientRenderer;
 import doctor_m.client.Shield.ShieldNetworkingClient;
 import doctor_m.client.Shield.ShieldOverlay;
 import doctor_m.client.dimension.TitanDimensionEffects;
-import doctor_m.client.entity.EvereyeRenderer;
+import doctor_m.client.entity.MarianJinRenderer;
 import doctor_m.client.entity.Type103Renderer;
 import doctor_m.client.gui.VortexManipulatorScreen;
 import doctor_m.client.network.DeMatGunClientNetwork;
@@ -50,7 +50,7 @@ public class DOCTORMClient implements ClientModInitializer {
         HudRenderCallback.EVENT.register(new ShieldOverlay());
 
         EntityRendererRegistry.register(Entities.TYPE_103_TARDIS, Type103Renderer::new);
-        EntityRendererRegistry.register(Entities.TYPE_103W_EVEREYE, EvereyeRenderer::new);
+        EntityRendererRegistry.register(Entities.MARIAN_JIN, MarianJinRenderer::new);
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             PlayerEntity player = client.player;

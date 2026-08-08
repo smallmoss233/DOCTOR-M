@@ -32,16 +32,16 @@ import net.minecraft.util.Identifier
 import net.minecraft.world.World
 import java.util.*
 
-class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: World) : PathAwareEntity(entityType, world) {
+class Marian_Jin(entityType: EntityType<out PathAwareEntity>, world: World) : PathAwareEntity(entityType, world) {
 
     enum class AIState { IDLE, TRADING, COMBAT, RETALIATING }
 
     companion object {
         val CURRENT_STATE: TrackedData<Int> = DataTracker.registerData(
-            Entity103wEvereye::class.java, TrackedDataHandlerRegistry.INTEGER
+            Marian_Jin::class.java, TrackedDataHandlerRegistry.INTEGER
         )
 
-        private const val BASE = "entity.doctor_m.103w_evereye"
+        private const val BASE = "entity.doctor_m.marian_jin"
 
         val STAGE1_KEYS   = (0..4).map { "$BASE.dialog.stage1.$it" }
         val STAGE2_KEYS   = (0..4).map { "$BASE.dialog.stage2.$it" }
@@ -244,7 +244,7 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
         attacker.addStatusEffect(StatusEffectInstance(StatusEffects.SLOWNESS, 100, 3))
         attacker.addStatusEffect(StatusEffectInstance(StatusEffects.NAUSEA, 120, 0))
         attacker.sendMessage(
-            Text.translatable("entity.doctor_m.103w_evereye.retaliation.paradox_pull"),
+            Text.translatable("entity.doctor_m.marian_jin.retaliation.paradox_pull"),
             true
         )
     }
@@ -255,7 +255,7 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
 
         if (attacker is ServerPlayerEntity) {
             attacker.sendMessage(
-                Text.translatable("entity.doctor_m.103w_evereye.retaliation.paradox_damage"),
+                Text.translatable("entity.doctor_m.marian_jin.retaliation.paradox_damage"),
                 true
             )
         }
@@ -270,7 +270,7 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
             attacker.addStatusEffect(StatusEffectInstance(StatusEffects.NAUSEA, 200, 0))
             attacker.addStatusEffect(StatusEffectInstance(StatusEffects.MINING_FATIGUE, 400, 2))
             attacker.addStatusEffect(StatusEffectInstance(StatusEffects.HUNGER, 200, 1))
-            attacker.sendMessage(Text.translatable("entity.doctor_m.103w_evereye.retaliation.debuff"), true)
+            attacker.sendMessage(Text.translatable("entity.doctor_m.marian_jin.retaliation.debuff"), true)
         } else {
             attacker.addStatusEffect(StatusEffectInstance(StatusEffects.WITHER, 100, 1))
             attacker.addStatusEffect(StatusEffectInstance(StatusEffects.SLOWNESS, 200, 1))
@@ -282,7 +282,7 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
         val targetY = attacker.y + 80 + random.nextInt(50)
         attacker.teleport(attacker.serverWorld, attacker.x, targetY, attacker.z, attacker.yaw, attacker.pitch)
         attacker.addStatusEffect(StatusEffectInstance(StatusEffects.NAUSEA, 200, 0))
-        attacker.sendMessage(Text.translatable("entity.doctor_m.103w_evereye.retaliation.high_altitude"), true)
+        attacker.sendMessage(Text.translatable("entity.doctor_m.marian_jin.retaliation.high_altitude"), true)
     }
 
     private fun retaliateTeleportVortex(attacker: LivingEntity) {
@@ -297,7 +297,7 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
             attacker.addStatusEffect(StatusEffectInstance(StatusEffects.SLOWNESS, 300, 2))
             attacker.addStatusEffect(StatusEffectInstance(StatusEffects.WEAKNESS, 300, 1))
             attacker.addStatusEffect(StatusEffectInstance(StatusEffects.BLINDNESS, 120, 0))
-            attacker.sendMessage(Text.translatable("entity.doctor_m.103w_evereye.retaliation.vortex"), true)
+            attacker.sendMessage(Text.translatable("entity.doctor_m.marian_jin.retaliation.vortex"), true)
         }
     }
 
@@ -312,7 +312,7 @@ class Entity103wEvereye(entityType: EntityType<out PathAwareEntity>, world: Worl
                 tryTrade(serverPlayer)
             } else {
                 player.sendMessage(Text.translatable(PEACEFUL_KEYS.random()), false)
-                player.sendMessage(Text.translatable("entity.doctor_m.103w_evereye.trade.hint.casual"), false)
+                player.sendMessage(Text.translatable("entity.doctor_m.marian_jin.trade.hint.casual"), false)
                 sendTradeList(serverPlayer)
                 player.sendMessage(Text.translatable("doctor_m.dialog.common.trade.hint.sneak"), false)
                 setState(AIState.TRADING)

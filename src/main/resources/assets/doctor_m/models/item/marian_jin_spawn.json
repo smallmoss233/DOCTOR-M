@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "doctor_m:item/evereye_spawn"
+    "layer0": "doctor_m:item/marian_jin_spawn"
   }
 }

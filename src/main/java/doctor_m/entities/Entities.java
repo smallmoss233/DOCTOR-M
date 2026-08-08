@@ -2,7 +2,7 @@ package doctor_m.entities;
 
 import doctor_m.DOCTORM;
 import doctor_m.entities.data.Entity103Tardis;
-import doctor_m.entities.data.Entity103wEvereye;
+import doctor_m.entities.data.Marian_Jin;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -30,17 +30,17 @@ public class Entities {
                     .build()
     );
 
-    public static final EntityType<Entity103wEvereye> TYPE_103W_EVEREYE = Registry.register(
+    public static final EntityType<Marian_Jin> MARIAN_JIN = Registry.register(
             Registries.ENTITY_TYPE,
-            new Identifier(DOCTORM.MOD_ID, "type_103w_evereye"),
-            FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, Entity103wEvereye::new)
+            new Identifier(DOCTORM.MOD_ID, "marian_jin"),
+            FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, Marian_Jin::new)
                     .dimensions(EntityDimensions.fixed(0.6f, 1.8f))
                     .build()
     );
 
     public static void registerAttributes() {
         FabricDefaultAttributeRegistry.register(TYPE_103_TARDIS, Entity103Tardis.createMobAttributes());
-        FabricDefaultAttributeRegistry.register(TYPE_103W_EVEREYE, Entity103wEvereye.createMobAttributes());
+        FabricDefaultAttributeRegistry.register(MARIAN_JIN, Marian_Jin.createMobAttributes());
     }
         private static final RegistryKey<World> TRENZALORE_DIM = RegistryKey.of(
                 RegistryKeys.WORLD, new Identifier("doctor_m", "trenzalore")
@@ -58,7 +58,7 @@ public class Entities {
 
             // 基础权重都低，成群1只
             BiomeModifications.addSpawn(snowyBiomes, SpawnGroup.CREATURE, Entities.TYPE_103_TARDIS, 2, 1, 1);
-            BiomeModifications.addSpawn(snowyBiomes, SpawnGroup.CREATURE, Entities.TYPE_103W_EVEREYE, 2, 1, 1);
+            BiomeModifications.addSpawn(snowyBiomes, SpawnGroup.CREATURE, Entities.MARIAN_JIN, 2, 1, 1);
 
             // 103型：主世界极稀有，特兰泽洛中等
             SpawnRestriction.register(TYPE_103_TARDIS,
@@ -73,7 +73,7 @@ public class Entities {
             );
 
             // 玛丽安：主世界同103，特兰泽洛概率更高
-            SpawnRestriction.register(TYPE_103W_EVEREYE,
+            SpawnRestriction.register(MARIAN_JIN,
                     SpawnRestriction.Location.ON_GROUND,
                     Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
                     (type, world, reason, pos, random) -> {

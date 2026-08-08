@@ -27,7 +27,7 @@ public static void registerItems() {
                                 entries.add(OXYGEN_CHARGER);
                                 entries.add(UNDERWATER_OXYGEN_GENERATOR);
                                 entries.add(TYPE_103_SPAWN);
-                                entries.add(EVEREYE_SPAWN);
+                                entries.add(MARIAN_JIN_SPAWN);
                                 entries.add(OXYGEN_TANK);
                                 entries.add(SHIELD_CORE);
                                 entries.add(FORCE_FIELD_SHIELD);
