@@ -2,6 +2,7 @@ package doctor_m.mixin.doctor_m;
 
 import dev.amble.ait.core.item.SonicItem;
 import doctor_m.module.sonic_plus.UpgradeModuleManager;
+import doctor_m.util.tooltip.TooltipHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
@@ -22,7 +23,10 @@ import java.util.List;
 @Mixin(Item.class)
 public class ItemMixin {
 
-    //能量再生核心恢复能量
+    private static final Identifier OXYGEN_CHARGER_ID = new Identifier("doctor_m", "oxygen_charger");
+    private static final Identifier UNDERWATER_OXYGEN_GENERATOR_ID = new Identifier("doctor_m", "underwater_oxygen_generator");
+
+    // 能量再生核心恢复能量
     @Inject(method = "inventoryTick", at = @At("TAIL"))
     private void doctor_m$regenerateFuel(ItemStack stack, World world, Entity entity,
                                          int slot, boolean selected, CallbackInfo ci) {
@@ -30,7 +34,6 @@ public class ItemMixin {
         if (!(stack.getItem() instanceof SonicItem sonic)) return;
         if (!UpgradeModuleManager.hasRegenerationModule(stack)) return;
 
-        // 每 5 秒（100 ticks）恢复 1 点能量
         if (world.getTime() % 100 != 0) return;
 
         double current = sonic.getCurrentFuel(stack);
@@ -40,13 +43,15 @@ public class ItemMixin {
             sonic.addFuel(1.0, stack);
         }
     }
-    //模块提示
+
+    // 模块提示 + 制氧机提示
     @Inject(method = "appendTooltip", at = @At("TAIL"))
     private void doctor_m$moduleTooltips(ItemStack stack, @Nullable World world,
                                          List<Text> tooltip, TooltipContext context,
                                          CallbackInfo ci) {
         Identifier id = Registries.ITEM.getId(stack.getItem());
 
+        // 音速起子升级模块提示
         if (id.equals(UpgradeModuleManager.ENERGY_UPGRADE) || id.equals(UpgradeModuleManager.REGENERATION_MODULE)) {
             tooltip.add(Text.translatable("message.tooltip.doctor_m.upgrade")
                     .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
@@ -60,6 +65,18 @@ public class ItemMixin {
                 tooltip.add(Text.translatable("message.tooltip.doctor_m.regeneration_module.desc")
                         .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
             }
+        }
+
+        //氧气补充机
+        if (id.equals(OXYGEN_CHARGER_ID)) {
+            TooltipHelper.addWrappedTooltip(tooltip,
+                    Text.translatable("message.doctor_m.oxygen_charger"));
+        }
+
+        //水下制氧机
+        if (id.equals(UNDERWATER_OXYGEN_GENERATOR_ID)) {
+            TooltipHelper.addWrappedTooltip(tooltip,
+                    Text.translatable("message.doctor_m.underwater_oxygen_generator"));
         }
     }
 }

@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "doctor_m:block/underwater_oxygen_generator_front",
+    "down": "doctor_m:block/underwater_oxygen_generator_bottom",
+    "up": "doctor_m:block/underwater_oxygen_generator_top",
+    "north": "doctor_m:block/underwater_oxygen_generator_front",
+    "south": "doctor_m:block/underwater_oxygen_generator_back",
+    "west": "doctor_m:block/underwater_oxygen_generator_top",
+    "east": "doctor_m:block/underwater_oxygen_generator_top"
+  }
+}

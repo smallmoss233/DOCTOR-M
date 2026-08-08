@@ -9,8 +9,10 @@ import net.minecraft.util.Identifier;
 
 public class ModBlocks {
     public static final Block OXYGEN_CHARGER = new OxygenChargerBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque());
+    public static final Block UNDERWATER_OXYGEN_GENERATOR = new UnderwaterOxygenGeneratorBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque());
 
     public static void register() {
         Registry.register(Registries.BLOCK, new Identifier("doctor_m", "oxygen_charger"), OXYGEN_CHARGER);
+        Registry.register(Registries.BLOCK, new Identifier("doctor_m", "underwater_oxygen_generator"), UNDERWATER_OXYGEN_GENERATOR);
     }
 }

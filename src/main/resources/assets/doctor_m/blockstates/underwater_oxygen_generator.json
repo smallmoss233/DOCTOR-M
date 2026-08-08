@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "doctor_m:block/underwater_oxygen_generator" },
+    "facing=south": { "model": "doctor_m:block/underwater_oxygen_generator", "y": 180 },
+    "facing=west": { "model": "doctor_m:block/underwater_oxygen_generator", "y": 270 },
+    "facing=east": { "model": "doctor_m:block/underwater_oxygen_generator", "y": 90 }
+  }
+}

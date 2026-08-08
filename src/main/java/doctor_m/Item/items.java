@@ -34,7 +34,8 @@ public class items extends ItemContainer {
     public static final Item TOYMAKER_HAMMER = new ToymakerHammerItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
 
     //氧气相关
-    public static final Item OXYGEN_CHARGER_ITEM = new BlockItem(ModBlocks.OXYGEN_CHARGER, new Item.Settings());
+    public static final Item OXYGEN_CHARGER = new BlockItem(ModBlocks.OXYGEN_CHARGER, new Item.Settings());
+    public static final Item UNDERWATER_OXYGEN_GENERATOR = new BlockItem(ModBlocks.UNDERWATER_OXYGEN_GENERATOR, new Item.Settings());
     public static final Item OXYGEN_TANK = new OxygenTankItem(new Item.Settings().maxCount(1));
 
     //实体相关
