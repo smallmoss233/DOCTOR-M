@@ -66,4 +66,6 @@
 
 ---
 
-### 特别处理，完全移除贡献者:Siletonight相关的内容 / Special handling: completely removed all content related to contributor Siletonight.
+### 特别处理 / Special handling
+
+-  完全移除贡献者:Siletonight相关的内容 / Special handling: completely removed all content related to contributor Siletonight.
