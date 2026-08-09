@@ -5,7 +5,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 public class TardisImpactS2CPacket {
-    public static final Identifier ID = new Identifier("aitmixin", "tardis_impact");
+    public static final Identifier ID = new Identifier("doctor_m", "tardis_impact");
 
     public static void write(PacketByteBuf buf, Vec3d pos, float intensity) {
         buf.writeDouble(pos.x);

@@ -3,6 +3,7 @@ package doctor_m;
 import dev.amble.lib.container.RegistryContainer;
 import doctor_m.Item.item_group;
 import doctor_m.Item.items;
+import doctor_m.api.AutoRegister;
 import doctor_m.command.AITTardisBuilderCommand;
 import doctor_m.config.ConfigManager;
 import doctor_m.dimension.DimensionRegister;
@@ -44,8 +45,9 @@ public class DOCTORM implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        RegistryContainer.register(items.class, MOD_ID);
-        RegistryContainer.register(CreativityItems.class, MOD_ID);
+        AutoRegister.items(items.class, MOD_ID);
+        AutoRegister.items(CreativityItems.class, MOD_ID);
+
         DimensionRegister.register();
         ShieldDamageHandler.register();
         ModBlocks.register();
@@ -57,18 +59,17 @@ public class DOCTORM implements ModInitializer {
         TimeKeyTeleportNetwork.register();
         TimeKeyNetwork.register();
         TimeKeyActiveNetwork.register();
+        DeMatGunNetwork.registerServerReceiver();
+
         TimeKeyFunction.INSTANCE.register();
         PocketWatchFunction.INSTANCE.register();
         GemDeathSaveHandler.INSTANCE.register();
         GemTickHandler.INSTANCE.register();
         STCSNetworking.INSTANCE.register();
-        TardisTypeLoader.init();
 
-        items.registerAbilities();
-        CreativityItems.registerAbilities();
+        TardisTypeLoader.init();
         item_group.registerItems();
         Entities.registerAttributes();
-        DeMatGunNetwork.registerServerReceiver();
 
         CommandRegistrationCallback.EVENT.register(AITTardisBuilderCommand::register);
         ConfigManager.loadConfig();

@@ -2,8 +2,13 @@ package doctor_m.mixin.aitmixin;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.network.packet.s2c.play.StopSoundS2CPacket;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -16,12 +21,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import dev.amble.ait.core.entities.FallingTardisEntity;
 import dev.amble.ait.core.tardis.ServerTardis;
 import dev.amble.ait.core.tardis.Tardis;
+import dev.drtheo.scheduler.api.TimeUnit;
+import dev.drtheo.scheduler.api.common.Scheduler;
+import dev.drtheo.scheduler.api.common.TaskStage;
 import doctor_m.util.TardisImpactFeedback;
 
 @Mixin(FallingTardisEntity.class)
 public class MixinFallingTardisEntity {
 
-    // ==================== Chunk 强制加载（防止下落途中消失）====================
+    // ==================== Chunk 强制加载 ====================
     @Unique
     private ChunkPos aitmixin$forcedChunkPos;
 
@@ -37,6 +45,29 @@ public class MixinFallingTardisEntity {
         }
     }
 
+    @Unique
+    private boolean aitmixin$landed = false;
+
+    @Inject(method = "stopFalling", at = @At("HEAD"))
+    private void aitmixin$onStopFallingStart(boolean antigravs, CallbackInfo ci) {
+        this.aitmixin$landed = true;
+
+        Entity self = (Entity) (Object) this;
+        World world = self.getWorld();
+        if (world.isClient()) return;
+
+        // 落地瞬间：强制停止所有客户端正在播放的 Elytra 呼啸声
+        StopSoundS2CPacket stopPacket = new StopSoundS2CPacket(
+                new Identifier("minecraft", "item.elytra.flying"),
+                SoundCategory.BLOCKS
+        );
+        for (ServerPlayerEntity player : ((ServerWorld) world).getPlayers()) {
+            if (player.squaredDistanceTo(self) < 256.0) { // 16格内
+                player.networkHandler.sendPacket(stopPacket);
+            }
+        }
+    }
+
     @Inject(method = "stopFalling", at = @At("TAIL"))
     private void aitmixin$releaseChunkOnLand(boolean antigravs, CallbackInfo ci) {
         if (this.aitmixin$forcedChunkPos != null) {
@@ -48,7 +79,7 @@ public class MixinFallingTardisEntity {
         }
     }
 
-    // ==================== ISS 再入火焰粒子（高速下坠时）====================
+    // ==================== 再入火焰粒子 + 呼啸（高速下坠时）====================
     @Unique
     private double aitmixin$startY = Double.NaN;
 
@@ -64,6 +95,8 @@ public class MixinFallingTardisEntity {
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void aitmixin$spawnReentryFlames(CallbackInfo ci) {
+        if (this.aitmixin$landed) return;
+
         Entity self = (Entity) (Object) this;
         World world = self.getWorld();
         if (world.isClient()) return;
@@ -95,9 +128,23 @@ public class MixinFallingTardisEntity {
                     pos.x, pos.y, pos.z,
                     1, 0.5, 0.5, 0.5, 0.1);
         }
+
+        // 短促呼啸：间隔 20 tick，音量适中
+        if (fallDistance > 60.0 && entity.timeFalling % 20 == 0) {
+            float howlVolume = (float) Math.min((fallDistance - 60.0) / 60.0, 1.0) * 1.5f;
+            sw.playSound(null, pos.x, pos.y, pos.z,
+                    SoundEvents.ITEM_ELYTRA_FLYING, SoundCategory.BLOCKS,
+                    howlVolume, 0.7f);
+        }
+        // 超高空沉闷轰鸣
+        if (fallDistance > 90.0 && entity.timeFalling % 30 == 0) {
+            sw.playSound(null, pos.x, pos.y, pos.z,
+                    SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.BLOCKS,
+                    0.5f, 2.0f);
+        }
     }
 
-    // ==================== 下落中被外力横向偏移检测 ====================
+    // ==================== 横向偏移检测 ====================
     @Unique
     private Vec3d aitmixin$lastPos = Vec3d.ZERO;
 
@@ -106,6 +153,8 @@ public class MixinFallingTardisEntity {
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void aitmixin$detectExternalDeflection(CallbackInfo ci) {
+        if (this.aitmixin$landed) return;
+
         Entity self = (Entity) (Object) this;
         World world = self.getWorld();
         if (world.isClient()) return;
@@ -130,39 +179,72 @@ public class MixinFallingTardisEntity {
         TardisImpactFeedback.apply(tardis, self.getPos(), intensity);
     }
 
-    // ==================== 落地冲击反馈（按高度计算强度）====================
+    // ==================== 落地冲击反馈（粒子 + 音效 + 内部反馈 + 火焰熄灭）====================
     @Unique
-    private static final double AITMIXIN$IMPACT_HEIGHT_THRESHOLD = 120.0; // 满强度阈值
+    private static final double AITMIXIN$IMPACT_HEIGHT_THRESHOLD = 120.0;
 
     @Inject(method = "stopFalling", at = @At("TAIL"))
     private void aitmixin$spawnImpactFeedback(boolean antigravs, CallbackInfo ci) {
         Entity self = (Entity) (Object) this;
         FallingTardisEntity entity = (FallingTardisEntity) (Object) this;
 
-        // 按实际下落高度计算冲击强度，而非时间
         double fallDistance = this.aitmixin$startY - self.getY();
         float intensity = (float) Math.min(fallDistance / AITMIXIN$IMPACT_HEIGHT_THRESHOLD, 1.0);
 
-        // 向内部发送运动反馈（声音、粒子、屏幕抖动）
+        // 内部反馈
         if (entity.isLinked() && !entity.tardis().isEmpty()) {
             ServerTardis tardis = entity.tardis().get().asServer();
             TardisImpactFeedback.apply(tardis, self.getPos(), intensity);
         }
 
-        // 只有真正的高空坠落才在外部世界 spawn 落地冲击粒子云
-        if (fallDistance < 20.0) return;
-
         World world = self.getWorld();
         if (world.isClient()) return;
-
         ServerWorld sw = (ServerWorld) world;
         Vec3d pos = self.getPos();
 
-        // 爆炸核心
+        // ===== 落地音效分级 =====
+        if (fallDistance >= 60.0) {
+            float explodeVol = (float) Math.min(fallDistance / 30.0, 4.0f);
+            sw.playSound(null, pos.x, pos.y, pos.z,
+                    SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS,
+                    explodeVol, 0.8f);
+        } else if (fallDistance >= 30.0) {
+            sw.playSound(null, pos.x, pos.y, pos.z,
+                    SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS,
+                    1.5f, 0.6f);
+        } else if (fallDistance >= 20.0) {
+            sw.playSound(null, pos.x, pos.y, pos.z,
+                    SoundEvents.BLOCK_METAL_HIT, SoundCategory.BLOCKS,
+                    0.8f, 0.7f);
+        }
+
+        // ===== 火焰熄灭效果（外壳冒火时）=====
+        if (fallDistance > 60.0) {
+            // 立即播放熄灭声
+            sw.playSound(null, pos.x, pos.y, pos.z,
+                    SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS,
+                    1.2f, 1.0f);
+
+            // 2秒内每5tick间歇冒出残余火焰和烟雾（共8次）
+            for (int i = 1; i <= 8; i++) {
+                final int delay = i * 5;
+                Scheduler.get().runTaskLater(() -> {
+                    sw.spawnParticles(ParticleTypes.FLAME,
+                            pos.x, pos.y + 0.3, pos.z,
+                            4, 0.4, 0.2, 0.4, 0.03);
+                    sw.spawnParticles(ParticleTypes.SMOKE,
+                            pos.x, pos.y + 0.5, pos.z,
+                            3, 0.3, 0.3, 0.3, 0.02);
+                }, TaskStage.END_SERVER_TICK, TimeUnit.TICKS, delay);
+            }
+        }
+
+        // 外部冲击粒子云（≥20格）
+        if (fallDistance < 20.0) return;
+
         sw.spawnParticles(ParticleTypes.EXPLOSION_EMITTER,
                 pos.x, pos.y, pos.z, 1, 0, 0, 0, 0);
 
-        // 被弹开的烟雾云
         for (int i = 0; i < 25; i++) {
             double ox = (sw.random.nextDouble() - 0.5) * 4.0;
             double oy = sw.random.nextDouble() * 2.5;
@@ -172,7 +254,6 @@ public class MixinFallingTardisEntity {
                     1, 0.15, 0.25, 0.15, 0.03);
         }
 
-        // 尘土飞扬
         for (int i = 0; i < 20; i++) {
             double ox = (sw.random.nextDouble() - 0.5) * 3.0;
             double oz = (sw.random.nextDouble() - 0.5) * 3.0;

@@ -218,6 +218,7 @@ public class LivingEntityMixin {
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
     private void doctor_m$stcsBlock(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (STCS_BLOCK_LOCK.get()) return;
+        if (STCS_AOE_LOCK.get()) return; // 防止 AoE 连锁触发
 
         LivingEntity self = (LivingEntity) (Object) this;
         if (!(self instanceof ServerPlayerEntity player)) return;
@@ -266,10 +267,12 @@ public class LivingEntityMixin {
         }
 
         STCS_BLOCK_LOCK.set(true);
+        STCS_AOE_LOCK.set(true);
         try {
             player.damage(source, newAmount);
         } finally {
             STCS_BLOCK_LOCK.set(false);
+            STCS_AOE_LOCK.set(false);
         }
         cir.setReturnValue(false);
     }
@@ -314,8 +317,11 @@ public class LivingEntityMixin {
                 if (!(entity instanceof LivingEntity living)) continue;
                 if (entity.squaredDistanceTo(victim) > radiusSq) continue;
 
-                // 普通伤害，可被护甲、抗性、限伤等减免
-                living.damage(victim.getDamageSources().generic(), amount);
+                if (attacker instanceof ServerPlayerEntity serverAttacker) {
+                    living.damage(serverAttacker.getDamageSources().playerAttack(serverAttacker), amount);
+                } else {
+                    living.damage(victim.getDamageSources().generic(), amount);
+                }
             }
         } finally {
             STCS_AOE_LOCK.set(false);

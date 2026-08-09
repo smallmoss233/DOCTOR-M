@@ -15,9 +15,11 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
 
 public class Entities {
@@ -47,41 +49,69 @@ public class Entities {
         );
 
         public static void registerSpawns() {
-            // 只在雪地 biome 注册（主世界雪地 + 特兰泽洛全境）
-            var snowyBiomes = BiomeSelectors.includeByKey(
-                    BiomeKeys.SNOWY_PLAINS,
-                    BiomeKeys.SNOWY_SLOPES,
-                    BiomeKeys.SNOWY_TAIGA,
-                    BiomeKeys.ICE_SPIKES,
-                    BiomeKeys.FROZEN_PEAKS
-            );
+        // 103型：主世界所有群系都注册（SpawnRestriction 负责过滤海洋）
+        BiomeModifications.addSpawn(
+                BiomeSelectors.foundInOverworld(),
+                SpawnGroup.CREATURE, Entities.TYPE_103_TARDIS, 2, 1, 1
+        );
 
-            // 基础权重都低，成群1只
-            BiomeModifications.addSpawn(snowyBiomes, SpawnGroup.CREATURE, Entities.TYPE_103_TARDIS, 2, 1, 1);
-            BiomeModifications.addSpawn(snowyBiomes, SpawnGroup.CREATURE, Entities.MARIAN_JIN, 2, 1, 1);
+        // 玛丽安：同上，全主世界注册，实际概率由 SpawnRestriction 控制
+        BiomeModifications.addSpawn(
+                BiomeSelectors.foundInOverworld(),
+                SpawnGroup.CREATURE, Entities.MARIAN_JIN, 2, 1, 1
+        );
 
-            // 103型：主世界极稀有，特兰泽洛中等
-            SpawnRestriction.register(TYPE_103_TARDIS,
-                    SpawnRestriction.Location.ON_GROUND,
-                    Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
-                    (type, world, reason, pos, random) -> {
-                        RegistryKey<World> dim = world.toServerWorld().getRegistryKey();
-                        if (dim == World.OVERWORLD) return random.nextFloat() < 0.08f;
-                        if (dim.equals(TRENZALORE_DIM)) return random.nextFloat() < 0.4f;
-                        return false;
+        // 103型生成限制：不在海洋生成
+        SpawnRestriction.register(TYPE_103_TARDIS,
+                SpawnRestriction.Location.ON_GROUND,
+                Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
+                (type, world, reason, pos, random) -> {
+                    if (isOcean(world.getBiome(pos))) return false;
+
+                    RegistryKey<World> dim = world.toServerWorld().getRegistryKey();
+                    if (dim == World.OVERWORLD) return random.nextFloat() < 0.08f;
+                    if (dim.equals(TRENZALORE_DIM)) return random.nextFloat() < 0.2f;
+                    return false;
+                }
+        );
+
+        // 玛丽安生成限制：雪原正常概率，其他陆地极低，海洋不生成
+        SpawnRestriction.register(MARIAN_JIN,
+                SpawnRestriction.Location.ON_GROUND,
+                Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
+                (type, world, reason, pos, random) -> {
+                    var biome = world.getBiome(pos);
+                    if (isOcean(biome)) return false;
+
+                    RegistryKey<World> dim = world.toServerWorld().getRegistryKey();
+                    if (dim == World.OVERWORLD) {
+                        if (isSnowy(biome)) return random.nextFloat() < 0.08f;
+                        return random.nextFloat() < 0.02f; // 其他陆地群系极低
                     }
-            );
+                    if (dim.equals(TRENZALORE_DIM)) return random.nextFloat() < 0.3f;
+                    return false;
+                }
+        );
+    }
 
-            // 玛丽安：主世界同103，特兰泽洛概率更高
-            SpawnRestriction.register(MARIAN_JIN,
-                    SpawnRestriction.Location.ON_GROUND,
-                    Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
-                    (type, world, reason, pos, random) -> {
-                        RegistryKey<World> dim = world.toServerWorld().getRegistryKey();
-                        if (dim == World.OVERWORLD) return random.nextFloat() < 0.08f;
-                        if (dim.equals(TRENZALORE_DIM)) return random.nextFloat() < 0.65f;
-                        return false;
-                    }
-            );
+    private static boolean isOcean(RegistryEntry<Biome> biome) {
+        return biome.matchesKey(BiomeKeys.OCEAN)
+                || biome.matchesKey(BiomeKeys.DEEP_OCEAN)
+                || biome.matchesKey(BiomeKeys.WARM_OCEAN)
+                || biome.matchesKey(BiomeKeys.LUKEWARM_OCEAN)
+                || biome.matchesKey(BiomeKeys.DEEP_LUKEWARM_OCEAN)
+                || biome.matchesKey(BiomeKeys.COLD_OCEAN)
+                || biome.matchesKey(BiomeKeys.DEEP_COLD_OCEAN)
+                || biome.matchesKey(BiomeKeys.FROZEN_OCEAN)
+                || biome.matchesKey(BiomeKeys.DEEP_FROZEN_OCEAN);
+    }
+
+    private static boolean isSnowy(RegistryEntry<Biome> biome) {
+        return biome.matchesKey(BiomeKeys.SNOWY_PLAINS)
+                || biome.matchesKey(BiomeKeys.SNOWY_TAIGA)
+                || biome.matchesKey(BiomeKeys.SNOWY_SLOPES)
+                || biome.matchesKey(BiomeKeys.ICE_SPIKES)
+                || biome.matchesKey(BiomeKeys.FROZEN_PEAKS)
+                || biome.matchesKey(BiomeKeys.GROVE);
     }
 }
