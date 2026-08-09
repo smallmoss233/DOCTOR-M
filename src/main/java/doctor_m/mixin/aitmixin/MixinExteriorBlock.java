@@ -1,6 +1,10 @@
 package doctor_m.mixin.aitmixin;
 
+import dev.amble.ait.core.blockentities.ExteriorBlockEntity;
+import dev.amble.ait.core.tardis.ServerTardis;
+import doctor_m.util.TardisImpactFeedback;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
@@ -60,5 +64,23 @@ public class MixinExteriorBlock {
 
         // 触发下落
         FallingTardisEntity.spawnFromBlock(world, pos, state);
+    }
+    
+    /**
+     * 检测实体高速撞击外壳，触发内部运动反馈。
+     */
+    @Inject(method = "onEntityCollision", at = @At("TAIL"))
+    private void aitmixin$detectEntityImpact(net.minecraft.block.BlockState state, World world, BlockPos pos,
+                                             Entity entity, CallbackInfo ci) {
+        if (world.isClient()) return;
+        if (!(world.getBlockEntity(pos) instanceof ExteriorBlockEntity exterior)) return;
+        if (!exterior.isLinked() || exterior.tardis().isEmpty()) return;
+
+        double speedSq = entity.getVelocity().lengthSquared();
+        if (speedSq < 0.25) return; // 速度阈值
+
+        ServerTardis tardis = exterior.tardis().get().asServer();
+        float intensity = (float) Math.min(speedSq / 2.0, 0.6f);
+        TardisImpactFeedback.apply(tardis, entity.getPos(), intensity);
     }
 }

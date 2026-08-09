@@ -15,7 +15,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import dev.amble.ait.core.entities.FallingTardisEntity;
+import dev.amble.ait.core.tardis.ServerTardis;
 import dev.amble.ait.core.tardis.Tardis;
+import doctor_m.util.TardisImpactFeedback;
 
 @Mixin(FallingTardisEntity.class)
 public class MixinFallingTardisEntity {
@@ -52,7 +54,7 @@ public class MixinFallingTardisEntity {
     private double aitmixin$startY = Double.NaN;
 
     @Unique
-    private static final double AITMIXIN$FLAME_THRESHOLD = 80.0;
+    private static final double AITMIXIN$FLAME_THRESHOLD = 30.0;
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void aitmixin$recordStartY(CallbackInfo ci) {
@@ -74,7 +76,6 @@ public class MixinFallingTardisEntity {
         Vec3d pos = self.getPos();
         FallingTardisEntity entity = (FallingTardisEntity) (Object) this;
 
-        // 环绕火焰
         for (int i = 0; i < 4; i++) {
             double ox = (sw.random.nextDouble() - 0.5) * 1.6;
             double oy = (sw.random.nextDouble() - 0.5) * 1.6;
@@ -84,14 +85,12 @@ public class MixinFallingTardisEntity {
                     1, 0, 0, 0, 0.05);
         }
 
-        // 烟雾尾迹
         if (entity.timeFalling % 5 == 0) {
             sw.spawnParticles(ParticleTypes.LARGE_SMOKE,
                     pos.x, pos.y + 0.5, pos.z,
                     3, 0.4, 0.4, 0.4, 0.02);
         }
 
-        // 超高速额外岩浆粒子
         if (fallDistance > 60.0) {
             sw.spawnParticles(ParticleTypes.LAVA,
                     pos.x, pos.y, pos.z,
@@ -99,13 +98,58 @@ public class MixinFallingTardisEntity {
         }
     }
 
-    // ==================== 落地冲击粒子云（下坠超过 2 秒）====================
+    // ==================== 下落中被外力横向偏移检测 ====================
     @Unique
-    private static final int AITMIXIN$IMPACT_THRESHOLD = 40; // 2 秒 = 40 ticks
+    private Vec3d aitmixin$lastPos = Vec3d.ZERO;
+
+    @Unique
+    private static final double AITMIXIN$HORIZONTAL_IMPACT_THRESHOLD = 0.12;
+
+    @Inject(method = "tick", at = @At("TAIL"))
+    private void aitmixin$detectExternalDeflection(CallbackInfo ci) {
+        Entity self = (Entity) (Object) this;
+        World world = self.getWorld();
+        if (world.isClient()) return;
+
+        Vec3d currentPos = self.getPos();
+        if (aitmixin$lastPos.equals(Vec3d.ZERO)) {
+            aitmixin$lastPos = currentPos;
+            return;
+        }
+
+        Vec3d motion = currentPos.subtract(aitmixin$lastPos);
+        aitmixin$lastPos = currentPos;
+
+        double horizontalSpeed = Math.sqrt(motion.x * motion.x + motion.z * motion.z);
+        if (horizontalSpeed <= AITMIXIN$HORIZONTAL_IMPACT_THRESHOLD) return;
+
+        FallingTardisEntity entity = (FallingTardisEntity) (Object) this;
+        if (!entity.isLinked() || entity.tardis().isEmpty()) return;
+
+        ServerTardis tardis = entity.tardis().get().asServer();
+        float intensity = (float) Math.min(horizontalSpeed * 3.0, 0.8f);
+        TardisImpactFeedback.apply(tardis, self.getPos(), intensity);
+    }
+
+    // ==================== 落地冲击反馈（内部 + 外部粒子）====================
+    @Unique
+    private static final int AITMIXIN$IMPACT_THRESHOLD = 40; // 2 秒
 
     @Inject(method = "stopFalling", at = @At("TAIL"))
-    private void aitmixin$spawnImpactCloud(boolean antigravs, CallbackInfo ci) {
+    private void aitmixin$spawnImpactFeedback(boolean antigravs, CallbackInfo ci) {
         FallingTardisEntity entity = (FallingTardisEntity) (Object) this;
+
+        // 计算冲击强度：下坠时间越长，冲击越强
+        float intensity = Math.min(entity.timeFalling / 40.0f, 1.0f);
+
+        // 向内部发送运动反馈（声音、粒子、屏幕抖动）
+        if (entity.isLinked() && !entity.tardis().isEmpty()) {
+            ServerTardis tardis = entity.tardis().get().asServer();
+            Vec3d pos = ((Entity) (Object) this).getPos();
+            TardisImpactFeedback.apply(tardis, pos, intensity);
+        }
+
+        // 下坠超过 2 秒额外在外部世界 spawn 落地冲击粒子云
         if (entity.timeFalling < AITMIXIN$IMPACT_THRESHOLD) return;
 
         Entity self = (Entity) (Object) this;

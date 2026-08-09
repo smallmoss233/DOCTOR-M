@@ -8,6 +8,7 @@ import doctor_m.client.dimension.TitanDimensionEffects;
 import doctor_m.client.entity.MarianJinRenderer;
 import doctor_m.client.entity.Type103Renderer;
 import doctor_m.client.gui.VortexManipulatorScreen;
+import doctor_m.client.network.AITMixinClientNetworking;
 import doctor_m.client.network.DeMatGunClientNetwork;
 import doctor_m.client.network.TimeKeyTeleportClient;
 import doctor_m.client.render.VMTrinketRenderer;
@@ -48,6 +49,7 @@ public class DOCTORMClient implements ClientModInitializer {
         ForceFieldClientRenderer.register();
         VMTrinketRenderer.register();
         HudRenderCallback.EVENT.register(new ShieldOverlay());
+        AITMixinClientNetworking.init();
 
         EntityRendererRegistry.register(Entities.TYPE_103_TARDIS, Type103Renderer::new);
         EntityRendererRegistry.register(Entities.MARIAN_JIN, MarianJinRenderer::new);
