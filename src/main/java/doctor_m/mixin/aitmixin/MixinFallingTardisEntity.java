@@ -4,7 +4,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -54,7 +53,7 @@ public class MixinFallingTardisEntity {
     private double aitmixin$startY = Double.NaN;
 
     @Unique
-    private static final double AITMIXIN$FLAME_THRESHOLD = 30.0;
+    private static final double AITMIXIN$FLAME_THRESHOLD = 120.0;
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void aitmixin$recordStartY(CallbackInfo ci) {
@@ -131,28 +130,28 @@ public class MixinFallingTardisEntity {
         TardisImpactFeedback.apply(tardis, self.getPos(), intensity);
     }
 
-    // ==================== 落地冲击反馈（内部 + 外部粒子）====================
+    // ==================== 落地冲击反馈（按高度计算强度）====================
     @Unique
-    private static final int AITMIXIN$IMPACT_THRESHOLD = 40; // 2 秒
+    private static final double AITMIXIN$IMPACT_HEIGHT_THRESHOLD = 120.0; // 满强度阈值
 
     @Inject(method = "stopFalling", at = @At("TAIL"))
     private void aitmixin$spawnImpactFeedback(boolean antigravs, CallbackInfo ci) {
+        Entity self = (Entity) (Object) this;
         FallingTardisEntity entity = (FallingTardisEntity) (Object) this;
 
-        // 计算冲击强度：下坠时间越长，冲击越强
-        float intensity = Math.min(entity.timeFalling / 40.0f, 1.0f);
+        // 按实际下落高度计算冲击强度，而非时间
+        double fallDistance = this.aitmixin$startY - self.getY();
+        float intensity = (float) Math.min(fallDistance / AITMIXIN$IMPACT_HEIGHT_THRESHOLD, 1.0);
 
         // 向内部发送运动反馈（声音、粒子、屏幕抖动）
         if (entity.isLinked() && !entity.tardis().isEmpty()) {
             ServerTardis tardis = entity.tardis().get().asServer();
-            Vec3d pos = ((Entity) (Object) this).getPos();
-            TardisImpactFeedback.apply(tardis, pos, intensity);
+            TardisImpactFeedback.apply(tardis, self.getPos(), intensity);
         }
 
-        // 下坠超过 2 秒额外在外部世界 spawn 落地冲击粒子云
-        if (entity.timeFalling < AITMIXIN$IMPACT_THRESHOLD) return;
+        // 只有真正的高空坠落才在外部世界 spawn 落地冲击粒子云
+        if (fallDistance < 20.0) return;
 
-        Entity self = (Entity) (Object) this;
         World world = self.getWorld();
         if (world.isClient()) return;
 
