@@ -47,6 +47,9 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkSection;
+import net.minecraft.world.chunk.WorldChunk;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -55,7 +58,7 @@ import java.util.UUID;
 public class ToymakerHammerItem extends Item {
 
     private static final int MIN_CHARGE_TICKS = 40;
-    private static final int COPY_RADIUS = 48;
+    private static final int COPY_CHUNK_RADIUS = 20; // 320 格范围
 
     public ToymakerHammerItem(Settings settings) {
         super(settings.maxCount(1));
@@ -221,65 +224,85 @@ public class ToymakerHammerItem extends Item {
         ServerWorld srcWorld = source.world();
         ServerWorld dstWorld = clone.world();
 
-        BlockPos center = new BlockPos(0, 64, 0);
-        int r = COPY_RADIUS;
-
         int copiedBlocks = 0;
         int copiedBlockEntities = 0;
         int copiedEntities = 0;
 
-        for (int cx = (center.getX() - r) >> 4; cx <= (center.getX() + r) >> 4; cx++) {
-            for (int cz = (center.getZ() - r) >> 4; cz <= (center.getZ() + r) >> 4; cz++) {
-                srcWorld.getChunk(cx, cz);
-                dstWorld.getChunk(cx, cz);
-            }
-        }
+        for (int cx = -COPY_CHUNK_RADIUS; cx <= COPY_CHUNK_RADIUS; cx++) {
+            for (int cz = -COPY_CHUNK_RADIUS; cz <= COPY_CHUNK_RADIUS; cz++) {
+                // 关键修复：getChunk 强制加载，而不是 getChunkManager().getChunk(..., false)
+                Chunk srcChunkRaw;
+                try {
+                    srcChunkRaw = srcWorld.getChunk(cx, cz);
+                } catch (Exception e) {
+                    continue;
+                }
 
-        for (int x = -r; x <= r; x++) {
-            for (int z = -r; z <= r; z++) {
-                for (int y = dstWorld.getBottomY(); y < dstWorld.getTopY(); y++) {
-                    BlockPos srcPos = center.add(x, y - 64, z);
-                    BlockPos dstPos = srcPos;
+                if (!(srcChunkRaw instanceof WorldChunk srcChunk)) continue;
 
-                    BlockState state = srcWorld.getBlockState(srcPos);
-
-                    if (state.isAir()) {
-                        if (!dstWorld.getBlockState(dstPos).isAir()) {
-                            dstWorld.setBlockState(dstPos, Blocks.AIR.getDefaultState(), 2 | 16);
-                        }
-                        continue;
+                // 跳过全空 chunk
+                boolean hasBlocks = false;
+                ChunkSection[] srcSections = srcChunk.getSectionArray();
+                for (ChunkSection section : srcSections) {
+                    if (section != null && !section.isEmpty()) {
+                        hasBlocks = true;
+                        break;
                     }
+                }
+                if (!hasBlocks) continue;
 
-                    if (state.getBlock() instanceof ExteriorBlock) continue;
+                // 确保目标 chunk 存在
+                Chunk dstChunkRaw = dstWorld.getChunk(cx, cz);
+                if (!(dstChunkRaw instanceof WorldChunk)) continue;
 
-                    dstWorld.setBlockState(dstPos, state, 2 | 16);
+                int baseX = cx << 4;
+                int baseZ = cz << 4;
+                int bottomY = srcChunk.getBottomY();
 
-                    BlockEntity srcBe = srcWorld.getBlockEntity(srcPos);
-                    if (srcBe != null) {
-                        NbtCompound nbt = srcBe.createNbtWithIdentifyingData();
-                        replaceUuidDeep(nbt, source.getUuid(), clone.getUuid());
+                for (int sy = 0; sy < srcSections.length; sy++) {
+                    ChunkSection section = srcSections[sy];
+                    if (section == null || section.isEmpty()) continue;
 
-                        BlockEntity dstBe = dstWorld.getBlockEntity(dstPos);
-                        if (dstBe != null) {
-                            dstBe.readNbt(nbt);
-                            dstBe.markDirty();
+                    int sectionBaseY = bottomY + (sy << 4);
+
+                    for (int x = 0; x < 16; x++) {
+                        for (int z = 0; z < 16; z++) {
+                            for (int y = 0; y < 16; y++) {
+                                BlockState state = section.getBlockState(x, y, z);
+                                if (state.isAir()) continue;
+                                if (state.getBlock() instanceof ExteriorBlock) continue;
+
+                                BlockPos pos = new BlockPos(baseX + x, sectionBaseY + y, baseZ + z);
+                                dstWorld.setBlockState(pos, state, 2 | 16);
+
+                                BlockEntity srcBe = srcWorld.getBlockEntity(pos);
+                                if (srcBe != null) {
+                                    NbtCompound nbt = srcBe.createNbtWithIdentifyingData();
+                                    replaceUuidDeep(nbt, source.getUuid(), clone.getUuid());
+
+                                    BlockEntity dstBe = dstWorld.getBlockEntity(pos);
+                                    if (dstBe != null) {
+                                        dstBe.readNbt(nbt);
+                                        dstBe.markDirty();
+                                    }
+                                    copiedBlockEntities++;
+                                }
+                                copiedBlocks++;
+                            }
                         }
-                        copiedBlockEntities++;
                     }
-                    copiedBlocks++;
                 }
             }
         }
 
-        Box box = new Box(
-                center.getX() - r, dstWorld.getBottomY(), center.getZ() - r,
-                center.getX() + r, dstWorld.getTopY(), center.getZ() + r
+        // 实体搜索范围同步扩大到 384×384
+        Box searchBox = new Box(
+                -384, dstWorld.getBottomY(), -384,
+                384, dstWorld.getTopY(), 384
         );
 
-        List<Entity> srcEntities = srcWorld.getEntitiesByClass(Entity.class, box,
-                e -> !(e instanceof PlayerEntity));
-
-        for (Entity entity : srcEntities) {
+        for (Entity entity : srcWorld.getEntitiesByClass(Entity.class, searchBox,
+                e -> !(e instanceof PlayerEntity))) {
             try {
                 NbtCompound nbt = new NbtCompound();
                 if (!entity.saveNbt(nbt)) continue;
