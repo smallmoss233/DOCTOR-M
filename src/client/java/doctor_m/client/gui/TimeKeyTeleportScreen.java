@@ -27,14 +27,12 @@ public class TimeKeyTeleportScreen extends Screen {
     public TimeKeyTeleportScreen(PlayerEntity player) {
         super(Text.translatable("gui.doctor_m.time_key.teleport.title"));
         this.player = player;
-        // 打开时向服务端请求维度列表
         ClientPlayNetworking.send(TimeKeyTeleportNetwork.REQUEST_DIMS, PacketByteBufs.empty());
     }
 
     public void onDimensionsReceived(List<String> dims) {
         this.availableDims = dims;
         this.dimsLoaded = true;
-
         String current = MinecraftClient.getInstance().world.getRegistryKey().getValue().toString();
         int idx = availableDims.indexOf(current);
         this.dimIndex = idx >= 0 ? idx : 0;
@@ -102,21 +100,43 @@ public class TimeKeyTeleportScreen extends Screen {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context);
+    public void renderBackground(DrawContext context) {}
 
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         int centerX = this.width / 2;
         int centerY = this.height / 2;
+
+        // ===== Tooltip 风格背景框（比 VM 界面稍大） =====
+        int bgX = centerX - 155;
+        int bgY = centerY - 90;
+        int bgW = 320;
+        int bgH = 185;
+        int bgR = bgX + bgW;
+        int bgB = bgY + bgH;
+
+        context.fill(bgX, bgY, bgR, bgB, 0xF0100010);
+        context.fill(bgX, bgY, bgR, bgY + 1, 0x505000FF);
+        context.fill(bgX, bgB - 1, bgR, bgB, 0x505000FF);
+        context.fill(bgX, bgY, bgX + 1, bgB, 0x5028007F);
+        context.fill(bgR - 1, bgY, bgR, bgB, 0x5028007F);
+        // =================================================
+
         int leftX = centerX - 130;
         int rightX = centerX + 10;
         int startY = centerY - 50;
 
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, centerX, centerY - 78, 0xFFFFFF);
+        // 标题在框内顶部
+        context.drawCenteredTextWithShadow(this.textRenderer, this.title, centerX, bgY + 8, 0xFFFFFF);
+        // 分割线
+        context.fill(centerX - 100, bgY + 22, centerX + 100, bgY + 23, 0x30FFFFFF);
 
+        // XYZ 标签
         context.drawTextWithShadow(this.textRenderer, Text.translatable("gui.doctor_m.vm.label.z"), leftX - 15, startY + 4, 0xAAAAAA);
         context.drawTextWithShadow(this.textRenderer, Text.translatable("gui.doctor_m.vm.label.y"), leftX - 15, startY + 30, 0xAAAAAA);
         context.drawTextWithShadow(this.textRenderer, Text.translatable("gui.doctor_m.vm.label.x"), leftX - 15, startY + 56, 0xAAAAAA);
 
+        // 维度标签
         context.drawTextWithShadow(this.textRenderer,
                 Text.translatable("gui.doctor_m.vm.dimension"),
                 rightX, startY - 14, 0xAAAAAA);
