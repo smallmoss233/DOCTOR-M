@@ -1,5 +1,8 @@
-package doctor_m.module.space_plus.block;
+package doctor_m.block;
 
+import doctor_m.block.entities.EyeOfHarmonyObeliskBlockEntity;
+import doctor_m.block.entities.OxygenChargerBlockEntity;
+import doctor_m.block.entities.UnderwaterOxygenGeneratorBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;
@@ -13,8 +16,17 @@ public class ModBlockEntities {
     public static final BlockEntityType<UnderwaterOxygenGeneratorBlockEntity> UNDERWATER_OXYGEN_GENERATOR_ENTITY =
             FabricBlockEntityTypeBuilder.create(UnderwaterOxygenGeneratorBlockEntity::new, ModBlocks.UNDERWATER_OXYGEN_GENERATOR).build();
 
+    public static BlockEntityType<EyeOfHarmonyObeliskBlockEntity> EYE_OF_HARMONY_OBELISK;
+
     public static void register() {
         Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("doctor_m", "oxygen_charger_entity"), OXYGEN_CHARGER_ENTITY);
         Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("doctor_m", "underwater_oxygen_generator_entity"), UNDERWATER_OXYGEN_GENERATOR_ENTITY);
+        EYE_OF_HARMONY_OBELISK = Registry.register(
+                Registries.BLOCK_ENTITY_TYPE,
+                new Identifier("doctor_m", "eye_of_harmony_obelisk"),
+                FabricBlockEntityTypeBuilder.create(
+                        EyeOfHarmonyObeliskBlockEntity::new,
+                        ModBlocks.EYE_OF_HARMONY_OBELISK
+                ).build());
     }
 }

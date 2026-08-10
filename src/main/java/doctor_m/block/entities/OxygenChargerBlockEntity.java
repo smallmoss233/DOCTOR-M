@@ -1,11 +1,11 @@
-package doctor_m.module.space_plus.block;
+package doctor_m.block.entities;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 
-import static doctor_m.module.space_plus.block.ModBlockEntities.OXYGEN_CHARGER_ENTITY;
+import static doctor_m.block.ModBlockEntities.OXYGEN_CHARGER_ENTITY;
 
 public class OxygenChargerBlockEntity extends BlockEntity {
 

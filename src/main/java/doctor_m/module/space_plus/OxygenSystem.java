@@ -1,4 +1,4 @@
-package doctor_m.module.space_plus.system;
+package doctor_m.module.space_plus;
 
 import doctor_m.config.ConfigManager;
 import net.minecraft.item.ItemStack;

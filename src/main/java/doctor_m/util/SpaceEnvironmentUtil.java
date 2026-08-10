@@ -2,7 +2,7 @@ package doctor_m.util;
 
 import dev.amble.ait.core.AITStatusEffects;
 import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry;
-import doctor_m.module.space_plus.system.OxygenSystem;
+import doctor_m.module.space_plus.OxygenSystem;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;

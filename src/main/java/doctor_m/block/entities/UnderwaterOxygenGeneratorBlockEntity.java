@@ -1,4 +1,4 @@
-package doctor_m.module.space_plus.block;
+package doctor_m.block.entities;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-import static doctor_m.module.space_plus.block.ModBlockEntities.UNDERWATER_OXYGEN_GENERATOR_ENTITY;
+import static doctor_m.block.ModBlockEntities.UNDERWATER_OXYGEN_GENERATOR_ENTITY;
 
 public class UnderwaterOxygenGeneratorBlockEntity extends BlockEntity {
 

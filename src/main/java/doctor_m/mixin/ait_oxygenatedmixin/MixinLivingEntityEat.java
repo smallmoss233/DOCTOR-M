@@ -1,6 +1,6 @@
 package doctor_m.mixin.ait_oxygenatedmixin;
 
-import doctor_m.module.space_plus.system.VacuumEatingHandler;
+import doctor_m.module.space_plus.VacuumEatingHandler;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;

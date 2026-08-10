@@ -26,6 +26,7 @@ public static void registerItems() {
                                 entries.add(RASSILON_KEY);
                                 entries.add(OXYGEN_CHARGER);
                                 entries.add(UNDERWATER_OXYGEN_GENERATOR);
+                                entries.add(EYE_OF_HARMONY_OBELISK);
                                 entries.add(TYPE_103_SPAWN);
                                 entries.add(MARIAN_JIN_SPAWN);
                                 entries.add(OXYGEN_TANK);

@@ -5,7 +5,7 @@ import dev.amble.ait.core.world.TardisServerWorld;
 import dev.amble.ait.module.planet.client.SpaceSuitOverlay;
 import dev.amble.ait.module.planet.core.item.SpacesuitItem;
 import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry;
-import doctor_m.module.space_plus.system.OxygenSystem;
+import doctor_m.module.space_plus.OxygenSystem;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;

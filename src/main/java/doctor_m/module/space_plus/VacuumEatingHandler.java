@@ -1,4 +1,4 @@
-package doctor_m.module.space_plus.system;
+package doctor_m.module.space_plus;
 
 import dev.amble.ait.core.AITStatusEffects;
 import dev.amble.ait.module.planet.core.item.SpacesuitItem;
