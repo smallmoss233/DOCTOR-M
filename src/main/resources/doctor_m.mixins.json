@@ -2,6 +2,7 @@
   "required": true,
   "package": "doctor_m.mixin",
   "compatibilityLevel": "JAVA_17",
+  "plugin": "doctor_m.api.AITOverridePlugin",
   "mixins": [
     "doctor_m.MobEntityMixin",
     "doctor_m.PlanetRegistryMixin",
@@ -31,6 +32,7 @@
     "aitmixin.MixinAntiGravsControl",
     "aitmixin.MixinExteriorBlock",
     "aitmixin.MixinExplosion",
+    "aitmixin.LivingEntityMixin",
     "sonic_mode.SonicItemMixin",
     "sonic_mode.ScanningSonicOverloadMixin",
     "sonic_mode.OverloadSonicModeMixin",

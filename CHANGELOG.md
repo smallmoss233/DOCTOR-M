@@ -40,6 +40,7 @@
    修复航天服UI的关于有氧环境的误判 / Fixed the spacesuit UI's false detection regarding oxygenated environments.
    航天服新增氧气阀值警告 / Added oxygen threshold warnings for the spacesuit.
    氧气机的算法优化，一个区域内放置多台氧气机有氧范围扩大，且修复了一些潜在BUG / Optimized oxygen generator algorithm; placing multiple generators in an area expands the oxygen coverage, and fixed some potential bugs.
+   呼吸器可以让玩家的氧气消耗速度减缓 / Respirators can slow down the rate at which players use up oxygen.
 -  塔迪斯型号不再局限于50型！可在doctor_m/tardis_type.json当中填写内饰ID+型号来自定义你的塔迪斯型号！ / TARDIS types are no longer limited to Type 50! You can now customise your TARDIS type by adding interior IDs and type names in doctor_m/tardis_type.json!
 -  音速起子晶体系统 / Sonic Screwdriver Crystal System
    来自AIT的iss，让音速起子可以替换端部晶体获得新功能 / Derived from AIT's ISS, allowing the Sonic Screwdriver to swap end crystals for new abilities.
