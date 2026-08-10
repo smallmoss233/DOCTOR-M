@@ -1,5 +1,9 @@
 package doctor_m.mixin.aitmixin;
 
+import dev.amble.ait.core.AITBlocks;
+import dev.amble.ait.core.blockentities.ExteriorBlockEntity;
+import dev.amble.ait.core.entities.FallingTardisEntity;
+import dev.amble.ait.core.tardis.ServerTardis;
 import doctor_m.util.TardisImpactFeedback;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -11,11 +15,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import dev.amble.ait.core.AITBlocks;
-import dev.amble.ait.core.blockentities.ExteriorBlockEntity;
-import dev.amble.ait.core.entities.FallingTardisEntity;
-import dev.amble.ait.core.tardis.ServerTardis;
 
 @Mixin(Explosion.class)
 public class MixinExplosion {

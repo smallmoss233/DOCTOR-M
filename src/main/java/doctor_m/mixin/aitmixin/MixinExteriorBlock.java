@@ -1,7 +1,11 @@
 package doctor_m.mixin.aitmixin;
 
 import dev.amble.ait.core.blockentities.ExteriorBlockEntity;
+import dev.amble.ait.core.blocks.ExteriorBlock;
+import dev.amble.ait.core.entities.FallingTardisEntity;
 import dev.amble.ait.core.tardis.ServerTardis;
+import dev.amble.ait.core.tardis.Tardis;
+import dev.amble.ait.core.tardis.handler.travel.TravelHandlerBase;
 import doctor_m.util.TardisImpactFeedback;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -14,11 +18,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import dev.amble.ait.core.blocks.ExteriorBlock;
-import dev.amble.ait.core.entities.FallingTardisEntity;
-import dev.amble.ait.core.tardis.Tardis;
-import dev.amble.ait.core.tardis.handler.travel.TravelHandlerBase;
 
 @Mixin(ExteriorBlock.class)
 public class MixinExteriorBlock {
