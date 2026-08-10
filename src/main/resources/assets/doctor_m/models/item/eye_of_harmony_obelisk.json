@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "doctor_m:item/eye_of_harmony_obelisk"
+  }
+}

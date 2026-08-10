@@ -4,10 +4,17 @@ import doctor_m.block.entities.EyeOfHarmonyObeliskBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.BlockMirror;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -16,13 +23,15 @@ import java.util.function.Consumer;
 
 public class EyeOfHarmonyObeliskBlock extends BlockWithEntity {
 
+    public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
+
     protected static final VoxelShape SHAPE = Block.createCuboidShape(2.0, 0.0, 2.0, 14.0, 16.0, 14.0);
 
-    // ← 关键：客户端在初始化时注入这个回调，main 只持有接口不引用具体类
     public static Consumer<EyeOfHarmonyObeliskBlockEntity> OPEN_SCREEN_CALLBACK = null;
 
     public EyeOfHarmonyObeliskBlock(Settings settings) {
         super(settings);
+        setDefaultState(getDefaultState().with(FACING, Direction.NORTH));
     }
 
     @Override
@@ -33,6 +42,27 @@ public class EyeOfHarmonyObeliskBlock extends BlockWithEntity {
     @Override
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.MODEL;
+    }
+
+    @Override
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
+    }
+
+    // ← 放置时根据玩家水平朝向设置（面向玩家）
+    @Override
+    public BlockState getPlacementState(ItemPlacementContext ctx) {
+        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+    }
+
+    @Override
+    public BlockState rotate(BlockState state, BlockRotation rotation) {
+        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    }
+
+    @Override
+    public BlockState mirror(BlockState state, BlockMirror mirror) {
+        return state.rotate(mirror.getRotation(state.get(FACING)));
     }
 
     @SuppressWarnings("deprecation")

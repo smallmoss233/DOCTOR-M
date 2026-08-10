@@ -1,7 +1,6 @@
 package doctor_m.client.gui;
 
 import doctor_m.block.entities.EyeOfHarmonyObeliskBlockEntity;
-import doctor_m.client.ObeliskClientCache;
 import doctor_m.network.UpdateObeliskPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.DrawContext;
@@ -13,58 +12,83 @@ import net.minecraft.text.Text;
 public class EyeOfHarmonyObeliskScreen extends Screen {
 
     private final EyeOfHarmonyObeliskBlockEntity blockEntity;
-    private float currentYOffset;
+    private int currentYOffset;      // ← 整数
+    private float currentScale;     // ← 浮点，保留1位小数
 
-    private SliderWidget yOffsetSlider;
-    private ButtonWidget doneButton;
+    private static final int MIN_Y = -100;
+    private static final int MAX_Y = 100;
 
-    private static final float MIN_Y = 10f;
-    private static final float MAX_Y = 100f;
+    private static final float MIN_SCALE = 0.1f;
+    private static final float MAX_SCALE = 5.0f;
 
     public EyeOfHarmonyObeliskScreen(EyeOfHarmonyObeliskBlockEntity blockEntity) {
         super(Text.literal("Eye of Harmony Obelisk"));
         this.blockEntity = blockEntity;
-        this.currentYOffset = blockEntity.getYOffset();
+        this.currentYOffset = Math.round(blockEntity.getYOffset());
+        this.currentScale = blockEntity.getScale();
     }
 
     @Override
     protected void init() {
-        double sliderValue = (double) (currentYOffset - MIN_Y) / (MAX_Y - MIN_Y);
-
-        yOffsetSlider = new SliderWidget(
-                this.width / 2 - 100,
-                this.height / 2 - 20,
+        // ===== Y 偏移滑块（整数） =====
+        double ySliderValue = (double) (currentYOffset - MIN_Y) / (MAX_Y - MIN_Y);
+        SliderWidget ySlider = new SliderWidget(
+                this.width / 2 - 100, this.height / 2 - 40,
                 200, 20,
-                Text.literal(formatLabel(currentYOffset)),
-                sliderValue
+                Text.literal(formatYLabel(currentYOffset)),
+                ySliderValue
         ) {
             @Override
             protected void updateMessage() {
-                double actual = MIN_Y + this.value * (MAX_Y - MIN_Y);
-                setMessage(Text.literal(formatLabel((float) actual)));
+                int actual = Math.round((float) (MIN_Y + this.value * (MAX_Y - MIN_Y)));
+                setMessage(Text.literal(formatYLabel(actual)));
             }
 
             @Override
             protected void applyValue() {
-                currentYOffset = (float) (MIN_Y + this.value * (MAX_Y - MIN_Y));
-
-                // ← 关键 1：客户端预测，本地 BlockEntity 立即更新，渲染器实时响应
+                currentYOffset = Math.round((float) (MIN_Y + this.value * (MAX_Y - MIN_Y)));
                 blockEntity.setYOffset(currentYOffset);
-                ObeliskClientCache.update(blockEntity.getPos(), currentYOffset);
-
-                // ← 关键 2：同步到服务器，触发 markDirty + NBT 持久化 + 广播给其他玩家
-                ClientPlayNetworking.send(
-                        UpdateObeliskPacket.ID,
-                        UpdateObeliskPacket.createBuf(blockEntity.getPos(), currentYOffset)
-                );
+                syncToServer();
             }
         };
 
-        doneButton = ButtonWidget.builder(Text.literal("Done"), button -> this.close())
-                .dimensions(this.width / 2 - 50, this.height / 2 + 20, 100, 20).build();
+        // ===== 体积缩放滑块（浮点，0.1 ~ 5.0） =====
+        double scaleSliderValue = (double) (currentScale - MIN_SCALE) / (MAX_SCALE - MIN_SCALE);
+        SliderWidget scaleSlider = new SliderWidget(
+                this.width / 2 - 100, this.height / 2 - 10,
+                200, 20,
+                Text.literal(formatScaleLabel(currentScale)),
+                scaleSliderValue
+        ) {
+            @Override
+            protected void updateMessage() {
+                float actual = (float) (MIN_SCALE + this.value * (MAX_SCALE - MIN_SCALE));
+                actual = Math.round(actual * 10.0f) / 10.0f;
+                setMessage(Text.literal(formatScaleLabel(actual)));
+            }
 
-        addDrawableChild(yOffsetSlider);
+            @Override
+            protected void applyValue() {
+                currentScale = (float) (MIN_SCALE + this.value * (MAX_SCALE - MIN_SCALE));
+                currentScale = Math.round(currentScale * 10.0f) / 10.0f;
+                blockEntity.setScale(currentScale);
+                syncToServer();
+            }
+        };
+
+        ButtonWidget doneButton = ButtonWidget.builder(Text.literal("Done"), button -> this.close())
+                .dimensions(this.width / 2 - 50, this.height / 2 + 30, 100, 20).build();
+
+        addDrawableChild(ySlider);
+        addDrawableChild(scaleSlider);
         addDrawableChild(doneButton);
+    }
+
+    private void syncToServer() {
+        ClientPlayNetworking.send(
+                UpdateObeliskPacket.ID,
+                UpdateObeliskPacket.createBuf(blockEntity.getPos(), currentYOffset, currentScale)
+        );
     }
 
     @Override
@@ -79,7 +103,11 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
         return false;
     }
 
-    private static String formatLabel(float value) {
-        return "Y Offset: " + String.format("%.1f", value);
+    private static String formatYLabel(int value) {
+        return "Y Offset: " + value;
+    }
+
+    private static String formatScaleLabel(float value) {
+        return "Scale: " + String.format("%.1f", value) + "x";
     }
 }

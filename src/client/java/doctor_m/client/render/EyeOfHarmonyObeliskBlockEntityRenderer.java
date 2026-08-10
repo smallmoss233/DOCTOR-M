@@ -22,11 +22,14 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
             "textures/environment/eye_of_harmony.png");
 
     private static final float HALF_SQRT_3 = (float) (Math.sqrt(3.0) / 2.0);
-
-    // ← 修正：createModel() 返回 ModelPart，不是 Model
     private static ModelPart starModelCache = null;
 
     public EyeOfHarmonyObeliskBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {}
+
+    @Override
+    public int getRenderDistance() {
+        return Integer.MAX_VALUE;
+    }
 
     @Override
     public void render(EyeOfHarmonyObeliskBlockEntity entity, float tickDelta, MatrixStack matrices,
@@ -34,30 +37,29 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
         if (entity.getWorld() == null) return;
 
         float delta = tickDelta + entity.getWorld().getTime();
+        float scale = entity.getScale();
 
         matrices.push();
-
         matrices.translate(0.5, 1.0 + entity.getYOffset(), 0.5);
 
-        renderStar(entity, delta, matrices, vertexConsumers, overlay);
-
-        renderShine(entity, delta, matrices, vertexConsumers);
+        renderStar(entity, delta, scale, matrices, vertexConsumers, overlay);
+        renderShine(entity, delta, scale, matrices, vertexConsumers);
 
         matrices.pop();
     }
 
-    private void renderStar(EyeOfHarmonyObeliskBlockEntity entity, float delta, MatrixStack matrices,
+    private void renderStar(EyeOfHarmonyObeliskBlockEntity entity, float delta, float scale, MatrixStack matrices,
                             VertexConsumerProvider vertexConsumers, int overlay) {
         matrices.push();
 
-        matrices.scale(40f, 40f, 40f);
+        // ← 应用用户自定义缩放，默认 40f * 1.0 = 40f
+        matrices.scale(40f * scale, 40f * scale, 40f * scale);
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(delta));
 
         if (starModelCache == null) {
             starModelCache = TardisStarModel.getTexturedModelData().createModel();
         }
 
-        // ← 修正：ModelPart.render() 方法签名
         starModelCache.render(matrices,
                 vertexConsumers.getBuffer(AITRenderLayers.tardisEmissiveCullZOffset(TARDIS_STAR_TEXTURE, true)),
                 LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay,
@@ -72,16 +74,16 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
         matrices.pop();
     }
 
-    private void renderShine(EyeOfHarmonyObeliskBlockEntity entity, float delta, MatrixStack matrices,
+    private void renderShine(EyeOfHarmonyObeliskBlockEntity entity, float delta, float scale, MatrixStack matrices,
                              VertexConsumerProvider vertexConsumers) {
         matrices.push();
 
-        matrices.scale(8f, 8f, 8f);
+        // ← 光芒也同步缩放，默认 8f * 1.0 = 8f
+        matrices.scale(8f * scale, 8f * scale, 8f * scale);
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-delta));
 
         float time = entity.getWorld().getTime() + delta;
         float l = (time / 50120f);
-        float sinFunc = (float) Math.sin((time * 1.0f) * 0.2f + 0.2f);
 
         Random random = Random.create(entity.getPos().hashCode());
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(AITRenderLayers.getLightning());
@@ -139,11 +141,5 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
     private static void putLightPositiveZTerminalVertex(VertexConsumer buffer, Matrix4f matrix, float radius, float width) {
         buffer.vertex(matrix, 0.0f, radius, width)
                 .color(255, 154, 0, 0).next();
-    }
-
-    @Override
-    public int getRenderDistance() {
-        //Integer.MAX_VALUE 无限远渲染距离
-        return Integer.MAX_VALUE;
     }
 }
