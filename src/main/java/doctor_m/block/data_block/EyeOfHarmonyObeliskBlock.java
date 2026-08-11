@@ -148,7 +148,7 @@ public class EyeOfHarmonyObeliskBlock extends BlockWithEntity implements IFluidL
             world.removeBlock(pos, false);
             Block.dropStack(world, pos, new ItemStack(this));
             if (placer instanceof ServerPlayerEntity player) {
-                player.sendMessage(Text.translatable("obelisk.no_space").formatted(Formatting.RED), true);
+                player.sendMessage(Text.translatable("tooltip.doctor_m.obelisk.no_space").formatted(Formatting.RED), true);
             }
             return;
         }

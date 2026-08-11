@@ -340,6 +340,7 @@
   "tooltip.doctorm.toymaker_hammer.success": "§aSuccessfully cloned TARDIS: %s",
   "tooltip.doctorm.toymaker_hammer.error": "§cAn error occurred during cloning. Please check the server console.",
   "tooltip.doctorm.toymaker_hammer.manager_full": "§cTARDIS count has reached the server limit. Cannot create more.",
+  "tooltip.doctor_m.obelisk.no_space": "Not enough space to place the Eye of Harmony Obelisk!",
 
   "hud.doctor_m.environment.oxygenated": "Oxygenated, can take off spacesuit",
   "hud.doctor_m.environment.deoxygenated": "Deoxygenated, cannot take off spacesuit",
@@ -443,8 +444,7 @@
   "message.doctor_m.underwater_oxygen_generator.suit_full": "Spacesuit oxygen is full.",
   "message.doctor_m.underwater_oxygen_generator.invalid_item": "Cannot fill oxygen for this item.",
   "message.doctor_m.underwater_oxygen_generator": "§7An oxygen generator, originally designed for underwater environments, producing oxygen through electrolysis of water (H2O).*Underwater, it supplies oxygen within a certain radius; outside of water, it can be manually refilled with water to generate oxygen.",
-  "message.doctor_m.obelisk.no_space": "Not enough space to place the Eye of Harmony Obelisk!",
-  "message.tooltip.doctor_m.eye_of_harmony_obelisk": "Provides infinite Artron energy and continuously charges surrounding Artron energy chunks. *Hold a Sonic Screwdriver and right-click the middle part of the obelisk to open the UI.",
+  "message.tooltip.doctor_m.eye_of_harmony_obelisk": "§7Provides infinite Artron energy and continuously charges surrounding Artron energy chunks. *Hold a Sonic Screwdriver and right-click the middle part of the obelisk to open the UI.",
 
   "dimension.minecraft.overworld": "Earth",
   "dimension.minecraft.the_end": "The End",

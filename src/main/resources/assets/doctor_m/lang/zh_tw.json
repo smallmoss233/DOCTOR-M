@@ -340,6 +340,7 @@
   "tooltip.doctorm.toymaker_hammer.success": "§a成功複製塔迪斯：%s",
   "tooltip.doctorm.toymaker_hammer.error": "§c複製過程中發生錯誤，請查看伺服端日誌",
   "tooltip.doctorm.toymaker_hammer.manager_full": "§c塔迪斯數量已達伺服器上限，無法繼續創建",
+  "tooltip.doctor_m.obelisk.no_space": "空間不足，無法放置和諧之眼方尖碑！",
 
   "hud.doctor_m.environment.oxygenated": "有氧，可脫下太空衣",
   "hud.doctor_m.environment.deoxygenated": "無氧，不可脫下太空衣",
@@ -443,8 +444,7 @@
   "message.doctor_m.underwater_oxygen_generator.suit_full": "宇航服氧氣已滿",
   "message.doctor_m.underwater_oxygen_generator.invalid_item": "無法為此物品充氧",
   "message.doctor_m.underwater_oxygen_generator": "§7一台製氧機，初為水下環境設計，通過電解水(H2O)製取氧氣*水下可在一定範圍內供氧，非水下環境可通過手動加入水進行製氧",
-  "message.doctor_m.obelisk.no_space": "空間不足，無法放置和諧之眼方尖碑！",
-  "message.tooltip.doctor_m.eye_of_harmony_obelisk": "提供無限的阿特隆能量，並持續為周圍的阿特隆能量區塊充能。*手持音速起子右鍵方尖碑中間部分可開啟UI",
+  "message.tooltip.doctor_m.eye_of_harmony_obelisk": "§7提供無限的阿特隆能量，並持續為周圍的阿特隆能量區塊充能。*手持音速起子右鍵方尖碑中間部分可開啟UI",
 
   "dimension.minecraft.overworld": "地球",
   "dimension.minecraft.the_end": "末路之地",

@@ -33,6 +33,7 @@ public class ModBlocks {
 
     public static final Block EYE_OF_HARMONY_PART = new EyeOfHarmonyPartBlock(
             FabricBlockSettings.copyOf(Blocks.OBSIDIAN)
+                    .dropsNothing()
                     .nonOpaque()
                     .luminance(state -> 0)
     );

@@ -98,14 +98,15 @@ public class EyeOfHarmonyPartBlock extends BlockWithEntity implements IFluidLink
         BlockPos up = mainPos.up();
         BlockPos down = mainPos.down();
 
-        if (world.getBlockState(mainPos).isOf(ModBlocks.EYE_OF_HARMONY_OBELISK)) {
-            world.removeBlock(mainPos, false);
-        }
         if (world.getBlockState(up).isOf(ModBlocks.EYE_OF_HARMONY_PART)) {
             world.removeBlock(up, false);
         }
         if (world.getBlockState(down).isOf(ModBlocks.EYE_OF_HARMONY_PART)) {
             world.removeBlock(down, false);
+        }
+
+        if (world.getBlockState(mainPos).isOf(ModBlocks.EYE_OF_HARMONY_OBELISK)) {
+            world.breakBlock(mainPos, true);
         }
     }
 
