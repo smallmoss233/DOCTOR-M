@@ -1,14 +1,20 @@
 package doctor_m.block.data_block;
 
+import dev.amble.ait.core.engine.link.tracker.FluidNetwork;
 import doctor_m.block.ModBlocks;
 import doctor_m.block.entities.EyeOfHarmonyObeliskBlockEntity;
+import dev.amble.ait.core.engine.link.IFluidLink;
+import dev.amble.ait.core.engine.link.IFluidSource;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
@@ -23,7 +29,7 @@ import net.minecraft.world.World;
 
 import java.util.function.Consumer;
 
-public class EyeOfHarmonyObeliskBlock extends BlockWithEntity {
+public class EyeOfHarmonyObeliskBlock extends BlockWithEntity implements IFluidLink {
 
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
 
@@ -51,7 +57,6 @@ public class EyeOfHarmonyObeliskBlock extends BlockWithEntity {
         builder.add(FACING);
     }
 
-    // ← 放置时根据玩家水平朝向设置（面向玩家）
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
@@ -84,6 +89,18 @@ public class EyeOfHarmonyObeliskBlock extends BlockWithEntity {
         }
         return ActionResult.SUCCESS;
     }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
+            World world, BlockState state, BlockEntityType<T> type) {
+        return world.isClient ? null : (w, pos, s, be) -> {
+            if (be instanceof EyeOfHarmonyObeliskBlockEntity obelisk) {
+                obelisk.tick();
+            }
+        };
+    }
+
+    // ========== 合并后的 onPlaced：结构放置 + 网络重建 ==========
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
@@ -92,9 +109,7 @@ public class EyeOfHarmonyObeliskBlock extends BlockWithEntity {
         BlockPos targetPos = pos.up();   // 本体最终位置
         BlockPos up = pos.up(2);         // 上方辅助
 
-        // 只检查本体位置和上方辅助位置是否可替换
         if (!world.getBlockState(targetPos).isReplaceable() || !world.getBlockState(up).isReplaceable()) {
-            // 空间不足，移除本体并提示
             world.removeBlock(pos, false);
             Block.dropStack(world, pos, new ItemStack(this));
             if (placer instanceof ServerPlayerEntity player) {
@@ -103,20 +118,28 @@ public class EyeOfHarmonyObeliskBlock extends BlockWithEntity {
             return;
         }
 
-        // 将 pos 变成下方辅助方块
         world.setBlockState(pos, ModBlocks.EYE_OF_HARMONY_PART.getDefaultState());
-        // 在 targetPos 放置本体
         world.setBlockState(targetPos, state);
-        // 在 up 放置上方辅助
         world.setBlockState(up, ModBlocks.EYE_OF_HARMONY_PART.getDefaultState());
+
+        // 结构放完后，触发周围线缆网络重建
+        FluidNetwork.rebuildAround((ServerWorld) world, targetPos);
     }
+
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (moved) return;
+        if (moved) {
+            super.onStateReplaced(state, world, pos, newState, moved);
+            return;
+        }
+
         if (!state.isOf(newState.getBlock())) {
+            if (!world.isClient()) {
+                FluidNetwork.rebuildAround((ServerWorld) world, pos);
+            }
+
             BlockPos up = pos.up();
             BlockPos down = pos.down();
-            // 使用 isOf 替代 instanceof
             if (world.getBlockState(up).isOf(ModBlocks.EYE_OF_HARMONY_PART)) {
                 world.removeBlock(up, false);
             }
@@ -125,5 +148,34 @@ public class EyeOfHarmonyObeliskBlock extends BlockWithEntity {
             }
         }
         super.onStateReplaced(state, world, pos, newState, moved);
+    }
+
+    @Override
+    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
+        if (world.isClient()) return;
+
+        if (sourceBlock instanceof IFluidLink) {
+            FluidNetwork.rebuildAround((ServerWorld) world, pos);
+        }
+    }
+
+    // ========== IFluidLink 实现 ==========
+    @Override
+    public IFluidSource source(boolean search) {
+        return null;
+    }
+
+    @Override
+    public void setSource(IFluidSource source) {
+    }
+
+    @Override
+    public IFluidLink last() {
+        return null;
+    }
+
+    @Override
+    public void setLast(IFluidLink last) {
     }
 }

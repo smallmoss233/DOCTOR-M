@@ -1,6 +1,8 @@
 package doctor_m.block;
 
+import doctor_m.DOCTORM;
 import doctor_m.block.entities.EyeOfHarmonyObeliskBlockEntity;
+import doctor_m.block.entities.EyeOfHarmonyPartBlockEntity;
 import doctor_m.block.entities.OxygenChargerBlockEntity;
 import doctor_m.block.entities.UnderwaterOxygenGeneratorBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -17,6 +19,13 @@ public class ModBlockEntities {
             FabricBlockEntityTypeBuilder.create(UnderwaterOxygenGeneratorBlockEntity::new, ModBlocks.UNDERWATER_OXYGEN_GENERATOR).build();
 
     public static BlockEntityType<EyeOfHarmonyObeliskBlockEntity> EYE_OF_HARMONY_OBELISK;
+
+    public static final BlockEntityType<EyeOfHarmonyPartBlockEntity> EYE_OF_HARMONY_PART =
+            Registry.register(
+                    Registries.BLOCK_ENTITY_TYPE,
+                    new Identifier(DOCTORM.MOD_ID, "eye_of_harmony_part"),
+                    FabricBlockEntityTypeBuilder.create(EyeOfHarmonyPartBlockEntity::new, ModBlocks.EYE_OF_HARMONY_PART).build()
+            );
 
     public static void register() {
         Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier("doctor_m", "oxygen_charger_entity"), OXYGEN_CHARGER_ENTITY);
