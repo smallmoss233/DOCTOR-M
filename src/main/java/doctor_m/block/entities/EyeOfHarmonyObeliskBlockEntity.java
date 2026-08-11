@@ -12,8 +12,8 @@ import doctor_m.block.ModBlockEntities;
 
 public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity {
 
-    private float yOffset = 5.0f;
-    private float scale = 1.0f;  // ← 默认 1.0 = 原大小
+    private float yOffset = 0.0f;   // 默认不偏移
+    private float scale = 1.0f;     // 默认 1.0 = 原大小
 
     public EyeOfHarmonyObeliskBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.EYE_OF_HARMONY_OBELISK, pos, state);
