@@ -26,20 +26,24 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
     private static final float MIN_SCALE = 0.1f;
     private static final float MAX_SCALE = 5.0f;
 
-    private static final int COLOR_OVERLAY      = 0xE6000000;
-    private static final int COLOR_PANEL        = 0xFF0D1117;
-    private static final int COLOR_PANEL_BORDER = 0xFF30363D;
-    private static final int COLOR_ACCENT       = 0xFF00D4AA;
-    private static final int COLOR_TEXT_PRIMARY = 0xFFE6EDF3;
-    private static final int COLOR_DIVIDER      = 0xFF21262D;
-    private static final int COLOR_CARD_BG      = 0xFF161B22;
-    private static final int COLOR_CARD_BORDER  = 0xFF30363D;
-    private static final int COLOR_TRACK_BG     = 0xFF0D1117;
-    private static final int COLOR_BTN_BG       = 0xFF21262D;
-    private static final int COLOR_BTN_HOVER    = 0xFF30363D;
+    // ========== Time Lord 古老贵族风配色 ==========
+    private static final int COLOR_OVERLAY       = 0xE6000000;
+    private static final int COLOR_PANEL         = 0xFF1A0A0E; // 深酒红
+    private static final int COLOR_PANEL_BORDER  = 0xFF8B6914; // 古铜金外框
+    private static final int COLOR_GOLD          = 0xFFC9A227; // 亮金
+    private static final int COLOR_GOLD_DIM      = 0xFF8B6914; // 暗金
+    private static final int COLOR_GLOW          = 0xFFFFD700; // 发光金
+    private static final int COLOR_TEXT          = 0xFFFFF0E0; // 象牙白
+    private static final int COLOR_TEXT_DIM      = 0xFFAA9988; // 暗象牙
+    private static final int COLOR_RUNE          = 0xFF6B4226; // 符文棕
+    private static final int COLOR_CARD_BG       = 0xFF0D0408; // 深红卡片
+    private static final int COLOR_CARD_BORDER   = 0xFF5C3A1E; // 暗金边框
+    private static final int COLOR_BTN_BG        = 0xFF2D0A12; // 深红按钮
+    private static final int COLOR_BTN_HOVER     = 0xFF4A1020; // 悬停
+    private static final int COLOR_TRACK_BG      = 0xFF0D0408; // 轨道
 
     private static final int PANEL_WIDTH  = 300;
-    private static final int PANEL_HEIGHT = 340; // 增高
+    private static final int PANEL_HEIGHT = 340;
 
     private int panelX, panelY;
 
@@ -58,17 +62,16 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
         panelY = (this.height - PANEL_HEIGHT) / 2;
 
         int cx = panelX + 24;
-        int cy = panelY + 110; // 整体下移，和能量卡片拉开距离
+        int cy = panelY + 110;
 
-        // Y轴偏移
-        double yVal = (double) (currentYOffset - MIN_Y) / (MAX_Y - MIN_Y);
-        addDrawableChild(new ModernSlider(
+        double ySliderValue = (double) (currentYOffset - MIN_Y) / (MAX_Y - MIN_Y);
+        addDrawableChild(new TimeLordSlider(
                 cx, cy, 252, 20,
-                Text.translatable("gui.doctor_m.obelisk.y_offset", currentYOffset), yVal
+                Text.translatable("gui.doctor_m.obelisk.y_offset", currentYOffset), ySliderValue
         ) {
             @Override protected void updateMessage() {
-                int v = Math.round((float) (MIN_Y + this.value * (MAX_Y - MIN_Y)));
-                setMessage(Text.translatable("gui.doctor_m.obelisk.y_offset", v));
+                int actual = Math.round((float) (MIN_Y + this.value * (MAX_Y - MIN_Y)));
+                setMessage(Text.translatable("gui.doctor_m.obelisk.y_offset", actual));
             }
             @Override protected void applyValue() {
                 currentYOffset = Math.round((float) (MIN_Y + this.value * (MAX_Y - MIN_Y)));
@@ -77,16 +80,15 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
             }
         });
 
-        // 缩放（间距从36→42）
-        double sVal = (double) (currentScale - MIN_SCALE) / (MAX_SCALE - MIN_SCALE);
-        addDrawableChild(new ModernSlider(
+        double scaleSliderValue = (double) (currentScale - MIN_SCALE) / (MAX_SCALE - MIN_SCALE);
+        addDrawableChild(new TimeLordSlider(
                 cx, cy + 42, 252, 20,
-                Text.translatable("gui.doctor_m.obelisk.scale", String.format("%.1f", currentScale)), sVal
+                Text.translatable("gui.doctor_m.obelisk.scale", String.format("%.1f", currentScale)), scaleSliderValue
         ) {
             @Override protected void updateMessage() {
-                float v = (float) (MIN_SCALE + this.value * (MAX_SCALE - MIN_SCALE));
-                v = Math.round(v * 10.0f) / 10.0f;
-                setMessage(Text.translatable("gui.doctor_m.obelisk.scale", String.format("%.1f", v)));
+                float actual = (float) (MIN_SCALE + this.value * (MAX_SCALE - MIN_SCALE));
+                actual = Math.round(actual * 10.0f) / 10.0f;
+                setMessage(Text.translatable("gui.doctor_m.obelisk.scale", String.format("%.1f", actual)));
             }
             @Override protected void applyValue() {
                 currentScale = (float) (MIN_SCALE + this.value * (MAX_SCALE - MIN_SCALE));
@@ -96,8 +98,7 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
             }
         });
 
-        // 复选框（间距拉大）
-        addDrawableChild(new ModernCheck(
+        addDrawableChild(new TimeLordCheck(
                 cx, cy + 84, 252, 20,
                 Text.translatable("gui.doctor_m.obelisk.render_eye"), currentEyeVisible
         ) {
@@ -109,7 +110,7 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
             }
         });
 
-        addDrawableChild(new ModernCheck(
+        addDrawableChild(new TimeLordCheck(
                 cx, cy + 112, 252, 20,
                 Text.translatable("gui.doctor_m.obelisk.redstone_control"), currentRedstoneMode
         ) {
@@ -121,8 +122,7 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
             }
         });
 
-        // 完成按钮
-        addDrawableChild(new ModernButton(
+        addDrawableChild(new TimeLordButton(
                 panelX + PANEL_WIDTH / 2 - 50, panelY + PANEL_HEIGHT - 36, 100, 20,
                 Text.translatable("gui.doctor_m.obelisk.done"),
                 b -> this.close()
@@ -143,30 +143,37 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
     }
 
     @Override
-    public void render(DrawContext ctx, int mx, int my, float delta) {
+    public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
         int cx = panelX + 24;
 
+        // 全屏遮罩
         ctx.fill(0, 0, this.width, this.height, COLOR_OVERLAY);
 
-        ctx.fill(panelX - 1, panelY - 1, panelX + PANEL_WIDTH + 1, panelY + PANEL_HEIGHT + 1, 0xFF080808);
+        // ========== 面板主体（深酒红 + 古铜金粗边框） ==========
+        ctx.fill(panelX - 2, panelY - 2, panelX + PANEL_WIDTH + 2, panelY + PANEL_HEIGHT + 2, 0xFF080808);
         ctx.fill(panelX, panelY, panelX + PANEL_WIDTH, panelY + PANEL_HEIGHT, COLOR_PANEL);
-        ctx.drawBorder(panelX, panelY, PANEL_WIDTH, PANEL_HEIGHT, COLOR_PANEL_BORDER);
-        ctx.fill(panelX + 1, panelY + 1, panelX + PANEL_WIDTH - 1, panelY + 3, COLOR_ACCENT);
+        // 3px 古铜外框
+        drawThickBorder(ctx, panelX, panelY, PANEL_WIDTH, PANEL_HEIGHT, COLOR_PANEL_BORDER, 2);
+        // 内层金线
+        ctx.drawBorder(panelX + 2, panelY + 2, PANEL_WIDTH - 4, PANEL_HEIGHT - 4, COLOR_GOLD_DIM);
 
-        // 标题
+        // ========== 顶部装饰：RASSILON 字样 + 符文 ==========
+        ctx.drawCenteredTextWithShadow(this.textRenderer,
+                Text.literal("RASSILON").formatted(Formatting.GOLD),
+                panelX + PANEL_WIDTH / 2, panelY + 6, COLOR_GOLD_DIM);
+
+        // 主标题
         String title = Text.translatable("gui.doctor_m.obelisk.title").getString();
-        int tw = this.textRenderer.getWidth(title);
+        int titleWidth = this.textRenderer.getWidth(title);
         ctx.drawTextWithShadow(this.textRenderer,
                 Text.literal(title).formatted(Formatting.WHITE),
-                panelX + (PANEL_WIDTH - tw) / 2, panelY + 14, COLOR_TEXT_PRIMARY);
+                panelX + (PANEL_WIDTH - titleWidth) / 2, panelY + 18, COLOR_TEXT);
 
-        // 标题下分隔线
-        int lineY = panelY + 30;
-        ctx.fill(panelX + 20, lineY, panelX + PANEL_WIDTH - 20, lineY + 1, COLOR_DIVIDER);
-        int dot = panelX + (PANEL_WIDTH - 4) / 2;
-        ctx.fill(dot, lineY, dot + 4, lineY + 1, COLOR_ACCENT);
+        // 标题下符文分隔线（左右对称装饰）
+        int lineY = panelY + 32;
+        drawRuneLine(ctx, panelX + 20, lineY, PANEL_WIDTH - 40);
 
-        // ====== 能量卡片 ======
+        // ========== 能量卡片（深红底 + 金边） ==========
         int cardX = panelX + 16;
         int cardY = panelY + 38;
         int cardW = PANEL_WIDTH - 32;
@@ -175,39 +182,43 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
         ctx.fill(cardX, cardY, cardX + cardW, cardY + cardH, COLOR_CARD_BG);
         ctx.drawBorder(cardX, cardY, cardW, cardH, COLOR_CARD_BORDER);
 
+        // 小标签
         ctx.drawTextWithShadow(this.textRenderer,
-                Text.literal("ENERGY").formatted(Formatting.GRAY),
-                cardX + 10, cardY + 7, 0xFF6E7681);
+                Text.literal("EYE OF HARMONY").formatted(Formatting.GOLD),
+                cardX + 10, cardY + 6, COLOR_GOLD_DIM);
 
-        int barX = cardX + 10, barY = cardY + 22, barW = cardW - 20, barH = 8;
-        double pct = blockEntity.getEnergyPercentage();
-        int fill = (int) (barW * pct);
+        // 能量条
+        int barX = cardX + 10, barY = cardY + 20, barW = cardW - 20, barH = 8;
+        double percentage = blockEntity.getEnergyPercentage();
+        int filledWidth = (int) (barW * percentage);
 
-        ctx.fill(barX, barY, barX + barW, barY + barH, 0xFF0A0C10);
-        ctx.drawBorder(barX, barY, barW, barH, 0xFF1C2128);
-        if (fill > 0) {
-            int c = energyColor(pct);
-            ctx.fill(barX + 1, barY + 1, barX + fill - 1, barY + barH - 1, c);
-            ctx.fill(barX + 1, barY + 1, barX + fill - 1, barY + 3, c | 0xFF444444);
+        ctx.fill(barX, barY, barX + barW, barY + barH, 0xFF0A0406);
+        ctx.drawBorder(barX, barY, barW, barH, COLOR_CARD_BORDER);
+        if (filledWidth > 0) {
+            int color = getEnergyColor(percentage);
+            ctx.fill(barX + 1, barY + 1, barX + filledWidth - 1, barY + barH - 1, color);
+            // 顶部金色光泽
+            ctx.fill(barX + 1, barY + 1, barX + filledWidth - 1, barY + 3, 0xFFFFD700);
         }
 
-        String energyText = String.format("%.0f / %.0f AU  (%.0f%%)",
+        String energyText = String.format("%.0f / %.0f AU (%.0f%%)",
                 blockEntity.getCurrentFuel(),
                 blockEntity.getMaxFuel(),
-                pct * 100);
-        int tx = cardX + (cardW - textRenderer.getWidth(energyText)) / 2;
+                percentage * 100);
+        int textX = panelX + (PANEL_WIDTH - textRenderer.getWidth(energyText)) / 2;
         ctx.drawTextWithShadow(this.textRenderer,
                 Text.literal(energyText).formatted(Formatting.WHITE),
-                tx, barY + 12, COLOR_TEXT_PRIMARY);
+                textX, barY + 12, COLOR_TEXT);
 
-        // ====== 状态区 ======
+        // ========== 状态区 ==========
         int statusY = panelY + PANEL_HEIGHT - 58;
-        ctx.fill(cx, statusY - 10, cx + 252, statusY - 9, COLOR_DIVIDER);
+        // 符文分隔线
+        drawRuneLine(ctx, panelX + 20, statusY - 10, PANEL_WIDTH - 40);
 
         boolean active = blockEntity.isActive();
-        int dotColor = active ? 0xFF00D4AA : 0xFFFF5555;
-        int dotX = panelX + (PANEL_WIDTH - 8) / 2 - 40;
-
+        // 状态指示灯（金色/暗色圆点）
+        int dotX = panelX + (PANEL_WIDTH - 6) / 2 - 35;
+        int dotColor = active ? COLOR_GLOW : COLOR_GOLD_DIM;
         ctx.fill(dotX, statusY, dotX + 6, statusY + 6, dotColor);
         ctx.fill(dotX - 1, statusY - 1, dotX + 7, statusY + 7, dotColor & 0x40FFFFFF);
 
@@ -215,26 +226,43 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
                 ? "gui.doctor_m.obelisk.active"
                 : "gui.doctor_m.obelisk.inactive";
         Text statusText = Text.translatable("gui.doctor_m.obelisk.status",
-                Text.translatable(statusKey).formatted(active ? Formatting.GREEN : Formatting.RED));
-        int sw = this.textRenderer.getWidth(statusText);
+                Text.translatable(statusKey).formatted(active ? Formatting.GOLD : Formatting.RED));
+        int statusWidth = this.textRenderer.getWidth(statusText);
         ctx.drawTextWithShadow(this.textRenderer, statusText,
-                panelX + (PANEL_WIDTH - sw) / 2 + 8, statusY + 1, COLOR_TEXT_PRIMARY);
+                panelX + (PANEL_WIDTH - statusWidth) / 2 + 6, statusY + 1, COLOR_TEXT);
 
-        super.render(ctx, mx, my, delta);
+        super.render(ctx, mouseX, mouseY, delta);
     }
 
-    private int energyColor(double pct) {
-        int r, g;
-        if (pct < 0.5) {
-            r = 0xFF;
-            g = (int) (0xFF * (pct * 2));
-        } else {
-            r = (int) (0xFF * (1 - (pct - 0.5) * 2));
-            g = 0xFF;
+    // ========== Gallifreyan 符文装饰线 ==========
+    private void drawRuneLine(DrawContext ctx, int x, int y, int w) {
+        int center = x + w / 2;
+        // 左半部分：点-线-点-线
+        ctx.fill(x, y, x + w / 2 - 8, y + 1, COLOR_RUNE);
+        ctx.fill(x + w / 2 + 8, y, x + w, y + 1, COLOR_RUNE);
+        // 中心：菱形装饰
+        ctx.fill(center - 2, y - 2, center + 2, y + 3, COLOR_GOLD_DIM);
+        ctx.fill(center - 1, y - 1, center + 1, y + 2, COLOR_GLOW);
+        // 两侧小圆点
+        ctx.fill(x + 4, y - 1, x + 6, y + 2, COLOR_GOLD_DIM);
+        ctx.fill(x + w - 6, y - 1, x + w - 4, y + 2, COLOR_GOLD_DIM);
+    }
+
+    private void drawThickBorder(DrawContext ctx, int x, int y, int w, int h, int color, int thickness) {
+        for (int i = 0; i < thickness; i++) {
+            ctx.drawBorder(x + i, y + i, w - i * 2, h - i * 2, color);
         }
-        if (pct > 0.8) {
-            r = (int) (r * 0.3);
-            g = 0xFF;
+    }
+
+    private int getEnergyColor(double percentage) {
+        // 0% → 暗红  50% → 橙金  100% → 亮金
+        int r, g;
+        if (percentage < 0.5) {
+            r = 0x8B + (int)((0xFF - 0x8B) * percentage * 2);
+            g = (int)(0x40 * percentage * 2);
+        } else {
+            r = 0xFF;
+            g = 0x40 + (int)((0xD7 - 0x40) * (percentage - 0.5) * 2);
         }
         return 0xFF000000 | (r << 16) | (g << 8) | 0x00;
     }
@@ -244,9 +272,9 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
         return false;
     }
 
-    // ========== 自定义现代滑块（手柄改小） ==========
-    private abstract class ModernSlider extends SliderWidget {
-        ModernSlider(int x, int y, int w, int h, Text msg, double val) {
+    // ========== Time Lord 风格滑块 ==========
+    private abstract class TimeLordSlider extends SliderWidget {
+        TimeLordSlider(int x, int y, int w, int h, Text msg, double val) {
             super(x, y, w, h, msg, val);
         }
 
@@ -256,21 +284,20 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
             int ty = this.getY();
             int tw = this.getWidth();
 
-            ctx.drawTextWithShadow(textRenderer, getMessage(), tx, ty - 10, COLOR_TEXT_PRIMARY);
+            ctx.drawTextWithShadow(textRenderer, getMessage(), tx, ty - 10, COLOR_TEXT);
 
             int trackY = ty + 6;
             int trackH = 4;
 
             ctx.fill(tx, trackY, tx + tw, trackY + trackH, COLOR_TRACK_BG);
-            ctx.drawBorder(tx, trackY, tw, trackH, 0xFF1C2128);
+            ctx.drawBorder(tx, trackY, tw, trackH, COLOR_CARD_BORDER);
 
             int fillW = (int) (tw * this.value);
             if (fillW > 0) {
-                ctx.fill(tx + 1, trackY + 1, tx + fillW - 1, trackY + trackH - 1, COLOR_ACCENT);
-                ctx.fill(tx + 1, trackY + 1, tx + fillW - 1, trackY + 2, 0xFF4DFFB8);
+                ctx.fill(tx + 1, trackY + 1, tx + fillW - 1, trackY + trackH - 1, COLOR_GOLD);
+                ctx.fill(tx + 1, trackY + 1, tx + fillW - 1, trackY + 2, COLOR_GLOW);
             }
 
-            // 手柄改小：8x12
             int handleW = 8;
             int handleH = 12;
             int hx = tx + fillW - handleW / 2;
@@ -278,16 +305,16 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
             int hy = trackY - (handleH - trackH) / 2;
 
             boolean hovered = isHovered();
-            int hc = hovered ? 0xFF00F0C8 : COLOR_ACCENT;
+            int hc = hovered ? COLOR_GLOW : COLOR_GOLD;
             ctx.fill(hx, hy, hx + handleW, hy + handleH, hc);
-            ctx.drawBorder(hx, hy, handleW, handleH, hovered ? 0xFFFFFFFF : 0xFF00A080);
-            ctx.fill(hx + 3, hy + 3, hx + 5, hy + handleH - 3, 0xFF0D1117);
+            ctx.drawBorder(hx, hy, handleW, handleH, hovered ? COLOR_GLOW : COLOR_GOLD_DIM);
+            ctx.fill(hx + 3, hy + 3, hx + 5, hy + handleH - 3, COLOR_PANEL);
         }
     }
 
-    // ========== 自定义现代复选框 ==========
-    private abstract class ModernCheck extends CheckboxWidget {
-        ModernCheck(int x, int y, int w, int h, Text msg, boolean checked) {
+    // ========== Time Lord 风格复选框 ==========
+    private abstract class TimeLordCheck extends CheckboxWidget {
+        TimeLordCheck(int x, int y, int w, int h, Text msg, boolean checked) {
             super(x, y, w, h, msg, checked);
         }
 
@@ -299,46 +326,43 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
 
             ctx.fill(tx, ty, tx + box, ty + box, COLOR_CARD_BG);
             boolean hovered = isHovered();
-            ctx.drawBorder(tx, ty, box, box, hovered ? COLOR_ACCENT : COLOR_CARD_BORDER);
+            ctx.drawBorder(tx, ty, box, box, hovered ? COLOR_GOLD : COLOR_CARD_BORDER);
 
             if (isChecked()) {
-                ctx.fill(tx + 2, ty + 2, tx + box - 2, ty + box - 2, COLOR_ACCENT);
-                ctx.fill(tx + 3, ty + 6, tx + 5, ty + 8, 0xFF0D1117);
-                ctx.fill(tx + 5, ty + 4, tx + 7, ty + 6, 0xFF0D1117);
-                ctx.fill(tx + 7, ty + 2, tx + 9, ty + 4, 0xFF0D1117);
+                ctx.fill(tx + 2, ty + 2, tx + box - 2, ty + box - 2, COLOR_GOLD);
+                // 对勾用深色
+                ctx.fill(tx + 3, ty + 6, tx + 5, ty + 8, COLOR_PANEL);
+                ctx.fill(tx + 5, ty + 4, tx + 7, ty + 6, COLOR_PANEL);
+                ctx.fill(tx + 7, ty + 2, tx + 9, ty + 4, COLOR_PANEL);
             }
 
-            ctx.drawTextWithShadow(textRenderer, getMessage(), tx + box + 6, ty + 2, COLOR_TEXT_PRIMARY);
+            ctx.drawTextWithShadow(textRenderer, getMessage(), tx + box + 6, ty + 2, COLOR_TEXT);
         }
     }
 
-    // ========== 自定义现代按钮 ==========
-    private class ModernButton extends ButtonWidget {
-        ModernButton(int x, int y, int w, int h, Text msg, PressAction action) {
+    // ========== Time Lord 风格按钮 ==========
+    private class TimeLordButton extends ButtonWidget {
+        TimeLordButton(int x, int y, int w, int h, Text msg, PressAction action) {
             super(x, y, w, h, msg, action, DEFAULT_NARRATION_SUPPLIER);
         }
 
         @Override
         public void renderButton(DrawContext ctx, int mx, int my, float delta) {
-            int tx = this.getX();
-            int ty = this.getY();
-            int tw = this.getWidth();
-            int th = this.getHeight();
-
+            int tx = getX(), ty = getY(), tw = getWidth(), th = getHeight();
             boolean hovered = isHovered();
+
             int bg = hovered ? COLOR_BTN_HOVER : COLOR_BTN_BG;
             ctx.fill(tx, ty, tx + tw, ty + th, bg);
-            ctx.drawBorder(tx, ty, tw, th, hovered ? COLOR_ACCENT : 0xFF30363D);
+            ctx.drawBorder(tx, ty, tw, th, hovered ? COLOR_GOLD : COLOR_CARD_BORDER);
 
             if (hovered) {
-                ctx.fill(tx + 1, ty + 1, tx + tw - 1, ty + 2, 0xFF00D4AA);
+                ctx.fill(tx + 1, ty + 1, tx + tw - 1, ty + 2, COLOR_GLOW);
             }
 
-            int color = this.active ? (hovered ? COLOR_ACCENT : COLOR_TEXT_PRIMARY) : 0xFF555555;
             Text msg = getMessage();
-            int mw = MinecraftClient.getInstance().textRenderer.getWidth(msg);
-            ctx.drawTextWithShadow(MinecraftClient.getInstance().textRenderer,
-                    msg, tx + (tw - mw) / 2, ty + (th - 8) / 2, color);
+            int mw = textRenderer.getWidth(msg);
+            int color = this.active ? (hovered ? COLOR_GLOW : COLOR_TEXT) : 0xFF555555;
+            ctx.drawTextWithShadow(textRenderer, msg, tx + (tw - mw) / 2, ty + (th - 8) / 2, color);
         }
     }
 }
