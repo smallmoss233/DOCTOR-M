@@ -53,8 +53,6 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
     private void renderStar(EyeOfHarmonyObeliskBlockEntity entity, float delta, float scale, MatrixStack matrices,
                             VertexConsumerProvider vertexConsumers, int overlay) {
         matrices.push();
-
-        // ← 应用用户自定义缩放，默认 40f * 1.0 = 40f
         matrices.scale(40f * scale, 40f * scale, 40f * scale);
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(delta));
 
@@ -80,17 +78,17 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
                              VertexConsumerProvider vertexConsumers) {
         matrices.push();
 
-        // ← 光芒也同步缩放，默认 8f * 1.0 = 8f
-        matrices.scale(8f * scale, 8f * scale, 8f * scale);
+        float sinFunc = (float) Math.sin(delta * 0.05f + 0.2f) * 0.2f;
+        float shineScale = 8f * scale;
+        matrices.scale(shineScale + sinFunc, shineScale + sinFunc, shineScale + sinFunc);
+
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-delta));
 
-        float time = entity.getWorld().getTime() + delta;
-        float l = (time / 50120f);
+        float l = (delta % 50120f) / 50120f;
+        float m = Math.min(l > 0.8f ? (l - 0.8f) / 0.2f : 0.0f, 1.0f);
 
         Random random = Random.create(entity.getPos().hashCode());
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(AITRenderLayers.getLightning());
-
-        float m = Math.min(l > 0.8f ? (l - 0.8f) / 0.2f : 0.0f, 1.0f);
 
         for (int n = 0; n < 30; n++) {
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees((random.nextFloat() * 360.0f)));
@@ -106,6 +104,7 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
             Matrix4f matrix4f = matrices.peek().getPositionMatrix();
             int q = (int) (255f * (1.0f - m));
 
+            // 和 AIT 完全一致的 4 个三角形（白色中心 + 橙金边缘）
             putLightSourceVertex(vertexConsumer, matrix4f, q);
             putLightNegativeXTerminalVertex(vertexConsumer, matrix4f, o, p);
             putLightPositiveXTerminalVertex(vertexConsumer, matrix4f, o, p);
@@ -118,9 +117,9 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
             putLightPositiveZTerminalVertex(vertexConsumer, matrix4f, o, p);
             putLightNegativeXTerminalVertex(vertexConsumer, matrix4f, o, p);
 
-            putLightPositiveXTerminalVertex(vertexConsumer, matrix4f, o, p);
+            putLightSourceVertex(vertexConsumer, matrix4f, q);
             putLightPositiveZTerminalVertex(vertexConsumer, matrix4f, o, p);
-            putLightNegativeXTerminalVertex(vertexConsumer, matrix4f, o, p);
+            putLightPositiveZTerminalVertex(vertexConsumer, matrix4f, o, p);
         }
 
         matrices.pop();
