@@ -76,10 +76,7 @@ public class EyeOfHarmonyPartBlock extends BlockWithEntity implements IFluidLink
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
         super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
         if (world.isClient()) return;
-
-        if (sourceBlock instanceof IFluidLink) {
-            FluidNetwork.rebuildAround((ServerWorld) world, pos);
-        }
+        FluidNetwork.rebuildAround((ServerWorld) world, pos);
     }
 
     private BlockPos findMainBlock(World world, BlockPos pos) {

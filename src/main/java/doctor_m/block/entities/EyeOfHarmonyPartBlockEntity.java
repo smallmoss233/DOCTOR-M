@@ -10,6 +10,7 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
 public class EyeOfHarmonyPartBlockEntity extends BlockEntity implements IFluidLink {
 
@@ -17,42 +18,48 @@ public class EyeOfHarmonyPartBlockEntity extends BlockEntity implements IFluidLi
         super(ModBlockEntities.EYE_OF_HARMONY_PART, pos, state);
     }
 
-    /** 查找相邻的主方块 BE */
-    private EyeOfHarmonyObeliskBlockEntity findMainObelisk() {
+    // ========== 查找相邻的 IFluidSource（不包括主方块） ==========
+    private IFluidSource findConnectedSource() {
         if (world == null) return null;
 
-        BlockPos down = pos.down();
-        BlockEntity be = world.getBlockEntity(down);
-        if (be instanceof EyeOfHarmonyObeliskBlockEntity obelisk) {
-            return obelisk;
-        }
+        for (Direction dir : Direction.values()) {
+            BlockPos neighborPos = pos.offset(dir);
+            BlockEntity be = world.getBlockEntity(neighborPos);
 
-        BlockPos up = pos.up();
-        be = world.getBlockEntity(up);
-        if (be instanceof EyeOfHarmonyObeliskBlockEntity obelisk) {
-            return obelisk;
-        }
+            // 如果邻居是主方块（方尖碑），跳过（能量应该往外流，不回流）
+            if (be instanceof EyeOfHarmonyObeliskBlockEntity) continue;
 
+            // 如果邻居是 IFluidSource，返回它
+            if (be instanceof IFluidSource source) {
+                return source;
+            }
+
+            // 如果邻居是 IFluidLink（线缆或其他辅助方块），继续询问它
+            if (be instanceof IFluidLink link) {
+                IFluidSource deeper = link.source(true);
+                if (deeper != null) return deeper;
+            }
+        }
         return null;
     }
 
-    // ========== IFluidLink 实现：全部透传给主方块 ==========
+    // ========== IFluidLink 实现 ==========
 
     @Override
     public IFluidSource source(boolean search) {
-        EyeOfHarmonyObeliskBlockEntity main = findMainObelisk();
-        return main != null ? main : null;
+        if (!search) return findConnectedSource();
+        // 如果 search 为 true，递归查找最终目标
+        return findConnectedSource();
     }
 
     @Override
     public void setSource(IFluidSource source) {
-        // 辅助方块不存储网络状态，由主方块承担 source 角色
+        // 辅助方块不存储网络状态
     }
 
     @Override
     public IFluidLink last() {
-        // 上游就是主方块
-        return findMainObelisk();
+        return null; // 辅助方块作为中间节点，不保存上游
     }
 
     @Override
@@ -60,8 +67,7 @@ public class EyeOfHarmonyPartBlockEntity extends BlockEntity implements IFluidLi
         // 辅助方块不存储网络状态
     }
 
-    // ========== NBT / 网络同步（辅助方块无持久化数据，但保留接口） ==========
-
+    // ========== NBT / 网络同步 ==========
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
