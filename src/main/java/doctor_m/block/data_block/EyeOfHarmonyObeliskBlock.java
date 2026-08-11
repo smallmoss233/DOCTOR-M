@@ -1,6 +1,7 @@
 package doctor_m.block.data_block;
 
 import dev.amble.ait.core.engine.link.tracker.FluidNetwork;
+import dev.amble.ait.core.item.SonicItem;  // ← 新增导入
 import doctor_m.block.ModBlocks;
 import doctor_m.block.entities.EyeOfHarmonyObeliskBlockEntity;
 import dev.amble.ait.core.engine.link.IFluidLink;
@@ -32,14 +33,43 @@ import java.util.function.Consumer;
 public class EyeOfHarmonyObeliskBlock extends BlockWithEntity implements IFluidLink {
 
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
-
     protected static final VoxelShape SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 16.0, 16.0);
-
     public static Consumer<EyeOfHarmonyObeliskBlockEntity> OPEN_SCREEN_CALLBACK = null;
 
     public EyeOfHarmonyObeliskBlock(Settings settings) {
         super(settings);
         setDefaultState(getDefaultState().with(FACING, Direction.NORTH));
+    }
+
+    // ========== 红石相关 ==========
+    @Override
+    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
+        if (world.isClient()) return;
+
+        BlockEntity be = world.getBlockEntity(pos);
+        if (be instanceof EyeOfHarmonyObeliskBlockEntity obelisk) {
+            obelisk.updateRedstoneState();
+        }
+
+        if (sourceBlock instanceof IFluidLink) {
+            FluidNetwork.rebuildAround((ServerWorld) world, pos);
+        }
+    }
+
+    @Override
+    public boolean emitsRedstonePower(BlockState state) { return false; }
+
+    @Override
+    public boolean hasComparatorOutput(BlockState state) { return true; }
+
+    @Override
+    public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
+        BlockEntity be = world.getBlockEntity(pos);
+        if (be instanceof EyeOfHarmonyObeliskBlockEntity obelisk) {
+            return obelisk.isActive() ? 15 : 0;
+        }
+        return 0;
     }
 
     @Override
@@ -48,9 +78,7 @@ public class EyeOfHarmonyObeliskBlock extends BlockWithEntity implements IFluidL
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
-    }
+    public BlockRenderType getRenderType(BlockState state) { return BlockRenderType.MODEL; }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
@@ -78,9 +106,17 @@ public class EyeOfHarmonyObeliskBlock extends BlockWithEntity implements IFluidL
         return SHAPE;
     }
 
+    // ← 修改：只有手持音速起子才能打开 GUI
     @SuppressWarnings("deprecation")
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        ItemStack held = player.getStackInHand(hand);
+
+        // 必须手持 SonicItem 才能打开
+        if (!(held.getItem() instanceof SonicItem)) {
+            return ActionResult.PASS; // 不消耗交互，让其他逻辑继续
+        }
+
         if (world.isClient && OPEN_SCREEN_CALLBACK != null) {
             BlockEntity be = world.getBlockEntity(pos);
             if (be instanceof EyeOfHarmonyObeliskBlockEntity obelisk) {
@@ -100,14 +136,13 @@ public class EyeOfHarmonyObeliskBlock extends BlockWithEntity implements IFluidL
         };
     }
 
-    // ========== 合并后的 onPlaced：结构放置 + 网络重建 ==========
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
         if (world.isClient()) return;
 
-        BlockPos targetPos = pos.up();   // 本体最终位置
-        BlockPos up = pos.up(2);         // 上方辅助
+        BlockPos targetPos = pos.up();
+        BlockPos up = pos.up(2);
 
         if (!world.getBlockState(targetPos).isReplaceable() || !world.getBlockState(up).isReplaceable()) {
             world.removeBlock(pos, false);
@@ -122,7 +157,6 @@ public class EyeOfHarmonyObeliskBlock extends BlockWithEntity implements IFluidL
         world.setBlockState(targetPos, state);
         world.setBlockState(up, ModBlocks.EYE_OF_HARMONY_PART.getDefaultState());
 
-        // 结构放完后，触发周围线缆网络重建
         FluidNetwork.rebuildAround((ServerWorld) world, targetPos);
     }
 
@@ -150,32 +184,9 @@ public class EyeOfHarmonyObeliskBlock extends BlockWithEntity implements IFluidL
         super.onStateReplaced(state, world, pos, newState, moved);
     }
 
-    @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
-        if (world.isClient()) return;
-
-        if (sourceBlock instanceof IFluidLink) {
-            FluidNetwork.rebuildAround((ServerWorld) world, pos);
-        }
-    }
-
-    // ========== IFluidLink 实现 ==========
-    @Override
-    public IFluidSource source(boolean search) {
-        return null;
-    }
-
-    @Override
-    public void setSource(IFluidSource source) {
-    }
-
-    @Override
-    public IFluidLink last() {
-        return null;
-    }
-
-    @Override
-    public void setLast(IFluidLink last) {
-    }
+    // IFluidLink
+    @Override public IFluidSource source(boolean search) { return null; }
+    @Override public void setSource(IFluidSource source) {}
+    @Override public IFluidLink last() { return null; }
+    @Override public void setLast(IFluidLink last) {}
 }

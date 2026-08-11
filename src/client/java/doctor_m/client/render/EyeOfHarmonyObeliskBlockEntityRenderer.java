@@ -35,12 +35,14 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
     public void render(EyeOfHarmonyObeliskBlockEntity entity, float tickDelta, MatrixStack matrices,
                        VertexConsumerProvider vertexConsumers, int light, int overlay) {
         if (entity.getWorld() == null) return;
+        if (!entity.isActive()) return;
+        if (!entity.isEyeVisible()) return;
 
         float delta = tickDelta + entity.getWorld().getTime();
         float scale = entity.getScale();
 
         matrices.push();
-        matrices.translate(0, 1.0 + entity.getYOffset(), 0);
+        matrices.translate(0, 55.0 + entity.getYOffset(), 0);
 
         renderStar(entity, delta, scale, matrices, vertexConsumers, overlay);
         renderShine(entity, delta, scale, matrices, vertexConsumers);

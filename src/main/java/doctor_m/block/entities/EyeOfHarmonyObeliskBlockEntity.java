@@ -20,29 +20,31 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
     private float yOffset = 0.0f;
     private float scale = 1.0f;
     private boolean active = true;
+    private boolean eyeVisible = true;
+    private boolean redstoneMode = false;
 
-    // 方尖碑参数
-    public static final int CHARGE_RADIUS = 3;          // 影响半径（区块数）
-    public static final double CHARGE_PER_TICK = 5.0;   // 每 tick 给单个 rift chunk 充能
+    public static final int CHARGE_RADIUS = 3;
+    public static final double CHARGE_PER_TICK = 5.0;
     private int tickCounter = 0;
 
     public EyeOfHarmonyObeliskBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.EYE_OF_HARMONY_OBELISK, pos, state);
     }
 
-    // ========== 原有 getter/setter ==========
     public float getYOffset() { return yOffset; }
     public void setYOffset(float yOffset) {
         this.yOffset = yOffset;
         markDirty();
         sync();
     }
+
     public float getScale() { return scale; }
     public void setScale(float scale) {
         this.scale = scale;
         markDirty();
         sync();
     }
+
     public boolean isActive() { return active; }
     public void setActive(boolean active) {
         this.active = active;
@@ -50,13 +52,55 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
         sync();
     }
 
-    // ========== 新增：每 tick 给周围 Rift Chunk 充能 ==========
+    public boolean isEyeVisible() { return eyeVisible; }
+    public void setEyeVisible(boolean visible) {
+        this.eyeVisible = visible;
+        markDirty();
+        sync();
+    }
+
+    public boolean isRedstoneMode() { return redstoneMode; }
+
+    // ← 修复1：退出红石模式时恢复常态开启
+    public void setRedstoneMode(boolean redstoneMode) {
+        this.redstoneMode = redstoneMode;
+        if (world != null && !world.isClient) {
+            if (redstoneMode) {
+                updateRedstoneState();
+            } else {
+                setActive(true);
+            }
+        }
+        markDirty();
+        sync();
+    }
+
+    // ← 修复2：统一红石状态更新，检测自身+上下辅助方块的红石信号
+    public void updateRedstoneState() {
+        if (!redstoneMode || world == null || world.isClient) return;
+        int power = getMaxRedstonePower();
+        boolean shouldBeActive = power > 0;
+        if (active != shouldBeActive) {
+            setActive(shouldBeActive);
+        }
+    }
+
+    private int getMaxRedstonePower() {
+        int p1 = world.getReceivedRedstonePower(pos);       // 主方块
+        int p2 = world.getReceivedRedstonePower(pos.up());  // 上方辅助
+        int p3 = world.getReceivedRedstonePower(pos.down());// 下方辅助
+        return Math.max(p1, Math.max(p2, p3));
+    }
+
+    // ← 修复3：tick 里调用统一方法
     public void tick() {
         if (world == null || world.isClient) return;
+        if (redstoneMode) {
+            updateRedstoneState();
+        }
         if (!active) return;
 
         tickCounter++;
-        // 每 20 tick（1秒）充能一次，降低性能开销
         if (tickCounter % 20 != 0) return;
 
         ServerWorld serverWorld = (ServerWorld) world;
@@ -67,80 +111,26 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
             for (int dz = -CHARGE_RADIUS; dz <= CHARGE_RADIUS; dz++) {
                 ChunkPos target = new ChunkPos(center.x + dx, center.z + dz);
                 if (manager.isRiftChunk(target)) {
-                    manager.addFuel(target, CHARGE_PER_TICK * 20); // 一次给 20 tick 的量
+                    manager.addFuel(target, CHARGE_PER_TICK * 20);
                 }
             }
         }
     }
 
-    // ========== IFluidSource 实现（无限 AU 源） ==========
-
-    @Override
-    public double level() {
-        return Double.MAX_VALUE / 2;
-    }
-
-    @Override
-    public void setLevel(double level) {
-        // 空操作：无限能源，无视任何扣减/增加
-    }
-
-    @Override
-    public double maxLevel() {
-        return Double.MAX_VALUE / 2;
-    }
-
-    // ========== IFluidLink 实现 ==========
-
-    @Override
-    public IFluidSource source(boolean search) {
-        return this; // 自己就是源
-    }
-
-    @Override
-    public void setSource(IFluidSource source) {
-        // 源不需要被设置源
-    }
-
-    @Override
-    public IFluidLink last() {
-        return this;
-    }
-
-    @Override
-    public void setLast(IFluidLink last) {
-        // 源不需要上游
-    }
-
-    // ========== ArtronHolder 实现（兼容 AIT 的 Artron 接口） ==========
-
-    @Override
-    public double getCurrentFuel() {
-        return Double.MAX_VALUE / 2;
-    }
-
-    @Override
-    public void setCurrentFuel(double var) {
-        // 空操作
-    }
-
-    @Override
-    public double getMaxFuel() {
-        return Double.MAX_VALUE / 2;
-    }
-
-    @Override
-    public void removeFuel(double var) {
-        // 无限能源，扣多少都无所谓
-    }
-
-    @Override
-    public double addFuel(double var) {
-        // 来者不拒，但返回溢出量（永远为0）
-        return 0;
-    }
-
-    // ========== NBT / 网络同步 ==========
+    // IFluidSource / ArtronHolder（不变）
+    @Override public double level() { return Double.MAX_VALUE / 2; }
+    @Override public void setLevel(double level) {}
+    @Override public double maxLevel() { return Double.MAX_VALUE / 2; }
+    @Override public void onChange(double before, double after) {}
+    @Override public IFluidSource source(boolean search) { return this; }
+    @Override public void setSource(IFluidSource source) {}
+    @Override public IFluidLink last() { return this; }
+    @Override public void setLast(IFluidLink last) {}
+    @Override public double getCurrentFuel() { return Double.MAX_VALUE / 2; }
+    @Override public void setCurrentFuel(double var) {}
+    @Override public double getMaxFuel() { return Double.MAX_VALUE / 2; }
+    @Override public void removeFuel(double var) {}
+    @Override public double addFuel(double var) { return 0; }
 
     @Override
     public void readNbt(NbtCompound nbt) {
@@ -149,6 +139,8 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
         this.scale = nbt.getFloat("Scale");
         if (this.scale == 0.0f) this.scale = 1.0f;
         this.active = nbt.getBoolean("Active");
+        this.eyeVisible = nbt.getBoolean("EyeVisible");
+        this.redstoneMode = nbt.getBoolean("RedstoneMode");
     }
 
     @Override
@@ -157,6 +149,8 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
         nbt.putFloat("YOffset", yOffset);
         nbt.putFloat("Scale", scale);
         nbt.putBoolean("Active", active);
+        nbt.putBoolean("EyeVisible", eyeVisible);
+        nbt.putBoolean("RedstoneMode", redstoneMode);
     }
 
     @Override
