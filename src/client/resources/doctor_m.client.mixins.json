@@ -8,7 +8,8 @@
       "doctor_m.AbstractClientPlayerEntityMixin",
       "doctor_m.MixinTitleScreenBackground",
       "doctor_m.ScytheFirstPersonMixin",
-      "doctor_m.SonicSettingsScreenMixin"
+      "doctor_m.SonicSettingsScreenMixin",
+      "doctor_m.ParticleManagerMixin"
     ],
 	"injectors": {
 		"defaultRequire": 1
