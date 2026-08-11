@@ -1,20 +1,20 @@
 package doctor_m.client.render;
 
+import dev.amble.ait.AITMod;
+import dev.amble.ait.client.models.decoration.TardisStarModel;
+import dev.amble.ait.client.renderers.AITRenderLayers;
 import doctor_m.block.entities.EyeOfHarmonyObeliskBlockEntity;
 import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.LightmapTextureManager;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.random.Random;
-
 import org.joml.Matrix4f;
-
-import dev.amble.ait.AITMod;
-import dev.amble.ait.client.models.decoration.TardisStarModel;
-import dev.amble.ait.client.renderers.AITRenderLayers;
 
 public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRenderer<EyeOfHarmonyObeliskBlockEntity> {
 

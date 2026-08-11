@@ -10,7 +10,6 @@ import net.minecraft.client.gui.widget.CheckboxWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 
 public class EyeOfHarmonyObeliskScreen extends Screen {
 
@@ -25,12 +24,11 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
     private static final float MIN_SCALE = 0.1f;
     private static final float MAX_SCALE = 5.0f;
 
-    // 面板尺寸
     private static final int PANEL_WIDTH = 280;
     private static final int PANEL_HEIGHT = 220;
 
     public EyeOfHarmonyObeliskScreen(EyeOfHarmonyObeliskBlockEntity blockEntity) {
-        super(Text.literal("Eye of Harmony Obelisk"));
+        super(Text.translatable("gui.doctor_m.obelisk.title"));
         this.blockEntity = blockEntity;
         this.currentYOffset = Math.round(blockEntity.getYOffset());
         this.currentScale = blockEntity.getScale();
@@ -45,21 +43,17 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
         int contentX = panelX + 20;
         int contentY = panelY + 35;
 
-        // ===== 标题分隔线 =====
-        // Y 偏移滑块
         double ySliderValue = (double) (currentYOffset - MIN_Y) / (MAX_Y - MIN_Y);
         SliderWidget ySlider = new SliderWidget(
-                contentX, contentY,
-                240, 18,
-                Text.literal("Y Offset: " + currentYOffset),
+                contentX, contentY, 240, 18,
+                Text.translatable("gui.doctor_m.obelisk.y_offset", currentYOffset),
                 ySliderValue
         ) {
             @Override
             protected void updateMessage() {
                 int actual = Math.round((float) (MIN_Y + this.value * (MAX_Y - MIN_Y)));
-                setMessage(Text.literal("§7Y Offset: §f" + actual));
+                setMessage(Text.translatable("gui.doctor_m.obelisk.y_offset", actual));
             }
-
             @Override
             protected void applyValue() {
                 currentYOffset = Math.round((float) (MIN_Y + this.value * (MAX_Y - MIN_Y)));
@@ -68,21 +62,18 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
             }
         };
 
-        // 体积缩放滑块
         double scaleSliderValue = (double) (currentScale - MIN_SCALE) / (MAX_SCALE - MIN_SCALE);
         SliderWidget scaleSlider = new SliderWidget(
-                contentX, contentY + 28,
-                240, 18,
-                Text.literal("Scale: " + String.format("%.1f", currentScale) + "x"),
+                contentX, contentY + 28, 240, 18,
+                Text.translatable("gui.doctor_m.obelisk.scale", String.format("%.1f", currentScale)),
                 scaleSliderValue
         ) {
             @Override
             protected void updateMessage() {
                 float actual = (float) (MIN_SCALE + this.value * (MAX_SCALE - MIN_SCALE));
                 actual = Math.round(actual * 10.0f) / 10.0f;
-                setMessage(Text.literal("§7Scale: §f" + String.format("%.1f", actual) + "x"));
+                setMessage(Text.translatable("gui.doctor_m.obelisk.scale", String.format("%.1f", actual)));
             }
-
             @Override
             protected void applyValue() {
                 currentScale = (float) (MIN_SCALE + this.value * (MAX_SCALE - MIN_SCALE));
@@ -92,11 +83,9 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
             }
         };
 
-        // 和谐之眼显隐
         CheckboxWidget eyeToggle = new CheckboxWidget(
-                contentX, contentY + 56,
-                240, 18,
-                Text.literal("Render Eye of Harmony"),
+                contentX, contentY + 56, 240, 18,
+                Text.translatable("gui.doctor_m.obelisk.render_eye"),
                 currentEyeVisible
         ) {
             @Override
@@ -108,11 +97,9 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
             }
         };
 
-        // 红石模式
         CheckboxWidget redstoneToggle = new CheckboxWidget(
-                contentX, contentY + 80,
-                240, 18,
-                Text.literal("Redstone Control"),
+                contentX, contentY + 80, 240, 18,
+                Text.translatable("gui.doctor_m.obelisk.redstone_control"),
                 currentRedstoneMode
         ) {
             @Override
@@ -124,9 +111,10 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
             }
         };
 
-        // 完成按钮
-        ButtonWidget doneButton = ButtonWidget.builder(Text.literal("Done"), button -> this.close())
-                .dimensions(panelX + PANEL_WIDTH / 2 - 40, panelY + PANEL_HEIGHT - 30, 80, 20).build();
+        ButtonWidget doneButton = ButtonWidget.builder(
+                Text.translatable("gui.doctor_m.obelisk.done"),
+                button -> this.close()
+        ).dimensions(panelX + PANEL_WIDTH / 2 - 40, panelY + PANEL_HEIGHT - 30, 80, 20).build();
 
         addDrawableChild(ySlider);
         addDrawableChild(scaleSlider);
@@ -150,33 +138,28 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        // 不调用 renderBackground，自己画深色背景
         int panelX = (this.width - PANEL_WIDTH) / 2;
         int panelY = (this.height - PANEL_HEIGHT) / 2;
 
-        // 背景遮罩（半透明黑）
         context.fill(0, 0, this.width, this.height, 0xCC000000);
-
-        // 主面板背景（深紫黑）
         context.fill(panelX, panelY, panelX + PANEL_WIDTH, panelY + PANEL_HEIGHT, 0xFF1A0A2E);
-
-        // 面板边框（金色）
         context.drawBorder(panelX, panelY, PANEL_WIDTH, PANEL_HEIGHT, 0xFFFFD700);
 
-        // 标题
-        String title = "Eye of Harmony Obelisk";
+        String title = Text.translatable("gui.doctor_m.obelisk.title").getString();
         int titleWidth = this.textRenderer.getWidth(title);
-        context.drawTextWithShadow(this.textRenderer, Text.literal(title).formatted(Formatting.GOLD),
+        context.drawTextWithShadow(this.textRenderer,
+                Text.literal(title).formatted(Formatting.GOLD),
                 panelX + (PANEL_WIDTH - titleWidth) / 2, panelY + 10, 0xFFD700);
 
-        // 标题下划线
         context.fill(panelX + 20, panelY + 24, panelX + PANEL_WIDTH - 20, panelY + 25, 0xFFFFD700);
 
-        // 状态显示
-        String status = blockEntity.isActive() ? "§aACTIVE" : "§cINACTIVE";
-        int statusWidth = this.textRenderer.getWidth("Status: " + Formatting.strip(status));
-        context.drawTextWithShadow(this.textRenderer,
-                Text.literal("Status: " + status),
+        String statusKey = blockEntity.isActive()
+                ? "gui.doctor_m.obelisk.active"
+                : "gui.doctor_m.obelisk.inactive";
+        Text statusText = Text.translatable("gui.doctor_m.obelisk.status",
+                Text.translatable(statusKey));
+        int statusWidth = this.textRenderer.getWidth(statusText);
+        context.drawTextWithShadow(this.textRenderer, statusText,
                 panelX + (PANEL_WIDTH - statusWidth) / 2, panelY + PANEL_HEIGHT - 50, 0xFFFFFF);
 
         super.render(context, mouseX, mouseY, delta);

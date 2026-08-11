@@ -72,6 +72,15 @@
   "gui.doctor_m.tracer.sonic_screen_title": "§d§lTime Key Tracker",
   "gui.doctor_m.tracer.sonic_screen_status": "§7Temporal tracking active",
   "gui.doctor_m.tracer.sonic_screen_hint": "§8Use telepathic circuit to locate fragments",
+  "gui.doctor_m.obelisk.title": "Eye of Harmony Obelisk",
+  "gui.doctor_m.obelisk.y_offset": "Y Offset: %s",
+  "gui.doctor_m.obelisk.scale": "Scale: %sx",
+  "gui.doctor_m.obelisk.render_eye": "Render Eye of Harmony",
+  "gui.doctor_m.obelisk.redstone_control": "Redstone Control",
+  "gui.doctor_m.obelisk.done": "Done",
+  "gui.doctor_m.obelisk.status": "Status: %s",
+  "gui.doctor_m.obelisk.active": "ACTIVE",
+  "gui.doctor_m.obelisk.inactive": "INACTIVE",
 
   "itemGroup.doctor_m": "DOCTOR M",
   "item.doctor_m.rassilon_key": "Key of Rassilon",
@@ -99,6 +108,7 @@
 
   "block.doctor_m.oxygen_charger": "Oxygen Recharger",
   "block.doctor_m.underwater_oxygen_generator": "Underwater Oxygen Generator",
+  "block.doctor_m.eye_of_harmony_obelisk": "Eye of Harmony Obelisk",
 
   "entity.doctor_m.marian_jin": "Marian.Jin",
   "entity.doctor_m.103_tardis.name.default": "Type 103 TARDIS",
@@ -433,6 +443,8 @@
   "message.doctor_m.underwater_oxygen_generator.suit_full": "Spacesuit oxygen is full.",
   "message.doctor_m.underwater_oxygen_generator.invalid_item": "Cannot fill oxygen for this item.",
   "message.doctor_m.underwater_oxygen_generator": "§7An oxygen generator, originally designed for underwater environments, producing oxygen through electrolysis of water (H2O).*Underwater, it supplies oxygen within a certain radius; outside of water, it can be manually refilled with water to generate oxygen.",
+  "message.doctor_m.obelisk.no_space": "Not enough space to place the Eye of Harmony Obelisk!",
+  "message.tooltip.doctor_m.eye_of_harmony_obelisk": "Provides infinite Artron energy and continuously charges surrounding Artron energy chunks. *Hold a Sonic Screwdriver and right-click the middle part of the obelisk to open the UI.",
 
   "dimension.minecraft.overworld": "Earth",
   "dimension.minecraft.the_end": "The End",

@@ -72,6 +72,15 @@
   "gui.doctor_m.tracer.sonic_screen_title": "§d§l时间之钥追踪器",
   "gui.doctor_m.tracer.sonic_screen_status": "§7时序追踪已激活",
   "gui.doctor_m.tracer.sonic_screen_hint": "§8使用心灵感应电路定位碎片",
+  "gui.doctor_m.obelisk.title": "和谐之眼方尖碑",
+  "gui.doctor_m.obelisk.y_offset": "Y轴偏移: %s",
+  "gui.doctor_m.obelisk.scale": "缩放: %sx",
+  "gui.doctor_m.obelisk.render_eye": "渲染和谐之眼",
+  "gui.doctor_m.obelisk.redstone_control": "红石控制",
+  "gui.doctor_m.obelisk.done": "完成",
+  "gui.doctor_m.obelisk.status": "状态: %s",
+  "gui.doctor_m.obelisk.active": "运行中",
+  "gui.doctor_m.obelisk.inactive": "已停止",
 
   "itemGroup.doctor_m": "DOCTOR M",
   "item.doctor_m.rassilon_key": "拉斯隆之钥",
@@ -99,6 +108,7 @@
 
   "block.doctor_m.oxygen_charger": "氧气补充机",
   "block.doctor_m.underwater_oxygen_generator": "水下制氧机",
+  "block.doctor_m.eye_of_harmony_obelisk": "和谐之眼方尖碑",
 
   "entity.doctor_m.marian_jin": "玛丽安.谨",
   "entity.doctor_m.103_tardis.name.default": "103型塔迪斯",
@@ -433,6 +443,8 @@
   "message.doctor_m.underwater_oxygen_generator.suit_full": "宇航服氧气已满",
   "message.doctor_m.underwater_oxygen_generator.invalid_item": "无法为此物品充氧",
   "message.doctor_m.underwater_oxygen_generator": "§7一台制氧机，初为水下环境设计，通过电解水(H2O)制取氧气*水下可在一定范围内供氧，非水下环境可通过手动加入水进行制氧",
+  "message.doctor_m.obelisk.no_space": "空间不足，无法放置和谐之眼方尖碑！",
+  "message.tooltip.doctor_m.eye_of_harmony_obelisk": "提供无限的阿特隆能量，并持续为周围的阿特隆能量区块充能。*手持音速起子右键方尖碑中间部分可打开UI",
 
   "dimension.minecraft.overworld": "地球",
   "dimension.minecraft.the_end": "末路之地",
