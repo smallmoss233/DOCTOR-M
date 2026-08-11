@@ -81,6 +81,9 @@
   "gui.doctor_m.obelisk.status": "狀態: %s",
   "gui.doctor_m.obelisk.active": "運行中",
   "gui.doctor_m.obelisk.inactive": "已停止",
+  "gui.doctor_m.obelisk.gallifrey": "伽里弗雷",
+  "gui.doctor_m.obelisk.eye_of_harmony": "和諧之眼",
+  "gui.doctor_m.obelisk.energy": "%s / %s 阿特隆能量 (%s%%)",
 
   "itemGroup.doctor_m": "DOCTOR M",
   "item.doctor_m.rassilon_key": "拉斯隆之鑰",

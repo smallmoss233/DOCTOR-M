@@ -160,7 +160,16 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
             BlockPos current = queue.poll();
             BlockEntity currentBE = world.getBlockEntity(current);
 
-            // 如果当前节点是 IFluidLink，尝试向它的 source() 传输
+            // 【新增】1. 如果当前节点自身是 IFluidSource 且不是自己，直接传输
+            if (currentBE instanceof IFluidSource && currentBE != this) {
+                IFluidSource source = (IFluidSource) currentBE;
+                if (!isTargetFull(source)) {
+                    transferToTarget(source);
+                    if (artronAmount <= 0) return;
+                }
+            }
+
+            // 2. 如果当前节点是 IFluidLink，尝试通过它的 source() 获取目标
             if (currentBE instanceof IFluidLink link) {
                 IFluidSource target = link.source(true);
                 if (target != null && target != this && !isTargetFull(target)) {
@@ -169,13 +178,11 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
                 }
             }
 
-            // 继续遍历邻居（辅助方块和线缆）
             for (Direction dir : Direction.values()) {
                 BlockPos neighbor = current.offset(dir);
                 if (visited.contains(neighbor)) continue;
 
                 BlockEntity neighborBE = world.getBlockEntity(neighbor);
-                // 只有 IFluidLink 才继续遍历
                 if (neighborBE instanceof IFluidLink) {
                     visited.add(neighbor);
                     queue.add(neighbor);

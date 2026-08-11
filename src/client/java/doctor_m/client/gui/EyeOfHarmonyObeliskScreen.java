@@ -3,7 +3,6 @@ package doctor_m.client.gui;
 import doctor_m.block.entities.EyeOfHarmonyObeliskBlockEntity;
 import doctor_m.network.UpdateObeliskPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -34,7 +33,6 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
     private static final int COLOR_GOLD_DIM      = 0xFF8B6914; // 暗金
     private static final int COLOR_GLOW          = 0xFFFFD700; // 发光金
     private static final int COLOR_TEXT          = 0xFFFFF0E0; // 象牙白
-    private static final int COLOR_TEXT_DIM      = 0xFFAA9988; // 暗象牙
     private static final int COLOR_RUNE          = 0xFF6B4226; // 符文棕
     private static final int COLOR_CARD_BG       = 0xFF0D0408; // 深红卡片
     private static final int COLOR_CARD_BORDER   = 0xFF5C3A1E; // 暗金边框
@@ -157,9 +155,9 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
         // 内层金线
         ctx.drawBorder(panelX + 2, panelY + 2, PANEL_WIDTH - 4, PANEL_HEIGHT - 4, COLOR_GOLD_DIM);
 
-        // ========== 顶部装饰：RASSILON 字样 + 符文 ==========
+        // ========== 顶部装饰==========
         ctx.drawCenteredTextWithShadow(this.textRenderer,
-                Text.literal("RASSILON").formatted(Formatting.GOLD),
+                Text.translatable("gui.doctor_m.obelisk.gallifrey").formatted(Formatting.GOLD),
                 panelX + PANEL_WIDTH / 2, panelY + 6, COLOR_GOLD_DIM);
 
         // 主标题
@@ -184,7 +182,7 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
 
         // 小标签
         ctx.drawTextWithShadow(this.textRenderer,
-                Text.literal("EYE OF HARMONY").formatted(Formatting.GOLD),
+                Text.translatable("gui.doctor_m.obelisk.eye_of_harmony").formatted(Formatting.GOLD),
                 cardX + 10, cardY + 6, COLOR_GOLD_DIM);
 
         // 能量条
@@ -201,14 +199,13 @@ public class EyeOfHarmonyObeliskScreen extends Screen {
             ctx.fill(barX + 1, barY + 1, barX + filledWidth - 1, barY + 3, 0xFFFFD700);
         }
 
-        String energyText = String.format("%.0f / %.0f AU (%.0f%%)",
-                blockEntity.getCurrentFuel(),
-                blockEntity.getMaxFuel(),
-                percentage * 100);
+        // 能量条文字
+        Text energyText = Text.translatable("gui.doctor_m.obelisk.energy",
+                String.format("%.0f", blockEntity.getCurrentFuel()),
+                String.format("%.0f", blockEntity.getMaxFuel()),
+                String.format("%.0f", percentage * 100)).formatted(Formatting.WHITE);
         int textX = panelX + (PANEL_WIDTH - textRenderer.getWidth(energyText)) / 2;
-        ctx.drawTextWithShadow(this.textRenderer,
-                Text.literal(energyText).formatted(Formatting.WHITE),
-                textX, barY + 12, COLOR_TEXT);
+        ctx.drawTextWithShadow(this.textRenderer, energyText, textX, barY + 12, COLOR_TEXT);
 
         // ========== 状态区 ==========
         int statusY = panelY + PANEL_HEIGHT - 58;

@@ -81,6 +81,9 @@
   "gui.doctor_m.obelisk.status": "Status: %s",
   "gui.doctor_m.obelisk.active": "ACTIVE",
   "gui.doctor_m.obelisk.inactive": "INACTIVE",
+  "gui.doctor_m.obelisk.gallifrey": "GALLILON",
+  "gui.doctor_m.obelisk.eye_of_harmony": "EYE OF HARMONY",
+  "gui.doctor_m.obelisk.energy": "%s / %s AU (%s%%)",
 
   "itemGroup.doctor_m": "DOCTOR M",
   "item.doctor_m.rassilon_key": "Key of Rassilon",
