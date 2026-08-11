@@ -16,6 +16,8 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
@@ -106,15 +108,14 @@ public class EyeOfHarmonyObeliskBlock extends BlockWithEntity implements IFluidL
         return SHAPE;
     }
 
-    // ← 修改：只有手持音速起子才能打开 GUI
+    // 只有手持音速起子才能打开 GUI
     @SuppressWarnings("deprecation")
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         ItemStack held = player.getStackInHand(hand);
 
-        // 必须手持 SonicItem 才能打开
         if (!(held.getItem() instanceof SonicItem)) {
-            return ActionResult.PASS; // 不消耗交互，让其他逻辑继续
+            return ActionResult.PASS;
         }
 
         if (world.isClient && OPEN_SCREEN_CALLBACK != null) {
@@ -157,6 +158,10 @@ public class EyeOfHarmonyObeliskBlock extends BlockWithEntity implements IFluidL
         world.setBlockState(targetPos, state);
         world.setBlockState(up, ModBlocks.EYE_OF_HARMONY_PART.getDefaultState());
 
+        // 放置音效：信标充能音
+        world.playSound(null, targetPos, SoundEvents.BLOCK_BEACON_POWER_SELECT,
+                SoundCategory.BLOCKS, 1.0f, 0.7f);
+
         FluidNetwork.rebuildAround((ServerWorld) world, targetPos);
     }
 
@@ -168,6 +173,12 @@ public class EyeOfHarmonyObeliskBlock extends BlockWithEntity implements IFluidL
         }
 
         if (!state.isOf(newState.getBlock())) {
+            // 破坏音效：信标关闭音
+            if (!world.isClient()) {
+                world.playSound(null, pos, SoundEvents.BLOCK_BEACON_DEACTIVATE,
+                        SoundCategory.BLOCKS, 1.0f, 0.8f);
+            }
+
             if (!world.isClient()) {
                 FluidNetwork.rebuildAround((ServerWorld) world, pos);
             }

@@ -12,6 +12,8 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 
@@ -47,9 +49,21 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
 
     public boolean isActive() { return active; }
     public void setActive(boolean active) {
+        boolean wasActive = this.active;
         this.active = active;
         markDirty();
         sync();
+
+        // 激活/关闭时播放一次性音效
+        if (world != null && !world.isClient) {
+            if (!wasActive && active) {
+                world.playSound(null, pos, SoundEvents.BLOCK_BEACON_ACTIVATE,
+                        SoundCategory.BLOCKS, 1.0f, 0.8f);
+            } else if (wasActive && !active) {
+                world.playSound(null, pos, SoundEvents.BLOCK_BEACON_DEACTIVATE,
+                        SoundCategory.BLOCKS, 1.0f, 0.8f);
+            }
+        }
     }
 
     public boolean isEyeVisible() { return eyeVisible; }
@@ -61,7 +75,6 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
 
     public boolean isRedstoneMode() { return redstoneMode; }
 
-    // ← 修复1：退出红石模式时恢复常态开启
     public void setRedstoneMode(boolean redstoneMode) {
         this.redstoneMode = redstoneMode;
         if (world != null && !world.isClient) {
@@ -75,7 +88,6 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
         sync();
     }
 
-    // ← 修复2：统一红石状态更新，检测自身+上下辅助方块的红石信号
     public void updateRedstoneState() {
         if (!redstoneMode || world == null || world.isClient) return;
         int power = getMaxRedstonePower();
@@ -86,18 +98,25 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
     }
 
     private int getMaxRedstonePower() {
-        int p1 = world.getReceivedRedstonePower(pos);       // 主方块
-        int p2 = world.getReceivedRedstonePower(pos.up());  // 上方辅助
-        int p3 = world.getReceivedRedstonePower(pos.down());// 下方辅助
+        int p1 = world.getReceivedRedstonePower(pos);
+        int p2 = world.getReceivedRedstonePower(pos.up());
+        int p3 = world.getReceivedRedstonePower(pos.down());
         return Math.max(p1, Math.max(p2, p3));
     }
 
-    // ← 修复3：tick 里调用统一方法
     public void tick() {
         if (world == null || world.isClient) return;
+
         if (redstoneMode) {
             updateRedstoneState();
         }
+
+        // 工作中定期播放信标环境音
+        if (active && world.getTime() % 70 == 0) {
+            world.playSound(null, pos, SoundEvents.BLOCK_BEACON_AMBIENT,
+                    SoundCategory.BLOCKS, 0.6f, 0.9f);
+        }
+
         if (!active) return;
 
         tickCounter++;
@@ -117,7 +136,7 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
         }
     }
 
-    // IFluidSource / ArtronHolder（不变）
+    // IFluidSource / ArtronHolder
     @Override public double level() { return Double.MAX_VALUE / 2; }
     @Override public void setLevel(double level) {}
     @Override public double maxLevel() { return Double.MAX_VALUE / 2; }
