@@ -3,6 +3,7 @@ package doctor_m.client.render;
 import dev.amble.ait.AITMod;
 import dev.amble.ait.client.models.decoration.TardisStarModel;
 import dev.amble.ait.client.renderers.AITRenderLayers;
+import doctor_m.DOCTORM;
 import doctor_m.block.entities.EyeOfHarmonyObeliskBlockEntity;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.LightmapTextureManager;
@@ -20,6 +21,8 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
 
     public static final Identifier TARDIS_STAR_TEXTURE = new Identifier(AITMod.MOD_ID,
             "textures/environment/eye_of_harmony.png");
+    public static final Identifier CORE_TEXTURE = new Identifier(DOCTORM.MOD_ID,
+            "textures/environment/eye_of_harmony_core.png");
 
     private static final float HALF_SQRT_3 = (float) (Math.sqrt(3.0) / 2.0);
     private static ModelPart starModelCache = null;
@@ -52,25 +55,32 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
 
     private void renderStar(EyeOfHarmonyObeliskBlockEntity entity, float delta, float scale, MatrixStack matrices,
                             VertexConsumerProvider vertexConsumers, int overlay) {
-        matrices.push();
-        matrices.scale(40f * scale, 40f * scale, 40f * scale);
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(delta));
-
         if (starModelCache == null) {
             starModelCache = TardisStarModel.getTexturedModelData().createModel();
         }
+
+        // ========== 外壳层：eye_of_harmony.png ==========
+        matrices.push();
+        matrices.scale(40f * scale, 40f * scale, 40f * scale);
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(delta));
 
         starModelCache.render(matrices,
                 vertexConsumers.getBuffer(AITRenderLayers.tardisEmissiveCullZOffset(TARDIS_STAR_TEXTURE, true)),
                 LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay,
                 1.0f, 1.0f, 1.0f, 0.5f);
+        matrices.pop();
 
-        matrices.scale(0.9f, 0.9f, 0.9f);
+        // ========== 核心层：eye_of_harmony_core.png ==========
+        matrices.push();
+        matrices.scale(33f * scale, 33f * scale, 33f * scale);
+        matrices.translate(0, 0.1, 0);//核心渲染位置偏移
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(delta));
+
+        // 亮金色、更实
         starModelCache.render(matrices,
-                vertexConsumers.getBuffer(AITRenderLayers.tardisEmissiveCullZOffset(TARDIS_STAR_TEXTURE, true)),
+                vertexConsumers.getBuffer(AITRenderLayers.tardisEmissiveCullZOffset(CORE_TEXTURE, true)),
                 LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay,
-                1.0f, 1.0f, 1.0f, 1.0f);
-
+                1.0f, 0.85f, 0.3f, 0.85f);
         matrices.pop();
     }
 
@@ -81,7 +91,7 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
         float sinFunc = (float) Math.sin(delta * 0.05f + 0.2f) * 0.2f;
         float shineScale = 8f * scale;
         matrices.scale(shineScale + sinFunc, shineScale + sinFunc, shineScale + sinFunc);
-
+        matrices.translate(0, 1, 0);//光束渲染位置偏移
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-delta));
 
         float l = (delta % 50120f) / 50120f;
