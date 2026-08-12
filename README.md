@@ -23,38 +23,40 @@ DOCTOR M isn't just about making your journey more entertaining—it's about mak
 
 ---
 
-**Compatibility**
+### **Compatibility**
 
 DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom interiors use blocks from the following mods, so besides AIT, it is recommended to install them as well:
 
-[**AIT Extras**](https://modrinth.com/mod/ait-extras) – The Cloister need content from this mod.
+* [**AIT Extras**](https://modrinth.com/mod/ait-extras) – The Cloister need content from this mod.(Version is below 1.1.0, because 1.1.0 doesn't have the new blocks.)
 
-[**Create**](https://modrinth.com/mod/create-fabric) – **Permanence**  need content from this mod.
+* [**Create**](https://modrinth.com/mod/create-fabric) – **Permanence**  need content from this mod.
 
-[**Tough as nails**](https://modrinth.com/mod/tough-as-nails) - AIT's spacesuit will provide warmth.
-
----
-
-**Credits for Custom Content**
-
-*永恒之眼(Evereye) interior & exterior , 玛丽.谨(Mary.Jin) Sonic Screwdriver , 守望(Watcher) interior & console texture, 恶疯(Madness) interior & exterior, 回廊(Cloister) , 恒朽(Permanence) , 古图书馆(Ancient Library) , 永恒之钟(Eternal Bell) interior*: [Smallmoss](https://modrinth.com/user/SmallMoss)
-
-*守望(Watcher) console texture*: [白桦下的赤俄(Kilin_Mus)](https://modrinth.com/user/Kilin_Mus)
-
-*霓虹(Rainbow), 烈火(Fire) , 泽顿水晶(Crystalline Zeiton) , 幻方(Magic Square) , 浪漫(Romantic)interiors*: 名游茶
-
-*斯格(Sig) interior*: [斯格尔特(Sigeerte)](https://modrinth.com/user/Sigeerte)
-
-*时隙(Rift) interior*: [TC020](https://modrinth.com/user/TC020)
-
-*Redstone Torch Sonic Screwdriver author*: 慢跑者
-
-*Partial item models*：[Tsinafs-Bcim](https://modrinth.com/user/Tsinafs-Bcim)
-
-*Partial achievement text and item tooltip text*：斯格尔特(Sigeerte), [asdjdfk](https://modrinth.com/user/asdjdfk), T天玄X
+* [**Tough as nails**](https://modrinth.com/mod/tough-as-nails) - AIT's spacesuit will provide warmth.
 
 ---
 
-**Modpack Distribution**
+### **Credits for Custom Content**
 
-You may include the DOCTOR M mod in your modpack, but please be sure to credit the source. Its interiors may not be ported to other mods or redistributed without permission.
+* *永恒之眼(Evereye) interior & exterior , 玛丽.谨(Mary.Jin) Sonic Screwdriver , 守望(Watcher) interior & console texture, 恶疯(Madness) interior & exterior, 回廊(Cloister) , 恒朽(Permanence) , 古图书馆(Ancient Library) , 永恒之钟(Eternal Bell) interior*: [Smallmoss](https://modrinth.com/user/SmallMoss)
+
+* *守望(Watcher) console texture*: [白桦下的赤俄(Kilin_Mus)](https://modrinth.com/user/Kilin_Mus)
+
+* *霓虹(Rainbow), 烈火(Fire) , 泽顿水晶(Crystalline Zeiton) , 幻方(Magic Square) , 浪漫(Romantic)interiors*: 名游茶
+
+* *斯格(Sig) interior*: [斯格尔特(Sigeerte)](https://modrinth.com/user/Sigeerte)
+
+* *时隙(Rift) interior*: [TC020](https://modrinth.com/user/TC020)
+
+* *Redstone Torch Sonic Screwdriver author*: 慢跑者
+
+* *Partial item models*：[Tsinafs-Bcim](https://modrinth.com/user/Tsinafs-Bcim)
+
+* *Partial achievement text and item tooltip text*：斯格尔特(Sigeerte), [asdjdfk](https://modrinth.com/user/asdjdfk), T天玄X
+
+### Also, special thanks to [AmbleLabs](https://amblelabs.dev/) for creating AIT.
+
+---
+
+### **Modpack Distribution**
+
+* ### You may include the DOCTOR M mod in your modpack, but please be sure to credit the source. Its interiors may not be ported to other mods or redistributed without permission.
