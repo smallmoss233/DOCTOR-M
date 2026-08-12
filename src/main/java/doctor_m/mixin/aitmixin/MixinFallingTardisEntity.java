@@ -1,8 +1,10 @@
 package doctor_m.mixin.aitmixin;
 
+import dev.amble.ait.core.blockentities.ExteriorBlockEntity;
 import dev.amble.ait.core.entities.FallingTardisEntity;
 import dev.amble.ait.core.tardis.ServerTardis;
 import dev.amble.ait.core.tardis.Tardis;
+import dev.amble.ait.core.tardis.handler.travel.TravelHandlerBase;
 import dev.drtheo.scheduler.api.TimeUnit;
 import dev.drtheo.scheduler.api.common.Scheduler;
 import dev.drtheo.scheduler.api.common.TaskStage;
@@ -16,6 +18,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -61,7 +64,7 @@ public class MixinFallingTardisEntity {
                 SoundCategory.BLOCKS
         );
         for (ServerPlayerEntity player : ((ServerWorld) world).getPlayers()) {
-            if (player.squaredDistanceTo(self) < 256.0) { // 16格内
+            if (player.squaredDistanceTo(self) < 256.0) {
                 player.networkHandler.sendPacket(stopPacket);
             }
         }
@@ -76,6 +79,34 @@ public class MixinFallingTardisEntity {
             }
             this.aitmixin$forcedChunkPos = null;
         }
+    }
+
+    // ==================== 下落开始时：保存锁状态并强制关门上锁 ====================
+    @Inject(method = "spawnFromBlock", at = @At("HEAD"))
+    private static void aitmixin$saveAndLockDoorsOnFall(World world, BlockPos pos, BlockState state, CallbackInfo ci) {
+        if (!(world.getBlockEntity(pos) instanceof ExteriorBlockEntity exterior))
+            return;
+        if (exterior.tardis().isEmpty())
+            return;
+
+        Tardis tardis = exterior.tardis().get();
+        // 保存当前锁状态（locked() 返回 boolean，直接用）
+        tardis.door().previouslyLocked().set(tardis.door().locked());
+        // 强制关门并上锁，forced=true 防止 interactLock 覆盖 previouslyLocked
+        tardis.door().closeDoors();
+        tardis.door().interactLock(true, null, true);
+    }
+
+    // ==================== 落地后：恢复之前保存的锁状态 ====================
+    @Inject(method = "stopFalling", at = @At("TAIL"))
+    private void aitmixin$restoreDoorsOnLand(boolean antigravs, CallbackInfo ci) {
+        FallingTardisEntity self = (FallingTardisEntity) (Object) this;
+        if (!self.isLinked() || self.tardis().isEmpty())
+            return;
+
+        Tardis tardis = self.tardis().get();
+        // forced=true 直接恢复，不覆盖 previouslyLocked，也不受 DEMAT/MAT 状态限制
+        tardis.door().interactLock(tardis.door().previouslyLocked().get(), null, true);
     }
 
     // ==================== 再入火焰粒子 + 呼啸（高速下坠时）====================
@@ -128,14 +159,12 @@ public class MixinFallingTardisEntity {
                     1, 0.5, 0.5, 0.5, 0.1);
         }
 
-        // 短促呼啸：间隔 20 tick，音量适中
         if (fallDistance > 60.0 && entity.timeFalling % 20 == 0) {
             float howlVolume = (float) Math.min((fallDistance - 60.0) / 60.0, 1.0) * 1.5f;
             sw.playSound(null, pos.x, pos.y, pos.z,
                     SoundEvents.ITEM_ELYTRA_FLYING, SoundCategory.BLOCKS,
                     howlVolume, 0.7f);
         }
-        // 超高空沉闷轰鸣
         if (fallDistance > 90.0 && entity.timeFalling % 30 == 0) {
             sw.playSound(null, pos.x, pos.y, pos.z,
                     SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.BLOCKS,
@@ -219,12 +248,10 @@ public class MixinFallingTardisEntity {
 
         // ===== 火焰熄灭效果（外壳冒火时）=====
         if (fallDistance > 60.0) {
-            // 立即播放熄灭声
             sw.playSound(null, pos.x, pos.y, pos.z,
                     SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS,
                     1.2f, 1.0f);
 
-            // 2秒内每5tick间歇冒出残余火焰和烟雾（共8次）
             for (int i = 1; i <= 8; i++) {
                 final int delay = i * 5;
                 Scheduler.get().runTaskLater(() -> {
