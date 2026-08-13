@@ -32,6 +32,7 @@
     "doctor_m.PlanetRegistryMixin",
     "doctor_m.SonicPortControlMixin",
     "doctor_m.TelepathicControlMixin",
+    "doctor_m.PlayerEntityMixin",
     "sonic_mode.InteractionSonicModeMixin",
     "sonic_mode.OverloadSonicModeMixin",
     "sonic_mode.ScanningSonicModeMixin",

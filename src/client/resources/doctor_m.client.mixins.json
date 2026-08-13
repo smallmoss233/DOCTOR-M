@@ -9,7 +9,10 @@
       "doctor_m.MixinTitleScreenBackground",
       "doctor_m.ScytheFirstPersonMixin",
       "doctor_m.SonicSettingsScreenMixin",
-      "doctor_m.ParticleManagerMixin"
+      "doctor_m.ParticleManagerMixin",
+      "title.LivingEntityRendererMixin",
+      "title.PlayerListHudMixin",
+      "title.ChatHudMixin"
     ],
 	"injectors": {
 		"defaultRequire": 1

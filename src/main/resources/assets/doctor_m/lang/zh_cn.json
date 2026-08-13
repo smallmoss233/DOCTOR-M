@@ -84,6 +84,11 @@
   "gui.doctor_m.obelisk.gallifrey": "伽理弗雷",
   "gui.doctor_m.obelisk.eye_of_harmony": "和谐之眼",
   "gui.doctor_m.obelisk.energy": "%s / %s 阿特隆能量 (%s%%)",
+  "gui.doctor_m.title.label": "称号：",
+  "gui.doctor_m.title.placeholder": "输入称号...",
+  "gui.doctor_m.title.save": "保存称号",
+
+  "title.doctor_m.apprentice_reaper": "§c见习死神",
 
   "itemGroup.doctor_m": "DOCTOR M",
   "item.doctor_m.rassilon_key": "拉斯隆之钥",

@@ -59,6 +59,7 @@ public class DOCTORM implements ModInitializer {
         TimeKeyNetwork.register();
         TimeKeyActiveNetwork.register();
         DeMatGunNetwork.registerServerReceiver();
+        TitleNetwork.register();
         UpdateObeliskPacket.registerServerReceiver();
 
         TimeKeyFunction.INSTANCE.register();

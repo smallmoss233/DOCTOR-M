@@ -16,6 +16,7 @@ import doctor_m.client.network.DeMatGunClientNetwork;
 import doctor_m.client.network.TimeKeyTeleportClient;
 import doctor_m.client.render.EyeOfHarmonyObeliskBlockEntityRenderer;
 import doctor_m.client.render.VMTrinketRenderer;
+import doctor_m.client.util.id.PlayerTitleCache;
 import doctor_m.entities.Entities;
 import doctor_m.util.VMClientScreenOpener;
 import net.fabricmc.api.ClientModInitializer;
@@ -65,6 +66,7 @@ public class DOCTORMClient implements ClientModInitializer {
         VMTrinketRenderer.register();
         HudRenderCallback.EVENT.register(new ShieldOverlay());
         AITMixinClientNetworking.init();
+        PlayerTitleCache.register();
 
         EntityRendererRegistry.register(Entities.TYPE_103_TARDIS, Type103Renderer::new);
         EntityRendererRegistry.register(Entities.MARIAN_JIN, MarianJinRenderer::new);
