@@ -20,8 +20,8 @@ public class TimelordRegenCompat {
     static {
         if (LOADED) {
             try {
-                capableClass = Class.forName("dev.amble.timelordregen.api.RegenerationCapable");
-                infoClass    = Class.forName("dev.amble.timelordregen.api.RegenerationInfo");
+                capableClass = Class.forName("dev.amble.ars.api.RegenerationCapable");
+                infoClass    = Class.forName("dev.amble.ars.core.RegenerationCore");
 
                 isTimelordMethod      = capableClass.getMethod("isTimelord");
                 getInfoMethod         = capableClass.getMethod("getRegenerationInfo");
