@@ -21,7 +21,9 @@ public final class GlowConditionChecker {
     public static final int COLOR_GREEN = 0x55FF55;
     public static final int COLOR_RED   = 0xFF5555;
 
-    private GlowConditionChecker() {}
+    private GlowConditionChecker() {
+
+    }
 
     /* ============================================================
        公开 API（原有）

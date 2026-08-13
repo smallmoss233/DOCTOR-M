@@ -213,20 +213,18 @@ public class LivingEntityMixin {
         }
     }
 
-    // ========== STCS 剑封锁（潜行触发） ==========
+    // ========== STCS 剑封锁（潜行触发 + 动态能耗 + 武器差异化） ==========
 
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
     private void doctor_m$stcsBlock(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (STCS_BLOCK_LOCK.get()) return;
-        if (STCS_AOE_LOCK.get()) return; // 防止 AoE 连锁触发
+        if (STCS_AOE_LOCK.get()) return;
 
         LivingEntity self = (LivingEntity) (Object) this;
         if (!(self instanceof ServerPlayerEntity player)) return;
 
-        // 潜行才触发
         if (!player.isSneaking()) return;
 
-        // 主手或副手持有 STCS 即可
         ItemStack stcsStack = null;
         STCSItem stcsItem = null;
 
@@ -243,23 +241,39 @@ public class LivingEntityMixin {
 
         if (stcsItem == null || stcsStack == null) return;
 
-        // 能量不足：不格挡，不扣能量，静默失败
+        // ---------- 特殊伤害源过滤 ----------
+        if (source.isOf(net.minecraft.entity.damage.DamageTypes.GENERIC_KILL) ||
+                source.isOf(net.minecraft.entity.damage.DamageTypes.OUT_OF_WORLD) ||
+                source.isIn(net.minecraft.registry.tag.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return;
+        }
+
+        // ---------- 动态能耗计算（调用武器自己的系数） ----------
+        float costPerDamage = stcsItem.getEnergyCostPerDamage();
+        int energyCost = (int) Math.ceil(amount * costPerDamage);
+        energyCost = Math.max(1, energyCost); // 至少消耗 1 点
+
         int energy = stcsItem.getEnergy(stcsStack);
-        if (energy < STCSItem.BLOCK_ENERGY_COST) return;
+        if (energy < energyCost) return; // 能量不足，不格挡
 
-        stcsItem.addEnergy(stcsStack, -STCSItem.BLOCK_ENERGY_COST);
+        // ---------- 扣除能量 ----------
+        stcsItem.addEnergy(stcsStack, -energyCost);
 
+        // ---------- 计算减伤 ----------
         float reduction = stcsItem.isCoreActive(stcsStack) ? 1.0f : stcsItem.getBlockDamageReduction();
+        reduction = Math.max(0f, Math.min(1f, reduction));
 
-        if (reduction >= 0.8f) spawnStcsBlockEffect(player);
+        if (reduction >= 0.8f) {
+            spawnStcsBlockEffect(player);
+        }
 
-        // 完全免疫
-        if (reduction >= 0.999f) {
+        // ---------- 完全免疫 ----------
+        if (reduction >= 1.0f) {
             cir.setReturnValue(false);
             return;
         }
 
-        // 部分减伤
+        // ---------- 部分减伤 ----------
         float newAmount = amount * (1.0f - reduction);
         if (newAmount <= 0.01f) {
             cir.setReturnValue(false);
@@ -274,6 +288,7 @@ public class LivingEntityMixin {
             STCS_BLOCK_LOCK.set(false);
             STCS_AOE_LOCK.set(false);
         }
+
         cir.setReturnValue(false);
     }
 
@@ -333,7 +348,6 @@ public class LivingEntityMixin {
      */
     @Inject(method = "damage", at = @At("RETURN"))
     private void doctor_m$stcsAoE(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        // 只有伤害成功（未被取消）才触发
         if (!cir.getReturnValue()) return;
         if (STCS_AOE_LOCK.get()) return;
 

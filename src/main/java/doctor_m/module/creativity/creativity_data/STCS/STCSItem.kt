@@ -1,5 +1,6 @@
 package doctor_m.Item.stcs
 
+import doctor_m.util.creativity.DynamicColorHelper
 import net.minecraft.entity.LivingEntity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
@@ -12,6 +13,8 @@ import net.minecraft.util.Formatting
 import net.minecraft.util.Rarity
 import net.minecraft.util.hit.HitResult
 import net.minecraft.world.RaycastContext
+import org.spongepowered.asm.mixin.injection.selectors.ElementNode.listOf
+import java.awt.Color
 
 /** STC-07H "巨妖" — 重装型 */
 class STCHItem : STCSItem(
@@ -23,6 +26,9 @@ class STCHItem : STCSItem(
     blockDamageReduction = 0.90f,
     descriptionKey = "message.doctor_m.stch.description"
 ) {
+
+    override fun getEnergyCostPerDamage(): Float = 10.0f
+
     override fun onSkillPressed(player: ServerPlayerEntity, stack: ItemStack) {
         val cd = getSkillCooldown(stack)
         if (cd > 0) return
@@ -50,6 +56,16 @@ class STCHItem : STCSItem(
         if (isCoreActive(stack)) finalCd -= 40
         setSkillCooldown(stack, finalCd)
     }
+
+        override fun getName(stack: ItemStack): Text {
+            val baseName = super.getName(stack)
+            val colors = listOf(
+                Color(128, 0, 128),
+                Color(128, 0, 128),
+                Color(255, 165, 0)
+            )
+            return DynamicColorHelper.applyColorCycle(baseName, colors, 15000)
+        }
 }
 
 /** STC-08A "天图" — 标准型 */
@@ -95,6 +111,16 @@ class STCAItem : STCSItem(
         if (isCoreActive(stack)) finalCd -= 40
         setSkillCooldown(stack, finalCd)
     }
+
+        override fun getName(stack: ItemStack): Text {
+            val baseName = super.getName(stack)
+            val colors = listOf(
+                Color(128, 0, 128),
+                Color(128, 0, 128),
+                Color(0, 100, 255)
+            )
+            return DynamicColorHelper.applyColorCycle(baseName, colors, 15000)
+        }
 }
 
 /** STC-09L "游侠" — 突袭型 */
@@ -107,6 +133,9 @@ class STCLItem : STCSItem(
     blockDamageReduction = 0.80f,
     descriptionKey = "message.doctor_m.stcl.description"
 ) {
+
+    override fun getEnergyCostPerDamage(): Float = 50.0f
+
     override fun onSkillPressed(player: ServerPlayerEntity, stack: ItemStack) {
         val cd = getSkillCooldown(stack)
         if (cd > 0) return
@@ -150,4 +179,14 @@ class STCLItem : STCSItem(
         finalCd = finalCd.coerceAtLeast(0)
         setSkillCooldown(stack, finalCd)
     }
+
+        override fun getName(stack: ItemStack): Text {
+            val baseName = super.getName(stack)
+            val colors = listOf(
+                Color(128, 0, 128),
+                Color(128, 0, 128),
+                Color(255, 0, 0)
+            )
+            return DynamicColorHelper.applyColorCycle(baseName, colors, 15000)
+        }
 }

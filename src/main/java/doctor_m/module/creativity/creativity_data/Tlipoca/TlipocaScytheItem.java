@@ -176,6 +176,6 @@ public class TlipocaScytheItem extends Item {
                 new Color(255, 0, 0),
                 new Color(0, 0, 0)
         );
-        return DynamicColorHelper.applyColorCycle(baseName, colors, 30000);
+        return DynamicColorHelper.applyColorCycle(baseName, colors, 20000);
     }
 }

@@ -105,6 +105,8 @@ abstract class STCSItem(
         return getOrCreateSTCSNbt(stack).getInt(MAX_ENERGY_BASE_KEY)
     }
 
+    open fun getEnergyCostPerDamage(): Float = 30.0f
+
     fun isCoreActive(stack: ItemStack): Boolean = getOrCreateSTCSNbt(stack).getBoolean(CORE_ACTIVE_KEY)
     fun setCoreActive(stack: ItemStack, active: Boolean) {
         getOrCreateSTCSNbt(stack).putBoolean(CORE_ACTIVE_KEY, active)

@@ -382,7 +382,6 @@ public class SelfDestructHandlerMixin {
             );
         }
 
-        // 终极大爆炸时给所有附近玩家屏幕震动（不含黑暗）
         Box globalBox = new Box(center, center).expand(200);
         List<ServerPlayerEntity> players = world.getEntitiesByClass(ServerPlayerEntity.class, globalBox, p -> true);
         for (ServerPlayerEntity player : players) {
