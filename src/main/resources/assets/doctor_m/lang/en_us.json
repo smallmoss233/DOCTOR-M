@@ -84,6 +84,11 @@
   "gui.doctor_m.obelisk.gallifrey": "GALLIFREY",
   "gui.doctor_m.obelisk.eye_of_harmony": "EYE OF HARMONY",
   "gui.doctor_m.obelisk.energy": "%s / %s Artron Energy (%s%%)",
+  "gui.doctor_m.title.label": "Title:",
+  "gui.doctor_m.title.placeholder": "Enter title...",
+  "gui.doctor_m.title.save": "Save Title",
+
+  "title.doctor_m.apprentice_reaper": "§cApprentice Reaper",
 
   "itemGroup.doctor_m": "DOCTOR M",
   "item.doctor_m.rassilon_key": "Key of Rassilon",
