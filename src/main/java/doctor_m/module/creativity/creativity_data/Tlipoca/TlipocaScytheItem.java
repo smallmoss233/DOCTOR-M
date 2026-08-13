@@ -1,5 +1,6 @@
 package doctor_m.module.creativity.creativity_data.Tlipoca;
 
+import doctor_m.util.creativity.DynamicColorHelper;
 import doctor_m.util.creativity.ScytheChargingManager;
 import doctor_m.util.creativity.ScytheSlashManager;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
@@ -22,6 +23,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 
+import java.awt.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,7 +33,6 @@ public class TlipocaScytheItem extends Item {
     private static final UUID DAMAGE_UUID = UUID.fromString("12345678-1234-1234-1234-123456789014");
     private static final UUID SPEED_UUID = UUID.fromString("12345678-1234-1234-1234-123456789016");
     private static final UUID REACH_UUID = UUID.fromString("12345678-1234-1234-1234-123456789017");
-    public static final UUID TLIPOCA_HEALTH_UUID = UUID.fromString("12345678-1234-1234-1234-123456789012");
 
     private static TlipocaScytheItem INSTANCE;
     public static TlipocaScytheItem getInstance() { return INSTANCE; }
@@ -165,5 +166,16 @@ public class TlipocaScytheItem extends Item {
             nbt.putBoolean(INIT_KEY, true);
             writeAttributeModifiers(stack, 20.0f);
         }
+    }
+
+    @Override
+    public Text getName(ItemStack stack) {
+        Text baseName = super.getName(stack);
+        List<Color> colors = List.of(
+                new Color(255, 0, 0),
+                new Color(255, 0, 0),
+                new Color(0, 0, 0)
+        );
+        return DynamicColorHelper.applyColorCycle(baseName, colors, 30000);
     }
 }
