@@ -20,6 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
+import static doctor_m.Item.items.*;
+
 @Mixin(Item.class)
 public class ItemMixin {
 
@@ -54,21 +56,17 @@ public class ItemMixin {
 
         // 音速起子升级模块提示
         if (id.equals(UpgradeModuleManager.ENERGY_UPGRADE) || id.equals(UpgradeModuleManager.REGENERATION_MODULE)) {
-            ShiftTooltipInvoker.addShiftTooltip(tooltip,
-                    Text.translatable("message.tooltip.doctor_m.upgrade")
-                            .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
-            ShiftTooltipInvoker.addShiftTooltip(tooltip,
-                    Text.translatable("message.tooltip.doctor_m.removed_upgrade")
-                            .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
+            tooltip.add(Text.translatable("message.tooltip.doctor_m.upgrade")
+                    .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
+            tooltip.add(Text.translatable("message.tooltip.doctor_m.removed_upgrade")
+                    .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
 
             if (id.equals(UpgradeModuleManager.ENERGY_UPGRADE)) {
-                ShiftTooltipInvoker.addShiftTooltip(tooltip,
-                        Text.translatable("message.tooltip.doctor_m.energy_upgrade.desc")
-                                .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
+                tooltip.add(Text.translatable("message.tooltip.doctor_m.energy_upgrade.desc")
+                        .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
             } else {
-                ShiftTooltipInvoker.addShiftTooltip(tooltip,
-                        Text.translatable("message.tooltip.doctor_m.regeneration_module.desc")
-                                .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
+                tooltip.add(Text.translatable("message.tooltip.doctor_m.regeneration_module.desc")
+                        .formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
             }
         }
 
@@ -88,6 +86,11 @@ public class ItemMixin {
         if (id.equals(EYE_OF_HARMONY_OBELISK_ID)) {
             ShiftTooltipInvoker.addShiftTooltip(tooltip,
                     Text.translatable("message.tooltip.doctor_m.eye_of_harmony_obelisk"));
+        }
+
+        // 至高议会勋章
+        if (stack.isOf(SEAL_OF_THE_HIGH_COUNCIL)) {
+            tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
         }
     }
 }

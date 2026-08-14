@@ -31,6 +31,7 @@ public class items {
     public static final Item VORTEX_MANIPULATOR = new VortexManipulatorItem(new Item.Settings().maxCount(1));
     public static final Item TRACER = new TracerItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
     public static final Item TOYMAKER_HAMMER = new ToymakerHammerItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
+    public static final Item SEAL_OF_THE_HIGH_COUNCIL = new Item(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
 
     //武器
     public static final Item DE_MAT_GUN = new DeMatGunItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));

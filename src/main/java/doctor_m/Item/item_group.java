@@ -24,6 +24,7 @@ public static void registerItems() {
                                 entries.add(TRACER);
                                 entries.add(DE_MAT_GUN);
                                 entries.add(RASSILON_KEY);
+                                entries.add(SEAL_OF_THE_HIGH_COUNCIL);
                                 entries.add(OXYGEN_CHARGER);
                                 entries.add(UNDERWATER_OXYGEN_GENERATOR);
                                 entries.add(EYE_OF_HARMONY_OBELISK);
