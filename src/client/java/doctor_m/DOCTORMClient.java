@@ -1,6 +1,8 @@
 package doctor_m;
 
 import doctor_m.Item.data_itme.DeMatGunItem;
+import doctor_m.Item.data_itme.TimeKyeFragment.PocketWatchItem;
+import doctor_m.Item.items;
 import doctor_m.block.ModBlockEntities;
 import doctor_m.block.data_block.EyeOfHarmonyObeliskBlock;
 import doctor_m.client.Shield.ForceFieldClientRenderer;
@@ -10,6 +12,7 @@ import doctor_m.client.dimension.TitanDimensionEffects;
 import doctor_m.client.entity.MarianJinRenderer;
 import doctor_m.client.entity.Type103Renderer;
 import doctor_m.client.gui.EyeOfHarmonyObeliskScreen;
+import doctor_m.client.gui.PocketWatchHudOverlay;
 import doctor_m.client.gui.VortexManipulatorScreen;
 import doctor_m.client.network.AITMixinClientNetworking;
 import doctor_m.client.network.DeMatGunClientNetwork;
@@ -28,6 +31,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.player.PlayerEntity;
@@ -44,6 +48,15 @@ public class DOCTORMClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+
+        ModelPredicateProviderRegistry.register(
+                items.POCKET_WATCH,
+                new Identifier("doctor_m", "open"),
+                (stack, world, entity, seed) -> PocketWatchItem.isOpen(stack) ? 1.0f : 0.0f
+        );
+
+        HudRenderCallback.EVENT.register(new PocketWatchHudOverlay());
+
         // 泰坦维度效果
         DimensionRenderingRegistry.registerDimensionEffects(
                 new Identifier("doctor_m", "titan"),
