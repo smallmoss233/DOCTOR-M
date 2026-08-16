@@ -37,8 +37,6 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
         super(settings);
     }
 
-    /* ========== 打开/关闭状态 ========== */
-
     public static boolean isOpen(ItemStack stack) {
         NbtCompound nbt = stack.getNbt();
         return nbt != null && nbt.contains(OPEN_KEY) && nbt.getBoolean(OPEN_KEY);
@@ -47,8 +45,6 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
     private static void setOpen(ItemStack stack, boolean open) {
         stack.getOrCreateNbt().putBoolean(OPEN_KEY, open);
     }
-
-    /* ========== 复活冷却耐久条（金色）========== */
 
     @Override
     public boolean isItemBarVisible(ItemStack stack) {
@@ -67,8 +63,6 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
     public int getItemBarColor(ItemStack stack) {
         return 0xFFD700;
     }
-
-    /* ========== 冷却辅助方法 ========== */
 
     public static void startCooldown(ItemStack stack, long durationMillis) {
         long end = System.currentTimeMillis() + durationMillis;
@@ -99,8 +93,6 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
         return nbt.getLong(COOLDOWN_DURATION_KEY);
     }
 
-    /* ========== use 方法（新增打开/关闭）========== */
-
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (!TimelordRegenCompat.isLoaded()) {
@@ -109,19 +101,30 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
 
         ItemStack stack = user.getStackInHand(hand);
 
-        // 打开状态下：任何右键关闭怀表
         if (isOpen(stack)) {
             setOpen(stack, false);
             return TypedActionResult.success(stack);
         }
 
-        // 潜行右键：打开怀表（所有人可用）
         if (user.isSneaking()) {
-            setOpen(stack, true);
-            return TypedActionResult.success(stack);
+            return transferRegenerations(world, user, stack);
         }
 
-        // 非潜行且关闭状态：原有TL专属逻辑
+        return openPocketWatch(world, user, stack);
+    }
+
+    /**
+     * 打开怀表逻辑（正常右键）
+     */
+    private TypedActionResult<ItemStack> openPocketWatch(World world, PlayerEntity user, ItemStack stack) {
+        setOpen(stack, true);
+        return TypedActionResult.success(stack);
+    }
+
+    /**
+     * 重生次数转移逻辑（潜行右键，TL专属）
+     */
+    private TypedActionResult<ItemStack> transferRegenerations(World world, PlayerEntity user, ItemStack stack) {
         user.getItemCooldownManager().set(this, COOLDOWN_TICKS);
 
         if (world.isClient()) {
@@ -178,13 +181,10 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
         return TypedActionResult.success(stack, false);
     }
 
-    /* ========== 提示 ========== */
-
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         NbtCompound nbt = stack.getNbt();
 
-        // 开关状态
         if (isOpen(stack)) {
             tooltip.add(Text.translatable("message.doctor_m.pocket_watch.state.open")
                     .setStyle(Style.EMPTY.withColor(Formatting.GREEN)));
@@ -235,8 +235,6 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
                 Text.translatable("message.doctor_m.pocket_watch.detail")
         );
     }
-
-    // ---------- NBT 辅助 ----------
 
     private static void markOwner(ItemStack stack, PlayerEntity p) {
         NbtCompound nbt = stack.getOrCreateNbt();
