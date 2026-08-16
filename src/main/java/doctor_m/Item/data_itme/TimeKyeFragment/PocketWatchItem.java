@@ -115,18 +115,49 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
 
     /**
      * 打开怀表逻辑（正常右键）
+     * 主人打开时，怀表内的重生次数会自动回到玩家身上
      */
     private TypedActionResult<ItemStack> openPocketWatch(World world, PlayerEntity user, ItemStack stack) {
         setOpen(stack, true);
+
+        if (world.isClient()) {
+            return TypedActionResult.success(stack);
+        }
+
+        UUID ownerId = getOwner(stack);
+        if (ownerId == null) {
+            markOwner(stack, user);
+            ownerId = user.getUuid();
+        }
+
+        if (!ownerId.equals(user.getUuid())) {
+            return TypedActionResult.success(stack);
+        }
+
+        int charges = getCharges(stack);
+        if (charges > 0) {
+            TimelordRegenCompat.RegenInfo info = TimelordRegenCompat.getRegenInfo(user);
+            if (info != null) {
+                int usesLeft = info.getUsesLeft();
+                int max = TimelordRegenCompat.getMaxRegenerations();
+                int transferable = Math.min(charges, max - usesLeft);
+                if (transferable > 0) {
+                    info.setUsesLeft(usesLeft + transferable);
+                    setCharges(stack, charges - transferable);
+                    world.playSound(null, user.getX(), user.getY(), user.getZ(),
+                            SoundEvents.ITEM_TOTEM_USE, user.getSoundCategory(), 1.0F, 1.0F);
+                }
+            }
+        }
+
         return TypedActionResult.success(stack);
     }
 
     /**
-     * 重生次数转移逻辑（潜行右键，TL专属）
+     * 重生次数储存逻辑（潜行右键，TL专属）
+     * 单向存入：玩家身上的重生次数 → 怀表
      */
     private TypedActionResult<ItemStack> transferRegenerations(World world, PlayerEntity user, ItemStack stack) {
-        user.getItemCooldownManager().set(this, COOLDOWN_TICKS);
-
         if (world.isClient()) {
             return TypedActionResult.success(stack);
         }
@@ -157,27 +188,20 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
         int usesLeft = info.getUsesLeft();
         int max = TimelordRegenCompat.getMaxRegenerations();
 
-        int transferable;
-        if (charges > usesLeft) {
-            transferable = Math.min(charges - usesLeft, max - usesLeft);
-            charges -= transferable;
-            usesLeft += transferable;
-        } else if (usesLeft > charges) {
-            transferable = Math.min(usesLeft - charges, max - charges);
-            usesLeft -= transferable;
-            charges += transferable;
+        int transferable = Math.min(usesLeft, max - charges);
+        if (transferable > 0) {
+            info.setUsesLeft(usesLeft - transferable);
+            setCharges(stack, charges + transferable);
+            world.playSound(null, user.getX(), user.getY(), user.getZ(),
+                    SoundEvents.ITEM_TOTEM_USE, user.getSoundCategory(), 1.0F, 1.0F);
         } else {
             world.playSound(null, user.getX(), user.getY(), user.getZ(),
                     SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), user.getSoundCategory(), 0.5F, 1.0F);
             return TypedActionResult.success(stack, false);
         }
 
-        info.setUsesLeft(usesLeft);
-        setCharges(stack, charges);
-
-        world.playSound(null, user.getX(), user.getY(), user.getZ(),
-                SoundEvents.ITEM_TOTEM_USE, user.getSoundCategory(), 1.0F, 1.0F);
-
+        // 仅在成功存入后设置冷却
+        user.getItemCooldownManager().set(this, COOLDOWN_TICKS);
         return TypedActionResult.success(stack, false);
     }
 
