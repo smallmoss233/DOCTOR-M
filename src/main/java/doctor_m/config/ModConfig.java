@@ -24,25 +24,20 @@ public class ModConfig {
     public int shieldCostPerDamage = 5;             // 每 1 点伤害消耗的能量
 
     //时间钥匙
-    public static final int DEFAULT_TIME_KEY_DAMAGE = 1;//冷却
-    public static final double DEFAULT_TIME_KEY_MULTIPLIER = 2;//扣血倍率
-    public static final double DEFAULT_TIME_KEY_EXTRA = 15.0;//最低扣血量（百分比）
+    public static final int KeytoTimeDamage = 1;//冷却
+    public static final double KeytoTimeMultiplier = 2;//扣血倍率
+    public static final double KeytoTimeExtra = 15.0;//最低扣血量（百分比）
 
     //永恒水晶
-    public static final int DEFAULT_ETERNAL_CRYSTAL_DAMAGE = 100;//冷却
-    public static final double DEFAULT_ETERNAL_CRYSTAL_MULTIPLIER = 0.5;//扣血倍率
-    public static final double DEFAULT_ETERNAL_CRYSTAL_EXTRA = 2.5;//最低扣血量（百分比）
+    public static final int eternalCrystalDamage = 100;//冷却
+    public static final double eternalCrystalMultiplier = 0.5;//扣血倍率
+    public static final double eternalCrystalExtra = 2.5;//最低扣血量（百分比）
 
     //特莉波卡的镰刀
-    public static final int DEFAULT_TLIPOCA_SCYTHE_DAMAGE = 30;//冷却
-    public static final double DEFAULT_TLIPOCA_SCYTHE_MULTIPLIER = 1.0;//扣血倍率
-    public static final double DEFAULT_TLIPOCA_SCYTHE_EXTRA = 25.0;//最低扣血量（百分比）
-    public boolean enableSlashSystem = true;         // 总开关
-    public long slashCooldownTicks = 60;             // 冷却时间（tick）
+    public static final int tlipocaScytheDamage = 30;//冷却
+    public static final double tlipocaScytheMultiplier = 1.0;//扣血倍率
+    public static final double tlipocaScytheExtra = 25.0;//最低扣血量（百分比）
     public float slashDamage = 500.0f;               // 右键伤害值
-    public double slashReach = 8.0;                  // 攻击距离
-    public double slashWidth = 5.0;                  // 攻击范围宽度
-    public double slashHeight = 3.0;                 // 攻击范围高度
 
     //塔迪斯自毁
     public boolean enableSelfDestructEnhancement = true;  // 总开关
@@ -76,17 +71,4 @@ public class ModConfig {
     // 真空进食
     public double vacuumEatingOxygenCost = 100.0;         // 真空环境吃一次食物扣多少氧
     public int vacuumEatingPendingTimeoutSeconds = 10;    // 进食 pending 超时（秒）
-
-    // --- 实际配置值 ---
-    public int timeKeyDamage = DEFAULT_TIME_KEY_DAMAGE;
-    public double timeKeyMultiplier = DEFAULT_TIME_KEY_MULTIPLIER;
-    public double timeKeyExtra = DEFAULT_TIME_KEY_EXTRA;
-
-    public int eternalCrystalDamage = DEFAULT_ETERNAL_CRYSTAL_DAMAGE;
-    public double eternalCrystalMultiplier = DEFAULT_ETERNAL_CRYSTAL_MULTIPLIER;
-    public double eternalCrystalExtra = DEFAULT_ETERNAL_CRYSTAL_EXTRA;
-
-    public int tlipocaScytheDamage = DEFAULT_TLIPOCA_SCYTHE_DAMAGE;
-    public double tlipocaScytheMultiplier = DEFAULT_TLIPOCA_SCYTHE_MULTIPLIER;
-    public double tlipocaScytheExtra = DEFAULT_TLIPOCA_SCYTHE_EXTRA;
 }

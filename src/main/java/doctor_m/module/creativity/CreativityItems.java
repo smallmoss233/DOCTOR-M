@@ -26,9 +26,9 @@ public class CreativityItems {
         ModConfig config = ConfigManager.getConfig();
 
         new PercentageDamageHelper(new PercentageDamageHelper.Config(
-                config.tlipocaScytheDamage,
-                config.tlipocaScytheMultiplier,
-                config.tlipocaScytheExtra,
+                ModConfig.tlipocaScytheDamage,
+                ModConfig.tlipocaScytheMultiplier,
+                ModConfig.tlipocaScytheExtra,
                 player -> {
                     return player.getMainHandStack().getItem() instanceof TlipocaScytheItem ||
                             player.getOffHandStack().getItem() instanceof TlipocaScytheItem;

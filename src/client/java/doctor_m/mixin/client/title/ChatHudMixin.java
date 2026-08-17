@@ -56,7 +56,7 @@ public class ChatHudMixin {
                 }
 
                 // 2. 名字/称号渐变（固定宽度=nameWidth，不会挤爆）
-                GlowTextRenderer.draw2DAlternating(context, textRenderer, name, title, drawX, y, nameWidth);
+                GlowTextRenderer.draw2DAlternating(context, textRenderer, name, title, drawX, y, nameWidth, client.player);
                 drawX += nameWidth;
 
                 // 3. 后缀（保留原版颜色样式，位置固定）

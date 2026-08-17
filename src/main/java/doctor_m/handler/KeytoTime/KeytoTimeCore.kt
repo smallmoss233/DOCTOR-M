@@ -1,9 +1,9 @@
-package doctor_m.handler.TimeKey
+package doctor_m.handler.KeytoTime
 
 import dev.amble.ait.core.AITStatusEffects
 import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry
 import dev.emi.trinkets.api.TrinketsApi
-import doctor_m.Item.data_itme.TimeKeyItem
+import doctor_m.Item.data_itme.KeytoTimeItem
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.LivingEntity
@@ -25,7 +25,7 @@ import net.minecraft.world.GameMode
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-object TimeKeyFunction {
+object KeytoTimeCore {
     private val customDamage = ThreadLocal.withInitial { false }
     private val lastGameMode = ConcurrentHashMap<UUID, GameMode>()
     private val lastHealTime = ConcurrentHashMap<UUID, Long>()
@@ -51,9 +51,9 @@ object TimeKeyFunction {
     @JvmStatic
     fun getTimeKeyStack(player: PlayerEntity): ItemStack {
         return try {
-            player.mainHandStack.takeIf { it.item is TimeKeyItem }
+            player.mainHandStack.takeIf { it.item is KeytoTimeItem }
                 ?: TrinketsApi.getTrinketComponent(player)
-                    .flatMap { it.getEquipped { stack -> stack.item is TimeKeyItem }.stream().findFirst() }
+                    .flatMap { it.getEquipped { stack -> stack.item is KeytoTimeItem }.stream().findFirst() }
                     .map { it.right }
                     .orElse(ItemStack.EMPTY)
         } catch (_: Throwable) {
@@ -87,7 +87,7 @@ object TimeKeyFunction {
                 if (!isTimeKeyEquipped(player)) return@register true
 
                 ensureMaxHealth(player)
-                if (TimeKeyPassive.isGodMode(player)) {
+                if (KeytoTimePassive.isGodMode(player)) {
                     player.health = player.maxHealth
                     return@register false
                 }
@@ -161,7 +161,7 @@ object TimeKeyFunction {
             val now = server.ticks.toLong()
             server.playerManager.playerList.forEach { player ->
                 val hasTimeKey = isTimeKeyEquipped(player)
-                val isGodMode = hasTimeKey && TimeKeyPassive.isGodMode(player)
+                val isGodMode = hasTimeKey && KeytoTimePassive.isGodMode(player)
 
                 protectionEndTime[player.uuid]?.let { endTick ->
                     if (now <= endTick) {
@@ -256,7 +256,7 @@ object TimeKeyFunction {
                 }
             }
         }
-        TimeKeyPassive.registerAttackCallback()
+        KeytoTimePassive.registerAttackCallback()
     }
 
     private fun eraseTargetDeMatStyle(target: LivingEntity, player: ServerPlayerEntity, world: ServerWorld) {
@@ -344,7 +344,7 @@ object TimeKeyFunction {
                     1, 0.0, 0.0, 0.0, 0.05)
             }
             playSound(SoundEvents.BLOCK_BELL_RESONATE, 1f, 1f)
-            sendMessage(Text.translatable("message.doctor_m.time_key_resurrection"), true)
+            sendMessage(Text.translatable("message.doctor_m.key_to_time_resurrection"), true)
             if (!abilities.allowFlying) {
                 abilities.allowFlying = true
                 sendAbilitiesUpdate()

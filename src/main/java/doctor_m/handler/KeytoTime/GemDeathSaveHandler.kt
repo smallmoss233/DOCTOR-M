@@ -1,7 +1,7 @@
-package doctor_m.handler.TimeKey
+package doctor_m.handler.KeytoTime
 
 import dev.emi.trinkets.api.TrinketsApi
-import doctor_m.Item.data_itme.TimeKyeFragment.RelicGemItem
+import doctor_m.Item.data_itme.KeytoTimeFragment.RelicGemItem
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects

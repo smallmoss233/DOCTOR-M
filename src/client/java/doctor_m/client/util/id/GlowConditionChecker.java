@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public final class GlowConditionChecker {
 
-    private static final Identifier GLOW_ITEM_ID = new Identifier("doctor_m", "time_key");
+    private static final Identifier GLOW_ITEM_ID = new Identifier("doctor_m", "key_to_time");
     private static final Identifier SCYTHE_ITEM_ID = new Identifier("doctor_m", "tlipoca_scythe");
     private static Item glowItemCache = null;
     private static Item scytheCache = null;
@@ -47,10 +47,6 @@ public final class GlowConditionChecker {
         return player == null ? null : getGlowTitle(player);
     }
 
-    /* ============================================================
-       新增：获取颜色和称号（按玩家）
-       ============================================================ */
-
     public static int getGlowColor(PlayerEntity player) {
         if (player == null) return 0;
         if (hasScythe(player)) return COLOR_RED;
@@ -66,10 +62,6 @@ public final class GlowConditionChecker {
         if (hasGlowItem(player)) return PlayerTitleCache.getTitle(player.getUuid());
         return null;
     }
-
-    /* ============================================================
-       新增：根据名字获取
-       ============================================================ */
 
     public static int getGlowColorByName(String name, MinecraftClient client) {
         PlayerEntity player = findPlayerByName(name, client);
@@ -88,10 +80,6 @@ public final class GlowConditionChecker {
         }
         return null;
     }
-
-    /* ============================================================
-       内部检测（原有，稍作调整）
-       ============================================================ */
 
     private static boolean hasGlowItem(PlayerEntity player) {
         return hasGlowItemInHand(player)
@@ -131,10 +119,6 @@ public final class GlowConditionChecker {
         }
         return stack.isOf(glowItemCache);
     }
-
-    /* ============================================================
-       新增：镰刀检测
-       ============================================================ */
 
     private static boolean hasScythe(PlayerEntity player) {
         if (scytheCache == null) {

@@ -1,7 +1,7 @@
 package doctor_m;
 
 import doctor_m.Item.data_itme.DeMatGunItem;
-import doctor_m.Item.data_itme.TimeKyeFragment.PocketWatchItem;
+import doctor_m.Item.data_itme.KeytoTimeFragment.PocketWatchItem;
 import doctor_m.Item.items;
 import doctor_m.block.ModBlockEntities;
 import doctor_m.block.data_block.EyeOfHarmonyObeliskBlock;
@@ -16,7 +16,7 @@ import doctor_m.client.gui.PocketWatchHudOverlay;
 import doctor_m.client.gui.VortexManipulatorScreen;
 import doctor_m.client.network.AITMixinClientNetworking;
 import doctor_m.client.network.DeMatGunClientNetwork;
-import doctor_m.client.network.TimeKeyTeleportClient;
+import doctor_m.client.network.KeytoTimeTeleportClient;
 import doctor_m.client.render.EyeOfHarmonyObeliskBlockEntityRenderer;
 import doctor_m.client.render.VMTrinketRenderer;
 import doctor_m.client.util.id.PlayerTitleCache;
@@ -73,7 +73,7 @@ public class DOCTORMClient implements ClientModInitializer {
             MinecraftClient.getInstance().setScreen(new EyeOfHarmonyObeliskScreen(obelisk));
         };
 
-        TimeKeyTeleportClient.register();
+        KeytoTimeTeleportClient.register();
         ShieldNetworkingClient.register();
         ForceFieldClientRenderer.register();
         VMTrinketRenderer.register();

@@ -1,6 +1,6 @@
 package doctor_m.client.gui;
 
-import doctor_m.network.TimeKeyTeleportNetwork;
+import doctor_m.network.KeytoTimeTeleportNetwork;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
@@ -16,7 +16,7 @@ import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TimeKeyTeleportScreen extends Screen {
+public class KeytoTimeTeleportScreen extends Screen {
     private final PlayerEntity player;
     private TextFieldWidget xField, yField, zField;
 
@@ -24,10 +24,10 @@ public class TimeKeyTeleportScreen extends Screen {
     private int dimIndex = 0;
     private boolean dimsLoaded = false;
 
-    public TimeKeyTeleportScreen(PlayerEntity player) {
-        super(Text.translatable("gui.doctor_m.time_key.teleport.title"));
+    public KeytoTimeTeleportScreen(PlayerEntity player) {
+        super(Text.translatable("gui.doctor_m.key_to_time.teleport.title"));
         this.player = player;
-        ClientPlayNetworking.send(TimeKeyTeleportNetwork.REQUEST_DIMS, PacketByteBufs.empty());
+        ClientPlayNetworking.send(KeytoTimeTeleportNetwork.REQUEST_DIMS, PacketByteBufs.empty());
     }
 
     public void onDimensionsReceived(List<String> dims) {
@@ -93,7 +93,7 @@ public class TimeKeyTeleportScreen extends Screen {
             buf.writeDouble(y);
             buf.writeDouble(z);
             buf.writeString(availableDims.get(dimIndex));
-            ClientPlayNetworking.send(TimeKeyTeleportNetwork.TELEPORT, buf);
+            ClientPlayNetworking.send(KeytoTimeTeleportNetwork.TELEPORT, buf);
             this.close();
         } catch (NumberFormatException ignored) {
         }

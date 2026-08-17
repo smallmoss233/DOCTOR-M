@@ -47,7 +47,7 @@ public class LivingEntityRendererMixin<T extends Entity> {
             return GlowTextRenderer.draw3DAlternating(
                     instance, name, title, x, y, shadow,
                     matrix, vertexConsumers, layerType,
-                    backgroundColor, light
+                    backgroundColor, light, player
             );
         }
 

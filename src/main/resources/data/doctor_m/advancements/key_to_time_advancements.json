@@ -1,13 +1,13 @@
 {
   "display": {
     "icon": {
-      "item": "doctor_m:time_key"
+      "item": "doctor_m:key_to_time"
     },
     "title": {
-      "translate": "advancements.doctor_m.obtain_time_key.title"
+      "translate": "advancements.doctor_m.obtain_key_to_time.title"
     },
     "description": {
-      "translate": "advancements.doctor_m.obtain_time_key.description"
+      "translate": "advancements.doctor_m.obtain_key_to_time.description"
     },
     "frame": "challenge",
     "show_toast": true,
@@ -17,13 +17,13 @@
   },
   "parent": "doctor_m:root",
   "criteria": {
-    "obtain_time_key": {
+    "obtain_key_to_time": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": [
-              "doctor_m:time_key"
+              "doctor_m:key_to_time"
             ]
           }
         ]
@@ -32,7 +32,7 @@
   },
   "requirements": [
     [
-      "obtain_time_key"
+      "obtain_key_to_time"
     ]
   ]
 }

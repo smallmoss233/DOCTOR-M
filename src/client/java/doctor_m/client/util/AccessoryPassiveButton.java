@@ -1,9 +1,9 @@
 package doctor_m.client.util;
 
 import doctor_m.Item.stcs.STCSItem;
-import doctor_m.client.gui.TimeKeyActiveScreen;
-import doctor_m.client.gui.TimeKeyPassiveScreen;
-import doctor_m.handler.TimeKey.TimeKeyFunction;
+import doctor_m.client.gui.KeytoTimeActiveScreen;
+import doctor_m.client.gui.KeytoTimePassiveScreen;
+import doctor_m.handler.KeytoTime.KeytoTimeCore;
 import doctor_m.network.STCSNetworking;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -61,13 +61,13 @@ public class AccessoryPassiveButton implements ClientModInitializer {
             }
 
             // ===== 优先级3：TimeKey（主手/副手/饰品栏任一位置） =====
-            boolean hasTimeKey = TimeKeyFunction.isTimeKeyEquipped(client.player);
+            boolean hasTimeKey = KeytoTimeCore.isTimeKeyEquipped(client.player);
 
             if (keySkill.wasPressed() && hasTimeKey) {
-                client.setScreen(new TimeKeyPassiveScreen(client.player));
+                client.setScreen(new KeytoTimePassiveScreen(client.player));
             }
             if (keyCore.wasPressed() && hasTimeKey) {
-                client.setScreen(new TimeKeyActiveScreen(client.player));
+                client.setScreen(new KeytoTimeActiveScreen(client.player));
             }
         });
     }

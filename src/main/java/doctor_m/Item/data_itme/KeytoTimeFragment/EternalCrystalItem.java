@@ -1,4 +1,4 @@
-package doctor_m.Item.data_itme.TimeKyeFragment;
+package doctor_m.Item.data_itme.KeytoTimeFragment;
 
 import dev.emi.trinkets.api.TrinketItem;
 import doctor_m.Item.KeytoTime;

@@ -10,10 +10,10 @@ import doctor_m.config.ConfigManager;
 import doctor_m.dimension.DimensionRegister;
 import doctor_m.entities.Entities;
 import doctor_m.handler.ShieldDamageHandler;
-import doctor_m.handler.TimeKey.GemDeathSaveHandler;
-import doctor_m.handler.TimeKey.GemTickHandler;
-import doctor_m.handler.TimeKey.PocketWatchFunction;
-import doctor_m.handler.TimeKey.TimeKeyFunction;
+import doctor_m.handler.KeytoTime.GemDeathSaveHandler;
+import doctor_m.handler.KeytoTime.GemTickHandler;
+import doctor_m.handler.KeytoTime.PocketWatchFunction;
+import doctor_m.handler.KeytoTime.KeytoTimeCore;
 import doctor_m.handler.VMServerHandler;
 import doctor_m.module.creativity.CreativityItems;
 import doctor_m.module.creativity.creativity_data.Tlipoca.TlipocaScytheEvents;
@@ -55,14 +55,14 @@ public class DOCTORM implements ModInitializer {
         VMServerHandler.register();
         TlipocaScytheEvents.register();
 
-        TimeKeyTeleportNetwork.register();
-        TimeKeyNetwork.register();
-        TimeKeyActiveNetwork.register();
+        KeytoTimeTeleportNetwork.register();
+        KeytoTimeNetwork.register();
+        KeytoTimeActiveNetwork.register();
         DeMatGunNetwork.registerServerReceiver();
         TitleNetwork.register();
         UpdateObeliskPacket.registerServerReceiver();
 
-        TimeKeyFunction.INSTANCE.register();
+        KeytoTimeCore.INSTANCE.register();
         PocketWatchFunction.INSTANCE.register();
         GemDeathSaveHandler.INSTANCE.register();
         GemTickHandler.INSTANCE.register();
