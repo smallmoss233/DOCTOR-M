@@ -7,6 +7,7 @@ import doctor_m.Item.data_itme.TimeKeyItem
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
@@ -40,6 +41,13 @@ object TimeKeyFunction {
         "fireworks", "fireball", "witherSkull", "thrown", "sting", "badRespawnPoint"
     )
 
+    private fun ensureMaxHealth(player: ServerPlayerEntity) {
+        val attr = player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)
+        if (attr != null && attr.value <= 0.0) {
+            attr.baseValue = 20.0
+        }
+    }
+
     @JvmStatic
     fun getTimeKeyStack(player: PlayerEntity): ItemStack {
         return try {
@@ -59,7 +67,7 @@ object TimeKeyFunction {
 
     @JvmStatic
     fun onDeathIntercepted(player: ServerPlayerEntity) {
-        protectionEndTime[player.uuid] = player.server.ticks + 2400L // 2分钟 = 2400 ticks
+        protectionEndTime[player.uuid] = player.server.ticks + 2400L
     }
 
     @JvmStatic
@@ -69,7 +77,6 @@ object TimeKeyFunction {
 
     @JvmStatic
     fun register() {
-        // ===== 1. 伤害拦截 =====
         ServerLivingEntityEvents.ALLOW_DAMAGE.register { entity, source, amount ->
             if (customDamage.get()) {
                 customDamage.set(false)
@@ -79,6 +86,7 @@ object TimeKeyFunction {
             (entity as? ServerPlayerEntity)?.let { player ->
                 if (!isTimeKeyEquipped(player)) return@register true
 
+                ensureMaxHealth(player)
                 if (TimeKeyPassive.isGodMode(player)) {
                     player.health = player.maxHealth
                     return@register false
@@ -90,6 +98,7 @@ object TimeKeyFunction {
 
                 protectionEndTime[player.uuid]?.let { end ->
                     if (player.server.ticks <= end) {
+                        ensureMaxHealth(player)
                         player.health = player.maxHealth
                         return@register false
                     }
@@ -120,10 +129,14 @@ object TimeKeyFunction {
                 val maxAllowed = player.maxHealth * 0.15f
                 val newAmount = amount.coerceAtMost(maxAllowed)
                 val newHealth = player.health - newAmount
+
                 if (newHealth <= 0) {
-                    revivePlayer(player)
+                    ensureMaxHealth(player)
+                    player.health = player.maxHealth
+                    onDeathIntercepted(player)
                     return@register false
                 }
+
                 if (newAmount != amount) {
                     customDamage.set(true)
                     player.damage(source, newAmount)
@@ -136,6 +149,7 @@ object TimeKeyFunction {
         ServerLivingEntityEvents.ALLOW_DEATH.register { entity, source, amount ->
             (entity as? ServerPlayerEntity)?.let { player ->
                 if (isTimeKeyEquipped(player)) {
+                    ensureMaxHealth(player)
                     revivePlayer(player)
                     return@register false
                 }
@@ -189,6 +203,7 @@ object TimeKeyFunction {
                 }
 
                 if (isGodMode) {
+                    ensureMaxHealth(player)
                     if (player.health < player.maxHealth) player.health = player.maxHealth
                     if (player.isOnFire) {
                         player.fireTicks = 0
@@ -202,6 +217,7 @@ object TimeKeyFunction {
                         player.hungerManager.saturationLevel = 20f
                     }
                     if (!player.isAlive || player.health <= 0) {
+                        ensureMaxHealth(player)
                         revivePlayer(player)
                     }
                 }
@@ -267,7 +283,6 @@ object TimeKeyFunction {
         if (target is ServerPlayerEntity) {
             target.kill()
         } else {
-            // 强制处决逻辑
             target.health = 1f
             val source = player.damageSources.playerAttack(player)
             val died = target.damage(source, 999f)
@@ -288,6 +303,9 @@ object TimeKeyFunction {
     @JvmStatic
     fun revivePlayer(p: ServerPlayerEntity) {
         if (p.world == null) return
+
+        ensureMaxHealth(p)
+
         onDeathIntercepted(p)
 
         p.apply {
