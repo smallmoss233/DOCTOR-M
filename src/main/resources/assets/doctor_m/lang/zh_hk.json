@@ -350,6 +350,9 @@
   "tooltip.doctorm.toymaker_hammer.error": "§c複製過程中發生錯誤，請查看伺服端日誌",
   "tooltip.doctorm.toymaker_hammer.manager_full": "§c塔迪斯數量已達伺服器上限，無法繼續創建",
   "tooltip.doctor_m.obelisk.no_space": "空間不足，無法放置和諧之眼方尖碑！",
+  "tooltip.doctor_m.pocket_watch.time.morning": "上午",
+  "tooltip.doctor_m.pocket_watch.time.noon": "中午",
+  "tooltip.doctor_m.pocket_watch.time.evening": "下午",
 
   "hud.doctor_m.environment.oxygenated": "有氧，可脫下太空衣",
   "hud.doctor_m.environment.deoxygenated": "無氧，不可脫下太空衣",
@@ -379,6 +382,8 @@
   "message.doctor_m.pocket_watch.detail": "§8§o這不過是一塊被人遺忘的舊錶...§r* *§7當你本該撐不住的時候，錶盤裡會傳來一聲乾澀的咔噠。§r*§7等你回過神，那道致命的傷口已經不見了，彷彿剛才只是走了一瞬的神。§r*§7周圍的生物似乎也被這陣異響震得七葷八素。§r* *§7可惜發條鏽得太厲害，每次倒轉之後都要等上好一陣子才能重新走動。",
   "message.doctor_m.pocket_watch.revived": "§d你的旅途尚未到達終點，六重神注視著你，期待著你的旅途最終通往何方...",
   "message.doctor_m.pocket_watch.cooldown": "§7錶盤裡的齒輪還在空轉...*§8距離下次能擰動發條還有 §c%d分%d秒",
+  "message.doctor_m.pocket_watch.state.open": "§7[已打開]",
+  "message.doctor_m.pocket_watch.state.closed": "§7[已關閉]",
   "message.doctor_m.relic_gem": "§7隨著時間流逝，她的力量已不如從前，但仍願她保佑你...",
   "message.doctor_m.relic_gem.detail": "§7裝備後獲得常駐抗性，死亡時觸發保命效果",
   "message.doctor_m.relic_gem.status.cooldown": "§b當前等級 %d/%d §2| 抗性等級 %d §c| 冷卻 %d分%d秒",

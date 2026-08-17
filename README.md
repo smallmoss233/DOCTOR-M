@@ -27,9 +27,9 @@ DOCTOR M isn't just about making your journey more entertaining—it's about mak
 
 DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom interiors use blocks from the following mods, so besides AIT, it is recommended to install them as well:
 
-* [**AIT Extras**](https://modrinth.com/mod/ait-extras) – The Cloister need content from this mod.(Version is below 1.1.0, because 1.1.0 doesn't have the new blocks.)
+* [**AIT Extras**](https://modrinth.com/mod/ait-extras) – Some interiors require blocks from this mod.(Only for versions before 1.1.0)
 
-* [**Create**](https://modrinth.com/mod/create-fabric) – **Permanence**  need content from this mod.
+* [**Create**](https://modrinth.com/mod/create-fabric) – Some interiors require blocks from this mod.
 
 * [**Tough as nails**](https://modrinth.com/mod/tough-as-nails) - AIT's spacesuit will provide warmth.
 
@@ -37,15 +37,15 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 
 ### **Credits for Custom Content**
 
-* *永恒之眼(Evereye) interior & exterior , 玛丽.谨(Mary.Jin) Sonic Screwdriver , 守望(Watcher) interior & console texture, 恶疯(Madness) interior & exterior, 回廊(Cloister) , 恒朽(Permanence) , 古图书馆(Ancient Library) , 永恒之钟(Eternal Bell) interior*: [Smallmoss](https://modrinth.com/user/SmallMoss)
+* *永恒之眼(Evereye) interior & exterior , 玛丽.谨(Mary.Jin) Sonic Screwdriver , 守望(Watcher) interior(Partial) & console texture, 恶疯(Madness) interior & exterior, 回廊(Cloister) , 恒朽(Permanence) , 古图书馆(Ancient Library) , 永恒之钟(Eternal Bell) interior*: [Smallmoss](https://modrinth.com/user/SmallMoss)
 
-* *守望(Watcher) console texture*: [白桦下的赤俄(Kilin_Mus)](https://modrinth.com/user/Kilin_Mus)
+* *守望(Watcher) console texture & interior(Partial)*: [白桦下的赤俄(Kilin_Mus)](https://modrinth.com/user/Kilin_Mus)
 
-* *霓虹(Rainbow), 烈火(Fire) , 泽顿水晶(Crystalline Zeiton) , 幻方(Magic Square) , 浪漫(Romantic)interiors*: 名游茶
+* *霓虹(Neon), 烈火(Inferno) , 泽顿水晶(Crystalline Zeiton) , 幻方(Magic Square) , 浪漫(Romantic)interiors , 守望(Watcher) interior(Partial)*: [名游茶](https://modrinth.com/user/MingYouCha-0527)
 
 * *斯格(Sig) interior*: [斯格尔特(Sigeerte)](https://modrinth.com/user/Sigeerte)
 
-* *时隙(Rift) interior*: [TC020](https://modrinth.com/user/TC020)
+* *时隙(The Rift) interior*: [TC020](https://modrinth.com/user/TC020)
 
 * *Redstone Torch Sonic Screwdriver author*: 慢跑者
 

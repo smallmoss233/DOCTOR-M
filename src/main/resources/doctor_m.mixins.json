@@ -33,7 +33,6 @@
     "doctor_m.SonicPortControlMixin",
     "doctor_m.TelepathicControlMixin",
     "doctor_m.PlayerEntityMixin",
-    "doctor_m.EntityRemovalProtectionMixin",
     "sonic_mode.InteractionSonicModeMixin",
     "sonic_mode.OverloadSonicModeMixin",
     "sonic_mode.ScanningSonicModeMixin",

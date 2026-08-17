@@ -37,16 +37,12 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * De-Mat Gun 实体抹除器 —— 修复编译错误版
- *
+ * De-Mat Gun
  * 设计目标：
  * 1. 不持有 KeytoTime 的玩家，无论携带何种神器，都会被彻底抹除数据。
  * 2. 保留网络连接，让玩家走正常死亡→重生流程，重生后数据为空（近似新玩家）。
  * 3. 若死亡被模组拦截，则将其转化为"时间幽灵"（无法与世界交互）。
  * 4. 执行顺序：冻结 → 清空所有数据 → 存档抹除 → 处决(kill) → 清理内部缓存 → 幽灵化保险。
- *
- * 适配：Minecraft 1.20.1 / Fabric / Yarn 映射
- * 修复：移除有争议的 import，全部改用反射，兼容不同映射版本。
  */
 public class DeMatGunEntityEraser {
 
@@ -144,14 +140,12 @@ public class DeMatGunEntityEraser {
         UUID uuid = player.getUuid();
         String name = player.getEntityName();
 
-        // ===== PHASE 0: 冻结 & 标签清除 =====
         player.setVelocity(Vec3d.ZERO);
         player.velocityModified = true;
         player.setNoGravity(true);
         player.setInvulnerable(true);
         clearEntityTags(player);
 
-        // ===== PHASE 1: 数据湮灭（先清完，再处死）=====
         player.clearStatusEffects();
         player.setAbsorptionAmount(0.0f);
         player.setAir(player.getMaxAir());
@@ -184,24 +178,18 @@ public class DeMatGunEntityEraser {
 
         clearEntityTags(player);
 
-        // ===== PHASE 2: 存档层面抹除 =====
         forceSaveEmptyPlayerData(player, server, uuid);
         deletePlayerFiles(server, uuid);
 
-        // ===== PHASE 3: 处决（触发正常死亡流程）=====
         player.kill();
 
-        // ===== PHASE 4: 死后清理 =====
         purgeFromWorldSystems(player, server);
         purgePlayerManagerCaches(player, server);
 
-        // ===== PHASE 5: 终极保险 =====
         if (player.isAlive()) {
             turnIntoTimeGhost(player);
         }
     }
-
-    // ========== 辅助方法 ==========
 
     private static void clearAdvancements(ServerPlayerEntity player) {
         try {
@@ -223,7 +211,6 @@ public class DeMatGunEntityEraser {
             Object recipeBook = player.getRecipeBook();
             Class<?> bookClass = recipeBook.getClass();
 
-            // 尝试获取 "recipes" 字段（可能在当前类或父类）
             Field recipesField = getFieldFromHierarchy(bookClass, "recipes");
             if (recipesField != null) {
                 recipesField.setAccessible(true);
@@ -231,7 +218,6 @@ public class DeMatGunEntityEraser {
                 if (recipes instanceof Set<?>) ((Set<?>) recipes).clear();
             }
 
-            // 尝试获取 "toBeDisplayed"（Yarn）或 "displayedRecipes"（旧版/其它映射）
             Field displayedField = getFieldFromHierarchy(bookClass, "toBeDisplayed");
             if (displayedField == null) {
                 displayedField = getFieldFromHierarchy(bookClass, "displayedRecipes");
@@ -242,7 +228,6 @@ public class DeMatGunEntityEraser {
                 if (displayed instanceof Set<?>) ((Set<?>) displayed).clear();
             }
 
-            // 尝试发送初始化配方包（同步客户端）
             try {
                 Method sendInit = bookClass.getDeclaredMethod("sendInitRecipesPacket", ServerPlayerEntity.class);
                 sendInit.setAccessible(true);
@@ -253,7 +238,6 @@ public class DeMatGunEntityEraser {
                     sendInit.setAccessible(true);
                     sendInit.invoke(recipeBook, player);
                 } catch (Exception ex2) {
-                    // 静默失败，不影响核心功能
                 }
             }
         } catch (Exception e) {
@@ -408,7 +392,6 @@ public class DeMatGunEntityEraser {
             PlayerManager pm = server.getPlayerManager();
             UUID uuid = player.getUuid();
 
-            // 尝试 "statistics"（Yarn 1.20.1）或 "statisticsMap"
             try {
                 Field statisticsField = PlayerManager.class.getDeclaredField("statistics");
                 statisticsField.setAccessible(true);
