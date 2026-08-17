@@ -15,6 +15,7 @@ import net.minecraft.entity.projectile.PersistentProjectileEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
@@ -26,6 +27,9 @@ object TimeKeyFunction {
     private val customDamage = ThreadLocal.withInitial { false }
     private val lastGameMode = ConcurrentHashMap<UUID, GameMode>()
     private val lastHealTime = ConcurrentHashMap<UUID, Long>()
+
+    // ===== 新增：保护期结束时间（server tick）=====
+    private val protectionEndTime = ConcurrentHashMap<UUID, Long>()
 
     @JvmStatic
     fun getTimeKeyStack(player: PlayerEntity): ItemStack =
@@ -39,6 +43,12 @@ object TimeKeyFunction {
     fun isTimeKeyEquipped(player: PlayerEntity): Boolean =
         getTimeKeyStack(player).isEmpty == false
 
+    // ===== 新增：死亡被拦截时调用，标记保护期 =====
+    @JvmStatic
+    fun onDeathIntercepted(player: ServerPlayerEntity) {
+        protectionEndTime[player.uuid] = player.server.ticks + 2400L // 2分钟 = 2400 ticks
+    }
+
     @JvmStatic
     fun register() {
         // ===== 1. 伤害拦截 =====
@@ -51,9 +61,18 @@ object TimeKeyFunction {
             (entity as? ServerPlayerEntity)?.let { player ->
                 if (!isTimeKeyEquipped(player)) return@register true
 
+                // GodMode：完全免疫，连伤害事件都不进
                 if (TimeKeyPassive.isGodMode(player)) {
                     player.health = player.maxHealth
                     return@register false
+                }
+
+                // 保护期内：完全免疫伤害（但抹除光环仍在工作）
+                protectionEndTime[player.uuid]?.let { end ->
+                    if (player.server.ticks <= end) {
+                        player.health = player.maxHealth
+                        return@register false
+                    }
                 }
 
                 (source.source as? PersistentProjectileEntity)?.takeIf { it.owner != player }?.let { proj ->
@@ -94,7 +113,7 @@ object TimeKeyFunction {
             true
         }
 
-        // ===== 2. 死亡拦截 =====
+        // ===== 2. 死亡拦截（已被 Mixin 兜底，这里保留冗余保险）=====
         ServerLivingEntityEvents.ALLOW_DEATH.register { entity, source, amount ->
             (entity as? ServerPlayerEntity)?.let { player ->
                 if (isTimeKeyEquipped(player)) {
@@ -111,6 +130,22 @@ object TimeKeyFunction {
             server.playerManager.playerList.forEach { player ->
                 val hasTimeKey = isTimeKeyEquipped(player)
                 val isGodMode = hasTimeKey && TimeKeyPassive.isGodMode(player)
+
+                // ===== 保护期：3格内生物 De-Mat 抹除 =====
+                protectionEndTime[player.uuid]?.let { endTick ->
+                    if (now <= endTick) {
+                        // 复仇光环：3格内任何生物强制抹除
+                        player.serverWorld.getEntitiesByClass(
+                            LivingEntity::class.java,
+                            player.boundingBox.expand(3.0),
+                            { it != player && it.isAlive }
+                        ).forEach { target ->
+                            eraseTargetDeMatStyle(target, player.serverWorld)
+                        }
+                    } else {
+                        protectionEndTime.remove(player.uuid)
+                    }
+                }
 
                 if (hasTimeKey) {
                     val healAmount = player.maxHealth * 0.1f
@@ -192,8 +227,42 @@ object TimeKeyFunction {
         TimeKeyPassive.registerAttackCallback()
     }
 
+    // ===== 新增：De-Mat 同款抹除（简化版，对保护期内的威胁强制处决）=====
+    private fun eraseTargetDeMatStyle(target: LivingEntity, world: ServerWorld) {
+        val pos = target.pos
+
+        // 粒子特效
+        repeat(30) {
+            world.spawnParticles(ParticleTypes.TOTEM_OF_UNDYING,
+                pos.x, pos.y, pos.z, 1,
+                (world.random.nextDouble() - 0.5) * 1.5,
+                (world.random.nextDouble() - 0.5) * 1.5,
+                (world.random.nextDouble() - 0.5) * 1.5, 0.2)
+        }
+        world.spawnParticles(ParticleTypes.FLASH, pos.x, pos.y, pos.z, 1, 0.0, 0.0, 0.0, 0.0)
+
+        // 音效
+        world.playSound(null, pos.x, pos.y, pos.z,
+            SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 1.0f, 1.0f)
+
+        if (target is ServerPlayerEntity) {
+            // 对玩家：清空数据后强制 kill（绕过对方的 kill() Mixin？不，对方的 Mixin 会拦截）
+            // 但如果对方也处于保护期，那就是两个不死身对轰，符合"威慑"设定
+            target.inventory.clear()
+            target.getEnderChestInventory().clear()
+            // 尝试 kill，如果对方有防护，对方的 Mixin 会把他拉起来
+            target.kill()
+        } else {
+            // 对普通生物：直接湮灭
+            target.discard()
+        }
+    }
+
     @JvmStatic
     fun revivePlayer(p: ServerPlayerEntity) {
+        // 标记保护期
+        onDeathIntercepted(p)
+
         p.apply {
             try {
                 val clazz = LivingEntity::class.java
