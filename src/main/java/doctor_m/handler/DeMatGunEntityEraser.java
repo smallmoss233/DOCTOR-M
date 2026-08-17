@@ -14,12 +14,10 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.recipe.book.RecipeBook;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.network.ServerRecipeBook;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.stat.StatHandler;
@@ -39,15 +37,16 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * De-Mat Gun 实体抹除器 —— 改进版
+ * De-Mat Gun 实体抹除器 —— 修复编译错误版
  *
  * 设计目标：
  * 1. 不持有 KeytoTime 的玩家，无论携带何种神器，都会被彻底抹除数据。
  * 2. 保留网络连接，让玩家走正常死亡→重生流程，重生后数据为空（近似新玩家）。
  * 3. 若死亡被模组拦截，则将其转化为"时间幽灵"（无法与世界交互）。
- * 4. 执行顺序：冻结 → 清空所有数据（装备/NBT/标签/进度/配方/统计/计分板）→ 存档抹除 → 处决(kill) → 清理内部缓存 → 幽灵化保险。
+ * 4. 执行顺序：冻结 → 清空所有数据 → 存档抹除 → 处决(kill) → 清理内部缓存 → 幽灵化保险。
  *
  * 适配：Minecraft 1.20.1 / Fabric / Yarn 映射
+ * 修复：移除有争议的 import，全部改用反射，兼容不同映射版本。
  */
 public class DeMatGunEntityEraser {
 
@@ -139,9 +138,7 @@ public class DeMatGunEntityEraser {
     }
 
     /**
-     * 从时间线上彻底抹除玩家。保留连接，让玩家走正常死亡→重生流程，
-     * 但所有数据已被清空，重生后即为全新玩家。
-     * 若死亡被模组拦截，则将其转化为"时间幽灵"（无法与世界交互）。
+     * 从时间线上彻底抹除玩家。保留连接，让玩家走正常死亡→重生流程。
      */
     private static void erasePlayerFromTimeline(ServerPlayerEntity player, MinecraftServer server) {
         UUID uuid = player.getUuid();
@@ -152,10 +149,9 @@ public class DeMatGunEntityEraser {
         player.velocityModified = true;
         player.setNoGravity(true);
         player.setInvulnerable(true);
+        clearEntityTags(player);
 
-        // ===== PHASE 1: 数据湮灭（装备/数据先清完，再处死）=====
-
-        // 1.1 实体状态清零
+        // ===== PHASE 1: 数据湮灭（先清完，再处死）=====
         player.clearStatusEffects();
         player.setAbsorptionAmount(0.0f);
         player.setAir(player.getMaxAir());
@@ -168,41 +164,38 @@ public class DeMatGunEntityEraser {
         player.setSneaking(false);
         player.setSprinting(false);
 
-        // 1.2 经验归零
         player.addExperienceLevels(-player.experienceLevel);
         player.experienceProgress = 0.0f;
         player.totalExperience = 0;
 
-        // 1.3 背包湮灭（所有维度）
         player.getInventory().clear();
         player.getEnderChestInventory().clear();
         clearTrinkets(player);
 
-        // 1.4 模组兼容清零
         if (TimelordRegenCompat.isLoaded() && TimelordRegenCompat.isTimelord(player)) {
             TimelordRegenCompat.RegenInfo info = TimelordRegenCompat.getRegenInfo(player);
             if (info != null) info.setUsesLeft(0);
         }
 
-        // 1.5 进度 / 配方 / 统计 / 计分板
         clearAdvancements(player);
         clearRecipes(player);
         clearStats(player);
         clearScoreboard(server, name);
 
+        clearEntityTags(player);
+
         // ===== PHASE 2: 存档层面抹除 =====
         forceSaveEmptyPlayerData(player, server, uuid);
         deletePlayerFiles(server, uuid);
 
-        // ===== PHASE 3: 处决（kill 触发正常死亡流程，客户端能看到死亡画面）=====
+        // ===== PHASE 3: 处决（触发正常死亡流程）=====
         player.kill();
 
-        // ===== PHASE 4: 死后清理（不影响客户端死亡画面）=====
+        // ===== PHASE 4: 死后清理 =====
         purgeFromWorldSystems(player, server);
         purgePlayerManagerCaches(player, server);
 
         // ===== PHASE 5: 终极保险 =====
-        // 如果某些模组阻止了死亡（health > 0），将其转化为"时间幽灵"
         if (player.isAlive()) {
             turnIntoTimeGhost(player);
         }
@@ -222,20 +215,47 @@ public class DeMatGunEntityEraser {
         }
     }
 
+    /**
+     * 清除玩家配方书。不直接引用 ServerRecipeBook / RecipeBook 类，避免映射差异。
+     */
     private static void clearRecipes(ServerPlayerEntity player) {
         try {
-            ServerRecipeBook recipeBook = player.getRecipeBook();
+            Object recipeBook = player.getRecipeBook();
+            Class<?> bookClass = recipeBook.getClass();
 
-            // Yarn 1.20.1: RecipeBook.recipes
-            Field recipesField = RecipeBook.class.getDeclaredField("recipes");
-            recipesField.setAccessible(true);
-            Object recipes = recipesField.get(recipeBook);
-            if (recipes instanceof Set<?>) ((Set<?>) recipes).clear();
+            // 尝试获取 "recipes" 字段（可能在当前类或父类）
+            Field recipesField = getFieldFromHierarchy(bookClass, "recipes");
+            if (recipesField != null) {
+                recipesField.setAccessible(true);
+                Object recipes = recipesField.get(recipeBook);
+                if (recipes instanceof Set<?>) ((Set<?>) recipes).clear();
+            }
 
-            // Yarn 1.20.1: sendInitRecipesPacket
-            Method sendInit = ServerRecipeBook.class.getDeclaredMethod("sendInitRecipesPacket", ServerPlayerEntity.class);
-            sendInit.setAccessible(true);
-            sendInit.invoke(recipeBook, player);
+            // 尝试获取 "toBeDisplayed"（Yarn）或 "displayedRecipes"（旧版/其它映射）
+            Field displayedField = getFieldFromHierarchy(bookClass, "toBeDisplayed");
+            if (displayedField == null) {
+                displayedField = getFieldFromHierarchy(bookClass, "displayedRecipes");
+            }
+            if (displayedField != null) {
+                displayedField.setAccessible(true);
+                Object displayed = displayedField.get(recipeBook);
+                if (displayed instanceof Set<?>) ((Set<?>) displayed).clear();
+            }
+
+            // 尝试发送初始化配方包（同步客户端）
+            try {
+                Method sendInit = bookClass.getDeclaredMethod("sendInitRecipesPacket", ServerPlayerEntity.class);
+                sendInit.setAccessible(true);
+                sendInit.invoke(recipeBook, player);
+            } catch (Exception ex1) {
+                try {
+                    Method sendInit = bookClass.getDeclaredMethod("sendUnlockRecipes", ServerPlayerEntity.class);
+                    sendInit.setAccessible(true);
+                    sendInit.invoke(recipeBook, player);
+                } catch (Exception ex2) {
+                    // 静默失败，不影响核心功能
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -257,18 +277,51 @@ public class DeMatGunEntityEraser {
         }
     }
 
+    private static void clearScoreboard(MinecraftServer server, String playerName) {
+        try {
+            Scoreboard scoreboard = server.getScoreboard();
+            Field stateField = Scoreboard.class.getDeclaredField("state");
+            stateField.setAccessible(true);
+            Object state = stateField.get(scoreboard);
+            if (state != null) {
+                Field scoresField = state.getClass().getDeclaredField("playerScores");
+                scoresField.setAccessible(true);
+                Map<?, ?> scores = (Map<?, ?>) scoresField.get(state);
+                if (scores != null) scores.remove(playerName);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
-     * 强制保存一个"空"的玩家数据到磁盘，覆盖原有数据
+     * 清除实体计分板标签。兼容 Yarn (getScoreboardTags) 和 Mojang (getTags) 映射。
      */
+    private static void clearEntityTags(Entity entity) {
+        try {
+            // Yarn 1.20.1 标准方式
+            Method getTagsMethod = Entity.class.getMethod("getScoreboardTags");
+            Set<?> tags = (Set<?>) getTagsMethod.invoke(entity);
+            if (tags != null) tags.clear();
+        } catch (Exception e) {
+            try {
+                // Mojang / Parchment 映射回退
+                Method getTagsMethod = Entity.class.getMethod("getTags");
+                Set<?> tags = (Set<?>) getTagsMethod.invoke(entity);
+                if (tags != null) tags.clear();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
     private static void forceSaveEmptyPlayerData(ServerPlayerEntity player, MinecraftServer server, UUID uuid) {
         try {
-            // 先让游戏正常保存一次（此时玩家数据已被清空）
             PlayerManager pm = server.getPlayerManager();
             Method saveMethod = PlayerManager.class.getDeclaredMethod("savePlayerData", ServerPlayerEntity.class);
             saveMethod.setAccessible(true);
             saveMethod.invoke(pm, player);
 
-            // 更暴力：直接写入空 NBT 覆盖文件
             Path playerDataPath = server.getSavePath(WorldSavePath.PLAYERDATA).resolve(uuid + ".dat");
             NbtCompound emptyNbt = new NbtCompound();
             NbtIo.writeCompressed(emptyNbt, playerDataPath.toFile());
@@ -277,21 +330,14 @@ public class DeMatGunEntityEraser {
         }
     }
 
-    /**
-     * 删除文件系统上的玩家存档文件
-     */
     private static void deletePlayerFiles(MinecraftServer server, UUID uuid) {
         String uuidStr = uuid.toString();
-
-        // 玩家数据
         deleteFile(server.getSavePath(WorldSavePath.PLAYERDATA).resolve(uuidStr + ".dat").toFile());
         deleteFile(server.getSavePath(WorldSavePath.PLAYERDATA).resolve(uuidStr + ".dat_old").toFile());
 
-        // 进度
         Path advPath = server.getSavePath(WorldSavePath.ADVANCEMENTS);
         deleteFile(advPath.resolve(uuidStr + ".json").toFile());
 
-        // 统计
         Path statsPath = server.getSavePath(WorldSavePath.STATS);
         deleteFile(statsPath.resolve(uuidStr + ".json").toFile());
     }
@@ -318,32 +364,10 @@ public class DeMatGunEntityEraser {
         }
     }
 
-    private static void clearScoreboard(MinecraftServer server, String playerName) {
-        try {
-            Scoreboard scoreboard = server.getScoreboard();
-            // 暴力反射：直接清空该玩家在所有 objective 中的 entry
-            Field stateField = Scoreboard.class.getDeclaredField("state");
-            stateField.setAccessible(true);
-            Object state = stateField.get(scoreboard);
-            if (state != null) {
-                Field scoresField = state.getClass().getDeclaredField("playerScores");
-                scoresField.setAccessible(true);
-                Map<?, ?> scores = (Map<?, ?>) scoresField.get(state);
-                if (scores != null) scores.remove(playerName);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 从世界实体系统中移除玩家残留（kill 后执行，不影响客户端死亡画面）
-     */
     private static void purgeFromWorldSystems(ServerPlayerEntity player, MinecraftServer server) {
         try {
             ServerWorld world = player.getServerWorld();
 
-            // 从 world.players 中移除
             try {
                 Field playersField = ServerWorld.class.getDeclaredField("players");
                 playersField.setAccessible(true);
@@ -353,7 +377,6 @@ public class DeMatGunEntityEraser {
                 e.printStackTrace();
             }
 
-            // 从 entityManager 中移除（1.20+ 标准方式）
             try {
                 Field entityManagerField = ServerWorld.class.getDeclaredField("entityManager");
                 entityManagerField.setAccessible(true);
@@ -364,7 +387,6 @@ public class DeMatGunEntityEraser {
                 e.printStackTrace();
             }
 
-            // 从 chunk 的 entity tracker 中移除
             try {
                 Field chunkManagerField = ServerWorld.class.getDeclaredField("chunkManager");
                 chunkManagerField.setAccessible(true);
@@ -376,31 +398,33 @@ public class DeMatGunEntityEraser {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * 从 PlayerManager 清理统计/进度缓存（保留 players/playerMap 供重生流程使用）
-     */
     private static void purgePlayerManagerCaches(ServerPlayerEntity player, MinecraftServer server) {
         try {
             PlayerManager pm = server.getPlayerManager();
             UUID uuid = player.getUuid();
 
-            // Yarn 1.20.1: PlayerManager.statistics（原代码 statisticsMap 映射错误）
+            // 尝试 "statistics"（Yarn 1.20.1）或 "statisticsMap"
             try {
                 Field statisticsField = PlayerManager.class.getDeclaredField("statistics");
                 statisticsField.setAccessible(true);
                 Map<?, ?> statisticsMap = (Map<?, ?>) statisticsField.get(pm);
                 if (statisticsMap != null) statisticsMap.remove(uuid);
             } catch (Exception e) {
-                e.printStackTrace();
+                try {
+                    Field statisticsField = PlayerManager.class.getDeclaredField("statisticsMap");
+                    statisticsField.setAccessible(true);
+                    Map<?, ?> statisticsMap = (Map<?, ?>) statisticsField.get(pm);
+                    if (statisticsMap != null) statisticsMap.remove(uuid);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
 
-            // Yarn 1.20.1: PlayerManager.advancementTrackers
             try {
                 Field advancementsField = PlayerManager.class.getDeclaredField("advancementTrackers");
                 advancementsField.setAccessible(true);
@@ -409,46 +433,53 @@ public class DeMatGunEntityEraser {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * 将玩家转化为"时间幽灵"——无法与实体世界交互的存在。
-     * 作为最终威慑手段，当死亡被模组阻止时调用。
-     */
     private static void turnIntoTimeGhost(ServerPlayerEntity player) {
         System.err.println("[DeMatGun] " + player.getEntityName() + " resisted death — converting to Time Ghost");
 
-        player.noClip = true;             // 穿墙
-        player.setInvulnerable(true);   // 无敌
-        player.setInvisible(true);        // 完全隐形
-        player.setSilent(true);           // 无声
-        player.setNoGravity(true);        // 不受重力
+        player.noClip = true;
+        player.setInvulnerable(true);
+        player.setInvisible(true);
+        player.setSilent(true);
+        player.setNoGravity(true);
         player.setVelocity(Vec3d.ZERO);
         player.velocityModified = true;
         player.setFireTicks(0);
         player.setGlowing(false);
+        clearEntityTags(player);
 
-        // 二次清空所有数据
         player.getInventory().clear();
         player.getEnderChestInventory().clear();
         clearTrinkets(player);
         player.clearStatusEffects();
     }
 
+    /**
+     * 从类层次结构中查找字段（当前类 → 父类 → ...）
+     */
+    private static Field getFieldFromHierarchy(Class<?> clazz, String fieldName) {
+        Class<?> current = clazz;
+        while (current != null && current != Object.class) {
+            try {
+                return current.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException ignored) {
+                current = current.getSuperclass();
+            }
+        }
+        return null;
+    }
+
     private static boolean hasProtectedItem(ServerPlayerEntity player) {
-        // 检查背包
         for (int i = 0; i < player.getInventory().size(); i++) {
             if (player.getInventory().getStack(i).getItem() instanceof KeytoTime) return true;
         }
-        // 检查末影箱
         for (int i = 0; i < player.getEnderChestInventory().size(); i++) {
             if (player.getEnderChestInventory().getStack(i).getItem() instanceof KeytoTime) return true;
         }
-        // 检查 Trinket 饰品栏
         var trinketOpt = TrinketsApi.getTrinketComponent(player);
         if (trinketOpt.isPresent()) {
             for (var groupEntry : trinketOpt.get().getInventory().entrySet()) {
