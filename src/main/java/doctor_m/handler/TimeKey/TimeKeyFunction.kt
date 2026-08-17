@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.block.entity.BeaconBlockEntity.playSound
 import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.mob.HostileEntity
@@ -43,6 +44,12 @@ object TimeKeyFunction {
         "fallingBlock", "trident", "arrow", "mob", "player", "explosion",
         "fireworks", "fireball", "witherSkull", "thrown", "sting", "badRespawnPoint"
     )
+
+    //取下清除保护期
+    @JvmStatic
+    fun clearProtection(player: ServerPlayerEntity) {
+        protectionEndTime.remove(player.uuid)
+    }
 
     @JvmStatic
     fun getTimeKeyStack(player: PlayerEntity): ItemStack {
@@ -167,7 +174,7 @@ object TimeKeyFunction {
                             player.boundingBox.expand(3.0),
                             { it != player && it.isAlive }
                         ).forEach { target ->
-                            eraseTargetDeMatStyle(target, player.serverWorld)
+                            eraseTargetDeMatStyle(target, player, player.serverWorld)
                         }
                     } else {
                         protectionEndTime.remove(player.uuid)
@@ -254,8 +261,8 @@ object TimeKeyFunction {
         TimeKeyPassive.registerAttackCallback()
     }
 
-    //保护期抹除
-    private fun eraseTargetDeMatStyle(target: LivingEntity, world: ServerWorld) {
+    //保护期处决
+    private fun eraseTargetDeMatStyle(target: LivingEntity, player: ServerPlayerEntity, world: ServerWorld) {
         val pos = target.pos
 
         repeat(20) {
@@ -277,11 +284,23 @@ object TimeKeyFunction {
             SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 0.25f, 1.8f)
 
         if (target is ServerPlayerEntity) {
-            target.inventory.clear()
-            target.getEnderChestInventory().clear()
             target.kill()
         } else {
-            target.discard()
+            // 强制处决逻辑
+            target.health = 1f
+            val source = player.damageSources.playerAttack(player)
+            val died = target.damage(source, 999f)
+
+            if (!died && target.isAlive) {
+                target.health = 0f
+                try {
+                    val onDeath = LivingEntity::class.java.getDeclaredMethod("onDeath", DamageSource::class.java)
+                    onDeath.isAccessible = true
+                    onDeath.invoke(target, source)
+                } catch (_: Exception) {
+                    target.kill()
+                }
+            }
         }
     }
 

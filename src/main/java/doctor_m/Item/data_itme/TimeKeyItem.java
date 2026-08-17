@@ -3,6 +3,7 @@ package doctor_m.Item.data_itme;
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketItem;
 import doctor_m.Item.KeytoTime;
+import doctor_m.handler.TimeKey.TimeKeyFunction;
 import doctor_m.util.creativity.DynamicColorHelper;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import doctor_m.util.tooltip.TooltipHelper;
@@ -10,6 +11,7 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -47,6 +49,11 @@ public class TimeKeyItem extends TrinketItem implements KeytoTime {
     @Override
     public void onUnequip(ItemStack stack, SlotReference slot, LivingEntity entity) {
         super.onUnequip(stack, slot, entity);
+
+        if (entity instanceof ServerPlayerEntity serverPlayer) {
+            TimeKeyFunction.clearProtection(serverPlayer);
+        }
+
         if (entity instanceof PlayerEntity player) {
             if (!player.isCreative() && player.getAbilities().allowFlying) {
                 player.getAbilities().allowFlying = false;
