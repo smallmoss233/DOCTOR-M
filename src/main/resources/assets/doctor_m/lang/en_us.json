@@ -351,8 +351,9 @@
   "tooltip.doctorm.toymaker_hammer.manager_full": "§cTARDIS count has reached the server limit. Cannot create more.",
   "tooltip.doctor_m.obelisk.no_space": "Not enough space to place the Eye of Harmony Obelisk!",
   "tooltip.doctor_m.pocket_watch.time.morning": "Morning",
-  "tooltip.doctor_m.pocket_watch.time.noon": "Noon",
-  "tooltip.doctor_m.pocket_watch.time.evening": "Afternoon",
+  "tooltip.doctor_m.pocket_watch.time.afternoon": "Afternoon",
+  "tooltip.doctor_m.pocket_watch.time.evening": "Evening",
+  "tooltip.doctor_m.pocket_watch.time.night": "Night",
 
   "hud.doctor_m.environment.oxygenated": "Oxygenated, can take off spacesuit",
   "hud.doctor_m.environment.deoxygenated": "Deoxygenated, cannot take off spacesuit",

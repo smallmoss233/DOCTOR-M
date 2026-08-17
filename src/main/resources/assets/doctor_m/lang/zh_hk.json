@@ -351,8 +351,9 @@
   "tooltip.doctorm.toymaker_hammer.manager_full": "§c塔迪斯數量已達伺服器上限，無法繼續創建",
   "tooltip.doctor_m.obelisk.no_space": "空間不足，無法放置和諧之眼方尖碑！",
   "tooltip.doctor_m.pocket_watch.time.morning": "上午",
-  "tooltip.doctor_m.pocket_watch.time.noon": "中午",
-  "tooltip.doctor_m.pocket_watch.time.evening": "下午",
+  "tooltip.doctor_m.pocket_watch.time.afternoon": "下午",
+  "tooltip.doctor_m.pocket_watch.time.evening": "傍晚",
+  "tooltip.doctor_m.pocket_watch.time.night": "夜晚",
 
   "hud.doctor_m.environment.oxygenated": "有氧，可脫下太空衣",
   "hud.doctor_m.environment.deoxygenated": "無氧，不可脫下太空衣",
