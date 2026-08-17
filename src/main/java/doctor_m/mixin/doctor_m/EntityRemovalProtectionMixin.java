@@ -11,9 +11,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Entity.class)
 public class EntityRemovalProtectionMixin {
 
+    private boolean doctor_m$isPlayerReady(ServerPlayerEntity player) {
+        try {
+            java.lang.reflect.Field f = net.minecraft.entity.player.PlayerEntity.class.getDeclaredField("inventory");
+            f.setAccessible(true);
+            return f.get(player) != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     @Inject(method = "discard", at = @At("HEAD"), cancellable = true)
     private void doctor_m$blockDiscard(CallbackInfo ci) {
-        if ((Object) this instanceof ServerPlayerEntity player) {
+        if ((Object) this instanceof ServerPlayerEntity player && doctor_m$isPlayerReady(player)) {
             if (TimeKeyFunction.isTimeKeyEquipped(player)) {
                 TimeKeyFunction.revivePlayer(player);
                 ci.cancel();
@@ -23,7 +33,10 @@ public class EntityRemovalProtectionMixin {
 
     @Inject(method = "remove", at = @At("HEAD"), cancellable = true)
     private void doctor_m$blockRemove(Entity.RemovalReason reason, CallbackInfo ci) {
-        if ((Object) this instanceof ServerPlayerEntity player) {
+        if ((Object) this instanceof ServerPlayerEntity player && doctor_m$isPlayerReady(player)) {
+            if (reason == Entity.RemovalReason.CHANGED_DIMENSION || reason == Entity.RemovalReason.UNLOADED_WITH_PLAYER) {
+                return;
+            }
             if (TimeKeyFunction.isTimeKeyEquipped(player)) {
                 TimeKeyFunction.revivePlayer(player);
                 ci.cancel();

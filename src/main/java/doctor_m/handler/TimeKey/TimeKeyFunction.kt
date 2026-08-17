@@ -4,20 +4,24 @@ import dev.amble.ait.core.AITStatusEffects
 import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry
 import dev.emi.trinkets.api.TrinketsApi
 import doctor_m.Item.data_itme.TimeKeyItem
+import jdk.internal.joptsimple.internal.Strings.repeat
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
+import net.minecraft.block.entity.BeaconBlockEntity.playSound
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.entity.mob.HostileEntity
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.entity.projectile.PersistentProjectileEntity
+import net.minecraft.entity.projectile.ProjectileEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.world.ChunkLevels.isAccessible
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
+import net.minecraft.structure.StructurePiece.boundingBox
 import net.minecraft.text.Text
 import net.minecraft.world.GameMode
 import java.util.*
@@ -27,23 +31,41 @@ object TimeKeyFunction {
     private val customDamage = ThreadLocal.withInitial { false }
     private val lastGameMode = ConcurrentHashMap<UUID, GameMode>()
     private val lastHealTime = ConcurrentHashMap<UUID, Long>()
-
-    // ===== 新增：保护期结束时间（server tick）=====
     private val protectionEndTime = ConcurrentHashMap<UUID, Long>()
 
+    //MC原版伤害类型白名单
+    private val VANILLA_DAMAGE_TYPES = setOf(
+        "inFire", "onFire", "lava", "hotFloor", "inWall", "cramming",
+        "drown", "starve", "cactus", "fall", "flyIntoWall", "outOfWorld",
+        "generic", "magic", "indirectMagic", "dragonBreath", "wither",
+        "anvil", "fallingStalactite", "stalagmite", "lightningBolt", "freeze",
+        "sonicBoom", "outsideBorder", "genericKill", "dryout", "sweetBerryBush",
+        "fallingBlock", "trident", "arrow", "mob", "player", "explosion",
+        "fireworks", "fireball", "witherSkull", "thrown", "sting", "badRespawnPoint"
+    )
+
     @JvmStatic
-    fun getTimeKeyStack(player: PlayerEntity): ItemStack =
-        player.mainHandStack.takeIf { it.item is TimeKeyItem }
+    fun getTimeKeyStack(player: PlayerEntity): ItemStack {
+        try {
+            val field = PlayerEntity::class.java.getDeclaredField("inventory")
+            field.isAccessible = true
+            if (field.get(player) == null) return ItemStack.EMPTY
+        } catch (_: Exception) {
+            return ItemStack.EMPTY
+        }
+
+        return player.mainHandStack.takeIf { it.item is TimeKeyItem }
             ?: TrinketsApi.getTrinketComponent(player)
                 .flatMap { it.getEquipped { stack -> stack.item is TimeKeyItem }.stream().findFirst() }
                 .map { it.right }
                 .orElse(ItemStack.EMPTY)
+    }
 
     @JvmStatic
     fun isTimeKeyEquipped(player: PlayerEntity): Boolean =
         getTimeKeyStack(player).isEmpty == false
 
-    // ===== 新增：死亡被拦截时调用，标记保护期 =====
+    //标记保护期
     @JvmStatic
     fun onDeathIntercepted(player: ServerPlayerEntity) {
         protectionEndTime[player.uuid] = player.server.ticks + 2400L // 2分钟 = 2400 ticks
@@ -51,7 +73,7 @@ object TimeKeyFunction {
 
     @JvmStatic
     fun register() {
-        // ===== 1. 伤害拦截 =====
+        //伤害拦截
         ServerLivingEntityEvents.ALLOW_DAMAGE.register { entity, source, amount ->
             if (customDamage.get()) {
                 customDamage.set(false)
@@ -61,13 +83,18 @@ object TimeKeyFunction {
             (entity as? ServerPlayerEntity)?.let { player ->
                 if (!isTimeKeyEquipped(player)) return@register true
 
-                // GodMode：完全免疫，连伤害事件都不进
+                //GodMode
                 if (TimeKeyPassive.isGodMode(player)) {
                     player.health = player.maxHealth
                     return@register false
                 }
 
-                // 保护期内：完全免疫伤害（但抹除光环仍在工作）
+                //非原版伤害类型全部拦截
+                if (source.name !in VANILLA_DAMAGE_TYPES) {
+                    return@register false
+                }
+
+                // 保护期内判断
                 protectionEndTime[player.uuid]?.let { end ->
                     if (player.server.ticks <= end) {
                         player.health = player.maxHealth
@@ -75,7 +102,7 @@ object TimeKeyFunction {
                     }
                 }
 
-                (source.source as? PersistentProjectileEntity)?.takeIf { it.owner != player }?.let { proj ->
+                (source.source as? ProjectileEntity)?.takeIf { it.owner != player }?.let { proj ->
                     player.world.playSound(null, player.x, player.y, player.z,
                         SoundEvents.ENTITY_ARROW_HIT_PLAYER, SoundCategory.PLAYERS, 0.5f, 1.5f)
                     repeat(10) {
@@ -89,10 +116,11 @@ object TimeKeyFunction {
                     return@register false
                 }
 
+                //原版伤害类型黑名单
                 when (source.name) {
                     "inFire", "onFire", "lava", "magic", "indirectMagic", "wither", "drown",
                     "starve", "fall", "cactus", "hotFloor", "sweetBerryBush", "freeze",
-                    "inWall", "lightningBolt", "thorns", "sonic_boom", "outOfWorld",
+                    "inWall", "lightningBolt", "thorns", "sonicBoom", "outOfWorld",
                     "dryout", "stalagmite", "fallingStalactite", "cramming", "flyIntoWall",
                     "generic" -> return@register false
                 }
@@ -113,7 +141,7 @@ object TimeKeyFunction {
             true
         }
 
-        // ===== 2. 死亡拦截（已被 Mixin 兜底，这里保留冗余保险）=====
+        //死亡拦截
         ServerLivingEntityEvents.ALLOW_DEATH.register { entity, source, amount ->
             (entity as? ServerPlayerEntity)?.let { player ->
                 if (isTimeKeyEquipped(player)) {
@@ -124,17 +152,16 @@ object TimeKeyFunction {
             true
         }
 
-        // ===== 3. Tick 循环 =====
+        //Tick循环
         ServerTickEvents.END_SERVER_TICK.register { server ->
             val now = server.ticks.toLong()
             server.playerManager.playerList.forEach { player ->
                 val hasTimeKey = isTimeKeyEquipped(player)
                 val isGodMode = hasTimeKey && TimeKeyPassive.isGodMode(player)
 
-                // ===== 保护期：3格内生物 De-Mat 抹除 =====
+                //保护期：3格内生物抹除
                 protectionEndTime[player.uuid]?.let { endTick ->
                     if (now <= endTick) {
-                        // 复仇光环：3格内任何生物强制抹除
                         player.serverWorld.getEntitiesByClass(
                             LivingEntity::class.java,
                             player.boundingBox.expand(3.0),
@@ -227,33 +254,33 @@ object TimeKeyFunction {
         TimeKeyPassive.registerAttackCallback()
     }
 
-    // ===== 新增：De-Mat 同款抹除（简化版，对保护期内的威胁强制处决）=====
+    //保护期抹除
     private fun eraseTargetDeMatStyle(target: LivingEntity, world: ServerWorld) {
         val pos = target.pos
 
-        // 粒子特效
-        repeat(30) {
-            world.spawnParticles(ParticleTypes.TOTEM_OF_UNDYING,
-                pos.x, pos.y, pos.z, 1,
-                (world.random.nextDouble() - 0.5) * 1.5,
-                (world.random.nextDouble() - 0.5) * 1.5,
-                (world.random.nextDouble() - 0.5) * 1.5, 0.2)
+        repeat(20) {
+            world.spawnParticles(ParticleTypes.END_ROD,
+                pos.x, pos.y + 0.5, pos.z, 1,
+                (world.random.nextDouble() - 0.5) * 0.8,
+                (world.random.nextDouble() - 0.5) * 0.8,
+                (world.random.nextDouble() - 0.5) * 0.8, 0.05)
         }
-        world.spawnParticles(ParticleTypes.FLASH, pos.x, pos.y, pos.z, 1, 0.0, 0.0, 0.0, 0.0)
+        repeat(10) {
+            world.spawnParticles(ParticleTypes.SOUL_FIRE_FLAME,
+                pos.x, pos.y + 0.3, pos.z, 1,
+                (world.random.nextDouble() - 0.5) * 0.5,
+                world.random.nextDouble() * 0.5,
+                (world.random.nextDouble() - 0.5) * 0.5, 0.02)
+        }
 
-        // 音效
         world.playSound(null, pos.x, pos.y, pos.z,
-            SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 1.0f, 1.0f)
+            SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 0.25f, 1.8f)
 
         if (target is ServerPlayerEntity) {
-            // 对玩家：清空数据后强制 kill（绕过对方的 kill() Mixin？不，对方的 Mixin 会拦截）
-            // 但如果对方也处于保护期，那就是两个不死身对轰，符合"威慑"设定
             target.inventory.clear()
             target.getEnderChestInventory().clear()
-            // 尝试 kill，如果对方有防护，对方的 Mixin 会把他拉起来
             target.kill()
         } else {
-            // 对普通生物：直接湮灭
             target.discard()
         }
     }
