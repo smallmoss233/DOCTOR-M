@@ -31,8 +31,7 @@
       "doctor_m.DOCTORM"
     ],
     "client": [
-      "doctor_m.DOCTORMClient",
-      "doctor_m.client.util.AccessoryPassiveButton"
+      "doctor_m.DOCTORMClient"
     ],
     "fabric-datagen": [
       "doctor_m.DOCTORMDataGenerator"

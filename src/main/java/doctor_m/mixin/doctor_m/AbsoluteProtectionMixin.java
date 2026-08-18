@@ -1,8 +1,11 @@
 package doctor_m.mixin.doctor_m;
 
+import doctor_m.handler.KeytoTime.HealthGuard;
 import doctor_m.handler.KeytoTime.KeytoTimeCore;
 import doctor_m.handler.KeytoTime.KeytoTimePassive;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -77,5 +80,28 @@ public class AbsoluteProtectionMixin {
                 }
             } catch (Exception ignored) {}
         }
+    }
+
+    /**
+     * 时间钥匙防修改血量机制
+     */
+    @Inject(method = "setHealth(F)V", at = @At("HEAD"), cancellable = true)
+    private void onSetHealth(float health, CallbackInfo ci) {
+        LivingEntity entity = (LivingEntity) (Object) this;
+
+        if (!(entity instanceof ServerPlayerEntity player)) return;
+        if (!KeytoTimeCore.isTimeKeyEquipped(player)) return;
+        if (HealthGuard.isHealthWriteAllowed()) return;
+
+        ci.cancel();
+    }
+
+    @Inject(
+            method = "getAttributeInstance(Lnet/minecraft/entity/attribute/EntityAttribute;)Lnet/minecraft/entity/attribute/EntityAttributeInstance;",
+            at = @At("HEAD")
+    )
+    private void beforeGetAttributeInstance(EntityAttribute attribute, CallbackInfoReturnable<EntityAttributeInstance> cir) {
+        LivingEntity entity = (LivingEntity) (Object) this;
+        HealthGuard.attributeAccessEntity.set(entity);
     }
 }

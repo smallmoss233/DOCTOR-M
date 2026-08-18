@@ -44,18 +44,48 @@ object KeytoTimeCore {
     private fun ensureMaxHealth(player: ServerPlayerEntity) {
         val attr = player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)
         if (attr != null && attr.value <= 0.0) {
-            attr.baseValue = 20.0
+            HealthGuard.withMaxHealthWrite {
+                attr.baseValue = 20.0
+            }
         }
     }
 
     @JvmStatic
     fun getTimeKeyStack(player: PlayerEntity): ItemStack {
         return try {
-            player.mainHandStack.takeIf { it.item is KeytoTimeItem }
-                ?: TrinketsApi.getTrinketComponent(player)
-                    .flatMap { it.getEquipped { stack -> stack.item is KeytoTimeItem }.stream().findFirst() }
-                    .map { it.right }
-                    .orElse(ItemStack.EMPTY)
+            getTimeKeyStackUnsafe(player)
+        } catch (e: NullPointerException) {
+            ItemStack.EMPTY
+        }
+    }
+
+    private fun getTimeKeyStackUnsafe(player: PlayerEntity): ItemStack {
+        // 主手
+        player.mainHandStack.takeIf { it.item is KeytoTimeItem }?.let { return it }
+        // 副手
+        player.offHandStack.takeIf { it.item is KeytoTimeItem }?.let { return it }
+
+        // 背包（含装备栏、副手槽）
+        for (i in 0 until player.inventory.size()) {
+            val stack = player.inventory.getStack(i)
+            if (stack.item is KeytoTimeItem) return stack
+        }
+
+        // 末影箱
+        val enderChest = player.enderChestInventory
+        if (enderChest != null) {
+            for (i in 0 until enderChest.size()) {
+                val stack = enderChest.getStack(i)
+                if (stack.item is KeytoTimeItem) return stack
+            }
+        }
+
+        // Trinkets 饰品栏
+        return try {
+            TrinketsApi.getTrinketComponent(player)
+                .flatMap { it.getEquipped { stack -> stack.item is KeytoTimeItem }.stream().findFirst() }
+                .map { it.right }
+                .orElse(ItemStack.EMPTY)
         } catch (_: Throwable) {
             ItemStack.EMPTY
         }
@@ -88,7 +118,9 @@ object KeytoTimeCore {
 
                 ensureMaxHealth(player)
                 if (KeytoTimePassive.isGodMode(player)) {
-                    player.health = player.maxHealth
+                    HealthGuard.withHealthWrite {
+                        player.health = player.maxHealth
+                    }
                     return@register false
                 }
 
@@ -99,7 +131,9 @@ object KeytoTimeCore {
                 protectionEndTime[player.uuid]?.let { end ->
                     if (player.server.ticks <= end) {
                         ensureMaxHealth(player)
-                        player.health = player.maxHealth
+                        HealthGuard.withHealthWrite {
+                            player.health = player.maxHealth
+                        }
                         return@register false
                     }
                 }
@@ -132,14 +166,18 @@ object KeytoTimeCore {
 
                 if (newHealth <= 0) {
                     ensureMaxHealth(player)
-                    player.health = player.maxHealth
+                    HealthGuard.withHealthWrite {
+                        player.health = player.maxHealth
+                    }
                     onDeathIntercepted(player)
                     return@register false
                 }
 
                 if (newAmount != amount) {
                     customDamage.set(true)
-                    player.damage(source, newAmount)
+                    HealthGuard.withHealthWrite {
+                        player.damage(source, newAmount)
+                    }
                     return@register false
                 }
             }
@@ -181,11 +219,15 @@ object KeytoTimeCore {
                     val healAmount = player.maxHealth * 0.1f
                     lastHealTime[player.uuid]?.let { last ->
                         if (now - last >= 20) {
-                            player.heal(healAmount)
+                            HealthGuard.withHealthWrite {
+                                player.heal(healAmount)
+                            }
                             lastHealTime[player.uuid] = now
                         }
                     } ?: run {
-                        player.heal(healAmount)
+                        HealthGuard.withHealthWrite {
+                            player.heal(healAmount)
+                        }
                         lastHealTime[player.uuid] = now
                     }
 
@@ -204,7 +246,11 @@ object KeytoTimeCore {
 
                 if (isGodMode) {
                     ensureMaxHealth(player)
-                    if (player.health < player.maxHealth) player.health = player.maxHealth
+                    if (player.health < player.maxHealth) {
+                        HealthGuard.withHealthWrite {
+                            player.health = player.maxHealth
+                        }
+                    }
                     if (player.isOnFire) {
                         player.fireTicks = 0
                         player.setOnFire(false)
@@ -325,7 +371,9 @@ object KeytoTimeCore {
                 }
             } catch (_: Exception) { }
 
-            health = maxHealth
+            HealthGuard.withHealthWrite {
+                health = maxHealth
+            }
             clearStatusEffects()
             addStatusEffect(StatusEffectInstance(StatusEffects.RESISTANCE, 40, 2, false, false))
             serverWorld.getEntitiesByClass(LivingEntity::class.java, boundingBox.expand(35.0)) {

@@ -25,10 +25,6 @@ public final class GlowConditionChecker {
 
     }
 
-    /* ============================================================
-       公开 API（原有）
-       ============================================================ */
-
     public static boolean shouldGlow(PlayerEntity player) {
         return getGlowColor(player) != 0;
     }

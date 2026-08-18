@@ -5,6 +5,10 @@ import doctor_m.Item.data_itme.KeytoTimeFragment.PocketWatchItem;
 import doctor_m.Item.items;
 import doctor_m.block.ModBlockEntities;
 import doctor_m.block.data_block.EyeOfHarmonyObeliskBlock;
+import doctor_m.client.Accessory.AccessoryKeyRegistry;
+import doctor_m.client.Accessory.AccessoryPassiveButton;
+import doctor_m.client.Accessory.handler.KeytoTimeKeyHandler;
+import doctor_m.client.Accessory.handler.STCSKeyHandler;
 import doctor_m.client.Shield.ForceFieldClientRenderer;
 import doctor_m.client.Shield.ShieldNetworkingClient;
 import doctor_m.client.Shield.ShieldOverlay;
@@ -48,6 +52,11 @@ public class DOCTORMClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+
+        //按键系统
+        AccessoryPassiveButton.register();
+        AccessoryKeyRegistry.register(new STCSKeyHandler());
+        AccessoryKeyRegistry.register(new KeytoTimeKeyHandler());
 
         ModelPredicateProviderRegistry.register(
                 items.POCKET_WATCH,
