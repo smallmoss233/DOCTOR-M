@@ -1,9 +1,9 @@
 package doctor_m.Item;
 
 import doctor_m.Item.data_itme.*;
-import doctor_m.Item.data_itme.TimeKyeFragment.EternalCrystalItem;
-import doctor_m.Item.data_itme.TimeKyeFragment.PocketWatchItem;
-import doctor_m.Item.data_itme.TimeKyeFragment.RelicGemItem;
+import doctor_m.Item.data_itme.KeytoTimeFragment.EternalCrystalItem;
+import doctor_m.Item.data_itme.KeytoTimeFragment.PocketWatchItem;
+import doctor_m.Item.data_itme.KeytoTimeFragment.RelicGemItem;
 import doctor_m.block.ModBlocks;
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
@@ -18,7 +18,7 @@ import net.minecraft.util.Rarity;
 public class items {
 
     //时间钥匙
-    public static final Item TIME_KEY = new TimeKeyItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
+    public static final Item KEY_TO_TIME = new KeytoTimeItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
     public static final Item POCKET_WATCH = new PocketWatchItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
     public static final Item RELIC_GEM = new RelicGemItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
     public static final Item ETERNAL_CRYSTAL = new EternalCrystalItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
@@ -56,16 +56,16 @@ public class items {
         ModConfig config = ConfigManager.getConfig();
 
         new PercentageDamageHelper(new PercentageDamageHelper.Config(
-                config.timeKeyDamage,
-                config.timeKeyMultiplier,
-                config.timeKeyExtra,
-                PercentageDamageHelper.hasAnyOfItems(TIME_KEY)
+                ModConfig.KeytoTimeDamage,
+                ModConfig.KeytoTimeMultiplier,
+                ModConfig.KeytoTimeExtra,
+                PercentageDamageHelper.hasAnyOfItems(KEY_TO_TIME)
         ));
 
         new PercentageDamageHelper(new PercentageDamageHelper.Config(
-                config.eternalCrystalDamage,
-                config.eternalCrystalMultiplier,
-                config.eternalCrystalExtra,
+                ModConfig.eternalCrystalDamage,
+                ModConfig.eternalCrystalMultiplier,
+                ModConfig.eternalCrystalExtra,
                 PercentageDamageHelper.hasAnyOfItems(ETERNAL_CRYSTAL)
         ));
     }

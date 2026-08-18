@@ -14,10 +14,10 @@ public class item_group {
 public static void registerItems() {
             Registry.register(Registries.ITEM_GROUP, id("doctor_m_items"),
                     FabricItemGroup.builder()
-                            .icon(() -> new ItemStack(TIME_KEY))
+                            .icon(() -> new ItemStack(KEY_TO_TIME))
                             .displayName(Text.translatable("itemGroup.doctor_m"))
                             .entries((context, entries) -> {
-                                entries.add(TIME_KEY);
+                                entries.add(KEY_TO_TIME);
                                 entries.add(POCKET_WATCH);
                                 entries.add(RELIC_GEM);
                                 entries.add(ETERNAL_CRYSTAL);

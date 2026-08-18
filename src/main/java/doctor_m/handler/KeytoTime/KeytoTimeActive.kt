@@ -1,10 +1,10 @@
-package doctor_m.handler.TimeKey
+package doctor_m.handler.KeytoTime
 
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.world.Difficulty
 import net.minecraft.world.GameMode
 
-object TimeKeyActive {
+object KeytoTimeActive {
 
     @JvmStatic
     fun toggleGameMode(player: ServerPlayerEntity) {

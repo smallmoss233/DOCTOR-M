@@ -23,7 +23,6 @@ import java.util.List;
 
 public class OxygenTankItem extends Item {
     public static final String OXYGEN_KEY = "oxygen";
-    // 移除硬编码常量，改为从配置读取
     private static final String START_TIME_KEY = "doctor_m_hold_start";
 
     public OxygenTankItem(Settings settings) {

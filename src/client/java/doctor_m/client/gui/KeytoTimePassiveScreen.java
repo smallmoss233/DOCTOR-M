@@ -1,9 +1,9 @@
 package doctor_m.client.gui;
 
-import doctor_m.client.util.id.PlayerTitleCache;
-import doctor_m.handler.TimeKey.TimeKeyFunction;
-import doctor_m.handler.TimeKey.TimeKeyPassive;
-import doctor_m.network.TimeKeyNetwork;
+import doctor_m.Item.data_itme.KeytoTimeItem;
+import doctor_m.handler.KeytoTime.KeytoTimeCore;
+import doctor_m.handler.KeytoTime.KeytoTimePassive;
+import doctor_m.network.KeytoTimeNetwork;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.gui.DrawContext;
@@ -11,23 +11,24 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-public class TimeKeyPassiveScreen extends Screen {
+public class KeytoTimePassiveScreen extends Screen {
     private final PlayerEntity player;
     private ButtonWidget godModeBtn, neutralBtn, slashBtn, saveTitleBtn;
     private TextFieldWidget titleField;
 
-    public TimeKeyPassiveScreen(PlayerEntity player) {
-        super(Text.translatable("gui.doctor_m.time_key.passive.title"));
+    public KeytoTimePassiveScreen(PlayerEntity player) {
+        super(Text.translatable("gui.doctor_m.key_to_time.passive.title"));
         this.player = player;
     }
 
     @Override
     protected void init() {
-        if (TimeKeyFunction.getTimeKeyStack(player).isEmpty()) {
+        if (KeytoTimeCore.getTimeKeyStack(player).isEmpty()) {
             this.close();
             return;
         }
@@ -35,25 +36,24 @@ public class TimeKeyPassiveScreen extends Screen {
         int cx = this.width / 2;
         int cy = this.height / 2;
 
-        // 三个功能按钮 —— 纵向间距从 ~6px 拉到 10px
         godModeBtn = this.addDrawableChild(ButtonWidget.builder(
-                toggleText("gui.doctor_m.time_key.godmode_status", TimeKeyPassive.isGodMode(player)),
+                toggleText("gui.doctor_m.key_to_time.godmode_status", KeytoTimePassive.isGodMode(player)),
                 btn -> send(0)
         ).position(cx - 80, cy - 48).size(160, 22).build());
 
         neutralBtn = this.addDrawableChild(ButtonWidget.builder(
-                toggleText("gui.doctor_m.time_key.neutral_status", TimeKeyPassive.isNeutralMode(player)),
+                toggleText("gui.doctor_m.key_to_time.neutral_status", KeytoTimePassive.isNeutralMode(player)),
                 btn -> send(1)
         ).position(cx - 80, cy - 16).size(160, 22).build());
 
         slashBtn = this.addDrawableChild(ButtonWidget.builder(
-                toggleText("gui.doctor_m.time_key.slash_mode", TimeKeyPassive.isSlashMode(player))
+                toggleText("gui.doctor_m.key_to_time.slash_mode", KeytoTimePassive.isSlashMode(player))
                         .formatted(Formatting.DARK_RED),
                 btn -> send(2)
         ).position(cx - 80, cy + 16).size(160, 22).build());
 
-        // ===== 称号区域 —— 和按钮拉开 16px，内部也拉开 =====
-        String currentTitle = PlayerTitleCache.getTitle(player.getUuid());
+        ItemStack keyStack = KeytoTimeCore.getTimeKeyStack(player);
+        String currentTitle = KeytoTimeItem.getTitle(keyStack);
         if (currentTitle == null) currentTitle = "";
 
         titleField = new TextFieldWidget(this.textRenderer, cx - 80, cy + 54, 160, 20,
@@ -77,13 +77,13 @@ public class TimeKeyPassiveScreen extends Screen {
     @Override
     public void tick() {
         super.tick();
-        if (TimeKeyFunction.getTimeKeyStack(player).isEmpty()) {
+        if (KeytoTimeCore.getTimeKeyStack(player).isEmpty()) {
             this.close();
             return;
         }
-        godModeBtn.setMessage(toggleText("gui.doctor_m.time_key.godmode_status", TimeKeyPassive.isGodMode(player)));
-        neutralBtn.setMessage(toggleText("gui.doctor_m.time_key.neutral_status", TimeKeyPassive.isNeutralMode(player)));
-        slashBtn.setMessage(toggleText("gui.doctor_m.time_key.slash_mode", TimeKeyPassive.isSlashMode(player)).formatted(Formatting.DARK_RED));
+        godModeBtn.setMessage(toggleText("gui.doctor_m.key_to_time.godmode_status", KeytoTimePassive.isGodMode(player)));
+        neutralBtn.setMessage(toggleText("gui.doctor_m.key_to_time.neutral_status", KeytoTimePassive.isNeutralMode(player)));
+        slashBtn.setMessage(toggleText("gui.doctor_m.key_to_time.slash_mode", KeytoTimePassive.isSlashMode(player)).formatted(Formatting.DARK_RED));
         titleField.tick();
     }
 
@@ -97,16 +97,18 @@ public class TimeKeyPassiveScreen extends Screen {
     private void send(int featureId) {
         var buf = PacketByteBufs.create();
         buf.writeInt(featureId);
-        ClientPlayNetworking.send(TimeKeyNetwork.TOGGLE_PASSIVE, buf);
+        ClientPlayNetworking.send(KeytoTimeNetwork.TOGGLE_PASSIVE, buf);
     }
 
     private void sendTitle() {
         String title = titleField.getText().trim();
-        if (title.isEmpty()) title = "";
+
+        ItemStack keyStack = KeytoTimeCore.getTimeKeyStack(player);
+        KeytoTimeItem.setTitle(keyStack, title);
 
         var buf = PacketByteBufs.create();
         buf.writeString(title, 64);
-        ClientPlayNetworking.send(new net.minecraft.util.Identifier("doctor_m", "set_title"), buf);
+        ClientPlayNetworking.send(KeytoTimeNetwork.SET_TITLE, buf);
     }
 
     @Override
@@ -120,7 +122,7 @@ public class TimeKeyPassiveScreen extends Screen {
         int bgX = cx - 100;
         int bgY = cy - 72;
         int bgW = 200;
-        int bgH = 218;          // 加高，给底部留 12px 白边
+        int bgH = 218;
         int bgR = bgX + bgW;
         int bgB = bgY + bgH;
 
@@ -133,7 +135,6 @@ public class TimeKeyPassiveScreen extends Screen {
         ctx.drawCenteredTextWithShadow(this.textRenderer, this.title, cx, bgY + 8, 0xFFFFFF);
         ctx.fill(cx - 60, bgY + 22, cx + 60, bgY + 23, 0x30FFFFFF);
 
-        // 称号标签 —— 与输入框左边缘对齐，放在输入框上方 10px
         ctx.drawTextWithShadow(this.textRenderer,
                 Text.translatable("gui.doctor_m.title.label"),
                 cx - 80, cy + 44, 0xAAAAAA);

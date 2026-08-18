@@ -8,7 +8,7 @@ import java.io.*;
 import java.nio.file.Path;
 
 public class ConfigManager {
-    private static final String CONFIG_FILE_NAME = "doctor_m.json"; // 你的模组ID
+    private static final String CONFIG_FILE_NAME = "doctor_m.json";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static ModConfig config;
 

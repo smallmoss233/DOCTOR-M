@@ -1,9 +1,9 @@
-package doctor_m.Item.data_itme.TimeKyeFragment;
+package doctor_m.Item.data_itme.KeytoTimeFragment;
 
 import dev.emi.trinkets.api.TrinketItem;
 import doctor_m.Item.KeytoTime;
 import doctor_m.compat.TimelordRegenCompat;
-import doctor_m.handler.TimeKey.PocketWatchFunction;
+import doctor_m.handler.KeytoTime.PocketWatchFunction;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import doctor_m.util.tooltip.TooltipHelper;
 import net.fabricmc.loader.api.FabricLoader;

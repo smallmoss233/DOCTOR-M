@@ -14,10 +14,10 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TimeKeyTeleportNetwork {
-    public static final Identifier TELEPORT = new Identifier("doctor_m", "time_key_teleport");
-    public static final Identifier REQUEST_DIMS = new Identifier("doctor_m", "time_key_request_dims");
-    public static final Identifier DIMS_RESPONSE = new Identifier("doctor_m", "time_key_dims_response");
+public class KeytoTimeTeleportNetwork {
+    public static final Identifier TELEPORT = new Identifier("doctor_m", "key_to_time_teleport");
+    public static final Identifier REQUEST_DIMS = new Identifier("doctor_m", "key_to_time_request_dims");
+    public static final Identifier DIMS_RESPONSE = new Identifier("doctor_m", "key_to_time_dims_response");
 
     public static void register() {
         // 服务端：收到维度列表请求，遍历 VM 同款维度池发回去

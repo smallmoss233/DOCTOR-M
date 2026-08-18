@@ -8,6 +8,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.PlayerListHud;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.OrderedText;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,7 +39,16 @@ public class PlayerListHudMixin {
             String pureName = stripFormatting(raw);
             String title = GlowConditionChecker.getTitleByName(raw, client);
             int nameWidth = textRenderer.getWidth(pureName);
-            GlowTextRenderer.draw2DAlternating(context, textRenderer, pureName, title, x, y, nameWidth);
+
+            PlayerEntity targetPlayer = null;
+            if (client.world != null) {
+                targetPlayer = client.world.getPlayers().stream()
+                        .filter(p -> stripFormatting(p.getName().getString()).equals(pureName))
+                        .findFirst()
+                        .orElse(null);
+            }
+
+            GlowTextRenderer.draw2DAlternating(context, textRenderer, pureName, title, x, y, nameWidth, targetPlayer);
             return textRenderer.getWidth(text);
         }
 

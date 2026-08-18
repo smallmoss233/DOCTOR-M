@@ -1,9 +1,9 @@
-package doctor_m.handler.TimeKey
+package doctor_m.handler.KeytoTime
 
 import dev.amble.ait.core.AITStatusEffects
 import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry
 import dev.emi.trinkets.api.TrinketsApi
-import doctor_m.Item.data_itme.TimeKeyItem
+import doctor_m.Item.data_itme.KeytoTimeItem
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.LivingEntity
@@ -25,7 +25,7 @@ import net.minecraft.world.GameMode
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-object TimeKeyFunction {
+object KeytoTimeCore {
     private val customDamage = ThreadLocal.withInitial { false }
     private val lastGameMode = ConcurrentHashMap<UUID, GameMode>()
     private val lastHealTime = ConcurrentHashMap<UUID, Long>()
@@ -44,18 +44,48 @@ object TimeKeyFunction {
     private fun ensureMaxHealth(player: ServerPlayerEntity) {
         val attr = player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)
         if (attr != null && attr.value <= 0.0) {
-            attr.baseValue = 20.0
+            HealthGuard.withMaxHealthWrite {
+                attr.baseValue = 20.0
+            }
         }
     }
 
     @JvmStatic
     fun getTimeKeyStack(player: PlayerEntity): ItemStack {
         return try {
-            player.mainHandStack.takeIf { it.item is TimeKeyItem }
-                ?: TrinketsApi.getTrinketComponent(player)
-                    .flatMap { it.getEquipped { stack -> stack.item is TimeKeyItem }.stream().findFirst() }
-                    .map { it.right }
-                    .orElse(ItemStack.EMPTY)
+            getTimeKeyStackUnsafe(player)
+        } catch (e: NullPointerException) {
+            ItemStack.EMPTY
+        }
+    }
+
+    private fun getTimeKeyStackUnsafe(player: PlayerEntity): ItemStack {
+        // 主手
+        player.mainHandStack.takeIf { it.item is KeytoTimeItem }?.let { return it }
+        // 副手
+        player.offHandStack.takeIf { it.item is KeytoTimeItem }?.let { return it }
+
+        // 背包（含装备栏、副手槽）
+        for (i in 0 until player.inventory.size()) {
+            val stack = player.inventory.getStack(i)
+            if (stack.item is KeytoTimeItem) return stack
+        }
+
+        // 末影箱
+        val enderChest = player.enderChestInventory
+        if (enderChest != null) {
+            for (i in 0 until enderChest.size()) {
+                val stack = enderChest.getStack(i)
+                if (stack.item is KeytoTimeItem) return stack
+            }
+        }
+
+        // Trinkets 饰品栏
+        return try {
+            TrinketsApi.getTrinketComponent(player)
+                .flatMap { it.getEquipped { stack -> stack.item is KeytoTimeItem }.stream().findFirst() }
+                .map { it.right }
+                .orElse(ItemStack.EMPTY)
         } catch (_: Throwable) {
             ItemStack.EMPTY
         }
@@ -87,8 +117,10 @@ object TimeKeyFunction {
                 if (!isTimeKeyEquipped(player)) return@register true
 
                 ensureMaxHealth(player)
-                if (TimeKeyPassive.isGodMode(player)) {
-                    player.health = player.maxHealth
+                if (KeytoTimePassive.isGodMode(player)) {
+                    HealthGuard.withHealthWrite {
+                        player.health = player.maxHealth
+                    }
                     return@register false
                 }
 
@@ -99,7 +131,9 @@ object TimeKeyFunction {
                 protectionEndTime[player.uuid]?.let { end ->
                     if (player.server.ticks <= end) {
                         ensureMaxHealth(player)
-                        player.health = player.maxHealth
+                        HealthGuard.withHealthWrite {
+                            player.health = player.maxHealth
+                        }
                         return@register false
                     }
                 }
@@ -132,14 +166,18 @@ object TimeKeyFunction {
 
                 if (newHealth <= 0) {
                     ensureMaxHealth(player)
-                    player.health = player.maxHealth
+                    HealthGuard.withHealthWrite {
+                        player.health = player.maxHealth
+                    }
                     onDeathIntercepted(player)
                     return@register false
                 }
 
                 if (newAmount != amount) {
                     customDamage.set(true)
-                    player.damage(source, newAmount)
+                    HealthGuard.withHealthWrite {
+                        player.damage(source, newAmount)
+                    }
                     return@register false
                 }
             }
@@ -161,7 +199,7 @@ object TimeKeyFunction {
             val now = server.ticks.toLong()
             server.playerManager.playerList.forEach { player ->
                 val hasTimeKey = isTimeKeyEquipped(player)
-                val isGodMode = hasTimeKey && TimeKeyPassive.isGodMode(player)
+                val isGodMode = hasTimeKey && KeytoTimePassive.isGodMode(player)
 
                 protectionEndTime[player.uuid]?.let { endTick ->
                     if (now <= endTick) {
@@ -181,11 +219,15 @@ object TimeKeyFunction {
                     val healAmount = player.maxHealth * 0.1f
                     lastHealTime[player.uuid]?.let { last ->
                         if (now - last >= 20) {
-                            player.heal(healAmount)
+                            HealthGuard.withHealthWrite {
+                                player.heal(healAmount)
+                            }
                             lastHealTime[player.uuid] = now
                         }
                     } ?: run {
-                        player.heal(healAmount)
+                        HealthGuard.withHealthWrite {
+                            player.heal(healAmount)
+                        }
                         lastHealTime[player.uuid] = now
                     }
 
@@ -204,7 +246,11 @@ object TimeKeyFunction {
 
                 if (isGodMode) {
                     ensureMaxHealth(player)
-                    if (player.health < player.maxHealth) player.health = player.maxHealth
+                    if (player.health < player.maxHealth) {
+                        HealthGuard.withHealthWrite {
+                            player.health = player.maxHealth
+                        }
+                    }
                     if (player.isOnFire) {
                         player.fireTicks = 0
                         player.setOnFire(false)
@@ -256,7 +302,7 @@ object TimeKeyFunction {
                 }
             }
         }
-        TimeKeyPassive.registerAttackCallback()
+        KeytoTimePassive.registerAttackCallback()
     }
 
     private fun eraseTargetDeMatStyle(target: LivingEntity, player: ServerPlayerEntity, world: ServerWorld) {
@@ -325,7 +371,9 @@ object TimeKeyFunction {
                 }
             } catch (_: Exception) { }
 
-            health = maxHealth
+            HealthGuard.withHealthWrite {
+                health = maxHealth
+            }
             clearStatusEffects()
             addStatusEffect(StatusEffectInstance(StatusEffects.RESISTANCE, 40, 2, false, false))
             serverWorld.getEntitiesByClass(LivingEntity::class.java, boundingBox.expand(35.0)) {
@@ -344,7 +392,7 @@ object TimeKeyFunction {
                     1, 0.0, 0.0, 0.0, 0.05)
             }
             playSound(SoundEvents.BLOCK_BELL_RESONATE, 1f, 1f)
-            sendMessage(Text.translatable("message.doctor_m.time_key_resurrection"), true)
+            sendMessage(Text.translatable("message.doctor_m.key_to_time_resurrection"), true)
             if (!abilities.allowFlying) {
                 abilities.allowFlying = true
                 sendAbilitiesUpdate()
