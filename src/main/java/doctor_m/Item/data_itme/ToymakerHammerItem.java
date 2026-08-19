@@ -1,21 +1,24 @@
 package doctor_m.Item.data_itme;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import dev.amble.ait.AITMod;
 import dev.amble.ait.api.tardis.TardisComponent;
 import dev.amble.ait.core.blockentities.ExteriorBlockEntity;
 import dev.amble.ait.core.blocks.ExteriorBlock;
+import dev.amble.ait.core.engine.DurableSubSystem;
+import dev.amble.ait.core.engine.SubSystem;
 import dev.amble.ait.core.tardis.ServerTardis;
 import dev.amble.ait.core.tardis.Tardis;
+import dev.amble.ait.core.tardis.handler.LoyaltyHandler;
+import dev.amble.ait.core.tardis.handler.StatsHandler;
+import dev.amble.ait.core.tardis.handler.SubSystemHandler;
+import dev.amble.ait.core.tardis.handler.travel.ProgressiveTravelHandler;
+import dev.amble.ait.core.tardis.handler.travel.TravelHandlerBase;
 import dev.amble.ait.core.tardis.manager.ServerTardisManager;
 import dev.amble.ait.core.tardis.manager.TardisBuilder;
 import dev.amble.ait.data.Loyalty;
+import dev.amble.ait.data.properties.Value;
 import dev.amble.ait.data.schema.desktop.TardisDesktopSchema;
 import dev.amble.ait.data.schema.exterior.ExteriorVariantSchema;
-import dev.amble.ait.registry.impl.DesktopRegistry;
-import dev.amble.ait.registry.impl.exterior.ExteriorVariantRegistry;
 import dev.amble.lib.data.CachedDirectedGlobalPos;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import doctor_m.util.tooltip.TooltipHelper;
@@ -51,7 +54,9 @@ import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class ToymakerHammerItem extends Item {
@@ -94,11 +99,7 @@ public class ToymakerHammerItem extends Item {
         if (!(world instanceof ServerWorld serverWorld)) return;
 
         int chargeTicks = this.getMaxUseTime(stack) - remainingUseTicks;
-
-        if (chargeTicks < MIN_CHARGE_TICKS) {
-            // 蓄力时间不足，静默取消
-            return;
-        }
+        if (chargeTicks < MIN_CHARGE_TICKS) return;
 
         Vec3d eyePos = player.getEyePos();
         Vec3d reachPos = eyePos.add(player.getRotationVec(1.0F).multiply(5.0));
@@ -109,42 +110,27 @@ public class ToymakerHammerItem extends Item {
                 player
         ));
 
-        if (hit.getType() != HitResult.Type.BLOCK) {
-            // 未命中方块，静默取消
-            return;
-        }
+        if (hit.getType() != HitResult.Type.BLOCK) return;
 
         BlockPos targetPos = hit.getBlockPos();
-
         if (!(world.getBlockEntity(targetPos) instanceof ExteriorBlockEntity exterior)) {
             player.sendMessage(Text.translatable("tooltip.doctorm.toymaker_hammer.not_tardis"), true);
             return;
         }
 
-        if (exterior.tardis().isEmpty()) {
-            // 外壳未绑定，静默取消
-            return;
-        }
-
+        if (exterior.tardis().isEmpty()) return;
         Tardis source = exterior.tardis().get();
-        if (!(source instanceof ServerTardis sourceServer)) {
-            // 非服务端 Tardis，静默取消
-            return;
-        }
+        if (!(source instanceof ServerTardis sourceServer)) return;
 
         Vec3d lookVec = player.getRotationVec(1.0F);
         Vec3d horizontalLook = new Vec3d(lookVec.x, 0, lookVec.z);
-        if (horizontalLook.lengthSquared() < 0.01) {
-            horizontalLook = new Vec3d(0, 0, -1);
-        }
+        if (horizontalLook.lengthSquared() < 0.01) horizontalLook = new Vec3d(0, 0, -1);
         horizontalLook = horizontalLook.normalize();
 
         BlockPos spawnPos = targetPos.add(
-                (int) Math.round(horizontalLook.x * 2),
-                0,
+                (int) Math.round(horizontalLook.x * 2), 0,
                 (int) Math.round(horizontalLook.z * 2)
         );
-
         byte sourceRotation = (byte) (int) world.getBlockState(targetPos).get(ExteriorBlock.ROTATION);
 
         player.sendMessage(Text.translatable("tooltip.doctorm.toymaker_hammer.cloning_start"), true);
@@ -158,57 +144,38 @@ public class ToymakerHammerItem extends Item {
         }
     }
 
-    /**
-     * 核心克隆逻辑：利用AIT原生Gson序列化实现完整深拷贝
-     */
     private boolean cloneTardisFull(ServerTardis source, ServerPlayerEntity player,
                                     ServerWorld world, BlockPos spawnPos, byte rotation) {
         try {
             UUID newUuid = UUID.randomUUID();
 
-            // ===== 步骤1：使用AIT的File Gson将源TARDIS完整序列化为JSON =====
-            Gson gson = ServerTardisManager.getInstance().getFileGson();
-            JsonObject json = JsonParser.parseString(gson.toJson(source)).getAsJsonObject();
+            TardisDesktopSchema desktopSchema = getDesktopSchema(source);
+            ExteriorVariantSchema exteriorVariant = getExteriorVariant(source);
 
-            // ===== 步骤2：在JSON层面替换UUID =====
-            json.addProperty("uuid", newUuid.toString());
-
-            // ===== 步骤3：反序列化为新的ServerTardis对象 =====
-            ServerTardis clone = gson.fromJson(json, ServerTardis.class);
-
-            // ===== 步骤4：初始化 =====
-            Tardis.init(clone, TardisComponent.InitContext.deserialize());
-
-            // ===== 步骤5：强制设置新的外部位置 =====
             CachedDirectedGlobalPos newPos = CachedDirectedGlobalPos.create(world, spawnPos, rotation);
-            clone.travel().forcePosition(newPos);
-            clone.travel().forceDestination(newPos);
 
-            // ===== 步骤6：触发内部世界的懒加载/创建 =====
-            clone.world();
+            TardisBuilder builder = new TardisBuilder(newUuid)
+                    .at(newPos);
 
-            // ===== 步骤7：复制内部空间 =====
-            copyInteriorDimension(source, clone, player);
+            if (desktopSchema != null) builder.desktop(desktopSchema);
+            if (exteriorVariant != null) builder.exterior(exteriorVariant);
 
-            // ===== 步骤8：注册到ServerTardisManager =====
-            TardisBuilder fakeBuilder = new TardisBuilder(newUuid) {
-                @Override
-                public ServerTardis build() {
-                    return clone;
-                }
-            };
-            ServerTardis registered = ServerTardisManager.getInstance().create(fakeBuilder);
-            if (registered == null) {
+            builder.<StatsHandler>with(TardisComponent.Id.STATS, stats -> copyStatsHandler(source, stats));
+
+            builder.<LoyaltyHandler>with(TardisComponent.Id.LOYALTY, loyalty -> copyLoyaltyHandler(source, loyalty));
+
+            ServerTardis clone = ServerTardisManager.getInstance().create(builder);
+            if (clone == null) {
                 player.sendMessage(Text.translatable("tooltip.doctorm.toymaker_hammer.manager_full"), true);
                 return false;
             }
 
-            // ===== 步骤9：在新位置放置外部方块 =====
+            copyTravelStateSafe(source, clone);
+            copySubSystems(source, clone);
+            clone.world();
+            copyInteriorDimension(source, clone, player);
             clone.travel().placeExterior(false);
-
-            // ===== 步骤10：将使用者设为Companion =====
             clone.loyalty().set(player, new Loyalty(Loyalty.Type.COMPANION));
-
             AITMod.LOGGER.info("[DOCTOR-M] Full clone complete: {} -> {}", source.getUuid(), clone.getUuid());
             return true;
 
@@ -217,6 +184,239 @@ public class ToymakerHammerItem extends Item {
             player.sendMessage(Text.translatable("tooltip.doctorm.toymaker_hammer.error"), true);
             return false;
         }
+    }
+
+    private TardisDesktopSchema getDesktopSchema(ServerTardis source) {
+        try {
+            Object desktop = invokeSafe(source, "getDesktop");
+            if (desktop == null) return null;
+            Object schema = invokeSafe(desktop, "getSchema");
+            return (TardisDesktopSchema) schema;
+        } catch (Exception e) {
+            AITMod.LOGGER.warn("[DOCTOR-M] Failed to get desktop schema: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private ExteriorVariantSchema getExteriorVariant(ServerTardis source) {
+        try {
+            Object exterior = invokeSafe(source, "getExterior");
+            if (exterior == null) return null;
+            Object variant = invokeSafe(exterior, "getVariant");
+            return (ExteriorVariantSchema) variant;
+        } catch (Exception e) {
+            AITMod.LOGGER.warn("[DOCTOR-M] Failed to get exterior variant: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private void copyStatsHandler(ServerTardis source, StatsHandler target) {
+        try {
+            StatsHandler src = source.stats();
+
+            String name = (String) invokeSafe(src, "getName");
+            if (name != null) invokeSafe(target, "setName", name);
+
+            String creator = (String) invokeSafe(src, "getPlayerCreatorName");
+            if (creator != null) {
+                invokeSafe(target, "setPlayerCreatorName", creator);
+                invokeSafe(target, "markPlayerCreatorName");
+            }
+
+            copyAllValueFields(src, target);
+
+        } catch (Exception e) {
+            AITMod.LOGGER.warn("[DOCTOR-M] Stats copy warning: {}", e.getMessage());
+        }
+    }
+
+    private void copyLoyaltyHandler(ServerTardis source, LoyaltyHandler target) {
+        try {
+            LoyaltyHandler src = source.loyalty();
+
+            Field srcMapField = null;
+            for (Field f : src.getClass().getDeclaredFields()) {
+                f.setAccessible(true);
+                Object val = f.get(src);
+                if (val instanceof Map<?, ?> map && !map.isEmpty()) {
+                    srcMapField = f;
+                    break;
+                }
+            }
+
+            if (srcMapField == null) {
+                AITMod.LOGGER.warn("[DOCTOR-M] Could not find loyalty map field in source");
+                return;
+            }
+
+            Field dstMapField = null;
+            for (Field f : target.getClass().getDeclaredFields()) {
+                if (f.getType() == srcMapField.getType()) {
+                    dstMapField = f;
+                    break;
+                }
+            }
+            if (dstMapField == null) {
+                dstMapField = findField(target.getClass(), srcMapField.getName());
+            }
+
+            if (dstMapField != null) {
+                srcMapField.setAccessible(true);
+                dstMapField.setAccessible(true);
+
+                @SuppressWarnings("unchecked")
+                Map<UUID, Loyalty> srcMap = (Map<UUID, Loyalty>) srcMapField.get(src);
+                @SuppressWarnings("unchecked")
+                Map<UUID, Loyalty> dstMap = (Map<UUID, Loyalty>) dstMapField.get(target);
+
+                if (srcMap != null && dstMap != null) {
+                    dstMap.putAll(srcMap);
+                }
+            }
+
+        } catch (Exception e) {
+            AITMod.LOGGER.warn("[DOCTOR-M] Loyalty copy warning: {}", e.getMessage());
+        }
+    }
+
+    private void copyTravelStateSafe(ServerTardis source, ServerTardis clone) {
+        try {
+            TravelHandlerBase srcBase = source.travel();
+            TravelHandlerBase dstBase = clone.travel();
+
+            copyValueField(srcBase, dstBase, "state");
+            copyValueField(srcBase, dstBase, "speed");
+            copyValueField(srcBase, dstBase, "maxSpeed");
+            copyValueField(srcBase, dstBase, "crashing");
+            copyValueField(srcBase, dstBase, "antigravs");
+            copyValueField(srcBase, dstBase, "leaveBehind");
+            copyValueField(srcBase, dstBase, "vGroundSearch");
+            copyValueField(srcBase, dstBase, "hGroundSearch");
+
+            CachedDirectedGlobalPos prev = srcBase.previousPosition();
+            if (prev != null) {
+                Field f = findField(TravelHandlerBase.class, "previousPosition");
+                if (f != null) {
+                    f.setAccessible(true);
+                    @SuppressWarnings("unchecked")
+                    Value<CachedDirectedGlobalPos> val = (Value<CachedDirectedGlobalPos>) f.get(dstBase);
+                    val.set(prev);
+                }
+            }
+
+            if (srcBase instanceof ProgressiveTravelHandler srcProg && dstBase instanceof ProgressiveTravelHandler dstProg) {
+
+                Field capField = findField(ProgressiveTravelHandler.class, "missedHardCap");
+                if (capField != null) {
+                    capField.setAccessible(true);
+                    int srcCap = capField.getInt(srcProg);
+
+                    capField.setInt(dstProg, Math.max(srcCap, 1));
+                }
+
+                Field evtField = findField(ProgressiveTravelHandler.class, "missedEvents");
+                if (evtField != null) {
+                    evtField.setAccessible(true);
+                    evtField.setInt(dstProg, evtField.getInt(srcProg));
+                }
+
+                copyValueField(srcProg, dstProg, "flightTicks");
+                copyValueField(srcProg, dstProg, "targetTicks");
+                copyValueField(srcProg, dstProg, "handbrake");
+                copyValueField(srcProg, dstProg, "autopilot");
+            }
+
+        } catch (Exception e) {
+            AITMod.LOGGER.warn("[DOCTOR-M] Travel state copy warning: {}", e.getMessage());
+        }
+    }
+
+    private void copySubSystems(ServerTardis source, ServerTardis clone) {
+        try {
+            SubSystemHandler srcSub = source.subsystems();
+            SubSystemHandler dstSub = clone.subsystems();
+
+            srcSub.forEach(srcSys -> {
+                try {
+                    SubSystem dstSys = dstSub.get(srcSys.getId());
+                    if (dstSys == null) return;
+
+                    if (srcSys.isEnabled() != dstSys.isEnabled()) {
+                        dstSys.setEnabled(srcSys.isEnabled());
+                    }
+
+                    if (srcSys instanceof DurableSubSystem srcDur && dstSys instanceof DurableSubSystem dstDur) {
+                        Field durField = findField(DurableSubSystem.class, "durability");
+                        if (durField != null) {
+                            durField.setAccessible(true);
+                            int d = durField.getInt(srcDur);
+                            dstDur.setDurability(d);
+                        }
+                    }
+                } catch (Exception e) {
+                    AITMod.LOGGER.warn("[DOCTOR-M] Subsystem {} copy warning: {}", srcSys.getId(), e.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            AITMod.LOGGER.warn("[DOCTOR-M] Subsystem copy warning: {}", e.getMessage());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void copyValueField(Object srcObj, Object dstObj, String fieldName) {
+        try {
+            Field f = findField(srcObj.getClass(), fieldName);
+            if (f == null) return;
+            f.setAccessible(true);
+
+            Object srcVal = f.get(srcObj);
+            Object dstVal = f.get(dstObj);
+
+            if (srcVal instanceof Value<?> s && dstVal instanceof Value<?> d) {
+                Object data = s.get();
+                ((Value<Object>) d).set(data);
+            }
+        } catch (Exception ignored) {}
+    }
+
+    private void copyAllValueFields(Object src, Object dst) {
+        Class<?> clazz = src.getClass();
+        while (clazz != null && clazz != Object.class) {
+            for (Field f : clazz.getDeclaredFields()) {
+                if (!Value.class.isAssignableFrom(f.getType())) continue;
+                try {
+                    f.setAccessible(true);
+                    Object s = f.get(src);
+                    Object d = f.get(dst);
+                    if (s instanceof Value<?> sv && d instanceof Value<?> dv) {
+                        ((Value<Object>) dv).set(sv.get());
+                    }
+                } catch (Exception ignored) {}
+            }
+            clazz = clazz.getSuperclass();
+        }
+    }
+
+    private static Object invokeSafe(Object obj, String method, Object... args) {
+        if (obj == null) return null;
+        try {
+            Class<?>[] types = new Class[args.length];
+            for (int i = 0; i < args.length; i++) types[i] = args[i].getClass();
+            return obj.getClass().getMethod(method, types).invoke(obj, args);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static Field findField(Class<?> clazz, String name) {
+        while (clazz != null) {
+            try {
+                return clazz.getDeclaredField(name);
+            } catch (NoSuchFieldException e) {
+                clazz = clazz.getSuperclass();
+            }
+        }
+        return null;
     }
 
     private void copyInteriorDimension(ServerTardis source, ServerTardis clone, ServerPlayerEntity player) {
@@ -229,7 +429,6 @@ public class ToymakerHammerItem extends Item {
 
         for (int cx = -COPY_CHUNK_RADIUS; cx <= COPY_CHUNK_RADIUS; cx++) {
             for (int cz = -COPY_CHUNK_RADIUS; cz <= COPY_CHUNK_RADIUS; cz++) {
-                // 关键修复：getChunk 强制加载，而不是 getChunkManager().getChunk(..., false)
                 Chunk srcChunkRaw;
                 try {
                     srcChunkRaw = srcWorld.getChunk(cx, cz);
@@ -239,7 +438,6 @@ public class ToymakerHammerItem extends Item {
 
                 if (!(srcChunkRaw instanceof WorldChunk srcChunk)) continue;
 
-                // 跳过全空 chunk
                 boolean hasBlocks = false;
                 ChunkSection[] srcSections = srcChunk.getSectionArray();
                 for (ChunkSection section : srcSections) {
@@ -250,7 +448,6 @@ public class ToymakerHammerItem extends Item {
                 }
                 if (!hasBlocks) continue;
 
-                // 确保目标 chunk 存在
                 Chunk dstChunkRaw = dstWorld.getChunk(cx, cz);
                 if (!(dstChunkRaw instanceof WorldChunk)) continue;
 
@@ -294,7 +491,6 @@ public class ToymakerHammerItem extends Item {
             }
         }
 
-        // 实体搜索范围同步扩大到 384×384
         Box searchBox = new Box(
                 -384, dstWorld.getBottomY(), -384,
                 384, dstWorld.getTopY(), 384
@@ -393,16 +589,6 @@ public class ToymakerHammerItem extends Item {
         world.spawnParticles(ParticleTypes.ENCHANT, newX, newY, newZ, 80, 1.2, 1.2, 1.2, 0.2);
         world.spawnParticles(ParticleTypes.END_ROD, newX, newY, newZ, 60, 0.5, 1.0, 0.5, 0.05);
         world.spawnParticles(ParticleTypes.WITCH, newX, newY, newZ, 40, 0.8, 0.8, 0.8, 0.1);
-    }
-
-    private TardisDesktopSchema pickRandomDesktop() {
-        List<TardisDesktopSchema> list = DesktopRegistry.getInstance().toList();
-        return list.get(AITMod.RANDOM.nextInt(list.size()));
-    }
-
-    private ExteriorVariantSchema pickRandomExterior() {
-        List<ExteriorVariantSchema> list = ExteriorVariantRegistry.getInstance().toList();
-        return list.get(AITMod.RANDOM.nextInt(list.size()));
     }
 
     @Override
