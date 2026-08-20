@@ -27,6 +27,7 @@ public static void registerItems() {
                                 entries.add(SEAL_OF_THE_HIGH_COUNCIL);
                                 entries.add(OXYGEN_CHARGER);
                                 entries.add(UNDERWATER_OXYGEN_GENERATOR);
+                                entries.add(TOYOTA_SPINNING_ROTOR);
                                 entries.add(EYE_OF_HARMONY_OBELISK);
                                 entries.add(TYPE_103_SPAWN);
                                 entries.add(MARIAN_JIN_SPAWN);

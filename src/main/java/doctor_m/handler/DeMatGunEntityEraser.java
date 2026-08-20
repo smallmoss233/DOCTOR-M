@@ -3,6 +3,7 @@ package doctor_m.handler;
 import dev.emi.trinkets.api.TrinketsApi;
 import doctor_m.DOCTORM;
 import doctor_m.Item.KeytoTime;
+import doctor_m.api.ModSounds;
 import doctor_m.compat.TimelordRegenCompat;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
@@ -58,7 +59,7 @@ public class DeMatGunEntityEraser {
         spawnBeamParticles(world, start, end, range);
 
         world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(),
-                DOCTORM.DE_MAT_GUN_FIRE, SoundCategory.PLAYERS, 1.0f, 1.0f);
+                ModSounds.DE_MAT_GUN_FIRE, SoundCategory.PLAYERS, 1.0f, 1.0f);
 
         EntityHitResult hitResult = ProjectileUtil.raycast(
                 shooter, start, end,
@@ -73,7 +74,7 @@ public class DeMatGunEntityEraser {
 
             spawnEraseParticles(world, hitPos);
             world.playSound(null, hitPos.x, hitPos.y, hitPos.z,
-                    DOCTORM.DE_MAT_GUN_ERASE, SoundCategory.PLAYERS, 1.0f, 1.0f);
+                    ModSounds.DE_MAT_GUN_ERASE, SoundCategory.PLAYERS, 1.0f, 1.0f);
 
             if (target instanceof ItemEntity itemEntity) {
                 if (itemEntity.getStack().getItem() instanceof KeytoTime) return;

@@ -1,9 +1,7 @@
 package doctor_m.block;
 
-import doctor_m.block.data_block.EyeOfHarmonyObeliskBlock;
-import doctor_m.block.data_block.EyeOfHarmonyPartBlock;
-import doctor_m.block.data_block.OxygenChargerBlock;
-import doctor_m.block.data_block.UnderwaterOxygenGeneratorBlock;
+import doctor_m.DOCTORM;
+import doctor_m.block.data_block.*;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -38,11 +36,17 @@ public class ModBlocks {
                     .luminance(state -> 0)
     );
 
-    public static void register() {
-        Registry.register(Registries.BLOCK, new Identifier("doctor_m", "oxygen_charger"), OXYGEN_CHARGER);
-        Registry.register(Registries.BLOCK, new Identifier("doctor_m", "underwater_oxygen_generator"), UNDERWATER_OXYGEN_GENERATOR);
+    public static final Block TOYOTA_SPINNING_ROTOR = new ToyotaSpinningRotorBlock(
+            FabricBlockSettings.copyOf(Blocks.IRON_BLOCK)
+                    .requiresTool()
+                    .nonOpaque()
+    );
 
-        Registry.register(Registries.BLOCK, new Identifier("doctor_m", "eye_of_harmony_obelisk"), EYE_OF_HARMONY_OBELISK);
-        Registry.register(Registries.BLOCK, new Identifier("doctor_m", "eye_of_harmony_part"), EYE_OF_HARMONY_PART);
+    public static void register() {
+        Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "oxygen_charger"), OXYGEN_CHARGER);
+        Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "underwater_oxygen_generator"), UNDERWATER_OXYGEN_GENERATOR);
+        Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "eye_of_harmony_obelisk"), EYE_OF_HARMONY_OBELISK);
+        Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "eye_of_harmony_part"), EYE_OF_HARMONY_PART);
+        Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "toyota_spinning_rotor"), TOYOTA_SPINNING_ROTOR);
     }
 }
