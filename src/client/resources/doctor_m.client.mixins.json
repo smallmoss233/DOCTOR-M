@@ -7,12 +7,12 @@
       "ait.MixinSpaceSuitOverlay",
       "doctor_m.AbstractClientPlayerEntityMixin",
       "doctor_m.MixinTitleScreenBackground",
+      "doctor_m.ParticleManagerMixin",
       "doctor_m.ScytheFirstPersonMixin",
       "doctor_m.SonicSettingsScreenMixin",
-      "doctor_m.ParticleManagerMixin",
+      "title.ChatHudMixin",
       "title.LivingEntityRendererMixin",
-      "title.PlayerListHudMixin",
-      "title.ChatHudMixin"
+      "title.PlayerListHudMixin"
     ],
 	"injectors": {
 		"defaultRequire": 1

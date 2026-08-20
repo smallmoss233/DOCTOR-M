@@ -1,13 +1,12 @@
 package doctor_m.client.render.ToyotaSpinningRotor;
 
+import dev.amble.ait.core.tardis.handler.travel.TravelHandlerBase;
 import doctor_m.block.entities.ToyotaSpinningRotorBlockEntity;
 import doctor_m.client.render.SpinningRotorModel;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.animation.Animation;
 import net.minecraft.client.util.math.MatrixStack;
-
-import dev.amble.ait.core.tardis.handler.travel.TravelHandlerBase;
 
 
 public class ToyotaSpinningRotorModel extends SpinningRotorModel {

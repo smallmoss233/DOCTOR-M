@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-import static doctor_m.Item.items.*;
+import static doctor_m.Item.items.SEAL_OF_THE_HIGH_COUNCIL;
 
 @Mixin(Item.class)
 public class ItemMixin {

@@ -1,7 +1,6 @@
 package doctor_m.handler;
 
 import dev.emi.trinkets.api.TrinketsApi;
-import doctor_m.DOCTORM;
 import doctor_m.Item.KeytoTime;
 import doctor_m.api.ModSounds;
 import doctor_m.compat.TimelordRegenCompat;

@@ -15,7 +15,10 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
 
 public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFluidSource, ArtronHolder {
 

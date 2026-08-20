@@ -1,8 +1,6 @@
 package doctor_m.client.render;
 
-import java.util.function.Function;
-
-import dev.amble.ait.client.config.AITClientConfig;
+import dev.amble.ait.core.tardis.handler.travel.TravelHandlerBase;
 import doctor_m.block.entities.ToyotaSpinningRotorBlockEntity;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.RenderLayer;
@@ -13,8 +11,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 
-import dev.amble.ait.AITMod;
-import dev.amble.ait.core.tardis.handler.travel.TravelHandlerBase;
+import java.util.function.Function;
 
 @SuppressWarnings("rawtypes")
 public abstract class SpinningRotorModel extends SinglePartEntityModel {
