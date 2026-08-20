@@ -27,6 +27,8 @@
   "advancements.doctor_m.marian_trade.description": "Trade with Marian Jin once.",
   "advancements.doctor_m.tech_next_gen.title": "Next-Gen Technology!",
   "advancements.doctor_m.tech_next_gen.description": "From the future, or from the past?",
+  "advancements.doctor_m.toyota_spinning_rotor.title": "Toyota Spinning Rotor and RWF Have Been Implemented Together",
+  "advancements.doctor_m.toyota_spinning_rotor.description": "Obtain the Toyota Spinning Rotor",
 
   "tardis.message.control.siege.confirm_prompt": "Press again to enable Siege Mode! (Wait 10 seconds before clicking)",
 
@@ -114,10 +116,12 @@
   "item.doctor_m.toymaker_hammer": "Toymaker's Hammer",
   "item.doctor_m.underwater_oxygen_generator": "Underwater Oxygen Generator",
   "item.doctor_m.seal_of_the_high_council": "Seal of The High Council",
+  "item.doctor_m.toyota_spinning_rotor": "Toyota Spinning Rotor",
 
   "block.doctor_m.oxygen_charger": "Oxygen Recharger",
   "block.doctor_m.underwater_oxygen_generator": "Underwater Oxygen Generator",
   "block.doctor_m.eye_of_harmony_obelisk": "Eye of Harmony Obelisk",
+  "block.doctor_m.toyota_spinning_rotor": "Toyota Spinning Rotor",
 
   "entity.doctor_m.marian_jin": "Marian.Jin",
   "entity.doctor_m.103_tardis.name.default": "Type 103 TARDIS",
@@ -460,6 +464,7 @@
   "message.doctor_m.underwater_oxygen_generator.invalid_item": "Cannot fill oxygen for this item.",
   "message.doctor_m.underwater_oxygen_generator": "§7An oxygen generator, originally designed for underwater environments, producing oxygen through electrolysis of water (H2O).*Underwater, it supplies oxygen within a certain radius; outside of water, it can be manually refilled with water to generate oxygen.",
   "message.tooltip.doctor_m.eye_of_harmony_obelisk": "§7Provides infinite Artron energy and continuously charges surrounding Artron energy chunks. *Hold a Sonic Screwdriver and right-click the middle part of the obelisk to open the UI.",
+  "message.tooltip.doctor_m.toyota_spinning_rotor": "§7A giant time rotor above the console",
 
   "dimension.minecraft.overworld": "Earth",
   "dimension.minecraft.the_end": "The End",
