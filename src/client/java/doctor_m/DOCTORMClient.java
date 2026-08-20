@@ -22,7 +22,7 @@ import doctor_m.client.network.AITMixinClientNetworking;
 import doctor_m.client.network.DeMatGunClientNetwork;
 import doctor_m.client.network.KeytoTimeTeleportClient;
 import doctor_m.client.render.EyeOfHarmonyObeliskBlockEntityRenderer;
-import doctor_m.client.render.ToyotaSpinningRotorRenderer;
+import doctor_m.client.render.ToyotaSpinningRotor.ToyotaSpinningRotorRenderer;
 import doctor_m.client.render.VMTrinketRenderer;
 import doctor_m.client.util.id.PlayerTitleCache;
 import doctor_m.entities.Entities;

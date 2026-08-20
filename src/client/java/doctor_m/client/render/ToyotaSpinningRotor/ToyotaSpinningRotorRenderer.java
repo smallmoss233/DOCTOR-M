@@ -1,4 +1,4 @@
-package doctor_m.client.render;
+package doctor_m.client.render.ToyotaSpinningRotor;
 
 import dev.amble.ait.core.tardis.handler.travel.TravelHandlerBase;
 import doctor_m.DOCTORM;
@@ -29,14 +29,21 @@ public class ToyotaSpinningRotorRenderer<T extends ToyotaSpinningRotorBlockEntit
     @Override
     public void render(ToyotaSpinningRotorBlockEntity entity, float tickDelta, MatrixStack matrices,
                        VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        if (!entity.isLinked()) return;
 
-        Tardis tardis = entity.tardis().get();
-        boolean hasPower = tardis.fuel().hasPower();
+        // 默认值：未链接时静止
+        boolean hasPower = false;
+        TravelHandlerBase.State state = TravelHandlerBase.State.LANDED;
 
-        TravelHandlerBase.State state = entity.displayState != null
-                ? entity.displayState
-                : tardis.travel().getState();
+        if (entity.isLinked()) {
+            var ref = entity.tardis();
+            if (ref.isPresent()) {
+                Tardis tardis = ref.get();
+                hasPower = tardis.fuel().hasPower();
+                state = entity.displayState != null
+                        ? entity.displayState
+                        : tardis.travel().getState();
+            }
+        }
 
         ToyotaSpinningRotorModel model = new ToyotaSpinningRotorModel(
                 ToyotaSpinningRotorModel.getTexturedModelData().createModel());
@@ -57,7 +64,9 @@ public class ToyotaSpinningRotorRenderer<T extends ToyotaSpinningRotorBlockEntit
 
         matrices.pop();
 
-        // 声音也用 displayState
-        ToyotaSpinningRotorBlockEntityClient.tick(entity, state);
+        // 只有链接了才播声音
+        if (entity.isLinked()) {
+            ToyotaSpinningRotorBlockEntityClient.tick(entity, state);
+        }
     }
 }
