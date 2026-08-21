@@ -67,9 +67,3 @@
 -  贡献者名字修改：Asnit_PnQing改为名游茶 / Change the contributor name from "Asnit_PnQing" to "名游茶".
 -  所有的塔迪斯废墟结构现在都能正常生成 / All TARDIS ruin structures now generate correctly
 -  所有有光影的内饰预览图都经过拍摄了 / All interior preview images with shaders have been captured
-
----
-
-### 特别处理 / Special handling
-
--  完全移除贡献者:Siletonight相关的内容 / Special handling: completely removed all content related to contributor Siletonight.

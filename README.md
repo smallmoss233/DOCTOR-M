@@ -9,17 +9,13 @@
 **What is DOCTOR M? You'd better not ask—I can't really explain it either.**  
 It could be DOCTOR MC, DOCTOR MOD, DOCTOR MOSS, or even DOCTOR MARY—but none of that really matters.
 
-DOCTOR M is an addon for [**AIT**](https://modrinth.com/mod/ait), adding several TARDIS interiors with unique stylistic designs, as well as brand‑new dimensions, new adventure content, and more.
+DOCTOR M is an add‑on for [AIT](https://modrinth.com/mod/ait) that adds multiple TARDIS interiors with unique stylistic designs, brand‑new dimensions, new adventure content, and more – including items that never fully showcased their lore potential in Doctor Who, as well as original creations from [us (Celestial Intervention Agency)](https://modrinth.com/organization/celestial-intervention-agency)!
 
-What matters is that it stuffs **Time Key**, **De‑Mat Gun**, **Key of Rassilon**, and **Trenzalore** into AIT—the very planet where the Eleventh Doctor regenerated in *The Time of the Doctor*!
+It adds the **Key to Time**, the **De‑Mat Gun**, the **Key of Rassilon**, and the **Vortex Manipulator** into Minecraft. On the creature side, we’ve introduced the Type 103 TARDIS (a humanoid TARDIS!) and the Marian – both of which have a chance to spawn naturally in your world. The Type 103 TARDIS even comes with 5 different personality variants! Dimension‑wise, we’ve added **Trenzalore** – the planet where the Eleventh Doctor regenerated – and **Titan** (Saturn’s moon). In our own vision, DOCTOR M also includes some interesting accessories and weapons: a shield generator that consumes energy to block damage, a force‑field shield that pushes monsters away, the Toymaker’s Hammer that can duplicate TARDISes, and a large collection of new interiors. More will come in the future!
 
-In DOCTOR M, you can travel to **Trenzalore** to visit the Doctor's grave, trade with a Type 103 TARDIS that is just like a human, craft the ancient and powerful **De‑mat Gun**, explore new structures around the world, and embark on a brand‑new time adventure with your TARDIS!
+But it’s not just new items – DOCTOR M also modifies vanilla AIT! For example, it overhauls space content by adding oxygen refill stations, oxygen tanks, etc. It also expands the sonic screwdriver’s functionality, implementing features originally planned for AIT2 – like the sonic’s crystal system. It strengthens the four existing sonic modes: Interactive Mode can now repair TARDIS subsystems; Overload Mode deals damage to the Weeping Angels; Scan Mode detects more things; and TARDIS Mode gives extra hints when you can’t summon your TARDIS.
 
-It lets your sonic screwdriver repair subsystems, stun the Warden, and scan everything behind walls—and when you fail to summon your TARDIS, it'll tell you exactly where that blue box is hiding. It also overhauls AIT's space system for a better experience in the void. It makes Hazandra Crystals reusable instead of one‑time trinkets. And it replaces the game menu with the Time Vortex, giving you that familiar dizzy feeling before you even load into a world—like stepping right back into the Dalek Mod's main menu from the 1.12.2 days.
-
-Beyond the classic elements from *Doctor Who*, DOCTOR M also includes plenty of original content from [**us(the Celestial Intervention Agency)**](https://modrinth.com/organization/celestial-intervention-agency) : for example, the Type 103 TARDIS **Evereye**, the Type 102 TARDIS **Watcher**, the Type 60 TARDIS **Cloister**, and the mysterious Type 1 TARDIS **Madness**—each with its own unique interior, all now available in DOCTOR M! On top of that, we've also brought **Eternal Crystals**, **Relic Gems**, and many more interiors you've definitely never seen before.
-
-DOCTOR M isn't just about making your journey more entertaining—it's about making it easier to get lost, and making your tools not just usable, but genuinely *good* to use.** We hope you enjoy them!
+In short, DOCTOR M is an expansion mod built for AIT. What will be added in the future? I have no idea either :D
 
 ---
 
