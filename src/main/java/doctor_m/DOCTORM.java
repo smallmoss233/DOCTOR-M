@@ -3,17 +3,18 @@ package doctor_m;
 import doctor_m.Item.item_group;
 import doctor_m.Item.items;
 import doctor_m.api.AutoRegister;
+import doctor_m.api.ModSounds;
 import doctor_m.block.ModBlockEntities;
 import doctor_m.block.ModBlocks;
 import doctor_m.command.AITTardisBuilderCommand;
 import doctor_m.config.ConfigManager;
 import doctor_m.dimension.DimensionRegister;
 import doctor_m.entities.Entities;
-import doctor_m.handler.ShieldDamageHandler;
 import doctor_m.handler.KeytoTime.GemDeathSaveHandler;
 import doctor_m.handler.KeytoTime.GemTickHandler;
-import doctor_m.handler.KeytoTime.PocketWatchFunction;
 import doctor_m.handler.KeytoTime.KeytoTimeCore;
+import doctor_m.handler.KeytoTime.PocketWatchFunction;
+import doctor_m.handler.ShieldDamageHandler;
 import doctor_m.handler.VMServerHandler;
 import doctor_m.module.creativity.CreativityItems;
 import doctor_m.module.creativity.creativity_data.Tlipoca.TlipocaScytheEvents;
@@ -29,9 +30,6 @@ import net.minecraft.util.Identifier;
 
 public class DOCTORM implements ModInitializer {
     public static final String MOD_ID = "doctor_m";
-    public static final SoundEvent SHIELD_ACTIVATE = register("shieldcore");
-    public static final SoundEvent DE_MAT_GUN_FIRE = register("item.de_mat_gun.fire");
-    public static final SoundEvent DE_MAT_GUN_ERASE = register("entity.de_mat_gun.erase");
 
     private static SoundEvent register(String name) {
         Identifier id = new Identifier(DOCTORM.MOD_ID, name);
@@ -71,6 +69,8 @@ public class DOCTORM implements ModInitializer {
         TardisTypeLoader.init();
         item_group.registerItems();
         Entities.registerAttributes();
+
+        ModSounds.init();
 
         CommandRegistrationCallback.EVENT.register(AITTardisBuilderCommand::register);
         ConfigManager.loadConfig();

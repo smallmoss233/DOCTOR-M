@@ -1,0 +1,28 @@
+{
+  "output": {
+    "id": "doctor_m:toyota_spinning_rotor",
+    "Count": 1
+  },
+  "inputs": [
+    {
+      "item": "ait:detector_block",
+      "maxCount": 1,
+      "minCount": 1
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "maxCount": 8,
+      "minCount": 5
+    },
+    {
+      "item": "minecraft:redstone",
+      "maxCount": 5,
+      "minCount": 3
+    },
+    {
+      "item": "minecraft:redstone_lamp",
+      "maxCount": 5,
+      "minCount": 3
+    }
+  ]
+}

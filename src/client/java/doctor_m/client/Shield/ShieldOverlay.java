@@ -2,6 +2,7 @@ package doctor_m.client.Shield;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import doctor_m.DOCTORM;
+import doctor_m.api.ModSounds;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -70,7 +71,7 @@ public class ShieldOverlay implements HudRenderCallback {
     private static void playShieldSound() {
         float pitch = 0.9f + (float) Math.random() * 0.2f; // 0.9 ~ 1.1
         MinecraftClient.getInstance().getSoundManager().play(
-                PositionedSoundInstance.master(DOCTORM.SHIELD_ACTIVATE, pitch, 1.0f)
+                PositionedSoundInstance.master(ModSounds.SHIELD_ACTIVATE, pitch, 1.0f)
         );
     }
 }

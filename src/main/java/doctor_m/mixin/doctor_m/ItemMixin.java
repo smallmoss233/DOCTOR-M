@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-import static doctor_m.Item.items.*;
+import static doctor_m.Item.items.SEAL_OF_THE_HIGH_COUNCIL;
 
 @Mixin(Item.class)
 public class ItemMixin {
@@ -28,6 +28,8 @@ public class ItemMixin {
     private static final Identifier OXYGEN_CHARGER_ID = new Identifier("doctor_m", "oxygen_charger");
     private static final Identifier UNDERWATER_OXYGEN_GENERATOR_ID = new Identifier("doctor_m", "underwater_oxygen_generator");
     private static final Identifier EYE_OF_HARMONY_OBELISK_ID = new Identifier("doctor_m", "eye_of_harmony_obelisk");
+    private static final Identifier TOYOTA_SPINNING_ROTOR_ENTITY_ID = new Identifier("doctor_m", "toyota_spinning_rotor");
+
 
     // 能量再生核心恢复能量
     @Inject(method = "inventoryTick", at = @At("TAIL"))
@@ -86,6 +88,12 @@ public class ItemMixin {
         if (id.equals(EYE_OF_HARMONY_OBELISK_ID)) {
             ShiftTooltipInvoker.addShiftTooltip(tooltip,
                     Text.translatable("message.tooltip.doctor_m.eye_of_harmony_obelisk"));
+        }
+
+        // 穹顶转子
+        if (id.equals(TOYOTA_SPINNING_ROTOR_ENTITY_ID)) {
+            ShiftTooltipInvoker.addShiftTooltip(tooltip,
+                    Text.translatable("message.tooltip.doctor_m.toyota_spinning_rotor"));
         }
 
         // 至高议会勋章

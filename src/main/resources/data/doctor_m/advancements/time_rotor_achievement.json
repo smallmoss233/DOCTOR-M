@@ -1,0 +1,37 @@
+{
+  "parent": "doctor_m:root",
+  "display": {
+    "icon": {
+      "item": "doctor_m:toyota_spinning_rotor"
+    },
+    "title": {
+      "translate": "advancements.doctor_m.toyota_spinning_rotor.title"
+    },
+    "description": {
+      "translate": "advancements.doctor_m.toyota_spinning_rotor.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain_rotor": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "doctor_m:toyota_spinning_rotor"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtain_rotor"
+    ]
+  ]
+}

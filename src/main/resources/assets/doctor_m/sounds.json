@@ -15,5 +15,20 @@
       "doctor_m:de_mat_gun_erase"
     ],
     "subtitle": "subtitles.doctor_m.de_mat_gun.erase"
+  },
+  "toyota_ticking_loop": {
+    "sounds": [
+      "doctor_m:ticking_loop"
+    ]
+  },
+  "toyota_ticking_start": {
+    "sounds": [
+      "doctor_m:ticking_start"
+    ]
+  },
+  "toyota_ticking_stop": {
+    "sounds": [
+      "doctor_m:ticking_end"
+    ]
   }
 }
