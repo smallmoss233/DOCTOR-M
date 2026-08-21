@@ -98,6 +98,14 @@
       "output": "doctor_m:stca",
       "outputCount": 1,
       "maxUses": 1
+    },
+    {
+      "input": "minecraft:iron_ingot",
+      "inputCount": 16,
+      "output": "ait:blueprint",
+      "outputCount": 1,
+      "maxUses": 1,
+      "outputNbt": "{Blueprint:\"doctor_m:toyota_spinning_rotor\"}"
     }
   ]
 }
