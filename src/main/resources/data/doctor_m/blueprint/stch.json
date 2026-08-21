@@ -6,13 +6,13 @@
   "inputs": [
     {
       "item": "minecraft:netherite_ingot",
-      "maxCount": 10,
-      "minCount": 6
+      "maxCount": 8,
+      "minCount": 2
     },
     {
       "item": "minecraft:diamond",
-      "maxCount": 10,
-      "minCount": 6
+      "maxCount": 6,
+      "minCount": 2
     },
     {
       "item": "doctor_m:stca",
@@ -21,13 +21,13 @@
     },
     {
       "item": "minecraft:iron_ingot",
-      "maxCount": 40,
-      "minCount": 28
+      "maxCount": 8,
+      "minCount": 8
     },
     {
       "item": "minecraft:quartz",
-      "maxCount": 20,
-      "minCount": 12
+      "maxCount": 4,
+      "minCount": 2
     }
   ]
 }

@@ -21,8 +21,8 @@
     },
     {
       "item": "minecraft:iron_ingot",
-      "maxCount": 20,
-      "minCount": 18
+      "maxCount": 8,
+      "minCount": 6
     },
     {
       "item": "minecraft:quartz",
