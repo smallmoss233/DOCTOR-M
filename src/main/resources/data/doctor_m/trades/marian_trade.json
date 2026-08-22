@@ -71,6 +71,55 @@
       "output": "doctor_m:vortex_manipulator",
       "outputCount": 1,
       "maxUses": 1
+    },
+    {
+      "input": "minecraft:iron_ingot",
+      "inputCount": 2,
+      "output": "ait:hyperion_core_shaft",
+      "outputCount": 1,
+      "maxUses": 15
+    },
+    {
+      "input": "ait:photon_accelerator",
+      "inputCount": 4,
+      "output": "ait:shields_circuit",
+      "outputCount": 1,
+      "maxUses": 1
+    },
+    {
+      "input": "ait:cable_connector_block",
+      "inputCount": 2,
+      "output": "ait:backup_circuit",
+      "outputCount": 1,
+      "maxUses": 1
+    },
+    {
+      "input": "ait:artron_mercurial_link",
+      "inputCount": 4,
+      "output": "ait:gravitational_circuit",
+      "outputCount": 1,
+      "maxUses": 1
+    },
+    {
+      "input": "ait:data_fluid_link",
+      "inputCount": 2,
+      "output": "ait:chameleon_circuit",
+      "outputCount": 1,
+      "maxUses": 1
+    },
+    {
+      "input": "ait:orthogonal_engine_filter",
+      "inputCount": 4,
+      "output": "ait:desperation_circuit",
+      "outputCount": 1,
+      "maxUses": 1
+    },
+    {
+      "input": "ait:vortex_fluid_link",
+      "inputCount": 2,
+      "output": "ait:stabilisers",
+      "outputCount": 1,
+      "maxUses": 1
     }
   ]
 }
