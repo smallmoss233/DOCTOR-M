@@ -1,0 +1,33 @@
+{
+  "output": {
+    "id": "doctor_m:stch",
+    "Count": 1
+  },
+  "inputs": [
+    {
+      "item": "minecraft:netherite_ingot",
+      "maxCount": 8,
+      "minCount": 2
+    },
+    {
+      "item": "minecraft:diamond",
+      "maxCount": 6,
+      "minCount": 2
+    },
+    {
+      "item": "doctor_m:stca",
+      "maxCount": 1,
+      "minCount": 1
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "maxCount": 8,
+      "minCount": 8
+    },
+    {
+      "item": "minecraft:quartz",
+      "maxCount": 4,
+      "minCount": 2
+    }
+  ]
+}
