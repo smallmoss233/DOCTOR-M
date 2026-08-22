@@ -71,6 +71,111 @@
       "output": "doctor_m:vortex_manipulator",
       "outputCount": 1,
       "maxUses": 1
+    },
+    {
+      "input": "minecraft:iron_ingot",
+      "inputCount": 2,
+      "output": "ait:hyperion_core_shaft",
+      "outputCount": 1,
+      "maxUses": 15
+    },
+    {
+      "input": "ait:photon_accelerator",
+      "inputCount": 4,
+      "output": "ait:shields_circuit",
+      "outputCount": 1,
+      "maxUses": 1
+    },
+    {
+      "input": "ait:cable_connector_block",
+      "inputCount": 2,
+      "output": "ait:backup_circuit",
+      "outputCount": 1,
+      "maxUses": 1
+    },
+    {
+      "input": "ait:artron_mercurial_link",
+      "inputCount": 4,
+      "output": "ait:gravitational_circuit",
+      "outputCount": 1,
+      "maxUses": 1
+    },
+    {
+      "input": "ait:data_fluid_link",
+      "inputCount": 2,
+      "output": "ait:chameleon_circuit",
+      "outputCount": 1,
+      "maxUses": 1
+    },
+    {
+      "input": "ait:orthogonal_engine_filter",
+      "inputCount": 4,
+      "output": "ait:desperation_circuit",
+      "outputCount": 1,
+      "maxUses": 1
+    },
+    {
+      "input": "ait:vortex_fluid_link",
+      "inputCount": 2,
+      "output": "ait:stabilisers",
+      "outputCount": 1,
+      "maxUses": 1
+    },
+    {
+      "input": "minecraft:iron_ingot",
+      "inputCount": 6,
+      "output": "ait:data_fluid_link",
+      "outputCount": 2,
+      "maxUses": 4
+    },
+    {
+      "input": "ait:zeiton_dust",
+      "inputCount": 8,
+      "output": "ait:vortex_fluid_link",
+      "outputCount": 2,
+      "maxUses": 4
+    },
+    {
+      "input": "minecraft:quartz",
+      "inputCount": 2,
+      "output": "ait:artron_mercurial_link",
+      "outputCount": 1,
+      "maxUses": 10
+    },
+    {
+      "input": "ait:coral_fragment",
+      "inputCount": 2,
+      "output": "ait:data_mercurial_link",
+      "outputCount": 1,
+      "maxUses": 16
+    },
+    {
+      "input": "minecraft:iron_ingot",
+      "inputCount": 6,
+      "output": "ait:vortex_mercurial_link",
+      "outputCount": 3,
+      "maxUses": 10
+    },
+    {
+      "input": "ait:data_fluid_link",
+      "inputCount": 4,
+      "output": "ait:orthogonal_engine_filter",
+      "outputCount": 1,
+      "maxUses": 15
+    },
+    {
+      "input": "ait:vortex_fluid_link",
+      "inputCount": 3,
+      "output": "ait:transwarp_resonator",
+      "outputCount": 1,
+      "maxUses": 8
+    },
+    {
+      "input": "ait:artron_fluid_link",
+      "inputCount": 4,
+      "output": "ait:photon_accelerator",
+      "outputCount": 2,
+      "maxUses": 8
     }
   ]
 }
