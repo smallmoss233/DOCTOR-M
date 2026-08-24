@@ -4,7 +4,7 @@
 	"parent": "ait:item/sonic/song",
 	"texture_size": [64, 64],
 	"textures": {
-		"5": "evereye:item/sonic_tools/rift_sonic/rift"
+		"5": "evereye:item/sonic_tools/mobius/mobius"
 	},
 	"elements": [
 		{

@@ -1,6 +1,6 @@
 {
 	"parent": "ait:item/sonic/song",
 	"textures": {
-		"0": "evereye:item/sonic_tools/rift_sonic/scanning"
+		"0": "evereye:item/sonic_tools/mobius/inactive"
 	}
 }
