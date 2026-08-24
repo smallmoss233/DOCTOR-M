@@ -106,6 +106,14 @@
       "outputCount": 1,
       "maxUses": 1,
       "outputNbt": "{Blueprint:\"doctor_m:toyota_spinning_rotor\"}"
+    },
+    {
+      "input": "minecraft:iron_ingot",
+      "inputCount": 4,
+      "output": "ait:blueprint",
+      "outputCount": 1,
+      "maxUses": 1,
+      "outputNbt": "{Blueprint:\"doctor_m:vortex_manipulator\"}"
     }
   ]
 }
