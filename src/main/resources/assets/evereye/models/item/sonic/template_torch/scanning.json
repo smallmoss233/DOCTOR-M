@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"ambientocclusion": false,
 	"textures": {
-		"torch": "evereye:item/sonic_tools/template_torch_scanning"
+		"torch": "evereye:item/sonic_tools/template_torch/template_torch_scanning"
 	},
 	"elements": [
 		{
