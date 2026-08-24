@@ -1,0 +1,13 @@
+{
+  "id": "evereye:mobius",
+  "models": {
+    "inactive": "evereye:item/sonic/mobius/inactive",
+    "interaction": "evereye:item/sonic/mobius/interaction",
+    "overload": "evereye:item/sonic/mobius/overload",
+    "scanning": "evereye:item/sonic/mobius/scanning",
+    "tardis": "evereye:item/sonic/mobius/tardis"
+  },
+  "loyalty": {
+    "type": "PILOT"
+  }
+}

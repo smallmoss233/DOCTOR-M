@@ -1,0 +1,43 @@
+{
+  "output": {
+    "id": "doctor_m:vortex_manipulator",
+    "Count": 1
+  },
+  "inputs": [
+    {
+      "item": "minecraft:nether_star",
+      "maxCount": 1,
+      "minCount": 1
+    },
+    {
+      "item": "ait:artron_collector",
+      "maxCount": 1,
+      "minCount": 1
+    },
+    {
+      "item": "minecraft:leather",
+      "maxCount": 5,
+      "minCount": 5
+    },
+    {
+      "item": "ait:photon_accelerator",
+      "maxCount": 2,
+      "minCount": 2
+    },
+    {
+      "item": "ait:transwarp_resonator",
+      "maxCount": 1,
+      "minCount": 1
+    },
+    {
+      "item": "ait:artron_fluid_link",
+      "maxCount": 2,
+      "minCount": 1
+    },
+    {
+      "item": "ait:vortex_fluid_link",
+      "maxCount": 2,
+      "minCount": 2
+    }
+  ]
+}
