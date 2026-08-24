@@ -29,7 +29,6 @@ object PocketWatchFunction {
             val currentTime = System.currentTimeMillis()
             val cooldownEnd = nbt.getLong(COOLDOWN_KEY)
 
-            // 冷却中 → 正常受伤，不弹提示
             if (currentTime < cooldownEnd) {
                 return@register true
             }
@@ -37,7 +36,7 @@ object PocketWatchFunction {
             val newHealth = player.health - amount
             if (newHealth <= 0) {
                 revivePlayer(player)
-                // ===== 修改：使用 startCooldown 写入结束时间 + 总时长，耐久条才能正确显示进度 =====
+
                 PocketWatchItem.startCooldown(watchStack, COOLDOWN_MILLIS)
                 return@register false
             }
@@ -53,7 +52,6 @@ object PocketWatchFunction {
         return kotlin.Pair(minutes, seconds)
     }
 
-    // 查找背包中的 pocket_watch（主手、副手、背包、饰品）
     private fun findPocketWatch(player: ServerPlayerEntity): ItemStack? {
         for (stack in player.inventory.main) {
             if (stack.item is PocketWatchItem) return stack

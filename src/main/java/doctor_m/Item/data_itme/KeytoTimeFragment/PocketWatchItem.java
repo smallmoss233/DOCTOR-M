@@ -1,6 +1,5 @@
 package doctor_m.Item.data_itme.KeytoTimeFragment;
 
-import dev.emi.trinkets.api.TrinketItem;
 import doctor_m.Item.KeytoTime;
 import doctor_m.compat.TimelordRegenCompat;
 import doctor_m.handler.KeytoTime.PocketWatchFunction;
@@ -9,6 +8,7 @@ import doctor_m.util.tooltip.TooltipHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundEvents;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class PocketWatchItem extends TrinketItem implements KeytoTime {
+public class PocketWatchItem extends Item implements KeytoTime {
 
     private static final int COOLDOWN_TICKS = 100;
     private static final String OWNER_KEY = "MarkedOwner";
@@ -113,10 +113,6 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
         return openPocketWatch(world, user, stack);
     }
 
-    /**
-     * 打开怀表逻辑（正常右键）
-     * 主人打开时，怀表内的重生次数会自动回到玩家身上
-     */
     private TypedActionResult<ItemStack> openPocketWatch(World world, PlayerEntity user, ItemStack stack) {
         setOpen(stack, true);
 
@@ -153,10 +149,6 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
         return TypedActionResult.success(stack);
     }
 
-    /**
-     * 重生次数储存逻辑（潜行右键，TL专属）
-     * 单向存入：玩家身上的重生次数 → 怀表
-     */
     private TypedActionResult<ItemStack> transferRegenerations(World world, PlayerEntity user, ItemStack stack) {
         if (world.isClient()) {
             return TypedActionResult.success(stack);
@@ -200,7 +192,6 @@ public class PocketWatchItem extends TrinketItem implements KeytoTime {
             return TypedActionResult.success(stack, false);
         }
 
-        // 仅在成功存入后设置冷却
         user.getItemCooldownManager().set(this, COOLDOWN_TICKS);
         return TypedActionResult.success(stack, false);
     }

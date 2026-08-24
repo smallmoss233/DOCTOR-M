@@ -15,13 +15,13 @@ public class TimelordRegenCompat {
     private static Method getInfoMethod;
     private static Method getUsesLeftMethod;
     private static Method setUsesLeftMethod;
-    private static int maxRegenerations = 12; // 默认兜底
+    private static int maxRegenerations = 12;
 
     static {
         if (LOADED) {
             try {
-                capableClass = Class.forName("dev.amble.ars.api.RegenerationCapable");
-                infoClass    = Class.forName("dev.amble.ars.core.RegenerationCore");
+                capableClass = Class.forName("dev.amble.timelordregen.api.RegenerationCapable");
+                infoClass    = Class.forName("dev.amble.timelordregen.core.RegenerationCore");
 
                 isTimelordMethod      = capableClass.getMethod("isTimelord");
                 getInfoMethod         = capableClass.getMethod("getRegenerationInfo");
@@ -31,7 +31,6 @@ public class TimelordRegenCompat {
                 Field maxField = infoClass.getField("MAX_REGENERATIONS");
                 maxRegenerations = (int) maxField.get(null);
             } catch (Exception e) {
-                // 反射失败就按未加载处理，避免崩溃
             }
         }
     }
@@ -64,7 +63,6 @@ public class TimelordRegenCompat {
         return maxRegenerations;
     }
 
-    // 包装对象，避免主代码直接引用 timelordregen 类
     public static class RegenInfo {
         private final Object delegate;
         RegenInfo(Object delegate) { this.delegate = delegate; }
