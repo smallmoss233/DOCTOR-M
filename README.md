@@ -52,7 +52,6 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 ### Also, special thanks to [AmbleLabs](https://amblelabs.dev/) for creating AIT.
 
 ---
+### *Modpack distribution and restricted resource statement.*
 
-### **Modpack Distribution**
-
-* ### You may include the DOCTOR M mod in your modpack, but please be sure to credit the source. Its interiors may not be ported to other mods or redistributed without permission.
+* ### You may include the DOCTOR M mod in your modpack, but please be sure to credit the source. Restricted assets (including but not limited to interiors, sonic screwdrivers, control panels, and exteriors) may not be ported to other mods or redistributed without permission.
