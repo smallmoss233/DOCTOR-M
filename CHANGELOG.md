@@ -10,17 +10,18 @@
 
 -  修改：时隙 / Edit : rift
 -  修改：永恒之眼/永恒之眼 45型 / Edit : Evereye/Evereye Type45
--  修改：守望
--  修改：霓虹
+-  修改：守望 / Edit : watcher
+-  修改：霓虹 / Edit : neon
 
 -  新增：幻方（作者：Asnit_PnQing/名游茶） / New addition: Magic Square (Author: Asnit_PnQing/名游茶)
 -  新增：时隙[战争往事]（作者：TC020） / New addition: The rift [War Stories](Author: TC020)
 
 -  护盾生成器，能提供99.99%的伤害减免并消耗能量，默认1000点能量，每次受伤消耗5点（可配置） / Shield Generator: Provides 99.99% damage reduction while consuming energy. Default energy capacity is 1000, and each hit consumes 5 energy (configurable)
 -  去物质枪！现在终于完成了！去物质枪会抹除击中的目标的物品栏/末影箱/成就，同时强制抹杀玩家，复活后玩家约等于重开新号（时间线级别抹除是这样的） / It's done—the De‑Mat Gun is finally finished! It wipes the target's inventory, ender chest, and achievements, and kills the player outright. When they respawn, it's like starting from scratch (that's timeline‑level erasure for you)
+-  拉斯隆之钥！可以为去物质枪授权！将去物质枪拿在副手，主手持有钥匙潜行右键即可！ / The Key of Rassilon can authorize the De-Mat Gun. Hold the gun in your offhand, the key in your main hand, then sneak + right-click to toggle authorization
 -  103型塔迪斯和玛丽安NPC / Type-103-TARDIS and Marian NPC
 -  力场盾牌，长按右键展开力场护盾，焚毁弹射物并推开周围实体，松开右键后进入短暂冷却，期间仅提供基础格挡。能量耗尽后需回满才可再次开启力场。 / Force Field Shield: Hold right-click to deploy a force field, incinerating projectiles and pushing away nearby entities. Releasing right-click triggers a brief cooldown, during which only basic blocking is provided. Once energy is depleted, it must be fully recharged before the shield can be deployed again.
--  涡旋操纵器，廉价的时间旅行设备，虽然快速但无任何防护，长途旅行会过热，每次使用后都有60s冷却，如果填错坐标还可能CosPlay安德森上校，副手持有阿特隆能量收集单元潜行右键补充能量 / Vortex Manipulator — a cheap time travel device. Fast, but offers no protection; long journeys cause overheating, with a 60s cooldown after each use. Enter the wrong coordinates and you might end up cosplaying as Colonel Anderson. Hold an Artron Collector in your off-hand and sneak + right-click to recharge.
+-  涡旋操纵器，廉价的时间旅行设备，虽然快速但无任何防护，长途旅行会过热，每次使用后都有60s冷却，如果填错坐标还可能CosPlay安德森少校，副手持有阿特隆能量收集单元潜行右键补充能量 / Vortex Manipulator — a cheap time travel device. Fast, but offers no protection; long journeys cause overheating, with a 60s cooldown after each use. Enter the wrong coordinates and you might end up cosplaying as Colonel Anderson. Hold an Artron Collector in your off-hand and sneak + right-click to recharge.
 -  特莉波卡的镰刀，攻击距离延长，对亡灵造成五倍伤害，附带强制百分比扣血与 35% 血线处决，处决可范围溅射并恢复大量生命；右键蓄力进入无敌状态，释放最高 30 格范围的灵魂收割斩击。 / Tlipoca's Scythe features extended reach, 5× damage to undead, max-HP-based forced damage with execution below 35% HP, AoE splash and healing on execute; right-click to charge into invincibility, then unleash Soul Reap with up to a 30-block range.
 -  新增和谐之眼方尖碑，可提供无限的阿特隆能量，工作时可渲染出和谐之眼（可在 UI 内调整） / Added Eye of Harmony Obelisk, provides infinite Artron energy and renders the Eye while active (adjustable in UI)
 -  穹顶转子/丰田转子，在飞行时会自己转起来，从AIT的分支仓库当中将它救了回来[原分支链接](https://github.com/amblelabs/ait/tree/feat/spinny-thing) / The Dome Rotor/Toyota Spinning Rotor will now spin on its own during flight. Rescued from AIT feature branch.[Original branch link](https://github.com/amblelabs/ait/tree/feat/spinny-thing)
@@ -61,6 +62,7 @@
    氧气机的算法优化，一个区域内放置多台氧气机有氧范围扩大，且修复了一些潜在BUG / Optimized oxygen generator algorithm; placing multiple generators in an area expands the oxygen coverage, and fixed some potential bugs.
    呼吸器可以让玩家的氧气消耗速度减缓 / Respirators can slow down the rate at which players use up oxygen.
 -  塔迪斯型号不再局限于50型！可在doctor_m/tardis_type.json当中填写内饰ID+型号来自定义你的塔迪斯型号！ / TARDIS types are no longer limited to Type 50! You can now customise your TARDIS type by adding interior IDs and type names in doctor_m/tardis_type.json!
+-  修改怀表，怀表不再是饰品了，同时怀表使用的模型也改成了amblelabs/regeneration的模型 / The pocket watch is no longer a trinket, and its model has been updated to use the one from amblelabs/regeneration.
 
 ---
 
