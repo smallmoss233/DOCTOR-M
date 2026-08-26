@@ -29,6 +29,8 @@
   "advancements.doctor_m.tech_next_gen.description": "来自未来，还是源自过去？",
   "advancements.doctor_m.toyota_spinning_rotor.title": "现在穹顶转子和RWF一起被实装了",
   "advancements.doctor_m.toyota_spinning_rotor.description": "获得穹顶转子",
+  "advancement.doctor_m.key_of_rassilon.title": "圣匙",
+  "advancement.doctor_m.key_of_rassilon.description": "除了拉斯隆，从未有时间领主总统能得到过拉斯隆之钥。",
 
   "tardis.message.control.siege.confirm_prompt": "再次按下以启用围攻模式！（等待10秒再点击）",
 

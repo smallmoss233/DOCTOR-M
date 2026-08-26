@@ -29,6 +29,8 @@
   "advancements.doctor_m.tech_next_gen.description": "From the future, or from the past?",
   "advancements.doctor_m.toyota_spinning_rotor.title": "Toyota Spinning Rotor and RWF Have Been Implemented Together",
   "advancements.doctor_m.toyota_spinning_rotor.description": "Obtain the Toyota Spinning Rotor",
+  "advancement.doctor_m.key_of_rassilon.title": "The Sacred Key",
+  "advancement.doctor_m.key_of_rassilon.description": "No Time Lord President has ever possessed the Key of Rassilon, save Rassilon himself.",
 
   "tardis.message.control.siege.confirm_prompt": "Press again to enable Siege Mode! (Wait 10 seconds before clicking)",
 

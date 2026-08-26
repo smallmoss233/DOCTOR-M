@@ -1,0 +1,32 @@
+{
+  "parent": "doctor_m:root",
+  "display": {
+    "icon": {
+      "item": "doctor_m:key_of_rassilon"
+    },
+    "title": {
+      "translate": "advancement.doctor_m.key_of_rassilon.title"
+    },
+    "description": {
+      "translate": "advancement.doctor_m.key_of_rassilon.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_key": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "doctor_m:key_of_rassilon"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

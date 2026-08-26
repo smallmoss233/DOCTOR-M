@@ -23,21 +23,15 @@ public class KeyofRassilonItem extends KeyItem {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        // 客户端不处理逻辑
         if (world.isClient) {
             return TypedActionResult.pass(player.getStackInHand(hand));
         }
-
-        // 只有潜行时才触发授权切换
         if (!player.isSneaking()) {
             return TypedActionResult.pass(player.getStackInHand(hand));
         }
 
-        // 获取主手和副手的物品
         ItemStack mainHand = player.getMainHandStack();
         ItemStack offHand = player.getOffHandStack();
-
-        // 判断钥匙在哪个手，以及另一只手拿的是什么
         ItemStack keyStack = null;
         ItemStack targetStack = null;
 
@@ -49,20 +43,16 @@ public class KeyofRassilonItem extends KeyItem {
             targetStack = mainHand;
         }
 
-        // 如果目标物品为空（即副手没有实现 Authorizable 的物品），静默返回（无提示、无声音）
         if (targetStack == null) {
             return TypedActionResult.pass(player.getStackInHand(hand));
         }
 
-        // 此时 targetStack 一定实现了 Authorizable
         Authorizable authorizable = (Authorizable) targetStack.getItem();
 
-        // 切换授权状态
         boolean current = authorizable.isAuthorized(targetStack);
         boolean newState = !current;
         authorizable.setAuthorized(targetStack, newState);
 
-        // 播放对应的音效（只有成功切换才播放）
         if (newState) {
             world.playSound(null, player.getBlockPos(), authorizable.getAuthorizeSound(),
                     SoundCategory.PLAYERS, 1.0f, 1.0f);
@@ -71,10 +61,8 @@ public class KeyofRassilonItem extends KeyItem {
                     SoundCategory.PLAYERS, 1.0f, 1.0f);
         }
 
-        // 调用额外回调（粒子等）
         authorizable.onAuthorizationChanged(player, targetStack, newState);
 
-        // 不消耗钥匙耐久（默认返回 success 不消耗）
         return TypedActionResult.success(player.getStackInHand(hand));
     }
 

@@ -29,6 +29,8 @@
   "advancements.doctor_m.tech_next_gen.description": "來自未來，還是源自過去？",
   "advancements.doctor_m.toyota_spinning_rotor.title": "現在穹頂轉子和RWF一起被實裝了",
   "advancements.doctor_m.toyota_spinning_rotor.description": "獲得穹頂轉子",
+  "advancement.doctor_m.key_of_rassilon.title": "聖匙",
+  "advancement.doctor_m.key_of_rassilon.description": "除了拉斯隆，從未有時間領主總統能得到過拉斯隆之鑰。",
 
   "tardis.message.control.siege.confirm_prompt": "再次按下以啟用圍攻模式！（等待10秒再點擊）",
 
@@ -93,7 +95,7 @@
   "title.doctor_m.apprentice_reaper": "§c見習死神",
 
   "itemGroup.doctor_m": "DOCTOR M",
-  "item.doctor_m.rassilon_key": "拉斯隆之鑰",
+  "item.doctor_m.key_of_rassilon": "拉斯隆之鑰",
   "item.doctor_m.de_mat_gun": "去物質槍",
   "item.doctor_m.key_to_time": "時間鑰匙",
   "item.doctor_m.pocket_watch": "§6懷錶",
@@ -376,10 +378,13 @@
   "message.doctor_m.oxygen_charger.cooldown": "氧氣補充機冷卻中...還剩 %d 秒...",
   "message.doctor_m.oxygen_charger": "§7特別為太空探索準備的氧氣補充機，效率極高且能無限制氧👍*能瞬間布滿你的氧氣瓶或航天服，每次使用後都有10s的製氧時間",
   "message.doctor_m.oxygen_tank": "§7看上去像個保溫杯",
-  "message.doctor_m.rassilon_key.tooltip.line": "§7除了拉斯隆，從未有時間領主總統能得到過拉斯隆之鑰...",
+  "message.doctor_m.key_of_rassilon.tooltip.line": "§7除了拉斯隆，從未有時間領主總統能得到過拉斯隆之鑰...",
   "message.doctor_m.de_mat_gun.tooltip.line1": "來自時間領主的忠告：",
   "message.doctor_m.de_mat_gun.tooltip.line2": "毀了這把槍，毀掉它的所有資料，不要被強大的力量蠱惑心智...",
   "message.doctor_m.de_mat_gun.detail": "§7扣下扳機時沒有火光，也沒有聲響§r*§7只有一道蒼白的閃光，和隨後令人不安的寂靜§r*§7被那道光觸碰的東西不會死去——它們只是§c不再存在§7了§r*§7連同身上的物品一起，從時間線上被輕輕擦去",
+  "message.doctor_m.de_mat_gun.not_authorized": "§c去物質槍無法啟動！",
+  "message.doctor_m.de_mat_gun.authorized": "§a去物質槍已啟動！",
+  "message.doctor_m.de_mat_gun.unauthorized": "§c去物質槍未啟動！",
   "message.doctor_m.key_to_time_resurrection": "§b時間鑰匙的所有者，你的權力不止於此，你不會被死亡這點小事困擾，六重神依然在注視著你",
   "message.doctor_m.key_to_time.tip": "§7一塊可能有無數種起源的晶體*拉斯隆獲得過它，亦或是它的製造者*而今，你得到了它，宇宙將向你俯首稱臣",
   "message.doctor_m.key_to_time.detail": "§7你握住了時間的權柄，宇宙開始向你低頭。§r* *§7死亡會把你倒帶復活，並在 §c35格§7 內清場。§r*§7攻擊附帶 §c百分比扣血§7；任何傷害最多只能刮掉你 §c15%§7 的生命。§r*§7箭矢近身即滅，每秒回復 §c10%§7 生命並熄滅火焰。§r*§7獲得 §c飛行§7，免疫火焰、窒息、藥水與音波。",
