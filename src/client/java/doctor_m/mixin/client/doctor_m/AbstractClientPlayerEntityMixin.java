@@ -1,6 +1,6 @@
 package doctor_m.mixin.client.doctor_m;
 
-import doctor_m.Item.data_itme.ToymakerHammerItem;
+import doctor_m.Item.data_item.ToymakerHammerItem;
 import doctor_m.module.creativity.creativity_data.Tlipoca.TlipocaScytheItem;
 import doctor_m.util.creativity.ScytheChargingManager;
 import net.minecraft.client.network.AbstractClientPlayerEntity;

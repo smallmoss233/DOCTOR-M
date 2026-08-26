@@ -1,8 +1,8 @@
 package doctor_m.handler;
 
 import dev.emi.trinkets.api.TrinketsApi;
-import doctor_m.Item.data_itme.ForceFieldShieldItem;
-import doctor_m.Item.data_itme.ShieldCoreItem;
+import doctor_m.Item.data_item.ForceFieldShieldItem;
+import doctor_m.Item.data_item.ShieldCoreItem;
 import doctor_m.network.ShieldNetworking;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.player.PlayerEntity;

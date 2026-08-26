@@ -1,9 +1,9 @@
 package doctor_m.Item;
 
-import doctor_m.Item.data_itme.*;
-import doctor_m.Item.data_itme.KeytoTimeFragment.EternalCrystalItem;
-import doctor_m.Item.data_itme.KeytoTimeFragment.PocketWatchItem;
-import doctor_m.Item.data_itme.KeytoTimeFragment.RelicGemItem;
+import doctor_m.Item.data_item.*;
+import doctor_m.Item.data_item.KeytoTimeFragment.EternalCrystalItem;
+import doctor_m.Item.data_item.KeytoTimeFragment.PocketWatchItem;
+import doctor_m.Item.data_item.KeytoTimeFragment.RelicGemItem;
 import doctor_m.block.ModBlocks;
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
@@ -35,7 +35,7 @@ public class items {
 
     //武器
     public static final Item DE_MAT_GUN = new DeMatGunItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
-    public static final Item RASSILON_KEY = new RassilonKeyItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
+    public static final Item KEY_OF_RASSILON = new KeyofRassilonItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
 
     //氧气相关
     public static final Item OXYGEN_CHARGER = new BlockItem(ModBlocks.OXYGEN_CHARGER, new Item.Settings());

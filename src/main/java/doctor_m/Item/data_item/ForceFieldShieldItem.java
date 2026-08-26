@@ -1,4 +1,4 @@
-package doctor_m.Item.data_itme;
+package doctor_m.Item.data_item;
 
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;

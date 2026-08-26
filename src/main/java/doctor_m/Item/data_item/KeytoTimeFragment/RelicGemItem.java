@@ -1,4 +1,4 @@
-package doctor_m.Item.data_itme.KeytoTimeFragment;
+package doctor_m.Item.data_item.KeytoTimeFragment;
 
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketItem;

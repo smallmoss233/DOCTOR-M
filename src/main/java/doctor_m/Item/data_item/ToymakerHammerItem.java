@@ -1,4 +1,4 @@
-package doctor_m.Item.data_itme;
+package doctor_m.Item.data_item;
 
 import dev.amble.ait.AITMod;
 import dev.amble.ait.api.tardis.TardisComponent;

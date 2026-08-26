@@ -2,6 +2,7 @@ package doctor_m.handler;
 
 import dev.emi.trinkets.api.TrinketsApi;
 import doctor_m.Item.KeytoTime;
+import doctor_m.Item.data_item.DeMatGunItem;
 import doctor_m.api.ModSounds;
 import doctor_m.compat.TimelordRegenCompat;
 import net.minecraft.entity.Entity;
@@ -21,6 +22,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.stat.StatHandler;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.WorldSavePath;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
@@ -51,6 +54,26 @@ public class DeMatGunEntityEraser {
     private static final float ERASE_PARTICLE_SIZE = 1.5f;
 
     public static void eraseByRaycast(PlayerEntity shooter, World world, double range) {
+
+        ItemStack gunStack = shooter.getMainHandStack();
+        if (!(gunStack.getItem() instanceof DeMatGunItem)) {
+            gunStack = shooter.getOffHandStack();
+            if (!(gunStack.getItem() instanceof DeMatGunItem)) {
+                return; // 没有持枪，直接返回
+            }
+        }
+        DeMatGunItem gunItem = (DeMatGunItem) gunStack.getItem();
+        if (!gunItem.isAuthorized(gunStack)) {
+            if (shooter instanceof ServerPlayerEntity serverPlayer) {
+                serverPlayer.sendMessage(
+                        Text.translatable("message.doctor_m.de_mat_gun.not_authorized")
+                                .formatted(Formatting.RED),
+                        true
+                );
+            }
+            return;
+        }
+
         Vec3d start = shooter.getEyePos();
         Vec3d direction = shooter.getRotationVec(1.0F);
         Vec3d end = start.add(direction.multiply(range));

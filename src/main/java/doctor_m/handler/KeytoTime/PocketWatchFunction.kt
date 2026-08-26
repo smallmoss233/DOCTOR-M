@@ -1,7 +1,7 @@
 package doctor_m.handler.KeytoTime
 
 import dev.emi.trinkets.api.TrinketsApi
-import doctor_m.Item.data_itme.KeytoTimeFragment.PocketWatchItem
+import doctor_m.Item.data_item.KeytoTimeFragment.PocketWatchItem
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.effect.StatusEffectInstance

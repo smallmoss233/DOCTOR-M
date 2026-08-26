@@ -1,4 +1,4 @@
-package doctor_m.Item.data_itme;
+package doctor_m.Item.data_item;
 
 import dev.amble.ait.core.item.ArtronCollectorItem;
 import doctor_m.Item.items;

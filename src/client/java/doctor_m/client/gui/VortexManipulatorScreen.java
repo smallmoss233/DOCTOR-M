@@ -1,6 +1,6 @@
 package doctor_m.client.gui;
 
-import doctor_m.Item.data_itme.VortexManipulatorItem;
+import doctor_m.Item.data_item.VortexManipulatorItem;
 import doctor_m.Item.items;
 import doctor_m.network.VMNetwork;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;

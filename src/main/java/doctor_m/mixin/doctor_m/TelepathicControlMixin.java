@@ -8,7 +8,7 @@ import dev.amble.ait.core.tardis.control.impl.TelepathicControl;
 import dev.amble.ait.core.tardis.util.AsyncLocatorUtil;
 import dev.amble.lib.data.CachedDirectedGlobalPos;
 import doctor_m.Item.KeytoTime;
-import doctor_m.Item.data_itme.TracerItem;
+import doctor_m.Item.data_item.TracerItem;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;

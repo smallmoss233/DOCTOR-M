@@ -1,7 +1,7 @@
 package doctor_m;
 
-import doctor_m.Item.data_itme.DeMatGunItem;
-import doctor_m.Item.data_itme.KeytoTimeFragment.PocketWatchItem;
+import doctor_m.Item.data_item.DeMatGunItem;
+import doctor_m.Item.data_item.KeytoTimeFragment.PocketWatchItem;
 import doctor_m.Item.items;
 import doctor_m.block.ModBlockEntities;
 import doctor_m.block.data_block.EyeOfHarmonyObeliskBlock;

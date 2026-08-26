@@ -23,7 +23,7 @@ public static void registerItems() {
                                 entries.add(ETERNAL_CRYSTAL);
                                 entries.add(TRACER);
                                 entries.add(DE_MAT_GUN);
-                                entries.add(RASSILON_KEY);
+                                entries.add(KEY_OF_RASSILON);
                                 entries.add(SEAL_OF_THE_HIGH_COUNCIL);
                                 entries.add(OXYGEN_CHARGER);
                                 entries.add(UNDERWATER_OXYGEN_GENERATOR);

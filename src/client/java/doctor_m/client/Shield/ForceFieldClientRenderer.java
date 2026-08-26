@@ -1,7 +1,7 @@
 package doctor_m.client.Shield;
 
 import dev.amble.ait.client.models.machines.ShieldsModel;
-import doctor_m.Item.data_itme.ForceFieldShieldItem;
+import doctor_m.Item.data_item.ForceFieldShieldItem;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;

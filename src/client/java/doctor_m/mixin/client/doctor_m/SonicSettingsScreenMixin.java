@@ -2,7 +2,7 @@ package doctor_m.mixin.client.doctor_m;
 
 import dev.amble.ait.client.screens.SonicSettingsScreen;
 import dev.amble.ait.core.blockentities.ConsoleBlockEntity;
-import doctor_m.Item.data_itme.TracerItem;
+import doctor_m.Item.data_item.TracerItem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;

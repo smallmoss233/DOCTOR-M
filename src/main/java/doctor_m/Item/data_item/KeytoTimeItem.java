@@ -1,4 +1,4 @@
-package doctor_m.Item.data_itme;
+package doctor_m.Item.data_item;
 
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketItem;

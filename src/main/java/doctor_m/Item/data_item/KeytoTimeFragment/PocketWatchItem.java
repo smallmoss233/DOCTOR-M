@@ -1,4 +1,4 @@
-package doctor_m.Item.data_itme.KeytoTimeFragment;
+package doctor_m.Item.data_item.KeytoTimeFragment;
 
 import doctor_m.Item.KeytoTime;
 import doctor_m.compat.TimelordRegenCompat;

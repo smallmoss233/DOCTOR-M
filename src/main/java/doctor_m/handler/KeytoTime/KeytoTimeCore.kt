@@ -3,7 +3,7 @@ package doctor_m.handler.KeytoTime
 import dev.amble.ait.core.AITStatusEffects
 import dev.amble.ait.module.planet.core.space.planet.PlanetRegistry
 import dev.emi.trinkets.api.TrinketsApi
-import doctor_m.Item.data_itme.KeytoTimeItem
+import doctor_m.Item.data_item.KeytoTimeItem
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.LivingEntity

@@ -3,7 +3,7 @@ package doctor_m.handler;
 import dev.amble.ait.AITMod;
 import dev.amble.ait.core.lock.LockedDimensionRegistry;
 import dev.amble.ait.core.util.WorldUtil;
-import doctor_m.Item.data_itme.VortexManipulatorItem;
+import doctor_m.Item.data_item.VortexManipulatorItem;
 import doctor_m.network.VMNetwork;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;

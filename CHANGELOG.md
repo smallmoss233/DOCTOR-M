@@ -4,12 +4,14 @@
 
 ## [ v2.1 - 过去的历史...与尚未发生的.../past... and what hasn't happened yet...]
 
-### 修改 / Edit
+### 更新 / Change
 
 - 土卫六-泰坦 / Saturn VI-Titan
 
 -  修改：时隙 / Edit : rift
 -  修改：永恒之眼/永恒之眼 45型 / Edit : Evereye/Evereye Type45
+-  修改：守望
+-  修改：霓虹
 
 -  新增：幻方（作者：Asnit_PnQing/名游茶） / New addition: Magic Square (Author: Asnit_PnQing/名游茶)
 -  新增：时隙[战争往事]（作者：TC020） / New addition: The rift [War Stories](Author: TC020)

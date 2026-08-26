@@ -1,4 +1,4 @@
-package doctor_m.Item.data_itme;
+package doctor_m.Item.data_item;
 
 import doctor_m.Item.KeytoTime;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;

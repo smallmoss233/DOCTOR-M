@@ -1,7 +1,7 @@
 package doctor_m.handler.KeytoTime
 
 import dev.emi.trinkets.api.TrinketsApi
-import doctor_m.Item.data_itme.KeytoTimeFragment.RelicGemItem
+import doctor_m.Item.data_item.KeytoTimeFragment.RelicGemItem
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 
 object GemTickHandler {

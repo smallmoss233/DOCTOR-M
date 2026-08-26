@@ -1,6 +1,6 @@
 package doctor_m.network;
 
-import doctor_m.Item.data_itme.KeytoTimeItem;
+import doctor_m.Item.data_item.KeytoTimeItem;
 import doctor_m.handler.KeytoTime.KeytoTimeCore;
 import doctor_m.handler.KeytoTime.KeytoTimePassive;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
