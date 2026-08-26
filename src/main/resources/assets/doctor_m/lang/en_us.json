@@ -471,6 +471,10 @@
   "message.tooltip.doctor_m.eye_of_harmony_obelisk": "§7Provides infinite Artron energy and continuously charges surrounding Artron energy chunks. *Hold a Sonic Screwdriver and right-click the middle part of the obelisk to open the UI.",
   "message.tooltip.doctor_m.toyota_spinning_rotor": "§7A giant time rotor above the console. When placed inside the TARDIS, it will slowly spin and emit a ticking sound when the TARDIS is activated. Right-click the rotor with dye in hand to switch its variant.",
 
+  "biome.doctor_m.titan_plains": "Titan Plains",
+  "biome.doctor_m.titan_methane_lakes": "Titan Methane Lakes",
+  "biome.doctor_m.titan_dunes": "Titan Dunes",
+
   "dimension.minecraft.overworld": "Earth",
   "dimension.minecraft.the_end": "The End",
   "dimension.minecraft.the_nether": "The Nether",

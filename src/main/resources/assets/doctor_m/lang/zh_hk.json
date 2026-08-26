@@ -470,6 +470,11 @@
   "message.doctor_m.underwater_oxygen_generator": "§7一台製氧機，初為水下環境設計，通過電解水(H2O)製取氧氣*水下可在一定範圍內供氧，非水下環境可通過手動加入水進行製氧",
   "message.tooltip.doctor_m.eye_of_harmony_obelisk": "§7提供無限的阿特隆能量，並持續為周圍的阿特隆能量區塊充能。*手持音速起子右鍵方尖碑中間部分可開啟UI",
   "message.tooltip.doctor_m.toyota_spinning_rotor": "§7位於控制台上方的巨型時間轉子，放置在塔迪斯內部*啟動塔迪斯時，轉子會緩慢旋轉起來並發出滴答聲*手持染料右鍵轉子即可切換轉子的變體",
+
+  "biome.doctor_m.titan_plains": "泰坦平原",
+  "biome.doctor_m.titan_methane_lakes": "泰坦甲烷湖",
+  "biome.doctor_m.titan_dunes": "泰坦沙丘",
+
   "dimension.minecraft.overworld": "地球",
   "dimension.minecraft.the_end": "末路之地",
   "dimension.minecraft.the_nether": "下界",
