@@ -1,5 +1,5 @@
 {
-  "type": "doctor_m:trenzalore",
+  "type": "doctor_m:trenzalore_type",
   "generator": {
     "type": "minecraft:noise",
     "settings": "minecraft:overworld",

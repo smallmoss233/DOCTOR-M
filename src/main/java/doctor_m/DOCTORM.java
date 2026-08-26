@@ -8,7 +8,6 @@ import doctor_m.block.ModBlockEntities;
 import doctor_m.block.ModBlocks;
 import doctor_m.command.AITTardisBuilderCommand;
 import doctor_m.config.ConfigManager;
-import doctor_m.dimension.DimensionRegister;
 import doctor_m.entities.Entities;
 import doctor_m.handler.KeytoTime.GemDeathSaveHandler;
 import doctor_m.handler.KeytoTime.GemTickHandler;
@@ -45,7 +44,6 @@ public class DOCTORM implements ModInitializer {
         AutoRegister.items(items.class, MOD_ID);
         AutoRegister.items(CreativityItems.class, MOD_ID);
 
-        DimensionRegister.register();
         ShieldDamageHandler.register();
         ModBlocks.register();
         ModBlockEntities.register();

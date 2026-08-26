@@ -34,40 +34,68 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mixin(SelfDestructHandler.class)
 public class SelfDestructHandlerMixin {
 
     private static final List<DelayedTask> TASK_QUEUE = new ArrayList<>();
-    private static boolean TICK_LISTENER_REGISTERED = false;
+    private static final AtomicBoolean TICK_LISTENER_REGISTERED = new AtomicBoolean(false);
+
+    private static Field TARDIS_FIELD_CACHE = null;
 
     private Tardis doctor_m$getTardis(SelfDestructHandler self) {
-        try {
+
+        if (TARDIS_FIELD_CACHE == null) {
             Class<?> clazz = self.getClass();
             while (clazz != null && clazz != Object.class) {
                 try {
-                    Field field = clazz.getDeclaredField("tardis");
-                    field.setAccessible(true);
-                    return (Tardis) field.get(self);
-                } catch (NoSuchFieldException e) {
+                    TARDIS_FIELD_CACHE = clazz.getDeclaredField("tardis");
+                    TARDIS_FIELD_CACHE.setAccessible(true);
+                    break;
+                } catch (NoSuchFieldException ignored) {
                     clazz = clazz.getSuperclass();
+                } catch (Exception e) {
+                    AITMod.LOGGER.error("Doctor_M: Failed to locate tardis field via reflection", e);
+                    break;
                 }
             }
-        } catch (IllegalAccessException e) {
-            AITMod.LOGGER.error("Failed to access tardis field via reflection", e);
         }
-        return null;
+
+        if (TARDIS_FIELD_CACHE == null) {
+            return null;
+        }
+
+        try {
+            return (Tardis) TARDIS_FIELD_CACHE.get(self);
+        } catch (IllegalAccessException e) {
+            AITMod.LOGGER.error("Doctor_M: Failed to access tardis field", e);
+            return null;
+        }
     }
 
     @Inject(method = "complete", at = @At("HEAD"), cancellable = true)
     private void doctor_m$gradualAnnihilation(CallbackInfo ci) {
-        // 检查总开关
-        if (!ConfigManager.getConfig().enableSelfDestructEnhancement) {
-            return; // 让原方法执行
+        boolean enhancementEnabled;
+        try {
+            var config = ConfigManager.getConfig();
+            if (config == null) {
+                AITMod.LOGGER.warn("Doctor_M: Config is null, falling back to vanilla self-destruct");
+                return;
+            }
+            enhancementEnabled = config.enableSelfDestructEnhancement;
+        } catch (Exception e) {
+            AITMod.LOGGER.error("Doctor_M: Failed to read self-destruct config, using vanilla behavior", e);
+            return;
         }
+
+        if (!enhancementEnabled) {
+            AITMod.LOGGER.debug("Doctor_M: Self-destruct enhancement disabled by config");
+            return;
+        }
+
         ci.cancel();
 
-        // 读取配置参数
         int MAX_RADIUS = ConfigManager.getConfig().selfDestructMaxRadius;
         int EXPLOSION_STEPS = ConfigManager.getConfig().selfDestructExplosionSteps;
         int DELAY_PER_STEP = ConfigManager.getConfig().selfDestructDelayPerStep;
@@ -75,97 +103,203 @@ public class SelfDestructHandlerMixin {
         int KNOCKBACK_RADIUS = ConfigManager.getConfig().selfDestructKnockbackRadius;
         double KNOCKBACK_FORCE = ConfigManager.getConfig().selfDestructKnockbackForce;
 
+        if (MAX_RADIUS > 50 || FINAL_CLEAR_RADIUS > 80) {
+            AITMod.LOGGER.warn("Doctor_M: Self-destruct radius is extremely large (max={}, final={}), this may cause long annihilation sequences",
+                    MAX_RADIUS, FINAL_CLEAR_RADIUS);
+        }
+
         SelfDestructHandler self = (SelfDestructHandler) (Object) this;
         Tardis tardis = this.doctor_m$getTardis(self);
 
         if (tardis == null) {
-            AITMod.LOGGER.error("Failed to get tardis instance, aborting annihilation");
+            AITMod.LOGGER.error("Doctor_M: Failed to get tardis instance, aborting annihilation");
             return;
         }
 
         CachedDirectedGlobalPos exterior = tardis.travel().position();
         ServerWorld world = exterior.getWorld();
+
+        if (world == null || world.isClient()) {
+            AITMod.LOGGER.error("Doctor_M: Invalid world for annihilation");
+            return;
+        }
+
         BlockPos centerPos = exterior.getPos();
         Vec3d center = Vec3d.ofCenter(centerPos);
         MinecraftServer server = world.getServer();
 
-        AITMod.LOGGER.warn("Tardis {} has initiated GRADUAL ANNIHILATION sequence!", tardis.getUuid());
+        AITMod.LOGGER.warn("Doctor_M: Tardis {} has initiated GRADUAL ANNIHILATION sequence! (maxRadius={}, steps={}, finalRadius={})",
+                tardis.getUuid(), MAX_RADIUS, EXPLOSION_STEPS, FINAL_CLEAR_RADIUS);
 
-        ServerTardisManager.getInstance().remove(server, tardis.asServer());
+        try {
+            ServerTardisManager.getInstance().remove(server, tardis.asServer());
+        } catch (Exception e) {
+            AITMod.LOGGER.error("Doctor_M: Failed to remove tardis from manager", e);
+        }
 
-        if (!TICK_LISTENER_REGISTERED) {
+        if (TICK_LISTENER_REGISTERED.compareAndSet(false, true)) {
             ServerTickEvents.END_SERVER_TICK.register(serverInstance -> {
                 synchronized (TASK_QUEUE) {
                     Iterator<DelayedTask> it = TASK_QUEUE.iterator();
                     while (it.hasNext()) {
                         DelayedTask task = it.next();
                         task.ticksRemaining--;
+
                         if (task.ticksRemaining <= 0) {
+                            // 执行前检查 world 是否还存活，防止世界卸载后 NPE/内存泄漏
+                            if (task.worldRef != null && (task.worldRef.isClient() || task.worldRef.getServer() == null)) {
+                                it.remove();
+                                continue;
+                            }
                             try {
                                 task.runnable.run();
                             } catch (Exception e) {
-                                AITMod.LOGGER.error("Error executing delayed annihilation task", e);
+                                AITMod.LOGGER.error("Doctor_M: Error executing delayed annihilation task", e);
                             }
                             it.remove();
                         }
                     }
                 }
             });
-            TICK_LISTENER_REGISTERED = true;
         }
 
-        // 阶段 0：核心坍缩
-        scheduleTask(0, () -> {
-            annihilateSphere(world, centerPos, 2);
+        // ==================== 阶段 0：核心坍缩 ====================
+        scheduleTask(world, 0, () -> {
+            annihilateSphereDirect(world, centerPos, 2);
             applyScreenShake(world, center, 10);
             spawnCollapseEffect(world, center);
         });
 
-        // 阶段 1~N：逐步扩散
+        // ==================== 阶段 1~N：逐步扩散 ====================
         for (int step = 1; step <= EXPLOSION_STEPS; step++) {
             final int currentStep = step;
             final double progress = currentStep / (double) EXPLOSION_STEPS;
             final double easedProgress = 1 - Math.pow(1 - progress, 3);
-            final double radius = 2 + (MAX_RADIUS - 2) * easedProgress;
-            final long delayTicks = 10L + (long) step * DELAY_PER_STEP;
+            final int radius = (int) (2 + (MAX_RADIUS - 2) * easedProgress);
+            final long baseDelay = 10L + (long) step * DELAY_PER_STEP;
 
-            scheduleTask(delayTicks, () -> {
-                annihilateSphere(world, centerPos, (int) radius);
-                applyScreenShake(world, center, (int) radius + 20);
+            // 球体清除（自动分帧，大半径不会卡死）
+            long afterClear = scheduleAnnihilation(world, centerPos, radius, baseDelay);
+
+            // 效果在清除完成后触发
+            scheduleTask(world, afterClear, () -> {
+                applyScreenShake(world, center, radius + 20);
                 applyKnockback(world, center, radius, KNOCKBACK_RADIUS, KNOCKBACK_FORCE);
                 spawnExpansionEffect(world, center, radius, currentStep, EXPLOSION_STEPS);
             });
         }
 
-        // 终极阶段
+        // ==================== 终极阶段 ====================
         int finalDelay = 10 + (EXPLOSION_STEPS + 3) * DELAY_PER_STEP;
-        scheduleTask(finalDelay, () -> {
-            ultimateAnnihilation(world, centerPos, center, FINAL_CLEAR_RADIUS);
+        long afterUltimate = scheduleAnnihilation(world, centerPos, FINAL_CLEAR_RADIUS, finalDelay);
+
+        scheduleTask(world, afterUltimate + 5, () -> {
             executeTotalObliteration(world, center, centerPos, FINAL_CLEAR_RADIUS);
-            spawnGrandFinale(world, center);
+            spawnGrandFinale(world, center, FINAL_CLEAR_RADIUS);
         });
     }
 
-    private void scheduleTask(long delayTicks, Runnable task) {
+    // ==================== 分帧调度工具 ====================
+
+    /**
+     * 安排一个延迟任务，并绑定 World 引用用于存活检查
+     */
+    private void scheduleTask(ServerWorld world, long delayTicks, Runnable task) {
         synchronized (TASK_QUEUE) {
-            TASK_QUEUE.add(new DelayedTask(delayTicks, task));
+            TASK_QUEUE.add(new DelayedTask(delayTicks, task, world));
         }
     }
 
-    private void annihilateSphere(ServerWorld world, BlockPos center, int radius) {
+    /**
+     * 安排球体清除，自动根据半径决定是否分帧。
+     * 返回"清除完成后的下一个可用 tick 延迟"（相对于当前时间线）
+     */
+    private long scheduleAnnihilation(ServerWorld world, BlockPos center, int radius, long startDelay) {
+        // 小半径（<=10）直接一个 tick 清掉，保持视觉效果
+        if (radius <= 10) {
+            scheduleTask(world, startDelay, () -> annihilateSphereDirect(world, center, radius));
+            return startDelay + 1;
+        }
+
+        // 大半径分帧：每 tick 处理 5 层 Y，避免单 tick 卡顿
+        int layersPerTick = 5;
+        int minY = center.getY() - radius;
+        int maxY = center.getY() + radius;
+        long currentDelay = startDelay;
+
+        for (int y = minY; y <= maxY; y += layersPerTick) {
+            final int layerStart = y;
+            final int layerEnd = Math.min(y + layersPerTick - 1, maxY);
+            final long taskDelay = currentDelay++;
+
+            scheduleTask(world, taskDelay, () -> {
+                annihilateSphereLayers(world, center, radius, layerStart, layerEnd);
+            });
+        }
+
+        // 非实体清除（掉落物、箭等）放在几何清除之后
+        final long entityClearDelay = currentDelay;
+        scheduleTask(world, entityClearDelay, () -> {
+            int cx = center.getX();
+            int cy = center.getY();
+            int cz = center.getZ();
+            Box box = new Box(
+                    cx - radius, cy - radius, cz - radius,
+                    cx + radius, cy + radius, cz + radius
+            );
+            List<Entity> entities = world.getEntitiesByClass(Entity.class, box,
+                    e -> !(e instanceof LivingEntity) && !(e instanceof PlayerEntity));
+            for (Entity entity : entities) {
+                entity.discard();
+            }
+        });
+
+        return entityClearDelay + 1;
+    }
+
+    // ==================== 核心清除逻辑 ====================
+
+    /**
+     * 直接清除（用于小半径，单 tick 内完成）
+     */
+    private void annihilateSphereDirect(ServerWorld world, BlockPos center, int radius) {
+        annihilateSphereLayers(world, center, radius, center.getY() - radius, center.getY() + radius);
+    }
+
+    /**
+     * 清除指定 Y 范围内的球体切片。这是性能关键路径。
+     * 增加了 Chunk 预检查，避免强制加载未加载区块。
+     */
+    private void annihilateSphereLayers(ServerWorld world, BlockPos center, int radius, int yStart, int yEnd) {
         int cx = center.getX();
         int cy = center.getY();
         int cz = center.getZ();
         int radiusSq = radius * radius;
 
-        for (int x = -radius; x <= radius; x++) {
-            for (int y = -radius; y <= radius; y++) {
+        // 限制 Y 到世界边界
+        yStart = Math.max(world.getBottomY(), yStart);
+        yEnd = Math.min(world.getTopY() - 1, yEnd);
+
+        for (int y = yStart; y <= yEnd; y++) {
+            int yOffset = y - cy;
+            int yOffsetSq = yOffset * yOffset;
+
+            for (int x = -radius; x <= radius; x++) {
+                int xOffsetSq = x * x;
+                // 提前剪枝：如果 x² + y² 已经 > r²，整个 z 循环都不需要
+                if (xOffsetSq + yOffsetSq > radiusSq) continue;
+
                 for (int z = -radius; z <= radius; z++) {
-                    if (x * x + y * y + z * z > radiusSq) continue;
+                    if (xOffsetSq + yOffsetSq + z * z > radiusSq) continue;
 
-                    BlockPos pos = new BlockPos(cx + x, cy + y, cz + z);
+                    BlockPos pos = new BlockPos(cx + x, y, cz + z);
+
+                    // ===== 关键优化：跳过未加载的 Chunk，避免强制加载 =====
+                    if (!world.isChunkLoaded(pos.getX() >> 4, pos.getZ() >> 4)) {
+                        continue;
+                    }
+
                     BlockState state = world.getBlockState(pos);
-
                     if (state.isOf(Blocks.BEDROCK) || state.isOf(Blocks.BARRIER)) {
                         continue;
                     }
@@ -175,21 +309,14 @@ public class SelfDestructHandlerMixin {
                         world.removeBlockEntity(pos);
                     }
 
+                    // 2 = NOTIFY_LISTENERS, 16 = SKIP_DROPS
                     world.setBlockState(pos, Blocks.AIR.getDefaultState(), 2 | 16);
                 }
             }
         }
-
-        Box box = new Box(
-                cx - radius, cy - radius, cz - radius,
-                cx + radius, cy + radius, cz + radius
-        );
-        List<Entity> entities = world.getEntitiesByClass(Entity.class, box,
-                e -> !(e instanceof LivingEntity) && !(e instanceof PlayerEntity));
-        for (Entity entity : entities) {
-            entity.discard();
-        }
     }
+
+    // ==================== 效果与辅助方法 ====================
 
     private void applyScreenShake(ServerWorld world, Vec3d center, int effectRadius) {
         Box box = new Box(center, center).expand(effectRadius);
@@ -236,40 +363,6 @@ public class SelfDestructHandlerMixin {
         }
     }
 
-    private void ultimateAnnihilation(ServerWorld world, BlockPos center, Vec3d centerVec, int finalRadius) {
-        int radius = finalRadius;
-        int cx = center.getX();
-        int cy = center.getY();
-        int cz = center.getZ();
-        int radiusSq = radius * radius;
-
-        for (int x = -radius; x <= radius; x++) {
-            for (int y = -radius; y <= radius; y++) {
-                for (int z = -radius; z <= radius; z++) {
-                    if (x * x + y * y + z * z > radiusSq) continue;
-
-                    BlockPos pos = new BlockPos(cx + x, cy + y, cz + z);
-                    BlockState state = world.getBlockState(pos);
-
-                    if (state.isOf(Blocks.BEDROCK) || state.isOf(Blocks.BARRIER)) {
-                        continue;
-                    }
-
-                    BlockEntity be = world.getBlockEntity(pos);
-                    if (be != null) {
-                        world.removeBlockEntity(pos);
-                    }
-
-                    world.setBlockState(pos, Blocks.AIR.getDefaultState(), 2 | 16);
-                }
-            }
-        }
-
-        world.spawnParticles(ParticleTypes.FLASH, centerVec.x, centerVec.y, centerVec.z, 200, 60, 60, 60, 1);
-        world.spawnParticles(ParticleTypes.END_ROD, centerVec.x, centerVec.y, centerVec.z, 800, 80, 80, 80, 0.5);
-        world.spawnParticles(ParticleTypes.WHITE_ASH, centerVec.x, centerVec.y, centerVec.z, 2000, 100, 100, 100, 0.1);
-    }
-
     private void executeTotalObliteration(ServerWorld world, Vec3d center, BlockPos centerPos, int finalRadius) {
         Box killBox = new Box(center, center).expand(finalRadius);
         List<LivingEntity> targets = world.getEntitiesByClass(
@@ -278,7 +371,6 @@ public class SelfDestructHandlerMixin {
         );
 
         for (LivingEntity target : targets) {
-            // 跳过创造/旁观模式玩家
             if (target instanceof ServerPlayerEntity player) {
                 if (player.isCreative() || player.isSpectator()) {
                     continue;
@@ -358,13 +450,22 @@ public class SelfDestructHandlerMixin {
         }
     }
 
-    private void spawnGrandFinale(ServerWorld world, Vec3d center) {
-        world.spawnParticles(ParticleTypes.EXPLOSION_EMITTER, center.x, center.y, center.z, 50, 5, 5, 5, 1);
-        world.spawnParticles(ParticleTypes.FLASH, center.x, center.y, center.z, 100, 10, 10, 10, 1);
-        world.spawnParticles(ParticleTypes.SONIC_BOOM, center.x, center.y, center.z, 200, 20, 20, 20, 1);
+    /**
+     * 终极粒子效果，数量按 finalRadius 缩放，避免硬编码过多
+     */
+    private void spawnGrandFinale(ServerWorld world, Vec3d center, int finalRadius) {
+        int flashCount = Math.min(100, 20 + finalRadius);
+        int rodCount = Math.min(800, 100 + finalRadius * 10);
+        int ashCount = Math.min(2000, 200 + finalRadius * 20);
 
-        for (int y = 0; y < 100; y++) {
-            double spread = Math.min(y * 0.8, 60);
+        world.spawnParticles(ParticleTypes.EXPLOSION_EMITTER, center.x, center.y, center.z, Math.min(50, finalRadius / 2), 5, 5, 5, 1);
+        world.spawnParticles(ParticleTypes.FLASH, center.x, center.y, center.z, flashCount, 10, 10, 10, 1);
+        world.spawnParticles(ParticleTypes.SONIC_BOOM, center.x, center.y, center.z, Math.min(200, finalRadius * 2), 20, 20, 20, 1);
+
+        // 烟柱高度和密度也按半径缩放
+        int smokeHeight = Math.min(100, 30 + finalRadius);
+        for (int y = 0; y < smokeHeight; y++) {
+            double spread = Math.min(y * 0.8, finalRadius * 0.6);
             world.spawnParticles(
                     ParticleTypes.CAMPFIRE_COSY_SMOKE,
                     center.x, center.y + y, center.z,
@@ -372,12 +473,13 @@ public class SelfDestructHandlerMixin {
             );
         }
 
-        for (int i = 0; i < 30; i++) {
+        int sparkBatches = Math.min(30, 5 + finalRadius / 3);
+        for (int i = 0; i < sparkBatches; i++) {
             world.spawnParticles(
                     ParticleTypes.ELECTRIC_SPARK,
-                    center.x + (Math.random() - 0.5) * 80,
+                    center.x + (Math.random() - 0.5) * finalRadius * 1.6,
                     center.y + Math.random() * 60,
-                    center.z + (Math.random() - 0.5) * 80,
+                    center.z + (Math.random() - 0.5) * finalRadius * 1.6,
                     50, 10, 10, 10, 1
             );
         }
@@ -394,10 +496,12 @@ public class SelfDestructHandlerMixin {
     private static class DelayedTask {
         long ticksRemaining;
         final Runnable runnable;
+        final ServerWorld worldRef;
 
-        DelayedTask(long ticksRemaining, Runnable runnable) {
+        DelayedTask(long ticksRemaining, Runnable runnable, ServerWorld worldRef) {
             this.ticksRemaining = ticksRemaining;
             this.runnable = runnable;
+            this.worldRef = worldRef;
         }
     }
 }

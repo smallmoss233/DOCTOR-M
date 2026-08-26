@@ -471,6 +471,10 @@
   "message.tooltip.doctor_m.eye_of_harmony_obelisk": "§7提供无限的阿特隆能量，并持续为周围的阿特隆能量区块充能。*手持音速起子右键方尖碑中间部分可打开UI",
   "message.tooltip.doctor_m.toyota_spinning_rotor": "§7位于控制台上方的巨型时间转子，放置在塔迪斯内部*启动塔迪斯时，转子会缓慢旋转起来并发出滴答声*手持染料右键转子即可切换转子的变体",
 
+  "biome.doctor_m.titan_plains": "泰坦平原",
+  "biome.doctor_m.titan_methane_lakes": "泰坦甲烷湖",
+  "biome.doctor_m.titan_dunes": "泰坦沙丘",
+
   "dimension.minecraft.overworld": "地球",
   "dimension.minecraft.the_end": "末路之地",
   "dimension.minecraft.the_nether": "下界",

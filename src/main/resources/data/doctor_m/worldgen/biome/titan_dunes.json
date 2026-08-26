@@ -1,0 +1,45 @@
+{
+  "temperature": -0.6,
+  "downfall": 0.0,
+  "has_precipitation": false,
+  "effects": {
+    "sky_color": 11053224,
+    "fog_color": 12638463,
+    "grass_color": 11184810,
+    "foliage_color": 10592673,
+    "water_color": 16445670,
+    "water_fog_color": 13355979,
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2
+    },
+    "particle": {
+      "probability": 0.03,
+      "options": {
+        "type": "minecraft:ash"
+      }
+    }
+  },
+  "carvers": {
+    "air": []
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:desert_well"
+    ],
+    []
+  ],
+  "spawn_costs": {},
+  "spawners": {}
+}

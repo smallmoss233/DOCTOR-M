@@ -1,0 +1,44 @@
+{
+  "temperature": -0.8,
+  "downfall": 0.0,
+  "has_precipitation": false,
+  "effects": {
+    "sky_color": 11053224,
+    "fog_color": 12638463,
+    "water_color": 394758,
+    "water_fog_color": 1973790,
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2
+    },
+    "particle": {
+      "probability": 0.01,
+      "options": {
+        "type": "minecraft:ash"
+      }
+    }
+  },
+  "carvers": {
+    "air": []
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:ice_spike",
+      "minecraft:basalt_pillar"
+    ],
+    []
+  ],
+  "spawn_costs": {},
+  "spawners": {}
+}
