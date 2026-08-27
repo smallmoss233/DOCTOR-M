@@ -45,6 +45,7 @@ public static void registerItems() {
                                 entries.add(REGENERATION_MODULE);
                                 entries.add(DOLL_JIN_MARY);
                                 entries.add(DOLL_SMALLMOSS_OLD);
+                                entries.add(DOLL_TC020);
                             })
                             .build());
         }

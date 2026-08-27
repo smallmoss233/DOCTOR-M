@@ -101,6 +101,7 @@ public class DOCTORMClient implements ClientModInitializer {
         //玩偶不透明图层
         BlockRenderLayerMap.INSTANCE.putBlock(DOLL_JIN_MARY, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(DOLL_SMALLMOSS_OLD, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_TC020, RenderLayer.getCutout());
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             PlayerEntity player = client.player;
