@@ -42,12 +42,11 @@ public abstract class TelepathicControlMixin {
     private static final double SCAN_RANGE_SQ = SCAN_RANGE * SCAN_RANGE;
     private static final int STRUCTURE_SEARCH_RADIUS = 5120;
 
-    // 已探索结构黑名单：Tardis UUID -> 结构坐标集合
     private static final Map<UUID, Set<BlockPos>> EXPLORED_STRUCTURES = new HashMap<>();
-    // 结构坐标容差（128格内视为同一结构）
+
     private static final int BLACKLIST_TOLERANCE = 128;
     private static final int BLACKLIST_TOLERANCE_SQ = BLACKLIST_TOLERANCE * BLACKLIST_TOLERANCE;
-    // 链式搜索最大尝试次数
+
     private static final int MAX_CHAIN_ATTEMPTS = 5;
 
     private static final TagKey<Structure> KTT_STRUCTURES = TagKey.of(
@@ -69,20 +68,21 @@ public abstract class TelepathicControlMixin {
         }
 
         if (!(consoleBe.getSonicScrewdriver().getItem() instanceof TracerItem)) {
+            if (player.isSneaking() && player.getMainHandStack().isEmpty()) {
+                player.heal(8.0f);
+                player.getHungerManager().add(4, 0.5f);
+                cir.setReturnValue(Control.Result.SUCCESS);
+            }
             return;
         }
 
-        // ===== 潜行右键：标记当前最近的远古结构为已探索 =====
         if (player.isSneaking()) {
             cir.setReturnValue(doctor_m$markAndExclude(tardis, player, world, console));
             return;
         }
 
-        // ===== 普通右键：搜索并锁定 =====
         cir.setReturnValue(doctor_m$searchAndLock(tardis, player, world, console));
     }
-
-    // ========== 标记当前结构为已探索 ==========
 
     private static Control.Result doctor_m$markAndExclude(Tardis tardis, ServerPlayerEntity player,
                                                           ServerWorld consoleWorld, BlockPos console) {
@@ -120,8 +120,6 @@ public abstract class TelepathicControlMixin {
         return Control.Result.SUCCESS;
     }
 
-    // ========== 黑名单工具方法 ==========
-
     private static UUID getTardisId(Tardis tardis) {
         return tardis.getUuid();
     }
@@ -144,8 +142,6 @@ public abstract class TelepathicControlMixin {
         }
         return false;
     }
-
-    // ========== 搜索并锁定（原有逻辑 + 链式结构搜索） ==========
 
     private static Control.Result doctor_m$searchAndLock(Tardis tardis, ServerPlayerEntity player,
                                                          ServerWorld consoleWorld, BlockPos console) {
@@ -288,8 +284,6 @@ public abstract class TelepathicControlMixin {
                 : "tooltip.doctor_m.tracer.signal_locked.surface";
         player.sendMessage(Text.translatable(typeKey), true);
     }
-
-    // ========== 链式结构搜索（自动跳过已标记） ==========
 
     private static void searchStructuresAsync(Tardis tardis, ServerPlayerEntity player,
                                               ServerWorld consoleWorld, BlockPos console,
