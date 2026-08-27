@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 public class ToyotaSpinningRotorBlockEntity extends InteriorLinkableBlockEntity {
 
     public ToyotaSpinningRotorBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.TOYOTA_SPINNING_ROTOR_ENTITY, pos, state);
+        super(ModBlockEntities.TOYOTA_SPINNING_ROTOR, pos, state);
     }
 
     public final AnimationState ANIM_STATE = new AnimationState();

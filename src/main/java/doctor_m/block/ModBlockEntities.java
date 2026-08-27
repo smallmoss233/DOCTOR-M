@@ -24,7 +24,7 @@ public class ModBlockEntities {
                     FabricBlockEntityTypeBuilder.create(EyeOfHarmonyPartBlockEntity::new, ModBlocks.EYE_OF_HARMONY_PART).build()
             );
 
-    public static final BlockEntityType<ToyotaSpinningRotorBlockEntity> TOYOTA_SPINNING_ROTOR_ENTITY =
+    public static final BlockEntityType<ToyotaSpinningRotorBlockEntity> TOYOTA_SPINNING_ROTOR =
             FabricBlockEntityTypeBuilder.create(ToyotaSpinningRotorBlockEntity::new, ModBlocks.TOYOTA_SPINNING_ROTOR).build();
 
     public static final BlockEntityType<CoffeeMachineBlockEntity> COFFEE_MACHINE =
@@ -51,7 +51,7 @@ public class ModBlockEntities {
         Registry.register(
                 Registries.BLOCK_ENTITY_TYPE,
                 new Identifier(DOCTORM.MOD_ID, "toyota_spinning_rotor"),
-                TOYOTA_SPINNING_ROTOR_ENTITY
+                TOYOTA_SPINNING_ROTOR
         );
     }
 }

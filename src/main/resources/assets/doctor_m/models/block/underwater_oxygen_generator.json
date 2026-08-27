@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/cube",
   "textures": {
-    "particle": "doctor_m:block/underwater_oxygen_generator_front",
+    "particle": "minecraft:block/obsidian",
     "down": "doctor_m:block/underwater_oxygen_generator_bottom",
     "up": "doctor_m:block/underwater_oxygen_generator_top",
     "north": "doctor_m:block/underwater_oxygen_generator_front",

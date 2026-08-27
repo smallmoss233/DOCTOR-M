@@ -15,7 +15,7 @@
     "hidden": false,
     "background": "minecraft:textures/block/stone.png"
   },
-  "parent": "doctor_m:root",
+  "parent": "doctor_m:deafening",
   "criteria": {
     "overload": {
       "trigger": "minecraft:impossible"

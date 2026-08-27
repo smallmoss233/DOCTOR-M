@@ -31,6 +31,12 @@
   "advancements.doctor_m.toyota_spinning_rotor.description": "獲得穹頂轉子",
   "advancement.doctor_m.key_of_rassilon.title": "聖匙",
   "advancement.doctor_m.key_of_rassilon.description": "除了拉斯隆，從未有時間領主總統能得到過拉斯隆之鑰。",
+  "advancements.doctor_m.coffee_machine.title": "現在咖啡機和去物質槍一起回歸了",
+  "advancements.doctor_m.coffee_machine.description": "製作一個咖啡機",
+  "advancements.doctor_m.doll_smallmoss_old.title": "舊時代",
+  "advancements.doctor_m.doll_smallmoss_old.description": "DWI，那是過去的了",
+  "advancements.doctor_m.doll_jin_mary.title": "新時代",
+  "advancements.doctor_m.doll_jin_mary.description": "DOCTOR M，這是現在的了",
 
   "tardis.message.control.siege.confirm_prompt": "再次按下以啟用圍攻模式！（等待10秒再點擊）",
 
@@ -121,6 +127,9 @@
   "block.doctor_m.underwater_oxygen_generator": "水下製氧機",
   "block.doctor_m.eye_of_harmony_obelisk": "和諧之眼方尖碑",
   "block.doctor_m.toyota_spinning_rotor": "穹頂轉子",
+  "block.doctor_m.coffee_machine": "咖啡機",
+  "block.doctor_m.doll_jin_mary": "Jin Mary（苔蘚）的玩偶",
+  "block.doctor_m.doll_smallmoss_old": "Small Moss（舊版）的玩偶",
 
   "entity.doctor_m.marian_jin": "瑪麗安.謹",
   "entity.doctor_m.103_tardis.name.default": "103型塔迪斯",
@@ -357,6 +366,9 @@
   "tooltip.doctor_m.pocket_watch.time.afternoon": "下午",
   "tooltip.doctor_m.pocket_watch.time.evening": "傍晚",
   "tooltip.doctor_m.pocket_watch.time.night": "夜晚",
+  "tooltip.doctor_m.coffee_machine.working": "咖啡機正在工作中！",
+  "tooltip.doctor_m.coffee_machine.making": "正在製作%s...",
+  "tooltip.doctor_m.coffee_machine.switched": "已選擇：%s",
 
   "hud.doctor_m.environment.oxygenated": "有氧，可脫下太空衣",
   "hud.doctor_m.environment.deoxygenated": "無氧，不可脫下太空衣",
@@ -467,6 +479,9 @@
   "message.doctor_m.underwater_oxygen_generator": "§7一台製氧機，初為水下環境設計，通過電解水(H2O)製取氧氣*水下可在一定範圍內供氧，非水下環境可通過手動加入水進行製氧",
   "message.tooltip.doctor_m.eye_of_harmony_obelisk": "§7提供無限的阿特隆能量，並持續為周圍的阿特隆能量區塊充能。*手持音速起子右鍵方尖碑中間部分可開啟UI",
   "message.tooltip.doctor_m.toyota_spinning_rotor": "§7位於控制台上方的巨型時間轉子，放置在塔迪斯內部*啟動塔迪斯時，轉子會緩慢旋轉起來並發出滴答聲*手持染料右鍵轉子即可切換轉子的變體",
+  "message.tooltip.doctor_m.coffee_machine": "咖啡機，雖然它不止做咖啡*空手右鍵選擇飲品，手持馬克杯右鍵即可製作飲品",
+  "message.tooltip.doctor_m.doll_jin_mary": "「Small Moss」尋找「Small BUG」",
+  "message.tooltip.doctor_m.doll_smallmoss_old": "Mcreator又炸了！",
 
   "biome.doctor_m.titan_plains": "泰坦平原",
   "biome.doctor_m.titan_methane_lakes": "泰坦甲烷湖",

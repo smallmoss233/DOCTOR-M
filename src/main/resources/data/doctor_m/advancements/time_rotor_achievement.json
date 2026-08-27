@@ -1,5 +1,5 @@
 {
-  "parent": "doctor_m:root",
+  "parent": "doctor_m:coffee_machine",
   "display": {
     "icon": {
       "item": "doctor_m:toyota_spinning_rotor"

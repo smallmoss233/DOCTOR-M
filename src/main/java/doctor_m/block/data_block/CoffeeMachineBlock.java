@@ -24,7 +24,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.registry.Registries;
@@ -34,7 +33,7 @@ import java.util.List;
 
 public class CoffeeMachineBlock extends Block implements BlockEntityProvider {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
-    private static final VoxelShape SHAPE = VoxelShapes.cuboid(0.1, 0.0, 0.1, 0.9, 0.8, 0.9);
+    private static final VoxelShape SHAPE = Block.createCuboidShape(3.0, 0.0, 2.0, 13.0, 15.0, 15.0);
 
     public CoffeeMachineBlock(Settings settings) {
         super(settings.nonOpaque());

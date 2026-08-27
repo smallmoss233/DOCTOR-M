@@ -127,7 +127,7 @@ public class DOCTORMClient implements ClientModInitializer {
                 MinecraftClient.getInstance().setScreen(new VortexManipulatorScreen(player, stack));
 
         BlockEntityRendererRegistry.register(
-                ModBlockEntities.TOYOTA_SPINNING_ROTOR_ENTITY,
+                ModBlockEntities.TOYOTA_SPINNING_ROTOR,
                 ToyotaSpinningRotorRenderer::new
         );
     }

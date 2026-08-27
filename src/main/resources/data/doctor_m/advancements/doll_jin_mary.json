@@ -1,35 +1,32 @@
 {
-  "parent": "doctor_m:key_of_rassilon",
+  "parent": "doctor_m:doll_smallmoss_old",
   "display": {
     "icon": {
-      "item": "doctor_m:de_mat_gun"
+      "item": "doctor_m:doll_jin_mary"
     },
     "title": {
-      "translate": "advancements.doctor_m.de_mat_gun.title"
+      "translate": "advancements.doctor_m.doll_jin_mary.title"
     },
     "description": {
-      "translate": "advancements.doctor_m.de_mat_gun.description"
+      "translate": "advancements.doctor_m.doll_jin_mary.description"
     },
-    "frame": "challenge",
+    "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false
   },
   "criteria": {
-    "has_de_mat_gun": {
+    "has_doll_jin_mary": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": [
-              "doctor_m:de_mat_gun"
+              "doctor_m:doll_jin_mary"
             ]
           }
         ]
       }
     }
-  },
-  "requirements": [
-    ["has_de_mat_gun"]
-  ]
+  }
 }

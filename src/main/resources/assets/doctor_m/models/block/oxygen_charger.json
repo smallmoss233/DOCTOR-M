@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/cube",
   "textures": {
-    "particle": "doctor_m:block/oxygen_charger_front",
+    "particle": "minecraft:block/obsidian",
     "down": "doctor_m:block/oxygen_charger_bottom",
     "up": "doctor_m:block/oxygen_charger_top",
     "north": "doctor_m:block/oxygen_charger_front",
