@@ -41,6 +41,8 @@
    相互冲突的起子升级，只能从103型塔迪斯和玛丽安那买到 / Conflicting upgrades that can only be purchased from the Type 103 TARDIS and Marian.
    能量扩容模块：提升音速起子能量上限到两倍（2000点） / Energy Expansion Module: Increases the Sonic Screwdriver's maximum energy capacity to double (2000 points).
    能量再生核心：降低起子的能量上限为500，但是音速起子能量会每5秒再生1点 / Energy Regeneration Core: Reduces the maximum energy capacity to 500, but the Sonic Screwdriver regenerates 1 point of energy every 5 seconds.
+-  玩偶，一些装饰品，有时还能起到心理安慰作用 / Dolls, decorative items that sometimes provide a little psychological comfort.
+-  咖啡机2.0，咖啡机回归了！它比以前更好了（代码层面上） / Coffee Machine 2.0 – the coffee machine returns! And it's improved (code‑wise).
 
 
 ---
@@ -65,6 +67,7 @@
    呼吸器可以让玩家的氧气消耗速度减缓 / Respirators can slow down the rate at which players use up oxygen.
 -  塔迪斯型号不再局限于50型！可在doctor_m/tardis_type.json当中填写内饰ID+型号来自定义你的塔迪斯型号！ / TARDIS types are no longer limited to Type 50! You can now customise your TARDIS type by adding interior IDs and type names in doctor_m/tardis_type.json!
 -  修改怀表，怀表不再是饰品了，同时怀表使用的模型也改成了amblelabs/regeneration的模型 / The pocket watch is no longer a trinket, and its model has been updated to use the one from amblelabs/regeneration.
+-  空手潜行右键心灵感应电路可以治疗玩家！ / Sneak right-click the Telepathic Circuit with an empty hand to heal yourself！
 
 ---
 
