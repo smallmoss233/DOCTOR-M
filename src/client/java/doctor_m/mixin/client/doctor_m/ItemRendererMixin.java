@@ -43,7 +43,7 @@ public class ItemRendererMixin {
         if (!(stack.getItem() instanceof TlipocaScytheItem)) return;
 
         VertexConsumer consumer = vertexConsumers.getBuffer(
-                RenderLayer.getEyes(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE));
+                RenderLayer.getEntityCutoutNoCull(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE));
 
         Random random = Random.create();
         long seed = 42L;
