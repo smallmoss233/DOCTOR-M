@@ -58,6 +58,13 @@ public class ModBlocks {
                     .sounds(BlockSoundGroup.WOOL)
     );
 
+    public static final Block DOLL_TC020 = new DollBlock(
+            FabricBlockSettings.create()
+                    .nonOpaque()
+                    .strength(0.0f,0.0f)
+                    .sounds(BlockSoundGroup.WOOL)
+    );
+
     public static final Block COFFEE_MACHINE = new CoffeeMachineBlock(
             AbstractBlock.Settings.create()
                     .strength(1.5f, 6.0f)
@@ -71,6 +78,7 @@ public class ModBlocks {
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "toyota_spinning_rotor"), TOYOTA_SPINNING_ROTOR);
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "doll_jin_mary"), DOLL_JIN_MARY);
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "doll_smallmoss_old"), DOLL_SMALLMOSS_OLD);
+        Registry.register(Registries.BLOCK,new Identifier(DOCTORM.MOD_ID, "doll_tc020"),DOLL_TC020);
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "coffee_machine"), COFFEE_MACHINE);
     }
 }

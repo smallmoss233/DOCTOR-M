@@ -49,6 +49,7 @@ public class items {
     //玩偶
     public static final Item DOLL_JIN_MARY = new BlockItem(ModBlocks.DOLL_JIN_MARY, new Item.Settings());
     public static final Item DOLL_SMALLMOSS_OLD = new BlockItem(ModBlocks.DOLL_SMALLMOSS_OLD, new Item.Settings());
+    public static final Item DOLL_TC020 = new BlockItem(ModBlocks.DOLL_TC020, new Item.Settings());
 
     //和谐之眼
     public static final Item EYE_OF_HARMONY_OBELISK = new BlockItem(ModBlocks.EYE_OF_HARMONY_OBELISK, new Item.Settings());
