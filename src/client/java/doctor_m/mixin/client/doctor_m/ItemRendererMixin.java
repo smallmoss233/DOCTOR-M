@@ -1,6 +1,6 @@
 package doctor_m.mixin.client.doctor_m;
 
-import doctor_m.module.creativity.creativity_data.Tlipoca.TlipocaScytheItem;
+import doctor_m.module.EmissiveItem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -40,7 +40,7 @@ public class ItemRendererMixin {
                                          VertexConsumerProvider vertexConsumers,
                                          int light, int overlay, BakedModel model,
                                          CallbackInfo ci) {
-        if (!(stack.getItem() instanceof TlipocaScytheItem)) return;
+        if (!(stack.getItem() instanceof EmissiveItem)) return;
 
         VertexConsumer consumer = vertexConsumers.getBuffer(
                 RenderLayer.getEntityCutoutNoCull(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE));

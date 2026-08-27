@@ -1,5 +1,6 @@
 package doctor_m.module.creativity.creativity_data.Tlipoca;
 
+import doctor_m.module.EmissiveItem;
 import doctor_m.util.creativity.DynamicColorHelper;
 import doctor_m.util.creativity.ScytheChargingManager;
 import doctor_m.util.creativity.ScytheSlashManager;
@@ -27,7 +28,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.UUID;
 
-public class TlipocaScytheItem extends Item {
+public class TlipocaScytheItem extends Item implements EmissiveItem {
     private static final String INIT_KEY = "TlipocaInit";
 
     private static final UUID DAMAGE_UUID = UUID.fromString("12345678-1234-1234-1234-123456789014");

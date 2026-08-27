@@ -1,5 +1,6 @@
 package doctor_m.Item.stcs
 
+import doctor_m.module.EmissiveItem
 import doctor_m.util.creativity.DynamicColorHelper
 import net.minecraft.entity.LivingEntity
 import net.minecraft.item.Item
@@ -25,7 +26,7 @@ class STCHItem : STCSItem(
     maxEnergy = 10000,
     blockDamageReduction = 0.90f,
     descriptionKey = "message.doctor_m.stch.description"
-) {
+),EmissiveItem {
 
     override fun getEnergyCostPerDamage(): Float = 10.0f
 
@@ -78,7 +79,7 @@ class STCAItem : STCSItem(
     blockDamageReduction = 0.85f,
     descriptionKey = "message.doctor_m.stca.description"
 
-) {
+),EmissiveItem {
     override fun onSkillPressed(player: ServerPlayerEntity, stack: ItemStack) {
         val cd = getSkillCooldown(stack)
         if (cd > 0) return
@@ -132,7 +133,7 @@ class STCLItem : STCSItem(
     maxEnergy = 10000,
     blockDamageReduction = 0.80f,
     descriptionKey = "message.doctor_m.stcl.description"
-) {
+),EmissiveItem {
 
     override fun getEnergyCostPerDamage(): Float = 50.0f
 

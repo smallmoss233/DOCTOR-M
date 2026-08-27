@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ABA",
+    "CDC",
+    "AEA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:blue_wool"
+    },
+    "B": {
+      "item": "minecraft:white_wool"
+    },
+    "C": {
+      "item": "minecraft:string"
+    },
+    "D": {
+      "item": "minecraft:feather"
+    },
+    "E": {
+      "item": "minecraft:orange_wool"
+    }
+  },
+  "result": {
+    "item": "doctor_m:doll_jin_mary",
+    "count": 1
+  }
+}

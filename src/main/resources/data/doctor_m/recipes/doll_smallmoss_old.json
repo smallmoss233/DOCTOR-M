@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AAA",
+    "BCB",
+    "DDD"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:black_wool"
+    },
+    "B": {
+      "item": "minecraft:string"
+    },
+    "C": {
+      "item": "minecraft:feather"
+    },
+    "D": {
+      "item": "minecraft:red_wool"
+    }
+  },
+  "result": {
+    "item": "doctor_m:doll_smallmoss_old",
+    "count": 1
+  }
+}
