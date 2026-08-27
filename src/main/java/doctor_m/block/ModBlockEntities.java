@@ -27,6 +27,9 @@ public class ModBlockEntities {
     public static final BlockEntityType<ToyotaSpinningRotorBlockEntity> TOYOTA_SPINNING_ROTOR_ENTITY =
             FabricBlockEntityTypeBuilder.create(ToyotaSpinningRotorBlockEntity::new, ModBlocks.TOYOTA_SPINNING_ROTOR).build();
 
+    public static final BlockEntityType<CoffeeMachineBlockEntity> COFFEE_MACHINE =
+            FabricBlockEntityTypeBuilder.create(CoffeeMachineBlockEntity::new, ModBlocks.COFFEE_MACHINE).build();
+
     public static void register() {
         Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(DOCTORM.MOD_ID, "oxygen_charger_entity"), OXYGEN_CHARGER_ENTITY);
         Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(DOCTORM.MOD_ID, "underwater_oxygen_generator_entity"), UNDERWATER_OXYGEN_GENERATOR_ENTITY);
@@ -38,6 +41,12 @@ public class ModBlockEntities {
                         EyeOfHarmonyObeliskBlockEntity::new,
                         ModBlocks.EYE_OF_HARMONY_OBELISK
                 ).build());
+
+        Registry.register(
+                Registries.BLOCK_ENTITY_TYPE,
+                new Identifier(DOCTORM.MOD_ID, "coffee_machine_block_entity"),
+                COFFEE_MACHINE
+        );
 
         Registry.register(
                 Registries.BLOCK_ENTITY_TYPE,

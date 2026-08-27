@@ -3,6 +3,7 @@ package doctor_m.block;
 import doctor_m.DOCTORM;
 import doctor_m.block.data_block.*;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.registry.Registries;
@@ -57,6 +58,11 @@ public class ModBlocks {
                     .sounds(BlockSoundGroup.WOOL)
     );
 
+    public static final Block COFFEE_MACHINE = new CoffeeMachineBlock(
+            AbstractBlock.Settings.create()
+                    .strength(1.5f, 6.0f)
+    );
+
     public static void register() {
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "oxygen_charger"), OXYGEN_CHARGER);
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "underwater_oxygen_generator"), UNDERWATER_OXYGEN_GENERATOR);
@@ -65,5 +71,6 @@ public class ModBlocks {
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "toyota_spinning_rotor"), TOYOTA_SPINNING_ROTOR);
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "doll_jin_mary"), DOLL_JIN_MARY);
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "doll_smallmoss_old"), DOLL_SMALLMOSS_OLD);
+        Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "coffee_machine"), COFFEE_MACHINE);
     }
 }

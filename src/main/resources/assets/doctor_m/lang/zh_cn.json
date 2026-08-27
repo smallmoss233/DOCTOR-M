@@ -357,6 +357,9 @@
   "tooltip.doctor_m.pocket_watch.time.afternoon": "下午",
   "tooltip.doctor_m.pocket_watch.time.evening": "傍晚",
   "tooltip.doctor_m.pocket_watch.time.night": "夜晚",
+  "tooltip.doctor_m.coffee_machine.working": "咖啡机正在工作中！",
+  "tooltip.doctor_m.coffee_machine.making": "正在制作%s...",
+  "tooltip.doctor_m.coffee_machine.switched": "已选择：%s",
 
   "hud.doctor_m.environment.oxygenated": "有氧，可脱下宇航服",
   "hud.doctor_m.environment.deoxygenated": "无氧，不可脱下宇航服",

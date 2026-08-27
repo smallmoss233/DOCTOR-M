@@ -42,8 +42,9 @@ public class items {
     public static final Item UNDERWATER_OXYGEN_GENERATOR = new BlockItem(ModBlocks.UNDERWATER_OXYGEN_GENERATOR, new Item.Settings());
     public static final Item OXYGEN_TANK = new OxygenTankItem(new Item.Settings().maxCount(1));
 
-    //穹顶转子
+    //穹顶转子和咖啡机
     public static final Item TOYOTA_SPINNING_ROTOR = new BlockItem(ModBlocks.TOYOTA_SPINNING_ROTOR, new Item.Settings());
+    public static final Item COFFEE_MACHINE = new BlockItem(ModBlocks.COFFEE_MACHINE, new Item.Settings());
 
     //玩偶
     public static final Item DOLL_JIN_MARY = new BlockItem(ModBlocks.DOLL_JIN_MARY, new Item.Settings());
