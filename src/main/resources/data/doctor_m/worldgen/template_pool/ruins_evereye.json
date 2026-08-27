@@ -6,7 +6,7 @@
       "weight": 1,
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "doctor_m:evereye",
+        "location": "doctor_m:ruins_evereye",
         "projection": "rigid",
         "processors": "minecraft:empty"
       }

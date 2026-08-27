@@ -4,12 +4,18 @@
   "size": 1,
   "max_distance_from_center": 64,
   "spawn_overrides": {},
-  "step": "surface_structures",
-  "terrain_adaptation": "blacklisted",
+  "step": "underground_structures",
+  "terrain_adaptation": "beard_box",
   "start_height": {
-    "absolute": 0
+    "type": "minecraft:uniform",
+    "min_inclusive": {
+      "absolute": -155
+    },
+    "max_inclusive": {
+      "absolute": -100
+    }
   },
-  "project_start_to_heightmap": "OCEAN_FLOOR_WG",
+  "project_start_to_heightmap": "WORLD_SURFACE_WG",
   "biomes": [
     "deep_dark",
     "ice_spikes",
