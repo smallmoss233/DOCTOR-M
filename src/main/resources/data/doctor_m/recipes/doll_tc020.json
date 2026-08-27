@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AAA",
+    "BCB",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:black_wool"
+    },
+    "B": {
+      "item": "minecraft:string"
+    },
+    "C": {
+      "item": "minecraft:feather"
+    }
+  },
+  "result": {
+    "item": "doctor_m:doll_tc020"
+  }
+}

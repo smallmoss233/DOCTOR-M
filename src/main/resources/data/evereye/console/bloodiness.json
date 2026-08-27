@@ -1,0 +1,6 @@
+{
+  "id": "evereye:bloodiness",
+  "parent": "ait:console/alnico",
+  "texture": "evereye:textures/consoles/bloodiness.png",
+  "emission": "evereye:textures/consoles/bloodiness_emission.png"
+}
