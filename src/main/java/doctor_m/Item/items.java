@@ -17,7 +17,7 @@ import net.minecraft.util.Rarity;
 
 public class items {
 
-    //时间钥匙
+    //时间钥匙相关
     public static final Item KEY_TO_TIME = new KeytoTimeItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
     public static final Item POCKET_WATCH = new PocketWatchItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
     public static final Item RELIC_GEM = new RelicGemItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
@@ -33,7 +33,7 @@ public class items {
     public static final Item TOYMAKER_HAMMER = new ToymakerHammerItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
     public static final Item SEAL_OF_THE_HIGH_COUNCIL = new Item(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
 
-    //武器
+    //去物质枪和拉斯隆之钥
     public static final Item DE_MAT_GUN = new DeMatGunItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
     public static final Item KEY_OF_RASSILON = new KeyofRassilonItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
 
@@ -45,6 +45,9 @@ public class items {
     //穹顶转子
     public static final Item TOYOTA_SPINNING_ROTOR = new BlockItem(ModBlocks.TOYOTA_SPINNING_ROTOR, new Item.Settings());
 
+    //玩偶
+    public static final Item DOLL_JIN_MARY = new BlockItem(ModBlocks.DOLL_JIN_MARY, new Item.Settings());
+    public static final Item DOLL_SMALLMOSS_OLD = new BlockItem(ModBlocks.DOLL_SMALLMOSS_OLD, new Item.Settings());
 
     //和谐之眼
     public static final Item EYE_OF_HARMONY_OBELISK = new BlockItem(ModBlocks.EYE_OF_HARMONY_OBELISK, new Item.Settings());

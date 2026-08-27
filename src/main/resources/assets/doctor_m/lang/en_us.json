@@ -104,7 +104,6 @@
   "item.doctor_m.type_103_spawn": "Spawn Type 103 TARDIS",
   "item.doctor_m.marian_jin_spawn": "Spawn Marian",
   "item.doctor_m.oxygen_tank": "Oxygen Tank",
-  "item.doctor_m.oxygen_charger": "Oxygen Recharger",
   "item.doctor_m.tlipoca_scythe": "Tlipoca's Scythe",
   "item.doctor_m.shield_core": "Shield Generator",
   "item.doctor_m.energy_upgrade_module": "Energy Expansion Module",
@@ -116,9 +115,7 @@
   "item.doctor_m.stcl": "STCS|STC-09L \"Stryder\"",
   "item.doctor_m.tracer": "Tracer",
   "item.doctor_m.toymaker_hammer": "Toymaker's Hammer",
-  "item.doctor_m.underwater_oxygen_generator": "Underwater Oxygen Generator",
   "item.doctor_m.seal_of_the_high_council": "Seal of The High Council",
-  "item.doctor_m.toyota_spinning_rotor": "Toyota Spinning Rotor",
 
   "block.doctor_m.oxygen_charger": "Oxygen Recharger",
   "block.doctor_m.underwater_oxygen_generator": "Underwater Oxygen Generator",

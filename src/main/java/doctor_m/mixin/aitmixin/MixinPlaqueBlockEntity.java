@@ -5,6 +5,7 @@ import dev.amble.ait.core.blockentities.PlaqueBlockEntity;
 import dev.amble.ait.core.tardis.Tardis;
 import dev.amble.ait.core.tardis.TardisDesktop;
 import doctor_m.util.type.TardisTypeMapper;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinPlaqueBlockEntity {
 
     @Inject(method = "getPlaqueText", at = @At("HEAD"), cancellable = true)
-    private void overridePlaqueText(CallbackInfoReturnable<String> cir) {
+    private void overridePlaqueText(CallbackInfoReturnable<Text> cir) {
         PlaqueBlockEntity self = (PlaqueBlockEntity) (Object) this;
         TardisRef ref = self.tardis();
 
@@ -24,15 +25,15 @@ public abstract class MixinPlaqueBlockEntity {
         Tardis tardis = ref.get();
         if (tardis == null) return;
 
-        // 获取当前内饰 ID
         TardisDesktop desktop = tardis.getDesktop();
         if (desktop == null) return;
 
         Identifier desktopId = desktop.getSchema().id();
         if (desktopId == null) return;
 
-        // 从映射表中查找型号
         String modelType = TardisTypeMapper.getTypeForDesktop(desktopId);
-        cir.setReturnValue(modelType);
+        if (modelType != null && !modelType.isEmpty()) {
+            cir.setReturnValue(Text.literal(modelType));
+        }
     }
 }

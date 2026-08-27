@@ -42,6 +42,8 @@ public static void registerItems() {
                                 entries.add(TOYMAKER_HAMMER);
                                 entries.add(ENERGY_UPGRADE_MODULE);
                                 entries.add(REGENERATION_MODULE);
+                                entries.add(DOLL_JIN_MARY);
+                                entries.add(DOLL_SMALLMOSS_OLD);
                             })
                             .build());
         }

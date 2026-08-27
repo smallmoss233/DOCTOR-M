@@ -104,7 +104,6 @@
   "item.doctor_m.type_103_spawn": "生成 103型塔迪斯",
   "item.doctor_m.marian_jin_spawn": "生成 玛丽安",
   "item.doctor_m.oxygen_tank": "氧气瓶",
-  "item.doctor_m.oxygen_charger": "氧气补充机",
   "item.doctor_m.tlipoca_scythe": "特莉波卡的镰刀",
   "item.doctor_m.shield_core": "护盾生成器",
   "item.doctor_m.energy_upgrade_module": "能量扩容模块",
@@ -116,9 +115,7 @@
   "item.doctor_m.stcl": "STCS|STC-09L“游侠”",
   "item.doctor_m.tracer": "追踪器",
   "item.doctor_m.toymaker_hammer": "玩具匠的锤子",
-  "item.doctor_m.underwater_oxygen_generator": "水下制氧机",
   "item.doctor_m.seal_of_the_high_council": "至高议会勋章",
-  "item.doctor_m.toyota_spinning_rotor": "穹顶转子",
 
   "block.doctor_m.oxygen_charger": "氧气补充机",
   "block.doctor_m.underwater_oxygen_generator": "水下制氧机",

@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 
 public class ModBlocks {
@@ -42,11 +43,27 @@ public class ModBlocks {
                     .nonOpaque()
     );
 
+    public static final Block DOLL_JIN_MARY = new DollBlock(
+            FabricBlockSettings.create()
+                    .nonOpaque()
+                    .strength(0.0f, 0.0f)
+                    .sounds(BlockSoundGroup.WOOL)
+    );
+
+    public static final Block DOLL_SMALLMOSS_OLD = new DollBlock(
+            FabricBlockSettings.create()
+                    .nonOpaque()
+                    .strength(0.0f, 0.0f)
+                    .sounds(BlockSoundGroup.WOOL)
+    );
+
     public static void register() {
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "oxygen_charger"), OXYGEN_CHARGER);
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "underwater_oxygen_generator"), UNDERWATER_OXYGEN_GENERATOR);
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "eye_of_harmony_obelisk"), EYE_OF_HARMONY_OBELISK);
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "eye_of_harmony_part"), EYE_OF_HARMONY_PART);
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "toyota_spinning_rotor"), TOYOTA_SPINNING_ROTOR);
+        Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "doll_jin_mary"), DOLL_JIN_MARY);
+        Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "doll_smallmoss_old"), DOLL_SMALLMOSS_OLD);
     }
 }

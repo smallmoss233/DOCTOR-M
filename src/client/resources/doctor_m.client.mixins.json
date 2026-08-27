@@ -10,6 +10,7 @@
       "doctor_m.ParticleManagerMixin",
       "doctor_m.ScytheFirstPersonMixin",
       "doctor_m.SonicSettingsScreenMixin",
+      "doctor_m.ItemRendererMixin",
       "title.ChatHudMixin",
       "title.LivingEntityRendererMixin",
       "title.PlayerListHudMixin"
