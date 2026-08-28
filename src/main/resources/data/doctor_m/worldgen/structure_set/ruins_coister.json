@@ -8,11 +8,7 @@
   "placement": {
     "type": "minecraft:random_spread",
     "salt": 987654321,
-    "spacing": 5000,
-    "separation": 3000,
-    "exclusion_zone": {
-      "chunk_count": 8,
-      "other_set": "minecraft:ancient_cities"
-    }
+    "spacing": 4096,
+    "separation": 3000
   }
 }
