@@ -8,10 +8,11 @@
 
 - 土卫六-泰坦 / Saturn VI-Titan
 
--  修改：时隙 / Edit : rift
+-  修改：时隙 / Edit : Rift
 -  修改：永恒之眼/永恒之眼 45型 / Edit : Evereye/Evereye Type45
--  修改：守望 / Edit : watcher
--  修改：霓虹 / Edit : neon
+-  修改：守望 / Edit : Watcher
+-  修改：霓虹 / Edit : Neon
+-  修改：回廊 / Edit : Coister
 
 -  新增：幻方（作者：Asnit_PnQing/名游茶） / New addition: Magic Square (Author: Asnit_PnQing/名游茶)
 -  新增：时隙[战争往事]（作者：TC020） / New addition: The rift [War Stories](Author: TC020)

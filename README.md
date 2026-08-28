@@ -39,7 +39,7 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 
 * *霓虹(Neon), 烈火(Inferno) , 泽顿水晶(Crystalline Zeiton) , 幻方(Magic Square) , 浪漫(Romantic)interiors , 守望(Watcher) interior(Partial)*: [名游茶](https://modrinth.com/user/MingYouCha-0527)
 
-* *斯格(Sig) interior*: [斯格尔特(Sigeerte)](https://modrinth.com/user/Sigeerte)
+* *尔特(Erte) interior*: [斯格尔特(Sigeerte)](https://modrinth.com/user/Sigeerte)
 
 * *时隙(The Rift) interior*: [TC020](https://modrinth.com/user/TC020)
 
