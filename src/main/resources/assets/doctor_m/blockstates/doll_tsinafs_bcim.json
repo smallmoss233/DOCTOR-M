@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "doctor_m:block/doll_tsinafs_bcim" },
+    "facing=south": { "model": "doctor_m:block/doll_tsinafs_bcim", "y": 180 },
+    "facing=east":  { "model": "doctor_m:block/doll_tsinafs_bcim", "y": 90 },
+    "facing=west":  { "model": "doctor_m:block/doll_tsinafs_bcim", "y": 270 }
+  }
+}

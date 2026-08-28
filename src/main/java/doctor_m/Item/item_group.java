@@ -48,6 +48,7 @@ public static void registerItems() {
                                 entries.add(DOLL_TC020);
                                 entries.add(DOLL_ASDJDFK);
                                 entries.add(DOLL_SIGEERTE);
+                                entries.add(DOLL_TSINAFS_BCIM);
                             })
                             .build());
         }
