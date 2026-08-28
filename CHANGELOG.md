@@ -71,6 +71,7 @@
 -  空手潜行右键心灵感应电路可以治疗玩家！ / Sneak right-click the Telepathic Circuit with an empty hand to heal yourself！
 -  永恒之眼废墟现在经过了重置！它刷新在接近世界底层的附近，被深板岩包裹，在里面有大量丰盛的战利品！ / Evereye Ruins have been revamped! They now generate near the bottom of the world, encased in deepslate, and contain plenty of rich loot inside!
 -  斯格废墟也重置了！ / Sig Ruins have also been revamped!
+-  回廊废墟！坐落在土卫六上的破败教堂 / Coister Ruins! A dilapidated church on Titan
 
 ---
 

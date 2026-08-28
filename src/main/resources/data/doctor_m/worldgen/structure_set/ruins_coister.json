@@ -1,0 +1,18 @@
+{
+  "structures": [
+    {
+      "structure": "doctor_m:ruins_coister",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 987654321,
+    "spacing": 64,
+    "separation": 32,
+    "exclusion_zone": {
+      "chunk_count": 16,
+      "other_set": "minecraft:ancient_cities"
+    }
+  }
+}

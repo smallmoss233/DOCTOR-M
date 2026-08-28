@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "doctor_m:ruins_rift"
+    "doctor_m:ruins_rift",
+    "doctor_m:ruins_coister"
   ]
 }
