@@ -46,6 +46,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
+import java.sql.Ref;
+
 import static doctor_m.Item.items.FORCE_FIELD_SHIELD;
 import static doctor_m.block.ModBlocks.*;
 
@@ -103,6 +105,7 @@ public class DOCTORMClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(DOLL_SMALLMOSS_OLD, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(DOLL_TC020, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(DOLL_ASDJDFK, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_SIGEERTE, RenderLayer.getCutout());
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             PlayerEntity player = client.player;
             if (player == null) return;
