@@ -69,9 +69,11 @@
 -  塔迪斯型号不再局限于50型！可在doctor_m/tardis_type.json当中填写内饰ID+型号来自定义你的塔迪斯型号！ / TARDIS types are no longer limited to Type 50! You can now customise your TARDIS type by adding interior IDs and type names in doctor_m/tardis_type.json!
 -  修改怀表，怀表不再是饰品了，同时怀表使用的模型也改成了amblelabs/regeneration的模型 / The pocket watch is no longer a trinket, and its model has been updated to use the one from amblelabs/regeneration.
 -  空手潜行右键心灵感应电路可以治疗玩家！ / Sneak right-click the Telepathic Circuit with an empty hand to heal yourself！
+-  星图黑名单系统，默认无法搜索到KTT有关的结构，可在data/doctor_m/tags/worldgen/structure/astral_map_blacklist.json当中新增黑名单结构ID，支持标签和单结构ID嵌套 / Astral Map Blacklist KTT-related structures are blocked by default. Customize the blacklist at data/doctor_m/tags/worldgen/structure/astral_map_blacklist.json – supports both single structure IDs and tag-based entries (with nesting).
 -  永恒之眼废墟现在经过了重置！它刷新在接近世界底层的附近，被深板岩包裹，在里面有大量丰盛的战利品！ / Evereye Ruins have been revamped! They now generate near the bottom of the world, encased in deepslate, and contain plenty of rich loot inside!
 -  斯格废墟也重置了！ / Sig Ruins have also been revamped!
 -  回廊废墟！坐落在土卫六上的破败教堂 / Coister Ruins! A dilapidated church on Titan
+-  时隙废墟，处在深海当中的塔迪斯废墟 / Rift Ruins, TARDIS ruins deep in the ocean
 
 ---
 
