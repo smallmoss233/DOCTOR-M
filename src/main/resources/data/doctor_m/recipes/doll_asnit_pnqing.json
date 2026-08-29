@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ABC",
+    "DED",
+    "FBF"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:white_wool"
+    },
+    "B": {
+      "item": "minecraft:black_wool"
+    },
+    "C": {
+      "item": "minecraft:purple_wool"
+    },
+    "D": {
+      "item": "minecraft:string"
+    },
+    "E": {
+      "item": "minecraft:feather"
+    },
+    "F": {
+      "item": "minecraft:lime_wool"
+    }
+  },
+  "result": {
+    "item": "doctor_m:doll_asnit_pnqing"
+  }
+}

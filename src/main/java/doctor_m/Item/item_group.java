@@ -49,6 +49,7 @@ public static void registerItems() {
                                 entries.add(DOLL_ASDJDFK);
                                 entries.add(DOLL_SIGEERTE);
                                 entries.add(DOLL_TSINAFS_BCIM);
+                                entries.add(DOLL_ASNIT_PNQING);
                             })
                             .build());
         }

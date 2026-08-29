@@ -45,6 +45,7 @@ import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import org.lwjgl.system.windows.INPUT;
 
 import java.sql.Ref;
 
@@ -107,6 +108,7 @@ public class DOCTORMClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(DOLL_ASDJDFK, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(DOLL_SIGEERTE, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(DOLL_TSINAFS_BCIM, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_ASNIT_PNQING, RenderLayer.getCutout());
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             PlayerEntity player = client.player;
