@@ -71,15 +71,6 @@ object KeytoTimeCore {
             if (stack.item is KeytoTimeItem) return stack
         }
 
-        // 末影箱
-        val enderChest = player.enderChestInventory
-        if (enderChest != null) {
-            for (i in 0 until enderChest.size()) {
-                val stack = enderChest.getStack(i)
-                if (stack.item is KeytoTimeItem) return stack
-            }
-        }
-
         // Trinkets 饰品栏
         return try {
             TrinketsApi.getTrinketComponent(player)
