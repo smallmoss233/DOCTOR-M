@@ -100,6 +100,13 @@ public class ModBlocks {
                     .sounds(BlockSoundGroup.WOOL)
     );
 
+    public static final Block DOLL_KILIN_MUS= new DollBlock(
+            FabricBlockSettings.create()
+                    .nonOpaque()
+                    .strength(0.0f,0.0f)
+                    .sounds(BlockSoundGroup.WOOL)
+    );
+
     public static final Block COFFEE_MACHINE = new CoffeeMachineBlock(
             AbstractBlock.Settings.create()
                     .strength(1.5f, 6.0f)
@@ -119,6 +126,7 @@ public class ModBlocks {
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "doll_tsinafs_bcim"),DOLL_TSINAFS_BCIM);
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "doll_asnit_pnqing"),DOLL_ASNIT_PNQING);
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "doll_tianx"),DOLL_TIANX);
+        Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "doll_kilin_mus"),DOLL_KILIN_MUS);
         Registry.register(Registries.BLOCK, new Identifier(DOCTORM.MOD_ID, "coffee_machine"), COFFEE_MACHINE);
     }
 }
