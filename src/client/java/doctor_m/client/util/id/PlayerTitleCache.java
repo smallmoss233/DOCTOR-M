@@ -69,7 +69,7 @@ public final class PlayerTitleCache {
                 raw.forEach((k, v) -> CACHE.put(UUID.fromString(k), v));
             }
         } catch (IOException e) {
-            System.err.println("[DoctorM] 加载称号缓存失败: " + e.getMessage());
+            System.err.println("[DOCTOR M] Failed to load title cache: " + e.getMessage());
         }
     }
 
@@ -85,7 +85,7 @@ public final class PlayerTitleCache {
                 GSON.toJson(raw, writer);
             }
         } catch (IOException e) {
-            System.err.println("[DoctorM] 保存称号缓存失败: " + e.getMessage());
+            System.err.println("[DOCTOR M] Failed to save title cache: " + e.getMessage());
         }
     }
 }

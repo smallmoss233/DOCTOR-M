@@ -20,7 +20,7 @@ public class KeytoTimeTeleportNetwork {
     public static final Identifier DIMS_RESPONSE = new Identifier("doctor_m", "key_to_time_dims_response");
 
     public static void register() {
-        // 服务端：收到维度列表请求，遍历 VM 同款维度池发回去
+
         ServerPlayNetworking.registerGlobalReceiver(REQUEST_DIMS, (server, player, handler, buf, responseSender) -> {
             server.execute(() -> {
                 List<String> dims = new ArrayList<>();
@@ -40,7 +40,6 @@ public class KeytoTimeTeleportNetwork {
             });
         });
 
-        // 服务端：处理传送（无燃料/过热/锁定限制）
         ServerPlayNetworking.registerGlobalReceiver(TELEPORT, (server, player, handler, buf, responseSender) -> {
             double x = buf.readDouble();
             double y = buf.readDouble();

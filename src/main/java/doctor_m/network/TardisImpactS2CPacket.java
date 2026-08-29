@@ -14,7 +14,6 @@ public class TardisImpactS2CPacket {
         buf.writeFloat(intensity);
     }
 
-    /** 服务端/客户端通用：读出 shake 强度。调用前 buf 指针必须在开头。 */
     public static float read(PacketByteBuf buf) {
         buf.readDouble(); // skip x
         buf.readDouble(); // skip y

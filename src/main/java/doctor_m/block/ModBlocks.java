@@ -10,7 +10,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
-import org.apache.commons.compress.harmony.pack200.FileBands;
 
 public class ModBlocks {
     public static final Block OXYGEN_CHARGER = new OxygenChargerBlock(

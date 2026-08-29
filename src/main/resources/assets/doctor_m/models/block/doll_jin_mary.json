@@ -2,9 +2,8 @@
 	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"3": "doctor_m:block/doll_jin_mary",
-        "particle": "minecraft:block/white_wool"
-    },
+		"3": "doctor_m:block/doll_jin_mary"
+	},
 	"elements": [
 		{
 			"name": "homunculus",

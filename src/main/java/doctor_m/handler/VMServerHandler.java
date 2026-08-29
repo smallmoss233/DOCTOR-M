@@ -98,8 +98,7 @@ public class VMServerHandler {
         VortexManipulatorItem.swapDestWithPrev(stack);
     }
 
-    // ==================== Teleport ====================
-
+    //Teleport
     private static void teleport(ServerPlayerEntity player, double x, double y, double z) {
         ItemStack stack = getVM(player);
         if (stack.isEmpty()) return;
@@ -143,14 +142,14 @@ public class VMServerHandler {
             }
         }
 
-        // ===== 5. 坐标硬边界检查（防止世界生成崩溃） =====
+        // 5. 坐标硬边界检查
         if (Math.abs(x) > 30_000_000 || Math.abs(z) > 30_000_000 || y < -128 || y > 512) {
             player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.out_of_bounds")
                     .formatted(Formatting.RED), true);
             return;
         }
 
-        // ===== 6. 燃料计算（含各种附加费） =====
+        // 6. 燃料计算（含各种附加费）
         double dist = distance(player.getX(), player.getY(), player.getZ(), x, y, z);
         boolean crossDimension = !player.getWorld().getRegistryKey().getValue().toString().equals(dimId);
 

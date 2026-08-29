@@ -1,18 +1,22 @@
 package doctor_m.block.data_block;
 
-import doctor_m.block.ModBlockEntities;
-import doctor_m.block.entities.CoffeeMachineBlockEntity;
 import dev.amble.ait.core.AITItems;
 import dev.amble.ait.core.drinks.Drink;
 import dev.amble.ait.core.drinks.DrinkRegistry;
 import dev.amble.ait.core.drinks.DrinkUtil;
-import net.minecraft.block.*;
+import doctor_m.block.ModBlockEntities;
+import doctor_m.block.entities.CoffeeMachineBlockEntity;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockEntityProvider;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
@@ -26,7 +30,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraft.registry.Registries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

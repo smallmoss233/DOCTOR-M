@@ -13,7 +13,7 @@ object STCSNetworking {
 
     @JvmStatic
     fun register() {
-        // Z 键：二技能
+        //二技能发包
         ServerPlayNetworking.registerGlobalReceiver(STCS_SKILL_ID) { server, player, _, _, _ ->
             server.execute {
                 var stack = player.mainHandStack
@@ -22,7 +22,7 @@ object STCSNetworking {
             }
         }
 
-        // X 键：剑核心 开/关
+        //剑核心发包
         ServerPlayNetworking.registerGlobalReceiver(STCS_CORE_ID) { server, player, _, _, _ ->
             server.execute {
                 var stack = player.mainHandStack

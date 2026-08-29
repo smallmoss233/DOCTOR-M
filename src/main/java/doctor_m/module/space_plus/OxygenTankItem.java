@@ -68,22 +68,21 @@ public class OxygenTankItem extends Item {
 
         int holdThreshold = config.oxygenTankHoldTicksForAchievement;
 
-        // ===== 1. 检测是否满足"食用"条件 =====
         boolean canEat = canEatOxygenTank(player);
-        if (canEat && usedTicks >= holdThreshold) { // 使用配置的阈值
-            // 执行食用逻辑
+        if (canEat && usedTicks >= holdThreshold) {
+            //食用逻辑
             eatOxygenTank(player, stack);
-            // 授予成就
+            //成就
             grantAdvancement(player, "you_ate_this");
-            return; // 食用后不再执行氧气补充
+            return;
         }
 
-        // ===== 2. 检查是否达到阈值（用于成就“不是保温杯”） =====
+        //检查是否达到阈值（用于成就“不是保温杯”）
         if (usedTicks >= holdThreshold) {
             grantAdvancement(player, "not_thermos");
         }
 
-        // ===== 3. 执行氧气补充逻辑（仅当未食用） =====
+        //执行氧气补充逻辑（仅当未食用）
         // 检查是否穿了宇航服
         ItemStack chestStack = player.getInventory().armor.get(2);
         if (!(chestStack.getItem() instanceof dev.amble.ait.module.planet.core.item.SpacesuitItem)) {
@@ -121,7 +120,7 @@ public class OxygenTankItem extends Item {
         player.getItemCooldownManager().set(this, 5);
     }
 
-    // ===== 判断是否可以食用 =====
+    //判断食用
     private boolean canEatOxygenTank(ServerPlayerEntity player) {
         var config = ConfigManager.getConfig();
         boolean hasStrength = player.hasStatusEffect(StatusEffects.STRENGTH);
@@ -131,7 +130,7 @@ public class OxygenTankItem extends Item {
         return hasStrength || hasHunger || isStarving;
     }
 
-    // ===== 执行食用逻辑 =====
+    //执行食用逻辑
     private void eatOxygenTank(ServerPlayerEntity player, ItemStack stack) {
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 30 * 20, 1, false, false, true));
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 30 * 20, 2, false, false, true));
@@ -143,7 +142,7 @@ public class OxygenTankItem extends Item {
         player.getItemCooldownManager().set(this, 20);
     }
 
-    // ===== 授予成就 =====
+    //授予成就
     private void grantAdvancement(ServerPlayerEntity player, String advancementId) {
         Advancement advancement = player.getServer().getAdvancementLoader()
                 .get(new Identifier("doctor_m", advancementId));
@@ -154,7 +153,7 @@ public class OxygenTankItem extends Item {
 
     @Override
     public int getMaxUseTime(ItemStack stack) {
-        // 最大使用时间不受配置影响，保持原样
+        //最大使用时间
         return 72000;
     }
 

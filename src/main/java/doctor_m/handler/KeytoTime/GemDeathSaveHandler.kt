@@ -24,7 +24,7 @@ object GemDeathSaveHandler {
             val world = player.world
             val currentTick = world.time
 
-            // ====== 1. 优先检查无敌状态 ======
+            // 1. 优先检查无敌状态
             val endTick = invincibleMap[player.uuid]
             if (endTick != null && currentTick < endTick) {
                 // 无敌时间内，取消本次伤害
@@ -34,21 +34,21 @@ object GemDeathSaveHandler {
                 invincibleMap.remove(player.uuid)
             }
 
-            // ====== 2. 检测致命伤害 ======
+            // 2. 检测致命伤害
             if (player.health - amount > 0) return@register true
 
-            // ====== 3. 查找装备的宝石 ======
+            // 3. 查找装备的宝石
             val gemStack = TrinketsApi.getTrinketComponent(player)
                 .orElse(null)
                 ?.getEquipped { stack -> stack.item is RelicGemItem }
                 ?.firstOrNull()
                 ?.right ?: return@register true
 
-            // ====== 4. 检查冷却 ======
+            // 4. 检查冷却
             val cooldownUntil = RelicGemItem.getCooldownUntilTick(gemStack)
             if (currentTick < cooldownUntil) return@register true
 
-            // ====== 5. 触发复活 ======
+            // 5. 触发复活
             val level = RelicGemItem.getLevel(gemStack)
             val activeTicks = RelicGemItem.getActiveTicks(level)
             val cooldownTicks = RelicGemItem.getCooldownTicks(level)

@@ -20,7 +20,7 @@ public class TlipocaScytheEvents {
         if (!isHoldingScythe(player)) return;
 
         if (entity.getWorld() instanceof ServerWorld world) {
-            // 灵魂粒子爆发
+
             world.spawnParticles(ParticleTypes.SOUL,
                     entity.getX(), entity.getY() + entity.getHeight() * 0.5, entity.getZ(),
                     20, 0.4, 0.4, 0.4, 0.06);
@@ -29,7 +29,6 @@ public class TlipocaScytheEvents {
                     entity.getX(), entity.getY() + 0.3, entity.getZ(),
                     10, 0.3, 0.3, 0.3, 0.03);
 
-            // 死神低鸣
             world.playSound(null, entity.getBlockPos(),
                     SoundEvents.ENTITY_WITHER_DEATH,
                     SoundCategory.PLAYERS, 0.6f, 0.6f);

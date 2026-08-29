@@ -67,8 +67,7 @@ abstract class STCSItem(
         private val CORE_SPEED_UUID = UUID.fromString("22222222-2222-2222-2222-222222222222")
     }
 
-    // ========== NBT ==========
-
+    //NBT
     fun getOrCreateSTCSNbt(stack: ItemStack): NbtCompound {
         val root = stack.orCreateNbt
         if (!root.contains(STCS_TAG, NbtElement.COMPOUND_TYPE.toInt())) {
@@ -93,8 +92,7 @@ abstract class STCSItem(
         }
     }
 
-    // ========== 快捷读写 ==========
-
+    //快捷读写
     fun getEnergy(stack: ItemStack): Int = getOrCreateSTCSNbt(stack).getInt(ENERGY_KEY)
     fun setEnergy(stack: ItemStack, value: Int) {
         getOrCreateSTCSNbt(stack).putInt(ENERGY_KEY, value.coerceIn(0, getMaxEnergy(stack)))
@@ -126,8 +124,7 @@ abstract class STCSItem(
         getOrCreateSTCSNbt(stack).putInt(SKILL_COOLDOWN_KEY, ticks.coerceAtLeast(0))
     }
 
-    // ========== 攻击属性 ==========
-
+    //攻击属性
     override fun getAttributeModifiers(slot: EquipmentSlot): Multimap<EntityAttribute, EntityAttributeModifier> {
         if (slot != EquipmentSlot.MAINHAND) return super.getAttributeModifiers(slot)
         val builder = ImmutableMultimap.builder<EntityAttribute, EntityAttributeModifier>()
@@ -148,8 +145,7 @@ abstract class STCSItem(
         return builder.build()
     }
 
-    // ========== 核心属性（带重复添加保护） ==========
-
+    //核心属性
     open fun applyCoreAttributes(player: ServerPlayerEntity) {
         player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE)?.apply {
             if (getModifier(CORE_DAMAGE_UUID) == null) {
@@ -172,8 +168,7 @@ abstract class STCSItem(
         player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.removeModifier(CORE_SPEED_UUID)
     }
 
-    // ========== 技能接口 ==========
-
+    //技能接口
     open fun onSkillPressed(player: ServerPlayerEntity, stack: ItemStack) {}
 
     open fun onCorePressed(player: ServerPlayerEntity, stack: ItemStack) {
@@ -196,8 +191,7 @@ abstract class STCSItem(
         }
     }
 
-    // ========== Tick ==========
-
+    //Tick
     override fun inventoryTick(stack: ItemStack, world: World, entity: Entity, slot: Int, selected: Boolean) {
         if (world.isClient) return
         if (entity !is ServerPlayerEntity) return
@@ -211,15 +205,11 @@ abstract class STCSItem(
             return
         }
 
-        // 每 tick：格挡检测（与 Mixin 一致：潜行 + 持有该武器）
         val isBlocking = entity.isSneaking && (entity.mainHandStack == stack || entity.offHandStack == stack)
 
-        // 每 tick：Action Bar + 核心粒子（不写 NBT）
         updateActionBar(entity, stack, isBlocking)
         if (isCoreActive(stack)) spawnCoreParticles(entity)
-        // 删除这行：if (isBlocking) spawnBlockParticles(entity)
 
-        // 每 20 ticks：能量/冷却逻辑 + 唯一一次 NBT 写入
         if (world.time % 20 != 0L) return
 
         val skillCd = getSkillCooldown(stack)
@@ -246,8 +236,7 @@ abstract class STCSItem(
         }
     }
 
-    // ========== 视觉反馈 ==========
-
+    //UI
     private fun updateActionBar(player: ServerPlayerEntity, stack: ItemStack, isBlocking: Boolean) {
         val energy = getEnergy(stack)
         val maxE = getMaxEnergy(stack)
@@ -300,8 +289,7 @@ abstract class STCSItem(
         }
     }
 
-    // ========== Tooltip ==========
-
+    //Tooltip
     override fun appendTooltip(
         stack: ItemStack,
         world: World?,
@@ -330,8 +318,7 @@ abstract class STCSItem(
         super.appendTooltip(stack, world, tooltip, context)
     }
 
-    // ========== 模块系统接口（预留） ==========
-
+    //模块系统接口（预留）
     fun getKitModule(stack: ItemStack): String =
         getOrCreateSTCSNbt(stack).getCompound(MODULES_KEY).getString(KIT_MODULE_KEY)
     fun setKitModule(stack: ItemStack, id: String) {

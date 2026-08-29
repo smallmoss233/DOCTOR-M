@@ -12,8 +12,6 @@ import java.util.UUID;
 
 /**
  * 称号网络同步
- * C2S: 客户端修改称号请求
- * S2C: 服务端广播称号更新
  */
 public class TitleNetwork {
 
@@ -29,7 +27,7 @@ public class TitleNetwork {
                 broadcastTitle(server, player.getUuid(), finalTitle);
             });
         });
-        // 玩家登录时同步
+
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ServerPlayerEntity joined = handler.getPlayer();
             for (ServerPlayerEntity p : server.getPlayerManager().getPlayerList()) {
@@ -39,7 +37,6 @@ public class TitleNetwork {
         });
     }
 
-    /** 服务端广播称号给所有在线玩家 */
     public static void broadcastTitle(net.minecraft.server.MinecraftServer server, UUID playerUuid, String title) {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeUuid(playerUuid);
@@ -51,7 +48,6 @@ public class TitleNetwork {
         }
     }
 
-    /** 发送给特定玩家（登录同步用） */
     public static void sendTitleToPlayer(ServerPlayerEntity target, UUID ownerUuid, String title) {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeUuid(ownerUuid);

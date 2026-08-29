@@ -20,7 +20,6 @@ import java.util.UUID;
 
 public class VacuumEatingHandler {
 
-    // 标记玩家"这次进食如果成功需要扣氧"
     private static final Map<UUID, Long> PENDING_EAT = new HashMap<>();
 
     public static void register() {

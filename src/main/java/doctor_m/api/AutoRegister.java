@@ -60,8 +60,7 @@ public class AutoRegister {
     }
 
     /**
-     * 自动调用目标类的 registerAbilities() 静态方法（如果有的话）。
-     * 这样主类里不需要再手动写 items.registerAbilities();
+     * 自动调用目标类的 registerAbilities()
      */
     private static void tryInvokePostRegister(Class<?> clazz) {
         try {
@@ -70,8 +69,9 @@ public class AutoRegister {
                 method.setAccessible(true);
                 method.invoke(null);
             }
-        } catch (NoSuchMethodException e) {
-            // 没有 registerAbilities 方法，正常，直接跳过
+        } catch (NoSuchMethodException e)
+        {
+
         } catch (Exception e) {
             throw new RuntimeException("Failed to invoke registerAbilities() on " + clazz.getName(), e);
         }

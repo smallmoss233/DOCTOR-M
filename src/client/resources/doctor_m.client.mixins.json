@@ -6,11 +6,11 @@
       "ait.MixinShieldsModel",
       "ait.MixinSpaceSuitOverlay",
       "doctor_m.AbstractClientPlayerEntityMixin",
+      "doctor_m.ItemRendererMixin",
       "doctor_m.MixinTitleScreenBackground",
       "doctor_m.ParticleManagerMixin",
       "doctor_m.ScytheFirstPersonMixin",
       "doctor_m.SonicSettingsScreenMixin",
-      "doctor_m.ItemRendererMixin",
       "title.ChatHudMixin",
       "title.LivingEntityRendererMixin",
       "title.PlayerListHudMixin"

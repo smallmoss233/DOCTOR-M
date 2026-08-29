@@ -77,8 +77,7 @@ public class TlipocaScytheItem extends Item implements EmissiveItem {
         nbt.put("AttributeModifiers", list);
     }
 
-    // ========== 多层蓄力斩击 ==========
-
+    //多层蓄力斩击
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);

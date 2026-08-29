@@ -129,7 +129,7 @@ public class AITTardisBuilderCommand {
                                                                                 Vec3ArgumentType.getVec3(ctx, "pos"),
                                                                                 getString(ctx, "executor"))))))
 
-                                                // ===== 分支 B: name <名称> =====
+                                                //分支 B: name <名称>
                                                 .then(CommandManager.literal("name")
                                                         .then(CommandManager.argument("name", StringArgumentType.string())
                                                                 .suggests(NAME_SUGGESTIONS)
@@ -176,7 +176,7 @@ public class AITTardisBuilderCommand {
                                                                                         Vec3ArgumentType.getVec3(ctx, "pos"),
                                                                                         getString(ctx, "executor"))))))
 
-                                                        // ===== 分支 C: 直接跟坐标（默认名称 + 默认子系统）=====
+                                                        //分支 C: 直接跟坐标（默认名称 + 默认子系统）
                                                         .then(CommandManager.argument("pos", Vec3ArgumentType.vec3())
                                                                 .executes(ctx -> executeWithArgs(ctx,
                                                                         getString(ctx, "desktop"), getString(ctx, "exterior"),
@@ -233,7 +233,7 @@ public class AITTardisBuilderCommand {
             commandSender = player;
         }
 
-        // ===== 解析执行玩家 =====
+        //解析执行玩家
         ServerPlayerEntity executor;
         if (executorRaw != null && !executorRaw.isEmpty()) {
             executor = world.getServer().getPlayerManager().getPlayer(executorRaw);

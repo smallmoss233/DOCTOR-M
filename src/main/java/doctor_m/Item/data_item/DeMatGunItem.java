@@ -3,7 +3,6 @@ package doctor_m.Item.data_item;
 import dev.amble.ait.module.gun.core.item.BaseGunItem;
 import doctor_m.Item.Authorizable;
 import doctor_m.api.ModSounds;
-import doctor_m.handler.DeMatGunEntityEraser;
 import doctor_m.util.creativity.DynamicColorHelper;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import net.minecraft.client.item.TooltipContext;

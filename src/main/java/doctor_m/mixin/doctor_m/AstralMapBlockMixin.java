@@ -1,5 +1,6 @@
 package doctor_m.mixin.doctor_m;
 
+import dev.amble.ait.core.blocks.AstralMapBlock;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -10,13 +11,11 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.gen.structure.Structure;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import dev.amble.ait.core.blocks.AstralMapBlock;
-import net.minecraft.world.gen.structure.Structure;
 
 import java.util.HashSet;
 import java.util.Set;

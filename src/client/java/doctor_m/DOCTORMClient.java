@@ -45,9 +45,6 @@ import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
-import org.lwjgl.system.windows.INPUT;
-
-import java.sql.Ref;
 
 import static doctor_m.Item.items.FORCE_FIELD_SHIELD;
 import static doctor_m.block.ModBlocks.*;

@@ -22,17 +22,15 @@ public class IdMappingUtil {
     public static Identifier fromMapping(String input) {
         if (input == null || input.isEmpty()) return null;
 
-        // 优先按 __ 分割
         int idx = input.indexOf(SEPARATOR);
         if (idx >= 0) {
             String namespace = input.substring(0, idx);
             String path = input.substring(idx + SEPARATOR.length());
-            // 将路径中的短横线还原为斜杠
+
             path = path.replace(MAPPING_SEPARATOR, PATH_SEPARATOR);
             return new Identifier(namespace, path);
         }
 
-        // 没有 __，尝试标准格式（namespace:path）
         return Identifier.tryParse(input);
     }
 }
