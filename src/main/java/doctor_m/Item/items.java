@@ -56,6 +56,7 @@ public class items {
     public static final Item DOLL_ASNIT_PNQING =new BlockItem(ModBlocks.DOLL_ASNIT_PNQING, new Item.Settings());
     public static final Item DOLL_TIANX =new BlockItem(ModBlocks.DOLL_TIANX, new Item.Settings());
     public static final Item DOLL_KILIN_MUS =new BlockItem(ModBlocks.DOLL_KILIN_MUS, new Item.Settings());
+    public static final Item DOLL_JOGGEST =new BlockItem(ModBlocks.DOLL_JOGGEST, new Item.Settings());
 
     //和谐之眼
     public static final Item EYE_OF_HARMONY_OBELISK = new BlockItem(ModBlocks.EYE_OF_HARMONY_OBELISK, new Item.Settings());

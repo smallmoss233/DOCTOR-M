@@ -52,6 +52,7 @@ public static void registerItems() {
                                 entries.add(DOLL_ASNIT_PNQING);
                                 entries.add(DOLL_TIANX);
                                 entries.add(DOLL_KILIN_MUS);
+                                entries.add(DOLL_JOGGEST);
                             })
                             .build());
         }
