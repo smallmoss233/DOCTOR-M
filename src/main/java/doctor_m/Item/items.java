@@ -50,6 +50,13 @@ public class items {
     public static final Item DOLL_JIN_MARY = new BlockItem(ModBlocks.DOLL_JIN_MARY, new Item.Settings());
     public static final Item DOLL_SMALLMOSS_OLD = new BlockItem(ModBlocks.DOLL_SMALLMOSS_OLD, new Item.Settings());
     public static final Item DOLL_TC020 = new BlockItem(ModBlocks.DOLL_TC020, new Item.Settings());
+    public static final Item DOLL_ASDJDFK =new BlockItem(ModBlocks.DOLL_ASDJDFK, new Item.Settings());
+    public static final Item DOLL_SIGEERTE =new BlockItem(ModBlocks.DOLL_SIGEERTE, new Item.Settings());
+    public static final Item DOLL_TSINAFS_BCIM =new BlockItem(ModBlocks.DOLL_TSINAFS_BCIM, new Item.Settings());
+    public static final Item DOLL_ASNIT_PNQING =new BlockItem(ModBlocks.DOLL_ASNIT_PNQING, new Item.Settings());
+    public static final Item DOLL_TIANX =new BlockItem(ModBlocks.DOLL_TIANX, new Item.Settings());
+    public static final Item DOLL_KILIN_MUS =new BlockItem(ModBlocks.DOLL_KILIN_MUS, new Item.Settings());
+    public static final Item DOLL_JOGGEST =new BlockItem(ModBlocks.DOLL_JOGGEST, new Item.Settings());
 
     //和谐之眼
     public static final Item EYE_OF_HARMONY_OBELISK = new BlockItem(ModBlocks.EYE_OF_HARMONY_OBELISK, new Item.Settings());

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ADA",
+    "BCB",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:white_wool"
+    },
+    "B": {
+      "item": "minecraft:string"
+    },
+    "C": {
+      "item": "minecraft:feather"
+    },
+    "D": {
+      "item":"minecraft:light_blue_wool"
+    }
+  },
+  "result": {
+    "item": "doctor_m:doll_kilin_mus"
+  }
+}

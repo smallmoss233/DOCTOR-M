@@ -1,0 +1,7 @@
+{
+  "parent": "doctor_m:block/doll_asnit_pnqing",
+  "textures": {
+    "0": "doctor_m:block/doll_tianx",
+    "particle": "minecraft:block/black_wool"
+  }
+}

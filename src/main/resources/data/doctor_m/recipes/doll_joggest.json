@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ADA",
+    "BCB",
+    "EEE"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:brown_wool"
+    },
+    "B": {
+      "item": "minecraft:string"
+    },
+    "C": {
+      "item": "minecraft:feather"
+    },
+    "D": {
+      "item": "minecraft:blue_wool"
+    },
+    "E": {
+      "item": "minecraft:light_blue_wool"
+    }
+  },
+  "result": {
+    "item": "doctor_m:doll_joggest"
+  }
+}

@@ -46,6 +46,13 @@ public static void registerItems() {
                                 entries.add(DOLL_JIN_MARY);
                                 entries.add(DOLL_SMALLMOSS_OLD);
                                 entries.add(DOLL_TC020);
+                                entries.add(DOLL_ASDJDFK);
+                                entries.add(DOLL_SIGEERTE);
+                                entries.add(DOLL_TSINAFS_BCIM);
+                                entries.add(DOLL_ASNIT_PNQING);
+                                entries.add(DOLL_TIANX);
+                                entries.add(DOLL_KILIN_MUS);
+                                entries.add(DOLL_JOGGEST);
                             })
                             .build());
         }

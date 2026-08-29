@@ -45,6 +45,9 @@ import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import org.lwjgl.system.windows.INPUT;
+
+import java.sql.Ref;
 
 import static doctor_m.Item.items.FORCE_FIELD_SHIELD;
 import static doctor_m.block.ModBlocks.*;
@@ -102,6 +105,13 @@ public class DOCTORMClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(DOLL_JIN_MARY, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(DOLL_SMALLMOSS_OLD, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(DOLL_TC020, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_ASDJDFK, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_SIGEERTE, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_TSINAFS_BCIM, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_ASNIT_PNQING, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_TIANX, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_KILIN_MUS, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_JOGGEST, RenderLayer.getCutout());
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             PlayerEntity player = client.player;

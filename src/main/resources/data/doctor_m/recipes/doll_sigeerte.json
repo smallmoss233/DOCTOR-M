@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ABA",
+    "CDC",
+    "AEA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:brown_wool"
+    },
+    "B": {
+      "item": "minecraft:black_wool"
+    },
+    "C": {
+      "item": "minecraft:string"
+    },
+    "D": {
+      "item": "minecraft:feather"
+    },
+    "E": {
+      "item": "minecraft:yellow_wool"
+    }
+  },
+  "result": {
+    "item": "doctor_m:doll_sigeerte",
+    "count": 1
+  }
+}

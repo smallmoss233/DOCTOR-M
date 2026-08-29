@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "doctor_m:block/doll_kilin_mus" },
+    "facing=south": { "model": "doctor_m:block/doll_kilin_mus", "y": 180 },
+    "facing=east":  { "model": "doctor_m:block/doll_kilin_mus", "y": 90 },
+    "facing=west":  { "model": "doctor_m:block/doll_kilin_mus", "y": 270 }
+  }
+}
