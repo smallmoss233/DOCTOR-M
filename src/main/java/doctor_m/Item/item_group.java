@@ -50,6 +50,7 @@ public static void registerItems() {
                                 entries.add(DOLL_SIGEERTE);
                                 entries.add(DOLL_TSINAFS_BCIM);
                                 entries.add(DOLL_ASNIT_PNQING);
+                                entries.add(DOLL_TIANX);
                             })
                             .build());
         }

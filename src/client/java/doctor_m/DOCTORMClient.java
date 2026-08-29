@@ -109,6 +109,7 @@ public class DOCTORMClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(DOLL_SIGEERTE, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(DOLL_TSINAFS_BCIM, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(DOLL_ASNIT_PNQING, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_TIANX, RenderLayer.getCutout());
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             PlayerEntity player = client.player;

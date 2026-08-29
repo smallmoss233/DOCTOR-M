@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "doctor_m:block/doll_tianx" },
+    "facing=south": { "model": "doctor_m:block/doll_tianx", "y": 180 },
+    "facing=east":  { "model": "doctor_m:block/doll_tianx", "y": 90 },
+    "facing=west":  { "model": "doctor_m:block/doll_tianx", "y": 270 }
+  }
+}
