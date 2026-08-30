@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "doctor_m:die_tardis",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 4096,
+    "separation": 3000,
+    "salt": 1145141919
+  }
+}

@@ -45,6 +45,9 @@
    能量再生核心：降低起子的能量上限为500，但是音速起子能量会每5秒再生1点 / Energy Regeneration Core: Reduces the maximum energy capacity to 500, but the Sonic Screwdriver regenerates 1 point of energy every 5 seconds.
 -  玩偶，一些装饰品，有时还能起到心理安慰作用 / Dolls, decorative items that sometimes provide a little psychological comfort.
 -  咖啡机2.0，咖啡机回归了！它比以前更好了（代码层面上） / Coffee Machine 2.0 – the coffee machine returns! And it's improved (code‑wise).
+-  回廊废墟！坐落在土卫六上的破败教堂 / Coister Ruins! A dilapidated church on Titan
+-  时隙废墟，处在深海当中的塔迪斯废墟 / Rift Ruins, TARDIS ruins deep in the ocean
+-  禁区！与博士之墓！目前为止DOCTOR M最大的建筑！ / Forbidden Zone! And the Doctor's Tomb! The biggest structure in DOCTOR M so far!
 
 
 ---
@@ -73,8 +76,6 @@
 -  星图黑名单系统，默认无法搜索到KTT有关的结构，可在data/doctor_m/tags/worldgen/structure/astral_map_blacklist.json当中新增黑名单结构ID，支持标签和单结构ID嵌套 / Astral Map Blacklist KTT-related structures are blocked by default. Customize the blacklist at data/doctor_m/tags/worldgen/structure/astral_map_blacklist.json – supports both single structure IDs and tag-based entries (with nesting).
 -  永恒之眼废墟现在经过了重置！它刷新在接近世界底层的附近，被深板岩包裹，在里面有大量丰盛的战利品！ / Evereye Ruins have been revamped! They now generate near the bottom of the world, encased in deepslate, and contain plenty of rich loot inside!
 -  斯格废墟也重置了！ / Sig Ruins have also been revamped!
--  回廊废墟！坐落在土卫六上的破败教堂 / Coister Ruins! A dilapidated church on Titan
--  时隙废墟，处在深海当中的塔迪斯废墟 / Rift Ruins, TARDIS ruins deep in the ocean
 
 ---
 
