@@ -2,7 +2,8 @@
 	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"3": "doctor_m:block/doll_jin_mary"
+		"3": "doctor_m:block/doll_jin_mary",
+        "particle": "minecraft:block/white_wool"
 	},
 	"elements": [
 		{
@@ -137,7 +138,7 @@
 			"to": [8.15, 2.5, 8.25],
 			"rotation": {"angle": 22.5, "axis": "y", "origin": [7.15, 1.5, 8.25]},
 			"faces": {
-				"north": {"uv": [6, 12, 7, 13], "texture": "#3"},
+				"north": {"uv": [6, 13, 7, 12], "texture": "#3"},
 				"east": {"uv": [4, 13, 5, 16], "rotation": 270, "texture": "#3"},
 				"south": {"uv": [6, 12, 5, 13], "rotation": 270, "texture": "#3"},
 				"west": {"uv": [6, 13, 7, 16], "rotation": 90, "texture": "#3"},

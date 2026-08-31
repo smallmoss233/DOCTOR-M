@@ -2,6 +2,6 @@
   "parent": "doctor_m:block/doll_asnit_pnqing",
   "textures": {
     "0": "doctor_m:block/doll_kilin_mus",
-    "particle": "minecraft:block/black_wool"
+    "particle": "minecraft:block/white_wool"
   }
 }
