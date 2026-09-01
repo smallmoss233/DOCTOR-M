@@ -42,7 +42,24 @@ public class MixinSiegeModeControl extends Control {
         UUID tardisId = tardis.getUuid();
         boolean isActive = tardis.siege().isActive();
 
-        // === 关闭围攻：直接执行 ===
+        // === 潜行右键：跳过二次确认，直接切换 ===
+        if (player.isSneaking()) {
+            if (isActive) {
+                tardis.siege().setActive(false);
+                tardis.alarm().disable();
+                player.sendMessage(Text.translatable("tardis.message.control.siege.disabled").formatted(Formatting.RED), true);
+                world.playSound(null, player.getBlockPos(), AITSounds.SIEGE, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            } else {
+                tardis.siege().setActive(true);
+                tardis.alarm().disable();
+                player.sendMessage(Text.translatable("tardis.message.control.siege.enabled").formatted(Formatting.GREEN), true);
+                world.playSound(null, player.getBlockPos(), AITSounds.SIEGE, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            }
+            SIEGE_ARMED.remove(tardisId);
+            return isActive ? Result.SUCCESS_ALT : Result.SUCCESS;
+        }
+
+        // === 原有逻辑：关闭围攻 ===
         if (isActive) {
             tardis.siege().setActive(false);
             tardis.alarm().disable();
@@ -52,11 +69,10 @@ public class MixinSiegeModeControl extends Control {
             return Result.SUCCESS_ALT;
         }
 
-        // === 开启围攻 ===
+        // === 原有逻辑：开启围攻（二次确认） ===
         long currentTick = world.getTime();
         Long armedAt = SIEGE_ARMED.get(tardisId);
 
-        // 已武装且在有效期内 → 二次确认
         if (armedAt != null && (currentTick - armedAt) <= CONFIRMATION_WINDOW) {
             SIEGE_ARMED.remove(tardisId);
             tardis.siege().setActive(true);
@@ -66,7 +82,6 @@ public class MixinSiegeModeControl extends Control {
             return Result.SUCCESS;
         }
 
-        // 首次点击 → 武装
         SIEGE_ARMED.put(tardisId, currentTick);
         player.sendMessage(Text.translatable("tardis.message.control.siege.confirm_prompt").formatted(Formatting.YELLOW), true);
         world.playSound(null, player.getBlockPos(), AITSounds.BWEEP, SoundCategory.BLOCKS, 0.5f, 1.5f);
