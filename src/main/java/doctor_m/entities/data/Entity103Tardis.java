@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 
 public class Entity103Tardis extends PathAwareEntity {
 
-    // ==================== 同步数据 ====================
+    //同步数据
     private static final TrackedData<String> SELECTED_SKIN =
             DataTracker.registerData(Entity103Tardis.class, TrackedDataHandlerRegistry.STRING);
     private static final TrackedData<String> MODEL_TYPE =
@@ -50,19 +50,19 @@ public class Entity103Tardis extends PathAwareEntity {
     private static final TrackedData<Integer> CURRENT_STATE =
             DataTracker.registerData(Entity103Tardis.class, TrackedDataHandlerRegistry.INTEGER);
 
-    // ==================== 皮肤与显示 ====================
+    //皮肤与显示
     private String selectedSkin = "";
     private String displayName = "";
     private String modelType = "slim";
 
-    // ==================== 个性系统 ====================
+    //个性系统
     public enum Personality {
         AGGRESSIVE, DEFENSIVE, TIMID, BRAVE, TRADER
     }
 
     private Personality personality = Personality.TRADER;
 
-    // ==================== 反击与记忆系统 ====================
+    //反击与记忆系统
     private long lastRetaliateTime = 0;
     private static final int RETALIATE_COOLDOWN = 30;
     private UUID lastAggressorUUID = null;
@@ -72,24 +72,27 @@ public class Entity103Tardis extends PathAwareEntity {
     private int aggressionCount = 0;
     private long lastDamageTime = 0;
 
-    // ==================== 交易系统 ====================
+    //交易系统
     private List<TradeOffer> dailyTrades = new ArrayList<>();
     private long lastTradeRefreshDay = -1;
     private static final String TRADE_POOL_FILE = "103tardis_trade.json";
 
-    // ==================== AI 状态机 ====================
+    //AI 状态机
     public enum AIState {
         IDLE(0), TRADING(1), FLEEING(2), RETALIATING(3), COMBAT(4);
         final int id;
         AIState(int id) { this.id = id; }
     }
 
-    // ==================== 反击类型 ====================
+    //反击类型
     public enum RetaliateType {
         MELEE, ENERGY_BEAM, HIGH_ALTITUDE, TELEPORT_TRENZALORE, TELEPORT_VORTEX
     }
 
-    // ==================== 性能优化：预编译正则 & 缓存配置 ====================
+    //远程攻击冷却
+    private int rangedCooldown = 0;
+
+    //预编译正则 & 缓存配置
     private static final Pattern SKIN_NAME_PATTERN = Pattern.compile("[^a-z0-9._-]");
 
     /** 每个 Personality 的固定文本配置，构造时一次性生成，避免每次受伤都 switch */
@@ -176,31 +179,28 @@ public class Entity103Tardis extends PathAwareEntity {
     // 实例缓存，避免每次查 Map
     private PersonalityConfig personalityConfig;
 
-    // ==================== 构造 ====================
+    //构造
     public Entity103Tardis(EntityType<? extends PathAwareEntity> type, World world) {
         super(type, world);
         if (!world.isClient) {
-            if (this.personality == Personality.TRADER) {
-                Personality[] values = Personality.values();
-                float roll = this.random.nextFloat();
-                if (roll < 0.60f) {
-                    this.personality = Personality.TRADER;
-                } else {
-                    Personality chosen;
-                    do {
-                        chosen = values[this.random.nextInt(values.length)];
-                    } while (chosen == Personality.TRADER);
-                    this.personality = chosen;
-                }
-            }
+            // 清空父类构造时可能基于 TRADER 添加的默认 AI
+            this.goalSelector.clear(goal -> true);
+            this.targetSelector.clear(goal -> true);
+
+            // 等概率随机性格
+            Personality[] values = Personality.values();
+            this.personality = values[this.random.nextInt(values.length)];
             this.personalityConfig = PERSONALITY_CONFIGS.get(this.personality);
-            this.lastDamageTime = world.getTime(); // 修复：初始化回血计时，防止出生即回血
+            this.lastDamageTime = world.getTime();
             chooseRandomSkin();
             setState(AIState.IDLE);
+
+            // 重新初始化 AI
+            this.initGoals();
         }
     }
 
-    // ==================== AI 初始化 ====================
+    //AI 初始化
     @Override
     protected void initGoals() {
         super.initGoals();
@@ -220,16 +220,20 @@ public class Entity103Tardis extends PathAwareEntity {
             case AGGRESSIVE -> {
                 this.targetSelector.add(1, new RevengeGoal(this));
                 this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
-                this.goalSelector.add(2, new MeleeAttackGoal(this, 1.2, true));
+                this.targetSelector.add(3, new ActiveTargetGoal<>(this, HostileEntity.class, true));
+                this.targetSelector.add(4, new ActiveTargetGoal<>(this, LivingEntity.class, true,
+                        entity -> !(entity instanceof Entity103Tardis) && !(entity instanceof PlayerEntity)));
+                this.goalSelector.add(2, new TardisAttackGoal(this, 1.2));
             }
             case BRAVE -> {
                 this.targetSelector.add(1, new RevengeGoal(this, PlayerEntity.class));
                 this.targetSelector.add(2, new ActiveTargetGoal<>(this, HostileEntity.class, true));
-                this.goalSelector.add(2, new MeleeAttackGoal(this, 1.1, true));
+                this.goalSelector.add(2, new TardisAttackGoal(this, 1.1));
             }
             case DEFENSIVE -> {
                 this.targetSelector.add(1, new RevengeGoal(this, PlayerEntity.class));
-                this.targetSelector.add(2, new FleeEntityGoal<>(this, HostileEntity.class, 10.0f, 1.0, 1.2));
+                this.targetSelector.add(2, new ActiveTargetGoal<>(this, HostileEntity.class, true));
+                this.goalSelector.add(2, new TardisAttackGoal(this, 1.1));
             }
             case TIMID -> {
                 this.targetSelector.add(1, new RevengeGoal(this, PlayerEntity.class));
@@ -259,11 +263,80 @@ public class Entity103Tardis extends PathAwareEntity {
         }
     }
 
-    // ==================== Tick ====================
+    //攻击目标（近战 + 激光
+    private static class TardisAttackGoal extends Goal {
+        private final Entity103Tardis tardis;
+        private final double speed;
+        private LivingEntity target;
+        private int updateCountdownTicks;
+        private int meleeCooldown = 0; // 近战攻击冷却
+
+        public TardisAttackGoal(Entity103Tardis tardis, double speed) {
+            this.tardis = tardis;
+            this.speed = speed;
+        }
+
+        @Override
+        public boolean canStart() {
+            LivingEntity living = this.tardis.getTarget();
+            if (living == null || !living.isAlive()) return false;
+            this.target = living;
+            return true;
+        }
+
+        @Override
+        public boolean shouldContinue() {
+            return this.target != null && this.target.isAlive() && this.tardis.getTarget() == this.target;
+        }
+
+        @Override
+        public void stop() {
+            this.target = null;
+            this.updateCountdownTicks = 0;
+            this.meleeCooldown = 0;
+        }
+
+        @Override
+        public void tick() {
+            if (this.target == null) return;
+            this.tardis.getLookControl().lookAt(this.target, 30.0f, 30.0f);
+            double distanceSq = this.tardis.squaredDistanceTo(this.target);
+            double meleeRangeSq = 3.0 * 3.0;
+
+            this.updateCountdownTicks = Math.max(this.updateCountdownTicks - 1, 0);
+            if (this.updateCountdownTicks <= 0) {
+                this.tardis.getNavigation().startMovingTo(this.target, this.speed);
+                this.updateCountdownTicks = 10;
+            }
+
+            // 冷却递减
+            if (this.meleeCooldown > 0) {
+                this.meleeCooldown--;
+            }
+
+            if (distanceSq <= meleeRangeSq) {
+                // 近战攻击
+                if (this.meleeCooldown <= 0) {
+                    this.tardis.tryAttack(this.target);
+                    this.meleeCooldown = 20; // 1 秒冷却
+                }
+            } else if (this.tardis.rangedCooldown <= 0 && this.tardis.canSee(this.target)) {
+                // 远程激光攻击
+                this.tardis.rangedCooldown = 20;
+                this.tardis.retaliateEnergyBeam(this.target);
+            }
+        }
+    }
+
+    //Tick
     @Override
     public void tick() {
         super.tick();
         if (this.getWorld().isClient || !(this.getWorld() instanceof ServerWorld sw)) return;
+
+        if (this.rangedCooldown > 0) {
+            this.rangedCooldown--;
+        }
 
         long currentDay = sw.getTime() / 24000L;
         if (currentDay > lastTradeRefreshDay) {
@@ -285,16 +358,14 @@ public class Entity103Tardis extends PathAwareEntity {
         this.lastTradeRefreshDay = server.getOverworld().getTime() / 24000L;
     }
 
-    // ==================== 受伤与对话链（含 50% 伤害减免） ====================
+    //受伤与对话链
     @Override
     public boolean damage(DamageSource source, float amount) {
-        // 50% 伤害减免
         amount *= 0.5f;
 
         boolean damaged = super.damage(source, amount);
         if (!damaged || this.getWorld().isClient) return damaged;
 
-        // 只有真正受伤才记录时间（修复：避免无敌帧/虚假调用重置回血计时）
         lastDamageTime = this.getWorld().getTime();
 
         if (this.isDead() || this.getHealth() <= 0.0f) return damaged;
@@ -372,7 +443,7 @@ public class Entity103Tardis extends PathAwareEntity {
         player.sendMessage(Text.translatable(base + "." + random.nextInt(count), getTardisName()), false);
     }
 
-    // ==================== 反击执行 ====================
+    //反击执行
     private void executeRetaliation(LivingEntity attacker) {
         if (this.getWorld().isClient) return;
         RetaliateType chosen = weightedRandom(personalityConfig);
@@ -394,6 +465,7 @@ public class Entity103Tardis extends PathAwareEntity {
         }
     }
 
+    // 此方法现在可被主动攻击目标调用（内部类可访问私有方法）
     private void retaliateEnergyBeam(LivingEntity attacker) {
         float damage = (personality == Personality.AGGRESSIVE || personality == Personality.BRAVE) ? 6.0f : 3.0f;
         attacker.damage(this.getWorld().getDamageSources().magic(), damage);
@@ -406,7 +478,6 @@ public class Entity103Tardis extends PathAwareEntity {
             Vec3d end = attacker.getPos().add(0, attacker.getHeight() * 0.5, 0);
             Vec3d dir = end.subtract(start).normalize();
             double step = 0.5;
-            // 优化：减少粒子计算量，步长稍微加大但视觉效果不变
             for (int i = 0; i < 20; i++) {
                 Vec3d pos = start.add(dir.multiply(i * step));
                 sw.spawnParticles(ParticleTypes.END_ROD, pos.x, pos.y, pos.z, 1, 0.05, 0.05, 0.05, 0.01);
@@ -454,7 +525,7 @@ public class Entity103Tardis extends PathAwareEntity {
         }
     }
 
-    // ==================== 交互系统 ====================
+    //交互系统
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         if (this.getWorld().isClient) return ActionResult.SUCCESS;
@@ -480,7 +551,7 @@ public class Entity103Tardis extends PathAwareEntity {
         return ActionResult.SUCCESS;
     }
 
-    // ==================== 交易辅助方法 ====================
+    //交易辅助方法
     private void sendTradeList(ServerPlayerEntity player, String name) {
         if (dailyTrades.isEmpty()) {
             player.sendMessage(Text.translatable("doctor_m.dialog.common.trade.empty", name), false);
@@ -538,7 +609,7 @@ public class Entity103Tardis extends PathAwareEntity {
         }
     }
 
-    // ==================== 皮肤系统 ====================
+    //皮肤系统
     @Override
     protected void initDataTracker() {
         super.initDataTracker();
@@ -597,7 +668,6 @@ public class Entity103Tardis extends PathAwareEntity {
                     String nameWithoutExt = line.contains(".") ? line.substring(0, line.lastIndexOf('.')) : line;
                     displayName = nameWithoutExt;
                 }
-                // 性能优化：使用预编译 Pattern
                 textureName = SKIN_NAME_PATTERN.matcher(textureName.toLowerCase()).replaceAll("_");
                 if (!textureName.endsWith(".png")) textureName += ".png";
                 list.add(new SkinEntry(textureName, displayName, modelType));
@@ -628,7 +698,7 @@ public class Entity103Tardis extends PathAwareEntity {
         return name == null || name.isEmpty() ? "Type-103" : name;
     }
 
-    // ==================== 状态管理 ====================
+    //状态管理
     public void setState(AIState state) {
         if (!this.getWorld().isClient) {
             this.dataTracker.set(CURRENT_STATE, state.id);
@@ -643,7 +713,7 @@ public class Entity103Tardis extends PathAwareEntity {
         return personality;
     }
 
-    // ==================== NBT 序列化 ====================
+    //NBT
     @Override
     public void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
@@ -693,9 +763,14 @@ public class Entity103Tardis extends PathAwareEntity {
         if (nbt.contains("DailyTrades", 9)) {
             dailyTrades = TradeManager.readOffersFromNbt(nbt.getList("DailyTrades", 10));
         }
+
+        // 修复：重新初始化 AI，确保与加载后的性格匹配
+        this.goalSelector.clear(goal -> true);
+        this.targetSelector.clear(goal -> true);
+        this.initGoals();
     }
 
-    // ==================== 属性 ====================
+    //属性
     public static DefaultAttributeContainer.Builder createMobAttributes() {
         return PathAwareEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0)
@@ -704,7 +779,7 @@ public class Entity103Tardis extends PathAwareEntity {
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 24.0);
     }
 
-    // ==================== 辅助方法 ====================
+    //辅助方法
     private void spawnRetaliateParticles() {
         if (this.getWorld() instanceof ServerWorld sw) {
             sw.spawnParticles(ParticleTypes.PORTAL, this.getX(), this.getY() + 1, this.getZ(),
@@ -714,15 +789,12 @@ public class Entity103Tardis extends PathAwareEntity {
         }
     }
 
-    /** 优化：螺旋向外搜索，避免重复检查同一坐标 */
     private BlockPos findSafePos(ServerWorld world, int centerX, int centerY, int centerZ, int radius) {
         BlockPos.Mutable mutable = new BlockPos.Mutable();
-        // r = 0
         mutable.set(centerX, centerY, centerZ);
         if (isSafe(world, mutable)) return mutable.toImmutable();
 
         for (int r = 1; r <= radius; r++) {
-            // 四条边，避免重复检查角
             for (int dx = -r; dx <= r; dx++) {
                 mutable.set(centerX + dx, centerY, centerZ - r);
                 if (isSafe(world, mutable)) return mutable.toImmutable();
@@ -744,12 +816,10 @@ public class Entity103Tardis extends PathAwareEntity {
                 && world.getBlockState(pos.down()).isSolidBlock(world, pos.down());
     }
 
-    /** 优化：使用缓存的前缀和数组，O(log n) 甚至可改为 O(1)（如果用 alias method） */
     private RetaliateType weightedRandom(PersonalityConfig config) {
         int total = config.weightPrefixSum[config.weightPrefixSum.length - 1];
         if (total <= 0) return RetaliateType.MELEE;
         int roll = this.random.nextInt(total);
-        // 二分查找前缀和
         int lo = 0, hi = config.weightPrefixSum.length - 1;
         while (lo < hi) {
             int mid = (lo + hi) >>> 1;
