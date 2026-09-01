@@ -2,6 +2,8 @@ package doctor_m.client.gui;
 
 import doctor_m.Item.data_item.VortexManipulatorItem;
 import doctor_m.Item.items;
+import doctor_m.config.ConfigManager;
+import doctor_m.config.ModConfig;
 import doctor_m.network.VMNetwork;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -17,6 +19,8 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 public class VortexManipulatorScreen extends Screen {
+    private static final ModConfig CONFIG = ConfigManager.getConfig();
+
     private final PlayerEntity player;
     private TextFieldWidget xField, yField, zField;
 
@@ -41,7 +45,6 @@ public class VortexManipulatorScreen extends Screen {
         int centerX = this.width / 2;
         int centerY = this.height / 2;
 
-        // ===== 统一布局系统 =====
         int bgW = 340;
         int bgH = 185;
         int bgX = centerX - bgW / 2;
@@ -62,7 +65,6 @@ public class VortexManipulatorScreen extends Screen {
         int bottomBtnW = 140;
         int bottomLeftX = centerX - 145;
         int bottomRightX = centerX + 5;
-        // =======================
 
         ItemStack stack = getVMStack();
         if (stack.isEmpty()) {
@@ -141,7 +143,7 @@ public class VortexManipulatorScreen extends Screen {
             ClientPlayNetworking.send(VMNetwork.TELEPORT, buf);
             this.close();
         } catch (NumberFormatException e) {
-            // 可选：播放错误音效
+            // 忽略
         }
     }
 
@@ -155,7 +157,6 @@ public class VortexManipulatorScreen extends Screen {
         int centerX = this.width / 2;
         int centerY = this.height / 2;
 
-        // ===== 与 init() 完全一致的布局常量 =====
         int bgW = 340;
         int bgH = 185;
         int bgX = centerX - bgW / 2;
@@ -179,7 +180,6 @@ public class VortexManipulatorScreen extends Screen {
         int bottomBtnW = 140;
         int bottomLeftX = centerX - 145;
         int bottomRightX = centerX + 5;
-        // =======================================
 
         ItemStack stack = getVMStack();
         if (stack.isEmpty()) return;
@@ -189,18 +189,15 @@ public class VortexManipulatorScreen extends Screen {
         boolean broken = VortexManipulatorItem.isBroken(stack);
         String dimId = VortexManipulatorItem.getDestDim(stack);
 
-        // 背景框
         context.fill(bgX, bgY, bgR, bgB, 0xF0100010);
         context.fill(bgX, bgY, bgR, bgY + 1, 0x505000FF);
         context.fill(bgX, bgB - 1, bgR, bgB, 0x505000FF);
         context.fill(bgX, bgY, bgX + 1, bgB, 0x5028007F);
         context.fill(bgR - 1, bgY, bgR, bgB, 0x5028007F);
 
-        // 主标题
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, centerX, bgY + 8, 0xFFFFFF);
         context.fill(bgX + padding, bgY + 20, bgR - padding, bgY + 21, 0x505000FF);
 
-        // 维度区域
         context.drawCenteredTextWithShadow(this.textRenderer,
                 Text.translatable("gui.doctor_m.vm.dimension"),
                 rightX + rightWidth / 2, startY - 14, 0xAAAAAA);
@@ -211,7 +208,6 @@ public class VortexManipulatorScreen extends Screen {
         context.drawTextWithShadow(this.textRenderer, dimText,
                 dimAreaCenter - (dimTextWidth / 2), startY + 4, 0xFFFFFF);
 
-        // XYZ 标签（右对齐）
         String[] labelKeys = {
                 "gui.doctor_m.vm.label.z",
                 "gui.doctor_m.vm.label.y",
@@ -225,17 +221,16 @@ public class VortexManipulatorScreen extends Screen {
                     labelRightX - lw, ly, 0xAAAAAA);
         }
 
-        // 左右分栏竖线（缩短到横杠处，不再贯穿到底）
         int sepY = startY + 75;
         context.fill(dividerX, startY - 10, dividerX + 1, sepY, 0x20FFFFFF);
 
-        // 状态区背景条：收缩为与输入框同宽，两侧各留 4px 边距
         int statY = centerY + 28;
         int statLeft = leftX - 4;
         int statRight = leftX + fieldWidth + 4;
         context.fill(statLeft, statY - 2, statRight, statY + 22, 0x15FFFFFF);
 
-        Text fuelText = Text.translatable("gui.doctor_m.vm.fuel_label", fuel, VortexManipulatorItem.MAX_FUEL)
+        // 修改：使用 CONFIG.vortexManipulatorMaxFuel 替代 VortexManipulatorItem.MAX_FUEL
+        Text fuelText = Text.translatable("gui.doctor_m.vm.fuel_label", fuel, CONFIG.vortexManipulatorMaxFuel)
                 .formatted(fuel < 100 ? Formatting.RED : Formatting.GREEN);
         Text ohText = Text.translatable("gui.doctor_m.vm.heat_label", overheat)
                 .formatted(overheat > 80 ? Formatting.RED : Formatting.YELLOW);
@@ -243,7 +238,6 @@ public class VortexManipulatorScreen extends Screen {
         context.drawTextWithShadow(this.textRenderer, fuelText, leftX, statY, 0xFFFFFF);
         context.drawTextWithShadow(this.textRenderer, ohText, leftX, statY + 12, 0xFFFFFF);
 
-        // 状态与按钮分割线
         int bottomLineY = centerY + 56;
         context.fill(bottomLeftX, bottomLineY, bottomRightX + bottomBtnW, bottomLineY + 1, 0x30FFFFFF);
 
