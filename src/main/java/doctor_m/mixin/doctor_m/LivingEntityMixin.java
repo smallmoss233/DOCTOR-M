@@ -3,6 +3,8 @@ package doctor_m.mixin.doctor_m;
 import doctor_m.Item.data_item.ForceFieldShieldItem;
 import doctor_m.Item.stcs.STCSItem;
 import doctor_m.module.creativity.creativity_data.Tlipoca.TlipocaScytheItem;
+import doctor_m.config.ConfigManager;
+import doctor_m.config.ModConfig;
 import doctor_m.util.creativity.ScytheChargingManager;
 import doctor_m.util.creativity.ScytheSlashManager;
 import net.minecraft.entity.Entity;
@@ -27,14 +29,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {
 
+    private static final ModConfig CONFIG = ConfigManager.getConfig();
+
     private static final ThreadLocal<Boolean> TLIPOCA_AOE_LOCK = ThreadLocal.withInitial(() -> false);
-    private static final double TLIPOCA_AOE_RADIUS = 5.0;
     private static final ThreadLocal<Boolean> STCS_BLOCK_LOCK = ThreadLocal.withInitial(() -> false);
     private static final ThreadLocal<Boolean> STCS_AOE_LOCK = ThreadLocal.withInitial(() -> false);
-    private static final double STCS_AOE_RADIUS = 3.0;
 
     // ========== 力场盾==========
-    /** 只要正在举盾就生效（不需要有能量） */
     private static boolean isHoldingForceFieldShield(PlayerEntity player) {
         if (!player.isUsingItem()) return false;
         return player.getActiveItem().getItem() instanceof ForceFieldShieldItem;
@@ -46,7 +47,10 @@ public class LivingEntityMixin {
         if (!(self instanceof PlayerEntity player)) return;
         if (!isHoldingForceFieldShield(player)) return;
         if (ForceFieldShieldItem.isEnvironmentalOrSpecialDamage(source)) return;
-        cir.setReturnValue(false);
+
+        if (CONFIG.forceFieldBlockAllNonEnvironmental) {
+            cir.setReturnValue(false);
+        }
     }
 
     @ModifyVariable(method = "damage", at = @At("HEAD"), argsOnly = true)
@@ -55,16 +59,13 @@ public class LivingEntityMixin {
         if (!(self instanceof PlayerEntity player)) return amount;
         if (!isHoldingForceFieldShield(player)) return amount;
         if (ForceFieldShieldItem.isEnvironmentalOrSpecialDamage(source)) {
-            return amount * 0.1f;
+            return amount * (float) CONFIG.forceFieldEnvironmentalDamageMultiplier;
         }
         return amount;
     }
 
-    // ========== 特莉波卡镰刀 ===========
+    // ========== 特莉波卡镰刀 ==========
 
-    /**
-     * 镰刀蓄力期间完全无敌
-     */
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
     private void doctor_m$chargingInvulnerable(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         LivingEntity self = (LivingEntity) (Object) this;
@@ -78,9 +79,6 @@ public class LivingEntityMixin {
                 || player.getOffHandStack().getItem() instanceof TlipocaScytheItem;
     }
 
-    /**
-     * 处决斩杀：低血量（≤35%）或伤害溢出（amount ≥ health）直接 setHealth(0)
-     */
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
     private void doctor_m$tlipocaExecute(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (TLIPOCA_AOE_LOCK.get()) return;
@@ -88,18 +86,13 @@ public class LivingEntityMixin {
         if (!(source.getAttacker() instanceof PlayerEntity player)) return;
         if (!isHoldingTlipocaScythe(player)) return;
 
-        // amount 已经过 ModifyVariable 修改（倍率后）
         if (self.getHealth() <= self.getMaxHealth() * 0.35f || amount >= self.getHealth()) {
             self.setHealth(0);
-            // 提前 return 会导致 @At("RETURN") 不执行，手动补后效
             applyTlipocaPostEffects(self, player, amount, true);
             cir.setReturnValue(true);
         }
     }
 
-    /**
-     * 镰刀增伤：亡灵 ×5，其他 ×1.5
-     */
     @ModifyVariable(method = "damage", at = @At("HEAD"), argsOnly = true)
     private float doctor_m$tlipocaModifyDamage(float amount, DamageSource source) {
         if (TLIPOCA_AOE_LOCK.get()) return amount;
@@ -113,9 +106,6 @@ public class LivingEntityMixin {
         return amount * 1.5f;
     }
 
-    /**
-     * 命中后：普通命中走这里；处决在 tlipocaExecute 已处理，不会重复（目标已死）
-     */
     @Inject(method = "damage", at = @At("RETURN"))
     private void doctor_m$tlipocaPostDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (!cir.getReturnValue()) return;
@@ -124,33 +114,27 @@ public class LivingEntityMixin {
         if (!(source.getAttacker() instanceof PlayerEntity player)) return;
         if (!isHoldingTlipocaScythe(player)) return;
 
-        // 如果目标已死（伤害溢出），视为处决
         boolean isExecution = !self.isAlive();
         applyTlipocaPostEffects(self, player, amount, isExecution);
     }
 
-    /**
-     * 统一后效：吸血、饱食度、灵魂牵引、伤害共享、粒子
-     */
     private static void applyTlipocaPostEffects(LivingEntity victim, PlayerEntity player,
                                                 float amount, boolean isExecution) {
 
-        // 每次攻击都生成红色扇形轨迹
         if (player.getWorld() instanceof ServerWorld world) {
             ScytheSlashManager.spawnSlashArcParticles(world, player);
         }
 
-        // 恢复：处决 60%，普通 25%
-        float healRatio = isExecution ? 0.6f : 0.25f;
+        float healRatio = isExecution ? (float) CONFIG.tlipocaScytheExecuteHealRatio : (float) CONFIG.tlipocaScytheNormalHealRatio;
         float heal = amount * healRatio;
         player.heal(heal);
 
-        int food = Math.max(1, (int) heal);
-        player.getHungerManager().add(food, food * 0.5f);
+        int food = Math.max(CONFIG.tlipocaScytheFoodBase, (int) heal);
+        player.getHungerManager().add(food, food * (float) CONFIG.tlipocaScytheSaturationMultiplier);
 
         if (!(victim.getWorld() instanceof ServerWorld world)) return;
 
-        // 灵魂牵引：周围 3.5 格敌人拉向玩家
+        // 灵魂牵引
         Box pullBox = new Box(victim.getPos(), victim.getPos()).expand(3.5);
         Vec3d playerPos = player.getPos();
 
@@ -173,11 +157,12 @@ public class LivingEntityMixin {
             entity.velocityDirty = true;
         }
 
-        // 伤害共享 / AoE（5格圆形）
+        // AoE
         TLIPOCA_AOE_LOCK.set(true);
         try {
-            double radiusSq = TLIPOCA_AOE_RADIUS * TLIPOCA_AOE_RADIUS;
-            Box aoeBox = new Box(victim.getPos(), victim.getPos()).expand(TLIPOCA_AOE_RADIUS);
+            double radius = CONFIG.tlipocaScytheAoeRadius;
+            double radiusSq = radius * radius;
+            Box aoeBox = new Box(victim.getPos(), victim.getPos()).expand(radius);
 
             for (Entity entity : world.getOtherEntities(victim, aoeBox)) {
                 if (entity == player) continue;
@@ -185,11 +170,13 @@ public class LivingEntityMixin {
                 if (entity.squaredDistanceTo(victim) > radiusSq) continue;
 
                 if (isExecution) {
-                    // 处决：强制扣血（无视护甲、抗性、限伤）
-                    float newHealth = living.getHealth() - amount;
-                    living.setHealth(Math.max(0.0f, newHealth));
+                    if (CONFIG.tlipocaScytheExecuteAoEDamageIgnoresArmor) {
+                        float newHealth = living.getHealth() - amount;
+                        living.setHealth(Math.max(0.0f, newHealth));
+                    } else {
+                        living.damage(victim.getDamageSources().generic(), amount);
+                    }
                 } else {
-                    // 普通：可被减免
                     living.damage(victim.getDamageSources().generic(), amount);
                 }
             }
@@ -197,12 +184,10 @@ public class LivingEntityMixin {
             TLIPOCA_AOE_LOCK.set(false);
         }
 
-        // 命中粒子
         world.spawnParticles(ParticleTypes.DAMAGE_INDICATOR,
                 victim.getX(), victim.getY() + victim.getHeight() * 0.6, victim.getZ(),
                 5, 0.3, 0.2, 0.3, 0.0);
 
-        // 处决额外灵魂特效
         if (isExecution) {
             world.spawnParticles(ParticleTypes.SOUL,
                     victim.getX(), victim.getY() + victim.getHeight() * 0.5, victim.getZ(),
@@ -213,7 +198,7 @@ public class LivingEntityMixin {
         }
     }
 
-    // ========== STCS 剑封锁（潜行触发 + 动态能耗 + 武器差异化） ==========
+    // ========== STCS 剑封锁 ==========
 
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
     private void doctor_m$stcsBlock(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
@@ -241,25 +226,21 @@ public class LivingEntityMixin {
 
         if (stcsItem == null || stcsStack == null) return;
 
-        // ---------- 特殊伤害源过滤 ----------
         if (source.isOf(net.minecraft.entity.damage.DamageTypes.GENERIC_KILL) ||
                 source.isOf(net.minecraft.entity.damage.DamageTypes.OUT_OF_WORLD) ||
                 source.isIn(net.minecraft.registry.tag.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             return;
         }
 
-        // ---------- 动态能耗计算（调用武器自己的系数） ----------
         float costPerDamage = stcsItem.getEnergyCostPerDamage();
         int energyCost = (int) Math.ceil(amount * costPerDamage);
-        energyCost = Math.max(1, energyCost); // 至少消耗 1 点
+        energyCost = Math.max(CONFIG.stcsMinEnergyCost, energyCost);
 
         int energy = stcsItem.getEnergy(stcsStack);
-        if (energy < energyCost) return; // 能量不足，不格挡
+        if (energy < energyCost) return;
 
-        // ---------- 扣除能量 ----------
         stcsItem.addEnergy(stcsStack, -energyCost);
 
-        // ---------- 计算减伤 ----------
         float reduction = stcsItem.isCoreActive(stcsStack) ? 1.0f : stcsItem.getBlockDamageReduction();
         reduction = Math.max(0f, Math.min(1f, reduction));
 
@@ -267,13 +248,11 @@ public class LivingEntityMixin {
             spawnStcsBlockEffect(player);
         }
 
-        // ---------- 完全免疫 ----------
         if (reduction >= 1.0f) {
             cir.setReturnValue(false);
             return;
         }
 
-        // ---------- 部分减伤 ----------
         float newAmount = amount * (1.0f - reduction);
         if (newAmount <= 0.01f) {
             cir.setReturnValue(false);
@@ -306,26 +285,20 @@ public class LivingEntityMixin {
 
     // ========== STCS 范围伤害共享（AoE） ==========
 
-    /**
-     * 判断玩家是否持有 STCS 武器（主手或副手）
-     */
     private static boolean isHoldingSTCS(PlayerEntity player) {
         return player.getMainHandStack().getItem() instanceof STCSItem
                 || player.getOffHandStack().getItem() instanceof STCSItem;
     }
 
-    /**
-     * STCS 专属 AoE 伤害（普通伤害，可被减免，无强制扣血）
-     */
     private static void applyStcsAoE(LivingEntity victim, LivingEntity attacker, float amount) {
-        // 防止递归触发（如 AoE 伤害再次触发本方法）
         if (STCS_AOE_LOCK.get()) return;
         if (!(victim.getWorld() instanceof ServerWorld world)) return;
 
         STCS_AOE_LOCK.set(true);
         try {
-            double radiusSq = STCS_AOE_RADIUS * STCS_AOE_RADIUS;
-            Box aoeBox = new Box(victim.getPos(), victim.getPos()).expand(STCS_AOE_RADIUS);
+            double radius = CONFIG.stcsAoeRadius;
+            double radiusSq = radius * radius;
+            Box aoeBox = new Box(victim.getPos(), victim.getPos()).expand(radius);
 
             for (Entity entity : world.getOtherEntities(victim, aoeBox)) {
                 if (entity == attacker) continue;
@@ -343,9 +316,6 @@ public class LivingEntityMixin {
         }
     }
 
-    /**
-     * 当 STCS 成功造成伤害后，触发范围 AoE
-     */
     @Inject(method = "damage", at = @At("RETURN"))
     private void doctor_m$stcsAoE(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (!cir.getReturnValue()) return;

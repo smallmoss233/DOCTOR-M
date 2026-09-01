@@ -2,6 +2,8 @@ package doctor_m.Item.data_item;
 
 import dev.amble.ait.core.item.ArtronCollectorItem;
 import doctor_m.Item.items;
+import doctor_m.config.ConfigManager;
+import doctor_m.config.ModConfig;
 import doctor_m.util.VMClientScreenOpener;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import net.fabricmc.api.EnvType;
@@ -27,6 +29,8 @@ import java.util.List;
 
 public class VortexManipulatorItem extends Item {
 
+    private static final ModConfig CONFIG = ConfigManager.getConfig();
+
     // ========== NBT Keys ==========
     public static final String DEST_X = "DestX";
     public static final String DEST_Y = "DestY";
@@ -43,11 +47,6 @@ public class VortexManipulatorItem extends Item {
     public static final String COOLDOWN_END_SYS = "CooldownEndSys";
 
     // ========== Constants ==========
-    public static final int MAX_FUEL = 1500;
-    public static final int MAX_OVERHEAT = 100;
-    public static final int COOLDOWN_TICKS = 60 * 20;
-    public static final long BROKEN_COOLDOWN_TICKS = 3L * 24000L;
-
     public static final int COLOR_FUEL = 0xFFD700;
     public static final int COLOR_COOLDOWN = 0xFF3333;
     public static final int COLOR_BROKEN = 0xAA0000;
@@ -65,7 +64,7 @@ public class VortexManipulatorItem extends Item {
     @Override
     public int getItemBarStep(ItemStack stack) {
         if (getBrokenUntil(stack) > 0) return 13;
-        return Math.round(13f * getFuel(stack) / MAX_FUEL);
+        return Math.round(13f * getFuel(stack) / CONFIG.vortexManipulatorMaxFuel);
     }
 
     @Override
@@ -91,13 +90,12 @@ public class VortexManipulatorItem extends Item {
         int overheat = getOverheat(stack);
         long brokenUntil = getBrokenUntil(stack);
 
-        tooltip.add(Text.translatable("tooltip.doctor_m.vm.fuel", fuel, MAX_FUEL)
+        tooltip.add(Text.translatable("tooltip.doctor_m.vm.fuel", fuel, CONFIG.vortexManipulatorMaxFuel)
                 .formatted(fuel < 100 ? Formatting.RED : Formatting.GOLD));
 
         tooltip.add(Text.translatable("tooltip.doctor_m.vm.heat", overheat)
                 .formatted(overheat > 80 ? Formatting.DARK_RED : Formatting.YELLOW));
 
-        // 客户端冷却显示（基于真实时间，不受维度影响）
         if (isOnCooldownSys(stack) && brokenUntil == 0) {
             long remainingMs = getCooldownEndSys(stack) - System.currentTimeMillis();
             int sec = Math.max(0, (int) (remainingMs / 1000));
@@ -126,12 +124,10 @@ public class VortexManipulatorItem extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
 
-        // 服务端：自动修复检测（统一使用 Overworld 时间）
         if (!world.isClient()) {
             tryAutoRepair(stack, world);
         }
 
-        // 潜行主手：尝试加载路径点 / 充电
         if (!world.isClient() && player.isSneaking() && hand == Hand.MAIN_HAND) {
             ItemStack offhand = player.getOffHandStack();
             if (tryLoadWaypoint(player, stack, offhand)) {
@@ -142,7 +138,6 @@ public class VortexManipulatorItem extends Item {
             }
         }
 
-        // 目的地为空时自动保存当前位置
         if (!world.isClient() && getDestDim(stack).isEmpty()) {
             saveCurrentAsDest(player, stack);
         }
@@ -157,14 +152,17 @@ public class VortexManipulatorItem extends Item {
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if (world.isClient || !(entity instanceof ServerPlayerEntity player)) return;
-        if (getBrokenUntil(stack) != 0) return; // 已损坏不散热
+        if (getBrokenUntil(stack) != 0) return;
 
         long time = getOverworldTime(world);
-        if (time % 80 != 0) return; // 每秒执行一次
+        int interval = CONFIG.vortexManipulatorCoolingIntervalTicks;
+        if (interval <= 0) return;
+        if (time % interval != 0) return;
 
         int overheat = getOverheat(stack);
         if (overheat > 0) {
-            setOverheat(stack, overheat - 1);
+            int decrease = CONFIG.vortexManipulatorCoolingPerInterval;
+            setOverheat(stack, Math.max(0, overheat - decrease));
         }
     }
 
@@ -195,7 +193,8 @@ public class VortexManipulatorItem extends Item {
 
     private static TypedActionResult<ItemStack> chargeFromCollector(PlayerEntity player, ItemStack vmStack, ItemStack collectorStack) {
         int vmFuel = getFuel(vmStack);
-        if (vmFuel >= MAX_FUEL) {
+        int maxFuel = CONFIG.vortexManipulatorMaxFuel;
+        if (vmFuel >= maxFuel) {
             player.sendMessage(Text.translatable("message.doctor_m.vm.fully_charged")
                     .formatted(Formatting.YELLOW), true);
             return TypedActionResult.fail(vmStack);
@@ -208,14 +207,14 @@ public class VortexManipulatorItem extends Item {
             return TypedActionResult.fail(vmStack);
         }
 
-        int space = MAX_FUEL - vmFuel;
+        int space = maxFuel - vmFuel;
         int transfer = (int) Math.min(cellFuel, space);
 
         setFuel(vmStack, vmFuel + transfer);
         NbtCompound nbt = collectorStack.getOrCreateNbt();
         nbt.putDouble(ArtronCollectorItem.AU_LEVEL, cellFuel - transfer);
 
-        player.sendMessage(Text.translatable("message.doctor_m.vm.charged", transfer, getFuel(vmStack), MAX_FUEL)
+        player.sendMessage(Text.translatable("message.doctor_m.vm.charged", transfer, getFuel(vmStack), maxFuel)
                 .formatted(Formatting.GREEN), true);
         return TypedActionResult.success(vmStack);
     }
@@ -238,15 +237,13 @@ public class VortexManipulatorItem extends Item {
 
     // ========== Time Utilities ==========
 
-    /** 获取 Overworld 时间，作为跨维度统一时间基准 */
     public static long getOverworldTime(World world) {
         if (world instanceof net.minecraft.server.world.ServerWorld sw && sw.getServer() != null) {
             return sw.getServer().getOverworld().getTime();
         }
-        return world.getTime(); // fallback
+        return world.getTime();
     }
 
-    /** 尝试自动修复（损坏时间到期） */
     public static void tryAutoRepair(ItemStack stack, World world) {
         long brokenUntil = getBrokenUntil(stack);
         if (brokenUntil == 0) return;
@@ -257,7 +254,7 @@ public class VortexManipulatorItem extends Item {
         }
     }
 
-    // ========== NBT Accessors（只读用 getNbt，避免空 Tag 污染） ==========
+    // ========== NBT Accessors ==========
 
     public static double getDestX(ItemStack stack) {
         NbtCompound nbt = stack.getNbt();
@@ -328,7 +325,7 @@ public class VortexManipulatorItem extends Item {
         return nbt != null ? nbt.getInt(FUEL) : 0;
     }
     public static void setFuel(ItemStack stack, int v) {
-        stack.getOrCreateNbt().putInt(FUEL, Math.min(v, MAX_FUEL));
+        stack.getOrCreateNbt().putInt(FUEL, Math.min(v, CONFIG.vortexManipulatorMaxFuel));
     }
 
     public static int getOverheat(ItemStack stack) {
@@ -336,7 +333,7 @@ public class VortexManipulatorItem extends Item {
         return nbt != null ? nbt.getInt(OVERHEAT) : 0;
     }
     public static void setOverheat(ItemStack stack, int v) {
-        stack.getOrCreateNbt().putInt(OVERHEAT, Math.min(v, MAX_OVERHEAT));
+        stack.getOrCreateNbt().putInt(OVERHEAT, Math.min(v, CONFIG.vortexManipulatorMaxOverheat));
     }
 
     public static long getLastUsed(ItemStack stack) {
@@ -365,34 +362,28 @@ public class VortexManipulatorItem extends Item {
 
     // ========== Derived State ==========
 
-    /** 客户端专用：基于真实时间的冷却显示 */
     public static boolean isOnCooldownSys(ItemStack stack) {
         return getCooldownEndSys(stack) > System.currentTimeMillis();
     }
 
-    /** 服务端权威：基于 Overworld tick 的冷却判定 */
     public static boolean isOnCooldown(ItemStack stack, long overworldTime) {
-        return overworldTime - getLastUsed(stack) < COOLDOWN_TICKS;
+        return overworldTime - getLastUsed(stack) < CONFIG.vortexManipulatorCooldownTicks;
     }
 
     public static int getCooldownRemaining(ItemStack stack, long overworldTime) {
-        return (int) Math.max(0, (COOLDOWN_TICKS - (overworldTime - getLastUsed(stack))) / 20);
+        return (int) Math.max(0, (CONFIG.vortexManipulatorCooldownTicks - (overworldTime - getLastUsed(stack))) / 20);
     }
 
     public static boolean isBroken(ItemStack stack) {
-        return getOverheat(stack) >= MAX_OVERHEAT;
+        return getOverheat(stack) >= CONFIG.vortexManipulatorMaxOverheat;
     }
 
     public static int calcFuelCost(double dist) {
-        // 基础5 + 线性增长(每50格1点) + 二次项(每1000万格² 1点)
-        // 短距离便宜，长距离急剧上升
         double base = 5.0 + dist / 50.0 + (dist * dist) / 10_000_000.0;
         return (int) Math.ceil(base);
     }
 
     public static int calcOverheat(double dist) {
-        // 线性项极缓(每800格1点) + 二次项主导(每400万格² 1点)
-        // 短距离几乎不涨，长距离过热爆炸，形成软天花板
         double base = dist / 800.0 + (dist * dist) / 4_000_000.0;
         return (int) Math.ceil(base);
     }

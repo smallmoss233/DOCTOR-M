@@ -20,6 +20,8 @@ import dev.amble.ait.data.properties.Value;
 import dev.amble.ait.data.schema.desktop.TardisDesktopSchema;
 import dev.amble.ait.data.schema.exterior.ExteriorVariantSchema;
 import dev.amble.lib.data.CachedDirectedGlobalPos;
+import doctor_m.config.ConfigManager;
+import doctor_m.config.ModConfig;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import doctor_m.util.tooltip.TooltipHelper;
 import net.minecraft.block.BlockState;
@@ -62,7 +64,7 @@ import java.util.UUID;
 public class ToymakerHammerItem extends Item {
 
     private static final int MIN_CHARGE_TICKS = 40;
-    private static final int COPY_CHUNK_RADIUS = 20; // 320 格范围
+    private static final ModConfig CONFIG = ConfigManager.getConfig();
 
     public ToymakerHammerItem(Settings settings) {
         super(settings.maxCount(1));
@@ -101,8 +103,9 @@ public class ToymakerHammerItem extends Item {
         int chargeTicks = this.getMaxUseTime(stack) - remainingUseTicks;
         if (chargeTicks < MIN_CHARGE_TICKS) return;
 
+        double reachDist = CONFIG.toymakerHammerReachDistance;
         Vec3d eyePos = player.getEyePos();
-        Vec3d reachPos = eyePos.add(player.getRotationVec(1.0F).multiply(5.0));
+        Vec3d reachPos = eyePos.add(player.getRotationVec(1.0F).multiply(reachDist));
         BlockHitResult hit = world.raycast(new RaycastContext(
                 eyePos, reachPos,
                 RaycastContext.ShapeType.OUTLINE,
@@ -127,9 +130,10 @@ public class ToymakerHammerItem extends Item {
         if (horizontalLook.lengthSquared() < 0.01) horizontalLook = new Vec3d(0, 0, -1);
         horizontalLook = horizontalLook.normalize();
 
+        int offsetBlocks = CONFIG.toymakerHammerSpawnOffsetBlocks;
         BlockPos spawnPos = targetPos.add(
-                (int) Math.round(horizontalLook.x * 2), 0,
-                (int) Math.round(horizontalLook.z * 2)
+                (int) Math.round(horizontalLook.x * offsetBlocks), 0,
+                (int) Math.round(horizontalLook.z * offsetBlocks)
         );
         byte sourceRotation = (byte) (int) world.getBlockState(targetPos).get(ExteriorBlock.ROTATION);
 
@@ -161,7 +165,6 @@ public class ToymakerHammerItem extends Item {
             if (exteriorVariant != null) builder.exterior(exteriorVariant);
 
             builder.<StatsHandler>with(TardisComponent.Id.STATS, stats -> copyStatsHandler(source, stats));
-
             builder.<LoyaltyHandler>with(TardisComponent.Id.LOYALTY, loyalty -> copyLoyaltyHandler(source, loyalty));
 
             ServerTardis clone = ServerTardisManager.getInstance().create(builder);
@@ -305,12 +308,10 @@ public class ToymakerHammerItem extends Item {
             }
 
             if (srcBase instanceof ProgressiveTravelHandler srcProg && dstBase instanceof ProgressiveTravelHandler dstProg) {
-
                 Field capField = findField(ProgressiveTravelHandler.class, "missedHardCap");
                 if (capField != null) {
                     capField.setAccessible(true);
                     int srcCap = capField.getInt(srcProg);
-
                     capField.setInt(dstProg, Math.max(srcCap, 1));
                 }
 
@@ -427,8 +428,13 @@ public class ToymakerHammerItem extends Item {
         int copiedBlockEntities = 0;
         int copiedEntities = 0;
 
-        for (int cx = -COPY_CHUNK_RADIUS; cx <= COPY_CHUNK_RADIUS; cx++) {
-            for (int cz = -COPY_CHUNK_RADIUS; cz <= COPY_CHUNK_RADIUS; cz++) {
+        int chunkRadius = CONFIG.toymakerHammerCopyChunkRadius;
+        boolean copyBlockEntities = CONFIG.toymakerHammerCopyBlockEntities;
+        boolean copyEntities = CONFIG.toymakerHammerCopyEntities;
+        int blockUpdateFlags = CONFIG.toymakerHammerBlockUpdateFlags;
+
+        for (int cx = -chunkRadius; cx <= chunkRadius; cx++) {
+            for (int cz = -chunkRadius; cz <= chunkRadius; cz++) {
                 Chunk srcChunkRaw;
                 try {
                     srcChunkRaw = srcWorld.getChunk(cx, cz);
@@ -469,19 +475,21 @@ public class ToymakerHammerItem extends Item {
                                 if (state.getBlock() instanceof ExteriorBlock) continue;
 
                                 BlockPos pos = new BlockPos(baseX + x, sectionBaseY + y, baseZ + z);
-                                dstWorld.setBlockState(pos, state, 2 | 16);
+                                dstWorld.setBlockState(pos, state, blockUpdateFlags);
 
-                                BlockEntity srcBe = srcWorld.getBlockEntity(pos);
-                                if (srcBe != null) {
-                                    NbtCompound nbt = srcBe.createNbtWithIdentifyingData();
-                                    replaceUuidDeep(nbt, source.getUuid(), clone.getUuid());
+                                if (copyBlockEntities) {
+                                    BlockEntity srcBe = srcWorld.getBlockEntity(pos);
+                                    if (srcBe != null) {
+                                        NbtCompound nbt = srcBe.createNbtWithIdentifyingData();
+                                        replaceUuidDeep(nbt, source.getUuid(), clone.getUuid());
 
-                                    BlockEntity dstBe = dstWorld.getBlockEntity(pos);
-                                    if (dstBe != null) {
-                                        dstBe.readNbt(nbt);
-                                        dstBe.markDirty();
+                                        BlockEntity dstBe = dstWorld.getBlockEntity(pos);
+                                        if (dstBe != null) {
+                                            dstBe.readNbt(nbt);
+                                            dstBe.markDirty();
+                                        }
+                                        copiedBlockEntities++;
                                     }
-                                    copiedBlockEntities++;
                                 }
                                 copiedBlocks++;
                             }
@@ -491,34 +499,37 @@ public class ToymakerHammerItem extends Item {
             }
         }
 
-        Box searchBox = new Box(
-                -384, dstWorld.getBottomY(), -384,
-                384, dstWorld.getTopY(), 384
-        );
+        if (copyEntities) {
+            int searchRadius = chunkRadius * 16;
+            Box searchBox = new Box(
+                    -searchRadius, dstWorld.getBottomY(), -searchRadius,
+                    searchRadius, dstWorld.getTopY(), searchRadius
+            );
 
-        for (Entity entity : srcWorld.getEntitiesByClass(Entity.class, searchBox,
-                e -> !(e instanceof PlayerEntity))) {
-            try {
-                NbtCompound nbt = new NbtCompound();
-                if (!entity.saveNbt(nbt)) continue;
+            for (Entity entity : srcWorld.getEntitiesByClass(Entity.class, searchBox,
+                    e -> !(e instanceof PlayerEntity))) {
+                try {
+                    NbtCompound nbt = new NbtCompound();
+                    if (!entity.saveNbt(nbt)) continue;
 
-                replaceUuidDeep(nbt, source.getUuid(), clone.getUuid());
-                nbt.remove("UUID");
-                nbt.remove("Pos");
+                    replaceUuidDeep(nbt, source.getUuid(), clone.getUuid());
+                    nbt.remove("UUID");
+                    nbt.remove("Pos");
 
-                Entity newEntity = entity.getType().create(dstWorld);
-                if (newEntity == null) continue;
+                    Entity newEntity = entity.getType().create(dstWorld);
+                    if (newEntity == null) continue;
 
-                newEntity.readNbt(nbt);
-                newEntity.setUuid(UUID.randomUUID());
-                newEntity.refreshPositionAndAngles(
-                        entity.getX(), entity.getY(), entity.getZ(),
-                        entity.getYaw(), entity.getPitch()
-                );
-                dstWorld.spawnEntity(newEntity);
-                copiedEntities++;
-            } catch (Exception e) {
-                AITMod.LOGGER.warn("[DOCTOR-M] Failed to copy entity {}: {}", entity.getType(), e.getMessage());
+                    newEntity.readNbt(nbt);
+                    newEntity.setUuid(UUID.randomUUID());
+                    newEntity.refreshPositionAndAngles(
+                            entity.getX(), entity.getY(), entity.getZ(),
+                            entity.getYaw(), entity.getPitch()
+                    );
+                    dstWorld.spawnEntity(newEntity);
+                    copiedEntities++;
+                } catch (Exception e) {
+                    AITMod.LOGGER.warn("[DOCTOR-M] Failed to copy entity {}: {}", entity.getType(), e.getMessage());
+                }
             }
         }
 

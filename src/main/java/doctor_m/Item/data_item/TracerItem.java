@@ -1,6 +1,8 @@
 package doctor_m.Item.data_item;
 
 import doctor_m.Item.KeytoTime;
+import doctor_m.config.ConfigManager;
+import doctor_m.config.ModConfig;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
@@ -28,10 +30,7 @@ import java.util.List;
 
 public class TracerItem extends Item {
 
-    private static final double SCAN_RANGE = 45;
-    private static final int CONTAINER_SCAN_RANGE = 45;
-    private static final double SCAN_RANGE_SQ = SCAN_RANGE * SCAN_RANGE;
-
+    private static final ModConfig CONFIG = ConfigManager.getConfig();
     private int tickCooldown = 0;
 
     public TracerItem(Settings settings) {
@@ -50,9 +49,12 @@ public class TracerItem extends Item {
 
         if (tickCooldown-- > 0) return;
 
+        double scanRange = CONFIG.tracerScanRange;
+        double scanRangeSq = scanRange * scanRange;
+
         Vec3d eye = player.getEyePos();
-        double nearestSq = SCAN_RANGE_SQ + 1;
-        Box box = new Box(eye, eye).expand(SCAN_RANGE);
+        double nearestSq = scanRangeSq + 1;
+        Box box = new Box(eye, eye).expand(scanRange);
 
         // 扫描掉落物
         for (ItemEntity itemEntity : world.getEntitiesByClass(
@@ -62,7 +64,7 @@ public class TracerItem extends Item {
             if (d < nearestSq) nearestSq = d;
         }
 
-        // 扫描物品展示框（含荧光展示框）
+        // 扫描物品展示框
         for (ItemFrameEntity frame : world.getEntitiesByClass(
                 ItemFrameEntity.class, box,
                 e -> e.getHeldItemStack().getItem() instanceof KeytoTime)) {
@@ -70,7 +72,7 @@ public class TracerItem extends Item {
             if (d < nearestSq) nearestSq = d;
         }
 
-        // 扫描生物携带（主副手 + 物品栏）
+        // 扫描生物携带
         for (LivingEntity living : world.getEntitiesByClass(
                 LivingEntity.class, box,
                 e -> {
@@ -86,13 +88,13 @@ public class TracerItem extends Item {
             if (d < nearestSq) nearestSq = d;
         }
 
-        if (nearestSq > SCAN_RANGE_SQ) {
+        if (nearestSq > scanRangeSq) {
             tickCooldown = 30;
             return;
         }
 
         double dist = Math.sqrt(nearestSq);
-        double ratio = dist / SCAN_RANGE;
+        double ratio = dist / scanRange;
 
         tickCooldown = (int) (3 + ratio * 20);
         float volume = 1.0f - (float) (ratio * 0.7f);
@@ -121,6 +123,9 @@ public class TracerItem extends Item {
             return TypedActionResult.success(stack);
         }
 
+        double scanRange = CONFIG.tracerScanRange;
+        int containerScanRange = CONFIG.tracerContainerScanRange;
+
         Vec3d playerPos = user.getPos();
         double nearestSq = Double.MAX_VALUE;
         boolean found = false;
@@ -128,7 +133,7 @@ public class TracerItem extends Item {
         boolean inFrame = false;
         boolean inEntity = false;
 
-        Box entityBox = new Box(playerPos, playerPos).expand(SCAN_RANGE);
+        Box entityBox = new Box(playerPos, playerPos).expand(scanRange);
 
         // 1. 扫描掉落物
         for (ItemEntity itemEntity : world.getEntitiesByClass(
@@ -144,7 +149,7 @@ public class TracerItem extends Item {
             }
         }
 
-        // 2. 扫描物品展示框（含荧光展示框）
+        // 2. 扫描物品展示框
         for (ItemFrameEntity frame : world.getEntitiesByClass(
                 ItemFrameEntity.class, entityBox,
                 e -> e.getHeldItemStack().getItem() instanceof KeytoTime)) {
@@ -158,7 +163,7 @@ public class TracerItem extends Item {
             }
         }
 
-        // 3. 扫描生物携带（主副手 + 物品栏）
+        // 3. 扫描生物携带
         for (LivingEntity living : world.getEntitiesByClass(
                 LivingEntity.class, entityBox,
                 e -> {
@@ -183,8 +188,8 @@ public class TracerItem extends Item {
         // 4. 扫描容器
         BlockPos center = user.getBlockPos();
         for (BlockPos pos : BlockPos.iterate(
-                center.add(-CONTAINER_SCAN_RANGE, -CONTAINER_SCAN_RANGE, -CONTAINER_SCAN_RANGE),
-                center.add(CONTAINER_SCAN_RANGE, CONTAINER_SCAN_RANGE, CONTAINER_SCAN_RANGE))) {
+                center.add(-containerScanRange, -containerScanRange, -containerScanRange),
+                center.add(containerScanRange, containerScanRange, containerScanRange))) {
 
             BlockEntity be = world.getBlockEntity(pos);
             if (!(be instanceof Inventory inv)) continue;

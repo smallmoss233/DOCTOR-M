@@ -17,6 +17,8 @@ public class ModConfig {
     public double forceFieldReleaseStrength = 1.2;      // 关闭时水平弹开力度
     public double forceFieldReleaseUpward = 0.4;        // 关闭时向上击飞力度
     public int forceFieldCooldownTicks = 40;            // 主动关闭后冷却时间（tick，40=2秒）
+    public double forceFieldEnvironmentalDamageMultiplier = 0.1; // 环境伤害减免比例（保留10%）
+    public boolean forceFieldBlockAllNonEnvironmental = true;     // 是否完全格挡非环境伤害
 
     //护盾生成器
     public int shieldMaxEnergy = 1000;              // 护盾能量总容量
@@ -38,6 +40,16 @@ public class ModConfig {
     public static final double tlipocaScytheMultiplier = 1.0;//扣血倍率
     public static final double tlipocaScytheExtra = 25.0;//最低扣血量（百分比）
     public float slashDamage = 500.0f;               // 右键伤害值
+    public double tlipocaScytheAoeRadius = 5.0;                  // 伤害共享/AoE 半径
+    public int tlipocaScytheFoodBase = 1;                        // 饥饿回复基础值
+    public double tlipocaScytheSaturationMultiplier = 0.5;       // 饱和度系数
+    public double tlipocaScytheExecuteHealRatio = 0.6;           // 处决吸血比例
+    public double tlipocaScytheNormalHealRatio = 0.25;           // 普通吸血比例
+    public boolean tlipocaScytheExecuteAoEDamageIgnoresArmor = true; // 处决 AoE 是否无视护甲/减伤
+
+    //STCS
+    public int stcsMinEnergyCost = 1;                            // 格挡最低能量消耗
+    public double stcsAoeRadius = 3.0;                           // STCS 范围伤害半径
 
     //塔迪斯自毁
     public boolean enableSelfDestructEnhancement = true;  // 总开关
@@ -68,7 +80,27 @@ public class ModConfig {
     public int oxygenatorCacheExpireTicks = 100;      // 缓存过期（5秒）
     public int oxygenatorMinAirBlocks = 10;           // 最小有效房间大小
 
-    // 真空进食
+    //真空进食
     public double vacuumEatingOxygenCost = 100.0;         // 真空环境吃一次食物扣多少氧
     public int vacuumEatingPendingTimeoutSeconds = 10;    // 进食 pending 超时（秒）
+
+    //玩具匠的锤子
+    public int toymakerHammerCopyChunkRadius = 20;
+    public int toymakerHammerSpawnOffsetBlocks = 2;
+    public double toymakerHammerReachDistance = 5.0;
+    public int toymakerHammerBlockUpdateFlags = 2 | 16;
+    public boolean toymakerHammerCopyEntities = true;
+    public boolean toymakerHammerCopyBlockEntities = true;
+
+    //追踪器
+    public double tracerScanRange = 45.0;      // 手持自动扫描半径（格）
+    public int tracerContainerScanRange = 45; // 右键扫描容器半径（格）
+
+    //涡旋操纵器
+    public int vortexManipulatorMaxFuel = 1500;                // 最大燃料
+    public int vortexManipulatorMaxOverheat = 100;             // 最大过热
+    public int vortexManipulatorCooldownTicks = 1200;          // 普通冷却（tick，1200=60秒）
+    public long vortexManipulatorBrokenCooldownTicks = 72000L; // 损坏恢复时间（3游戏日）
+    public int vortexManipulatorCoolingIntervalTicks = 80;     // 散热间隔（tick）
+    public int vortexManipulatorCoolingPerInterval = 1;        // 每次散热减少的过热量
 }
