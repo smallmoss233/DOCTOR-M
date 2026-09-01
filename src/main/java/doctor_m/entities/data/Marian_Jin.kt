@@ -96,7 +96,7 @@ class Marian_Jin(entityType: EntityType<out PathAwareEntity>, world: World) : Pa
     override fun initGoals() {
         super.initGoals()
         goalSelector.add(0, SwimGoal(this))
-        goalSelector.add(1, FleeEntityGoal(this, HostileEntity::class.java, 10.0f, 0.8, 0.4))
+        goalSelector.add(1, FleeEntityGoal(this, HostileEntity::class.java, 10.0f, 0.4, 0.8))
         goalSelector.add(2, LookAtEntityGoal(this, PlayerEntity::class.java, 12.0f))
         goalSelector.add(3, LookAroundGoal(this))
         goalSelector.add(4, WanderAroundGoal(this, 0.25))
