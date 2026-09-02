@@ -1,5 +1,4 @@
-
-![DOCTOR M](https://cdn.modrinth.com/data/cached_images/94a6627c21fea9704a8c3a218f5168e2ccb10016.png)
+![DOCTOR M](https://cdn.modrinth.com/data/cached_images/9b6819507534acb76a4639d0b47aa7bc3e9f161b.png)
 
 ---
 ## **Introduction**
