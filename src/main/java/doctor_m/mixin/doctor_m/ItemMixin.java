@@ -67,6 +67,12 @@ public class ItemMixin {
         else if (item == items.DOLL_TSINAFS_BCIM) {
             tooltip.add(t("message.tooltip.doctor_m.doll_tsinafs_bcim"));
         }
+        else if (item == items.DOLL_TC020) {
+            tooltip.add(t("message.tooltip.doctor_m.doll_tc020"));
+        }
+        else if (item == items.DOLL_ASDJDFK) {
+            tooltip.add(t("message.tooltip.doctor_m.doll_asdjdfk"));
+        }
 
         else if (item == items.OXYGEN_CHARGER) {
             ShiftTooltipInvoker.addShiftTooltip(tooltip, t("message.doctor_m.oxygen_charger"));
