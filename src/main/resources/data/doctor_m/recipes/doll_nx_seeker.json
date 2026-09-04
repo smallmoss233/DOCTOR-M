@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AAA",
+    "BCB",
+    "EDE"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:white_wool"
+    },
+    "B": {
+      "item": "minecraft:string"
+    },
+    "C": {
+      "item": "minecraft:feather"
+    },
+    "D": {
+      "item":"minecraft:cyan_wool"
+    },
+    "E": {
+      "item": "minecraft:black_wool"
+    }
+  },
+  "result": {
+    "item": "doctor_m:doll_nx_seeker"
+  }
+}
