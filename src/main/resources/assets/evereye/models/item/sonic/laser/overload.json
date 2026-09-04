@@ -1,0 +1,6 @@
+{
+  "parent": "evereye:item/sonic/laser",
+  "textures": {
+    "1": "evereye:item/sonic_tools/laser/overload"
+  }
+}
