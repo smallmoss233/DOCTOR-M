@@ -8,3 +8,4 @@ smallmossold.png|SmallMoss(Old)|slim
 smallmoss.png|SmallMoss|slim
 evilmorty.png|Evil Morty (liyubee)|slim
 asnit_pnqing.png|Asnit_PnQing|steve
+nx_seeker.png|NX-Seeker|steve
