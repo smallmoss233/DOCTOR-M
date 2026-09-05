@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "OOO",
+    "ITI",
+    "ITI"
+  ],
+  "key": {
+    "O": { "item": "minecraft:orange_dye" },
+    "I": { "item": "minecraft:iron_ingot" },
+    "T": { "item": "doctor_m:oxygen_tank" }
+  },
+  "result": {
+    "item": "doctor_m:advanced_oxygen_tank",
+    "count": 1
+  }
+}

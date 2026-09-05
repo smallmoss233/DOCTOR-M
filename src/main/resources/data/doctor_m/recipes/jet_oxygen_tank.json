@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RDR",
+    "ISI",
+    "RPR"
+  ],
+  "key": {
+    "R": { "item": "minecraft:red_dye" },
+    "D": { "item": "minecraft:dispenser" },
+    "I": { "item": "minecraft:iron_ingot" },
+    "S": { "item": "doctor_m:super_oxygen_tank" },
+    "P": { "item": "minecraft:piston" }
+  },
+  "result": {
+    "item": "doctor_m:jet_oxygen_tank",
+    "count": 1
+  }
+}

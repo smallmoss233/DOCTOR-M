@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BIB",
+    "IAI",
+    "BIB"
+  ],
+  "key": {
+    "B": { "item": "minecraft:blue_dye" },
+    "I": { "item": "minecraft:iron_ingot" },
+    "A": { "item": "doctor_m:advanced_oxygen_tank" }
+  },
+  "result": {
+    "item": "doctor_m:super_oxygen_tank",
+    "count": 1
+  }
+}
