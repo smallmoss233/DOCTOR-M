@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "doctor_m:block/doll_nx_seeker" },
+    "facing=south": { "model": "doctor_m:block/doll_nx_seeker", "y": 180 },
+    "facing=east":  { "model": "doctor_m:block/doll_nx_seeker", "y": 90 },
+    "facing=west":  { "model": "doctor_m:block/doll_nx_seeker", "y": 270 }
+  }
+}
