@@ -26,12 +26,14 @@ import doctor_m.client.render.ToyotaSpinningRotor.ToyotaSpinningRotorRenderer;
 import doctor_m.client.render.VMTrinketRenderer;
 import doctor_m.client.util.id.PlayerTitleCache;
 import doctor_m.entities.Entities;
+import doctor_m.network.INVERTSCREENPACKETNetwork;
 import doctor_m.util.VMClientScreenOpener;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
@@ -40,12 +42,15 @@ import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredica
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+
+import java.lang.reflect.Method;
 
 import static doctor_m.Item.items.FORCE_FIELD_SHIELD;
 import static doctor_m.block.ModBlocks.*;
@@ -145,6 +150,44 @@ public class DOCTORMClient implements ClientModInitializer {
         BlockEntityRendererRegistry.register(
                 ModBlockEntities.TOYOTA_SPINNING_ROTOR,
                 ToyotaSpinningRotorRenderer::new
+        );
+
+        //反色效果
+        ClientPlayNetworking.registerGlobalReceiver(
+                INVERTSCREENPACKETNetwork.INVERT_SCREEN_PACKET,
+                (client, handler, buf, responseSender) -> {
+                    int duration = buf.readInt();
+                    client.execute(() -> {
+                        GameRenderer gameRenderer = client.gameRenderer;
+
+                        // 通过反射加载反色后处理着色器
+                        try {
+                            Method loadMethod = GameRenderer.class.getDeclaredMethod("loadPostProcessor", Identifier.class);
+                            loadMethod.setAccessible(true);
+                            loadMethod.invoke(gameRenderer, new Identifier("shaders/post/invert.json"));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        // 延迟恢复
+                        new Thread(() -> {
+                            try {
+                                Thread.sleep(duration * 50L); // 1 tick = 50ms
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            client.execute(() -> {
+                                try {
+                                    Method disableMethod = GameRenderer.class.getDeclaredMethod("disablePostProcessor");
+                                    disableMethod.setAccessible(true);
+                                    disableMethod.invoke(gameRenderer);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                        }).start();
+                    });
+                }
         );
     }
 }
