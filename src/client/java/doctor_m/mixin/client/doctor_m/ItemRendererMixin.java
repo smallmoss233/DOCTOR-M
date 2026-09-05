@@ -43,10 +43,10 @@ public class ItemRendererMixin {
         if (!(stack.getItem() instanceof EmissiveItem)) return;
 
         VertexConsumer consumer = vertexConsumers.getBuffer(
-                RenderLayer.getEntityCutoutNoCull(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE));
+                RenderLayer.getEyes(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE));
 
         Random random = Random.create();
-        long seed = 42L;
+        final long seed = 42L; // 固定种子避免闪烁
 
         for (Direction direction : Direction.values()) {
             random.setSeed(seed);
@@ -55,6 +55,7 @@ public class ItemRendererMixin {
                 renderEmissiveQuad(matrices, consumer, quad, overlay);
             }
         }
+
         random.setSeed(seed);
         List<BakedQuad> quads = model.getQuads(null, null, random);
         for (BakedQuad quad : quads) {
@@ -68,7 +69,8 @@ public class ItemRendererMixin {
         if (emissive == null) return;
 
         BakedQuad emissiveQuad = remapQuad(quad, emissive);
-        consumer.quad(matrices.peek(), emissiveQuad, 3f, 3f, 3f, 15728880, overlay);
+        // 使用 1,1,1 乘数，保持原始颜色；light 设为满光照
+        consumer.quad(matrices.peek(), emissiveQuad, 5f, 5f, 5f, 15728880, overlay);
     }
 
     private static Sprite findEmissive(Sprite base) {
@@ -76,14 +78,16 @@ public class ItemRendererMixin {
         if (contents == null) return null;
 
         Identifier id = contents.getId();
-        if (id.getPath().endsWith("_emissive")) return null;
+        if (id.getPath().endsWith("_emissive")) return null; // 防止递归
 
         Identifier emissiveId = new Identifier(id.getNamespace(), id.getPath() + "_emissive");
 
+        // 直接从图集获取，若不存在则返回 null
         Sprite emissive = MinecraftClient.getInstance()
                 .getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
                 .apply(emissiveId);
 
+        // 确保获取到的是有效的贴图，而不是占位图
         if (emissive == null || emissive.getContents() == null) return null;
         if (!emissive.getContents().getId().equals(emissiveId)) return null;
 
