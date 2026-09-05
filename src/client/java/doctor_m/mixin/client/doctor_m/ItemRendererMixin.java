@@ -1,8 +1,8 @@
 package doctor_m.mixin.client.doctor_m;
 
+import doctor_m.client.render.DOCTORMMRenderLayers;
 import doctor_m.module.EmissiveItem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -43,7 +43,7 @@ public class ItemRendererMixin {
         if (!(stack.getItem() instanceof EmissiveItem)) return;
 
         VertexConsumer consumer = vertexConsumers.getBuffer(
-                RenderLayer.getEyes(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE));
+                DOCTORMMRenderLayers.tardisEmissiveCullZOffset(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE));
 
         Random random = Random.create();
         final long seed = 42L; // 固定种子避免闪烁
@@ -69,8 +69,7 @@ public class ItemRendererMixin {
         if (emissive == null) return;
 
         BakedQuad emissiveQuad = remapQuad(quad, emissive);
-        // 使用 1,1,1 乘数，保持原始颜色；light 设为满光照
-        consumer.quad(matrices.peek(), emissiveQuad, 5f, 5f, 5f, 15728880, overlay);
+        consumer.quad(matrices.peek(), emissiveQuad, 2f, 2f, 2f, 15728880, overlay);
     }
 
     private static Sprite findEmissive(Sprite base) {

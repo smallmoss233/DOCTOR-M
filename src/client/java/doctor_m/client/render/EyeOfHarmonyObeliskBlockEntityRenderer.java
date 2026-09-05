@@ -65,7 +65,7 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(delta));
 
         starModelCache.render(matrices,
-                vertexConsumers.getBuffer(EyeOfHarmonyRenderLayers.tardisEmissiveCullZOffset(TARDIS_STAR_TEXTURE)),
+                vertexConsumers.getBuffer(DOCTORMMRenderLayers.tardisEmissiveCullZOffset(TARDIS_STAR_TEXTURE)),
                 LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay,
                 1.0f, 1.0f, 1.0f, 0.5f);
         matrices.pop();
@@ -77,7 +77,7 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(delta));
 
         starModelCache.render(matrices,
-                vertexConsumers.getBuffer(EyeOfHarmonyRenderLayers.tardisEmissiveCullZOffset(CORE_TEXTURE)),
+                vertexConsumers.getBuffer(DOCTORMMRenderLayers.tardisEmissiveCullZOffset(CORE_TEXTURE)),
                 LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay,
                 1.0f, 0.85f, 0.3f, 0.85f);
         matrices.pop();
