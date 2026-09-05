@@ -1,4 +1,4 @@
-package doctor_m.module.space_plus;
+package doctor_m.module.space_plus.Tank;
 
 import doctor_m.config.ConfigManager;
 import net.minecraft.client.item.TooltipContext;

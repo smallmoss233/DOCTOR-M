@@ -5,7 +5,8 @@ import doctor_m.block.entities.OxygenChargerBlockEntity;
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
 import doctor_m.module.space_plus.OxygenSystem;
-import doctor_m.module.space_plus.OxygenTankItem;
+import doctor_m.module.space_plus.Tank.JetOxygenTankItem;
+import doctor_m.module.space_plus.Tank.OxygenTankItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -107,10 +108,10 @@ public class OxygenChargerBlock extends BlockWithEntity {
      * 内部已处理玩家提示，调用方只需根据结果设置冷却。
      */
     private ChargeResult tryCharge(ItemStack held, PlayerEntity player, ModConfig config) {
-        // 1) 氧气瓶
-        if (held.getItem() instanceof OxygenTankItem) {
+        // 1) 普通氧气瓶及其子类（高级、超级）
+        if (held.getItem() instanceof OxygenTankItem tankItem) {
             double current = OxygenTankItem.getOxygen(held);
-            double max = config.oxygenTankMaxOxygen;
+            double max = tankItem.getMaxOxygen();
             if (current < max) {
                 OxygenTankItem.setOxygen(held, max);
                 player.sendMessage(Text.translatable("message.doctor_m.oxygen_charger.tank_fill"), true);
@@ -120,7 +121,20 @@ public class OxygenChargerBlock extends BlockWithEntity {
             return ChargeResult.ALREADY_FULL;
         }
 
-        // 2) 航天服胸甲
+        // 2) 喷气氧气瓶（独立类，单独处理）
+        if (held.getItem() instanceof JetOxygenTankItem jetTank) {
+            double current = jetTank.getOxygen(held);
+            double max = jetTank.getMaxOxygen();
+            if (current < max) {
+                jetTank.setOxygen(held, max);
+                player.sendMessage(Text.translatable("message.doctor_m.oxygen_charger.tank_fill"), true);
+                return ChargeResult.SUCCESS;
+            }
+            player.sendMessage(Text.translatable("message.doctor_m.oxygen_charger.tank_full"), true);
+            return ChargeResult.ALREADY_FULL;
+        }
+
+        // 3) 航天服胸甲
         if (held.getItem() instanceof SpacesuitItem
                 && held.getItem() instanceof ArmorItem armor
                 && armor.getType() == ArmorItem.Type.CHESTPLATE) {
@@ -135,7 +149,7 @@ public class OxygenChargerBlock extends BlockWithEntity {
             return ChargeResult.ALREADY_FULL;
         }
 
-        // 3) 无效物品
+        // 4) 无效物品
         player.sendMessage(Text.translatable("message.doctor_m.oxygen_charger.invalid_item"), true);
         return ChargeResult.INVALID_ITEM;
     }

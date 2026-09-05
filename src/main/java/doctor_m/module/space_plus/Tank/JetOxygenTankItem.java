@@ -1,4 +1,4 @@
-package doctor_m.module.space_plus;
+package doctor_m.module.space_plus.Tank;
 
 import doctor_m.config.ConfigManager;
 import net.minecraft.client.item.TooltipContext;
@@ -26,13 +26,8 @@ public class JetOxygenTankItem extends Item {
 
     public static final String OXYGEN_KEY = "oxygen";
 
-    // 飞行参数（可配置）
-    private static final int WINDUP_TICKS = 10;               // 前摇时间
-    private static final double THRUST_STRENGTH = 0.15;       // 目标速度
-    private static final double INERTIA = 0.78;               // 惯性保留比例
-    private static final double GRAVITY_COMPENSATION = 0.08;  // 重力补偿
-    private static final double MAX_SPEED = 2.5;
-    private static final double MAX_VERTICAL_SPEED = 2.0;
+    // 前摇时间保持固定（也可配置，但这里不要求）
+    private static final int WINDUP_TICKS = 10;
     private static final double OXYGEN_CONSUMPTION_PER_TICK = 1.0;
 
     public JetOxygenTankItem(Settings settings) {
@@ -65,7 +60,6 @@ public class JetOxygenTankItem extends Item {
             }
         }
 
-        // 开始持续使用，触发 usageTick
         user.setCurrentHand(hand);
         return TypedActionResult.consume(stack);
     }
@@ -76,18 +70,25 @@ public class JetOxygenTankItem extends Item {
         if (!(user instanceof ServerPlayerEntity player)) return;
 
         int ticks = this.getMaxUseTime(stack) - remainingUseTicks;
-
         double oxygen = getOxygen(stack);
         if (oxygen <= 0) {
             player.stopUsingItem();
             return;
         }
 
-        // 前摇阶段：减速蓄力
+        // 从配置读取飞行参数
+        var config = ConfigManager.getConfig();
+        double thrustStrength = config.jetOxygenTankThrustStrength;
+        double inertia = config.jetOxygenTankInertia;
+        double gravityCompensation = config.jetOxygenTankGravityCompensation;
+        double maxSpeed = config.jetOxygenTankMaxSpeed;
+        double maxVerticalSpeed = config.jetOxygenTankMaxVerticalSpeed;
+
+        // 前摇阶段
         if (ticks < WINDUP_TICKS) {
             Vec3d current = player.getVelocity();
             player.setVelocity(current.multiply(0.82));
-            player.velocityModified = true;   // 关键：标记速度已修改，确保同步
+            player.velocityModified = true;
             player.fallDistance = 0;
 
             if (world instanceof ServerWorld serverWorld) {
@@ -102,28 +103,28 @@ public class JetOxygenTankItem extends Item {
             return;
         }
 
-        // 正式飞行：惯性混合 + 推力 + 重力补偿
+        // 正式飞行
         Vec3d look = player.getRotationVector();
-        Vec3d targetVel = look.multiply(THRUST_STRENGTH);
+        Vec3d targetVel = look.multiply(thrustStrength);
         Vec3d current = player.getVelocity();
 
         player.setVelocity(
-                current.x * INERTIA + targetVel.x * (1.0 - INERTIA),
-                current.y * INERTIA + targetVel.y * (1.0 - INERTIA) + GRAVITY_COMPENSATION,
-                current.z * INERTIA + targetVel.z * (1.0 - INERTIA)
+                current.x * inertia + targetVel.x * (1.0 - inertia),
+                current.y * inertia + targetVel.y * (1.0 - inertia) + gravityCompensation,
+                current.z * inertia + targetVel.z * (1.0 - inertia)
         );
-        player.velocityModified = true;   // 关键
+        player.velocityModified = true;
         player.fallDistance = 0;
 
         // 限制速度
         Vec3d newVel = player.getVelocity();
         double horizontalSpeed = Math.sqrt(newVel.x * newVel.x + newVel.z * newVel.z);
-        if (horizontalSpeed > MAX_SPEED) {
-            double scale = MAX_SPEED / horizontalSpeed;
+        if (horizontalSpeed > maxSpeed) {
+            double scale = maxSpeed / horizontalSpeed;
             player.setVelocity(newVel.x * scale, newVel.y, newVel.z * scale);
         }
-        if (newVel.y > MAX_VERTICAL_SPEED) {
-            player.setVelocity(newVel.x, MAX_VERTICAL_SPEED, newVel.z);
+        if (newVel.y > maxVerticalSpeed) {
+            player.setVelocity(newVel.x, maxVerticalSpeed, newVel.z);
         }
 
         setOxygen(stack, oxygen - OXYGEN_CONSUMPTION_PER_TICK);
@@ -155,7 +156,7 @@ public class JetOxygenTankItem extends Item {
 
     @Override
     public UseAction getUseAction(ItemStack stack) {
-        return UseAction.NONE; // 不使用任何动作动画
+        return UseAction.NONE;
     }
 
     @Override

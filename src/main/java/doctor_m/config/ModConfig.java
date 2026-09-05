@@ -67,6 +67,11 @@ public class ModConfig {
     public int oxygenTankHoldTicksForAchievement = 100;  // 长按多少 tick 触发成就（5秒 = 100 tick）
     public double advancedOxygenTankCapacityMultiplier = 3.0;  //高级氧气瓶容量倍率
     public double superOxygenTankCapacityMultiplier = 5.0;  //超级氧气瓶基于高级氧气瓶容量倍率
+    public double jetOxygenTankThrustStrength = 0.5;      // 推力强度
+    public double jetOxygenTankInertia = 0.72;             // 惯性保留比例
+    public double jetOxygenTankGravityCompensation = 0.12; // 重力补偿
+    public double jetOxygenTankMaxSpeed = 8.0;             // 最大水平速度
+    public double jetOxygenTankMaxVerticalSpeed = 6.0;     // 最大垂直速度
 
     //氧气补充机
     public int oxygenChargerCooldownSeconds = 32;      // 充能冷却时间（秒）

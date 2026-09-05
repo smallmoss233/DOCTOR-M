@@ -6,7 +6,8 @@ import doctor_m.block.entities.UnderwaterOxygenGeneratorBlockEntity;
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
 import doctor_m.module.space_plus.OxygenSystem;
-import doctor_m.module.space_plus.OxygenTankItem;
+import doctor_m.module.space_plus.Tank.JetOxygenTankItem;
+import doctor_m.module.space_plus.Tank.OxygenTankItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -156,10 +157,10 @@ public class UnderwaterOxygenGeneratorBlock extends BlockWithEntity {
             return ChargeResult.NO_WATER;
         }
 
-        // 1) 氧气瓶
-        if (held.getItem() instanceof OxygenTankItem) {
+        // 1) 普通氧气瓶及其子类
+        if (held.getItem() instanceof OxygenTankItem tankItem) {
             double current = OxygenTankItem.getOxygen(held);
-            double max = config.oxygenTankMaxOxygen;
+            double max = tankItem.getMaxOxygen();
             if (current < max) {
                 double amount = isUnderwater ? max : max * 0.25;
                 double newOxygen = Math.min(current + amount, max);
@@ -179,7 +180,30 @@ public class UnderwaterOxygenGeneratorBlock extends BlockWithEntity {
             return ChargeResult.ALREADY_FULL;
         }
 
-        // 2) 航天服胸甲
+        // 2) 喷气氧气瓶
+        if (held.getItem() instanceof JetOxygenTankItem jetTank) {
+            double current = jetTank.getOxygen(held);
+            double max = jetTank.getMaxOxygen();
+            if (current < max) {
+                double amount = isUnderwater ? max : max * 0.25;
+                double newOxygen = Math.min(current + amount, max);
+                jetTank.setOxygen(held, newOxygen);
+
+                if (!isUnderwater) {
+                    generator.consumeWaterCharge();
+                }
+
+                String key = isUnderwater
+                        ? "message.doctor_m.underwater_oxygen_generator.tank_fill"
+                        : "message.doctor_m.underwater_oxygen_generator.tank_fill_partial";
+                player.sendMessage(Text.translatable(key), true);
+                return ChargeResult.SUCCESS;
+            }
+            player.sendMessage(Text.translatable("message.doctor_m.underwater_oxygen_generator.tank_full"), true);
+            return ChargeResult.ALREADY_FULL;
+        }
+
+        // 3) 航天服胸甲
         if (held.getItem() instanceof SpacesuitItem
                 && held.getItem() instanceof ArmorItem armor
                 && armor.getType() == ArmorItem.Type.CHESTPLATE) {
@@ -204,7 +228,7 @@ public class UnderwaterOxygenGeneratorBlock extends BlockWithEntity {
             return ChargeResult.ALREADY_FULL;
         }
 
-        // 3) 无效物品
+        // 4) 无效物品
         player.sendMessage(Text.translatable("message.doctor_m.underwater_oxygen_generator.invalid_item"), true);
         return ChargeResult.INVALID_ITEM;
     }

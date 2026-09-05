@@ -48,6 +48,9 @@
 -  回廊废墟！坐落在土卫六上的破败教堂 / Coister Ruins! A dilapidated church on Titan
 -  时隙废墟，处在深海当中的塔迪斯废墟 / Rift Ruins, TARDIS ruins deep in the ocean
 -  禁区！与博士之墓！目前为止DOCTOR M最大的建筑！ / Forbidden Zone! And the Doctor's Tomb! The biggest structure in DOCTOR M so far!
+-  氧气瓶模型！与更多氧气瓶！ / Oxygen Tank Model! And More Oxygen Tanks!
+   高级氧气瓶，超级氧气瓶，容量更大与更更大的氧气瓶 / Advanced Oxygen Tank, Super Oxygen Tank — with larger and even larger capacities.
+   喷气氧气瓶，什么叫你把珍贵的氧气当助推剂 / Jet Oxygen Tank — using precious oxygen as propellant? Really?
 
 
 ---
@@ -70,7 +73,6 @@
    航天服新增氧气阀值警告 / Added oxygen threshold warnings for the spacesuit.
    氧气机的算法优化，一个区域内放置多台氧气机有氧范围扩大，且修复了一些潜在BUG / Optimized oxygen generator algorithm; placing multiple generators in an area expands the oxygen coverage, and fixed some potential bugs.
    呼吸器可以让玩家的氧气消耗速度减缓 / Respirators can slow down the rate at which players use up oxygen.
-   氧气瓶模型！与更多氧气瓶！ / Oxygen Tank Model! And More Oxygen Tanks!
 -  塔迪斯型号不再局限于50型！可在doctor_m/tardis_type.json当中填写内饰ID+型号来自定义你的塔迪斯型号！ / TARDIS types are no longer limited to Type 50! You can now customise your TARDIS type by adding interior IDs and type names in doctor_m/tardis_type.json!
 -  修改怀表，怀表不再是饰品了，同时怀表使用的模型也改成了amblelabs/regeneration的模型 / The pocket watch is no longer a trinket, and its model has been updated to use the one from amblelabs/regeneration.
 -  空手潜行右键心灵感应电路可以治疗玩家！ / Sneak right-click the Telepathic Circuit with an empty hand to heal yourself！

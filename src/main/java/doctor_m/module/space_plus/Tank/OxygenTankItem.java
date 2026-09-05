@@ -1,6 +1,7 @@
-package doctor_m.module.space_plus;
+package doctor_m.module.space_plus.Tank;
 
 import doctor_m.config.ConfigManager;
+import doctor_m.module.space_plus.OxygenSystem;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
