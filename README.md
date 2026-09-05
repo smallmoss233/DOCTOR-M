@@ -48,6 +48,8 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 
 * *Partial achievement text and item tooltip text*：斯格尔特(Sigeerte), [asdjdfk](https://modrinth.com/user/asdjdfk), T天玄X
 
+*  *laser sonic screwdriver*: [NX-Seeker](https://modrinth.com/user/NX-Seeker)
+
 ### Also, special thanks to [AmbleLabs](https://amblelabs.dev/) for creating AIT.
 
 ---
