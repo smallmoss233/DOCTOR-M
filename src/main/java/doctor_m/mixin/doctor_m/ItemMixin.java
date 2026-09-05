@@ -73,6 +73,9 @@ public class ItemMixin {
         else if (item == items.DOLL_ASDJDFK) {
             tooltip.add(t("message.tooltip.doctor_m.doll_asdjdfk"));
         }
+        else if (item == items.DOLL_TIANX) {
+            tooltip.add(t("message.tooltip.doctor_m.doll_tianx"));
+        }
 
         else if (item == items.OXYGEN_CHARGER) {
             ShiftTooltipInvoker.addShiftTooltip(tooltip, t("message.doctor_m.oxygen_charger"));
