@@ -1,0 +1,6 @@
+{
+  "parent": "doctor_m:item/oxygen_tank",
+  "textures": {
+    "0": "doctor_m:item/jet_oxygen_tank"
+  }
+}

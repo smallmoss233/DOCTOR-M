@@ -8,7 +8,10 @@ import doctor_m.block.ModBlocks;
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
 import doctor_m.entities.Entities;
+import doctor_m.module.space_plus.AdvancedOxygenTankItem;
+import doctor_m.module.space_plus.JetOxygenTankItem;
 import doctor_m.module.space_plus.OxygenTankItem;
+import doctor_m.module.space_plus.SuperOxygenTankItem;
 import doctor_m.util.creativity.PercentageDamageHelper;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -41,6 +44,9 @@ public class items {
     public static final Item OXYGEN_CHARGER = new BlockItem(ModBlocks.OXYGEN_CHARGER, new Item.Settings());
     public static final Item UNDERWATER_OXYGEN_GENERATOR = new BlockItem(ModBlocks.UNDERWATER_OXYGEN_GENERATOR, new Item.Settings());
     public static final Item OXYGEN_TANK = new OxygenTankItem(new Item.Settings().maxCount(1));
+    public static final Item ADVANCED_OXYGEN_TANK = new AdvancedOxygenTankItem(new Item.Settings().maxCount(1));
+    public static final Item SUPER_OXYGEN_TANK = new SuperOxygenTankItem(new Item.Settings().maxCount(1));
+    public static final Item JET_OXYGEN_TANK = new JetOxygenTankItem(new Item.Settings().maxCount(1));
 
     //穹顶转子和咖啡机
     public static final Item TOYOTA_SPINNING_ROTOR = new BlockItem(ModBlocks.TOYOTA_SPINNING_ROTOR, new Item.Settings());

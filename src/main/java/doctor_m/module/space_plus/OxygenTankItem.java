@@ -29,13 +29,27 @@ public class OxygenTankItem extends Item {
         super(settings);
     }
 
+    /** 获取当前物品实例的最大氧气容量，子类可重写此方法实现不同倍率 */
+    public double getMaxOxygen() {
+        return ConfigManager.getConfig().oxygenTankMaxOxygen;
+    }
+
     public static double getOxygen(ItemStack stack) {
         NbtCompound nbt = stack.getNbt();
         return nbt != null && nbt.contains(OXYGEN_KEY) ? nbt.getDouble(OXYGEN_KEY) : 0.0;
     }
 
+    /**
+     * 设置氧气量，自动根据物品类型获取对应的最大容量。
+     * 如果是 {@link OxygenTankItem} 的子类，则使用其重写的 getMaxOxygen()。
+     */
     public static void setOxygen(ItemStack stack, double amount) {
-        double maxOxygen = ConfigManager.getConfig().oxygenTankMaxOxygen;
+        double maxOxygen;
+        if (stack.getItem() instanceof OxygenTankItem tankItem) {
+            maxOxygen = tankItem.getMaxOxygen();
+        } else {
+            maxOxygen = ConfigManager.getConfig().oxygenTankMaxOxygen; // 回退值
+        }
         stack.getOrCreateNbt().putDouble(OXYGEN_KEY, Math.min(amount, maxOxygen));
     }
 
@@ -70,20 +84,16 @@ public class OxygenTankItem extends Item {
 
         boolean canEat = canEatOxygenTank(player);
         if (canEat && usedTicks >= holdThreshold) {
-            //食用逻辑
             eatOxygenTank(player, stack);
-            //成就
             grantAdvancement(player, "you_ate_this");
             return;
         }
 
-        //检查是否达到阈值（用于成就“不是保温杯”）
         if (usedTicks >= holdThreshold) {
             grantAdvancement(player, "not_thermos");
         }
 
-        //执行氧气补充逻辑（仅当未食用）
-        // 检查是否穿了宇航服
+        // 氧气补充逻辑（未食用时）
         ItemStack chestStack = player.getInventory().armor.get(2);
         if (!(chestStack.getItem() instanceof dev.amble.ait.module.planet.core.item.SpacesuitItem)) {
             player.sendMessage(Text.translatable("message.doctor_m.oxygen_tank.no_suit"), true);
@@ -120,7 +130,6 @@ public class OxygenTankItem extends Item {
         player.getItemCooldownManager().set(this, 5);
     }
 
-    //判断食用
     private boolean canEatOxygenTank(ServerPlayerEntity player) {
         var config = ConfigManager.getConfig();
         boolean hasStrength = player.hasStatusEffect(StatusEffects.STRENGTH);
@@ -130,7 +139,6 @@ public class OxygenTankItem extends Item {
         return hasStrength || hasHunger || isStarving;
     }
 
-    //执行食用逻辑
     private void eatOxygenTank(ServerPlayerEntity player, ItemStack stack) {
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 30 * 20, 1, false, false, true));
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 30 * 20, 2, false, false, true));
@@ -142,7 +150,6 @@ public class OxygenTankItem extends Item {
         player.getItemCooldownManager().set(this, 20);
     }
 
-    //授予成就
     private void grantAdvancement(ServerPlayerEntity player, String advancementId) {
         Advancement advancement = player.getServer().getAdvancementLoader()
                 .get(new Identifier("doctor_m", advancementId));
@@ -153,7 +160,6 @@ public class OxygenTankItem extends Item {
 
     @Override
     public int getMaxUseTime(ItemStack stack) {
-        //最大使用时间
         return 72000;
     }
 
@@ -166,7 +172,8 @@ public class OxygenTankItem extends Item {
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         var config = ConfigManager.getConfig();
         double oxygen = getOxygen(stack);
-        tooltip.add(Text.translatable("tooltip.doctor_m.oxygen", oxygen, config.oxygenTankMaxOxygen));
-        tooltip.add(Text.translatable("message.doctor_m.oxygen_tank", oxygen, config.oxygenTankMaxOxygen));
+        double maxOxygen = getMaxOxygen(); // 使用实例方法，子类会返回正确倍率
+        tooltip.add(Text.translatable("tooltip.doctor_m.oxygen", oxygen, maxOxygen));
+        tooltip.add(Text.translatable("message.doctor_m.oxygen_tank", oxygen, maxOxygen));
     }
 }

@@ -65,6 +65,8 @@ public class ModConfig {
     public double oxygenTankTransferRate = 100.0;        // 每次转移的氧气量
     public int oxygenTankFoodThreshold = 6;              // 饱食度阈值（<= 此值视为极低）
     public int oxygenTankHoldTicksForAchievement = 100;  // 长按多少 tick 触发成就（5秒 = 100 tick）
+    public double advancedOxygenTankCapacityMultiplier = 3.0;  //高级氧气瓶容量倍率
+    public double superOxygenTankCapacityMultiplier = 5.0;  //超级氧气瓶基于高级氧气瓶容量倍率
 
     //氧气补充机
     public int oxygenChargerCooldownSeconds = 32;      // 充能冷却时间（秒）

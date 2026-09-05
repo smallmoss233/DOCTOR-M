@@ -33,6 +33,9 @@ public static void registerItems() {
                                 entries.add(TYPE_103_SPAWN);
                                 entries.add(MARIAN_JIN_SPAWN);
                                 entries.add(OXYGEN_TANK);
+                                entries.add(ADVANCED_OXYGEN_TANK);
+                                entries.add(SUPER_OXYGEN_TANK);
+                                entries.add(JET_OXYGEN_TANK);
                                 entries.add(SHIELD_CORE);
                                 entries.add(FORCE_FIELD_SHIELD);
                                 entries.add(VORTEX_MANIPULATOR);
