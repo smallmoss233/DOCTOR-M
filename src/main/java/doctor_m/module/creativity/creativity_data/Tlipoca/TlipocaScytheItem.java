@@ -1,6 +1,7 @@
 package doctor_m.module.creativity.creativity_data.Tlipoca;
 
 import doctor_m.module.EmissiveItem;
+import doctor_m.network.INVERTSCREENPACKETNetwork;
 import doctor_m.util.creativity.DynamicColorHelper;
 import doctor_m.util.creativity.ScytheChargingManager;
 import doctor_m.util.creativity.ScytheSlashManager;
@@ -128,6 +129,10 @@ public class TlipocaScytheItem extends Item implements EmissiveItem {
                 ScytheChargingManager.MAX_CHARGE_LEVEL);
 
         if (level <= 0) return;
+
+        if (level == ScytheChargingManager.MAX_CHARGE_LEVEL) {
+            INVERTSCREENPACKETNetwork.INSTANCE.sendInvertScreenPacket(player, 20);
+        }
 
         ScytheSlashManager.performChargedSlash(
                 (net.minecraft.server.world.ServerWorld) world, player, stack, level);
