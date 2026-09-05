@@ -2,11 +2,11 @@ package doctor_m.client.render;
 
 import dev.amble.ait.AITMod;
 import dev.amble.ait.client.models.decoration.TardisStarModel;
-import dev.amble.ait.client.renderers.AITRenderLayers;
 import doctor_m.DOCTORM;
 import doctor_m.block.entities.EyeOfHarmonyObeliskBlockEntity;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.LightmapTextureManager;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
@@ -65,7 +65,7 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(delta));
 
         starModelCache.render(matrices,
-                vertexConsumers.getBuffer(AITRenderLayers.tardisEmissiveCullZOffset(TARDIS_STAR_TEXTURE, true)),
+                vertexConsumers.getBuffer(EyeOfHarmonyRenderLayers.tardisEmissiveCullZOffset(TARDIS_STAR_TEXTURE)),
                 LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay,
                 1.0f, 1.0f, 1.0f, 0.5f);
         matrices.pop();
@@ -73,12 +73,11 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
         // ========== 核心层：eye_of_harmony_core.png ==========
         matrices.push();
         matrices.scale(33f * scale, 33f * scale, 33f * scale);
-        matrices.translate(0, 0.1, 0);//核心渲染位置偏移
+        matrices.translate(0, 0.1, 0);
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(delta));
 
-        // 亮金色、更实
         starModelCache.render(matrices,
-                vertexConsumers.getBuffer(AITRenderLayers.tardisEmissiveCullZOffset(CORE_TEXTURE, true)),
+                vertexConsumers.getBuffer(EyeOfHarmonyRenderLayers.tardisEmissiveCullZOffset(CORE_TEXTURE)),
                 LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay,
                 1.0f, 0.85f, 0.3f, 0.85f);
         matrices.pop();
@@ -91,14 +90,14 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
         float sinFunc = (float) Math.sin(delta * 0.05f + 0.2f) * 0.2f;
         float shineScale = 8f * scale;
         matrices.scale(shineScale + sinFunc, shineScale + sinFunc, shineScale + sinFunc);
-        matrices.translate(0, 1, 0);//光束渲染位置偏移
+        matrices.translate(0, 1, 0);
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-delta));
 
         float l = (delta % 50120f) / 50120f;
         float m = Math.min(l > 0.8f ? (l - 0.8f) / 0.2f : 0.0f, 1.0f);
 
         Random random = Random.create(entity.getPos().hashCode());
-        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(AITRenderLayers.getLightning());
+        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getLightning());
 
         for (int n = 0; n < 30; n++) {
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees((random.nextFloat() * 360.0f)));
@@ -114,7 +113,6 @@ public class EyeOfHarmonyObeliskBlockEntityRenderer implements BlockEntityRender
             Matrix4f matrix4f = matrices.peek().getPositionMatrix();
             int q = (int) (255f * (1.0f - m));
 
-            // 和 AIT 完全一致的 4 个三角形（白色中心 + 橙金边缘）
             putLightSourceVertex(vertexConsumer, matrix4f, q);
             putLightNegativeXTerminalVertex(vertexConsumer, matrix4f, o, p);
             putLightPositiveXTerminalVertex(vertexConsumer, matrix4f, o, p);
