@@ -37,6 +37,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
+import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
@@ -99,17 +100,23 @@ public class DOCTORMClient implements ClientModInitializer {
         EntityRendererRegistry.register(Entities.MARIAN_JIN, MarianJinRenderer::new);
 
         //玩偶不透明图层
-        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_JIN_MARY, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_SMALLMOSS_OLD, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_TC020, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_ASDJDFK, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_SIGEERTE, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_TSINAFS_BCIM, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_ASNIT_PNQING, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_TIANX, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_KILIN_MUS, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_JOGGEST, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(DOLL_NX_SEEKER, RenderLayer.getCutout());
+        Block[] dollBlocks = {
+                DOLL_JIN_MARY,
+                DOLL_SMALLMOSS_OLD,
+                DOLL_TC020,
+                DOLL_ASDJDFK,
+                DOLL_SIGEERTE,
+                DOLL_TSINAFS_BCIM,
+                DOLL_ASNIT_PNQING,
+                DOLL_TIANX,
+                DOLL_KILIN_MUS,
+                DOLL_JOGGEST,
+                DOLL_NX_SEEKER
+        };
+
+        for (Block block : dollBlocks) {
+            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getCutout());
+        }
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             PlayerEntity player = client.player;
