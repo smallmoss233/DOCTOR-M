@@ -3,8 +3,7 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [64, 64],
 	"textures": {
-		"1": "evereye:item/sonic_tools/evereye/evereye",
-		"particle": "evereye:item/sonic_tools/evereye"
+		"1": "evereye:item/sonic_tools/evereye/evereye"
 	},
 	"elements": [
 		{
@@ -704,6 +703,7 @@
 		},
 		"gui": {
 			"rotation": [-27.72, -34.41, -46.07],
+			"translation": [-0.5, -0.75, 0],
 			"scale": [0.7, 0.7, 0.7]
 		},
 		"head": {
