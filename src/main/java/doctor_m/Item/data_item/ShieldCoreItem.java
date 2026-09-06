@@ -3,6 +3,7 @@ package doctor_m.Item.data_item;
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketItem;
 import doctor_m.config.ConfigManager;
+import doctor_m.module.EmissiveItem;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
@@ -24,16 +25,13 @@ public class ShieldCoreItem extends TrinketItem {
         super(settings);
     }
 
-    // ========== 创造模式默认满能量 ==========
     @Override
     public ItemStack getDefaultStack() {
         ItemStack stack = super.getDefaultStack();
-        // 直接写入满能量，创造模式物品栏会显示满耐久条
         setEnergy(stack, getMaxEnergy());
         return stack;
     }
 
-    // ========== 配置代理 ==========
     public static int getMaxEnergy() {
         return ConfigManager.getConfig().shieldMaxEnergy;
     }
@@ -46,7 +44,6 @@ public class ShieldCoreItem extends TrinketItem {
         return ConfigManager.getConfig().shieldCostPerDamage;
     }
 
-    // ========== 能量条 ==========
     @Override
     public boolean isItemBarVisible(ItemStack stack) {
         return true;
@@ -62,21 +59,13 @@ public class ShieldCoreItem extends TrinketItem {
         return 0x00FFFF;
     }
 
-    // ========== 充能逻辑 ==========
-    /**
-     * 饰品槽位充能（装备在 Trinkets 槽时触发）
-     */
+    //充能逻辑
     @Override
     public void tick(ItemStack stack, SlotReference slot, LivingEntity entity) {
         if (!entity.getWorld().isClient && entity instanceof PlayerEntity) {
             recharge(stack);
         }
     }
-
-    /**
-     * 背包/手持充能（在原版物品栏里时触发）
-     * 注意：如果物品已装备在 Trinkets 槽，原版不会遍历到它，不会重复充能。
-     */
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if (!world.isClient && entity instanceof PlayerEntity) {
@@ -87,11 +76,10 @@ public class ShieldCoreItem extends TrinketItem {
     private void recharge(ItemStack stack) {
         int energy = getEnergy(stack);
         int max = getMaxEnergy();
-        if (energy >= max) return; // 提前返回，避免无意义计算
+        if (energy >= max) return;
         setEnergy(stack, Math.min(energy + getRechargePerTick(), max));
     }
 
-    // ========== NBT（只读用 getNbt，避免空 Tag 污染客户端同步） ==========
     public static int getEnergy(ItemStack stack) {
         NbtCompound nbt = stack.getNbt();
         return nbt != null ? nbt.getInt(ENERGY_KEY) : 0;
@@ -113,7 +101,6 @@ public class ShieldCoreItem extends TrinketItem {
         return true;
     }
 
-    // ========== 提示 ==========
     @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
