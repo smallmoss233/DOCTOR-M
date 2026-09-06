@@ -89,3 +89,4 @@
 -  贡献者名字修改：Asnit_PnQing改为名游茶 / Change the contributor name from "Asnit_PnQing" to "名游茶".
 -  所有的塔迪斯废墟结构现在都能正常生成 / All TARDIS ruin structures now generate correctly
 -  所有有光影的内饰预览图都经过拍摄了 / All interior preview images with shaders have been captured
+-  红石火把起子的物品栏渲染位置终于改了 / The inventory rendering position of the Redstone Torch Screwdriver has finally been changed.
