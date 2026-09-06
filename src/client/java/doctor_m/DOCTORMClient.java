@@ -22,6 +22,7 @@ import doctor_m.client.network.AITMixinClientNetworking;
 import doctor_m.client.network.DeMatGunClientNetwork;
 import doctor_m.client.network.KeytoTimeTeleportClient;
 import doctor_m.client.render.EyeOfHarmonyObeliskBlockEntityRenderer;
+import doctor_m.client.render.OxygenChargerRenderer;
 import doctor_m.client.render.SCTrinketRenderer;
 import doctor_m.client.render.ToyotaSpinningRotor.ToyotaSpinningRotorRenderer;
 import doctor_m.client.render.VMTrinketRenderer;
@@ -99,6 +100,9 @@ public class DOCTORMClient implements ClientModInitializer {
         ForceFieldClientRenderer.register();
         VMTrinketRenderer.register();
         SCTrinketRenderer.register();
+
+        BlockEntityRendererRegistry.register(ModBlockEntities.OXYGEN_CHARGER_ENTITY, OxygenChargerRenderer::new);
+
         HudRenderCallback.EVENT.register(new ShieldOverlay());
         AITMixinClientNetworking.init();
         PlayerTitleCache.register();
