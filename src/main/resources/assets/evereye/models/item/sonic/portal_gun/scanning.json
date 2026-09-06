@@ -1,6 +1,6 @@
 {
 	"parent": "evereye:item/sonic/portal_gun",
 	"textures": {
-		"0": "evereye:item/sonic_tools/portal_gun/scanning"
+		"0": "evereye:item/sonic_tools/portal_gun/portal_gun"
 	}
 }

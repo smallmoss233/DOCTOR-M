@@ -2,6 +2,7 @@ package doctor_m.mixin.sonic_mode;
 
 import dev.amble.ait.core.item.SonicItem;
 import dev.amble.ait.core.item.sonic.SonicMode;
+import doctor_m.module.EmissiveItem;
 import doctor_m.module.sonic_plus.AmethystSonicModes;
 import doctor_m.module.sonic_plus.ChargedZeitonSonicModes;
 import doctor_m.module.sonic_plus.CrystalManager;
@@ -29,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 @Mixin(SonicItem.class)
-public class SonicItemMixin {
+public class SonicItemMixin implements EmissiveItem {
 
     // 1. 安装逻辑
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
