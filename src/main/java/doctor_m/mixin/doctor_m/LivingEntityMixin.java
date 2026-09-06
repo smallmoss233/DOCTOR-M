@@ -2,9 +2,9 @@ package doctor_m.mixin.doctor_m;
 
 import doctor_m.Item.data_item.ForceFieldShieldItem;
 import doctor_m.Item.stcs.STCSItem;
-import doctor_m.module.creativity.creativity_data.Tlipoca.TlipocaScytheItem;
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
+import doctor_m.module.creativity.creativity_data.Tlipoca.TlipocaScytheItem;
 import doctor_m.util.creativity.ScytheChargingManager;
 import doctor_m.util.creativity.ScytheSlashManager;
 import net.minecraft.entity.Entity;

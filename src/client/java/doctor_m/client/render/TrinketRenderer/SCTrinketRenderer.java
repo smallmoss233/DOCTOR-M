@@ -1,4 +1,4 @@
-package doctor_m.client.render;
+package doctor_m.client.render.TrinketRenderer;
 
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.client.TrinketRenderer;
@@ -16,10 +16,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RotationAxis;
 
-public class VMTrinketRenderer implements TrinketRenderer {
+public class SCTrinketRenderer implements TrinketRenderer {
 
     public static void register() {
-        TrinketRendererRegistry.registerRenderer(items.VORTEX_MANIPULATOR, new VMTrinketRenderer());
+        TrinketRendererRegistry.registerRenderer(items.SHIELD_CORE, new SCTrinketRenderer());
     }
 
     @Override
@@ -41,22 +41,24 @@ public class VMTrinketRenderer implements TrinketRenderer {
 
         matrices.push();
 
-        TrinketRenderer.translateToRightArm(matrices, playerModel, player);
+        // 定位到胸部，然后向下移动至腰部，并向后偏移（挂在腰后）
+        TrinketRenderer.translateToChest(matrices, playerModel, player);
+        matrices.translate(0.0, 0.2, 0.45);
 
         if (isSlim) {
-            matrices.translate(0.03, -0.1, -0.12);
             matrices.scale(1f, 1f, 1f);
         } else {
-            matrices.translate(0.0, -0.1, -0.12);
-            matrices.scale(1.1f, 1.1f, 1.1f);
+            matrices.scale(1.0f, 1.0f, 1.0f);
         }
 
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90));
+        // 旋转物品使其正面朝外，避免上下颠倒
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
+        // 如果还需要调整朝向，可再绕Y轴旋转
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
 
         MinecraftClient.getInstance().getItemRenderer().renderItem(
                 stack,
-                ModelTransformationMode.THIRD_PERSON_RIGHT_HAND,
+                ModelTransformationMode.FIXED,
                 light, OverlayTexture.DEFAULT_UV,
                 matrices, vertexConsumers,
                 entity.getWorld(), 0

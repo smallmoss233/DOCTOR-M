@@ -1,4 +1,4 @@
-package doctor_m.client.render;
+package doctor_m.client.render.Layers;
 
 import doctor_m.block.entities.OxygenChargerBlockEntity;
 import doctor_m.client.util.EmissiveRenderHelper;
