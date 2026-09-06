@@ -1,0 +1,13 @@
+{
+  "id": "evereye:evil_portal_gun",
+  "models": {
+    "inactive":"evereye:item/sonic/evil_portal_gun/inactive",
+    "interaction": "evereye:item/sonic/evil_portal_gun/interaction",
+    "overload": "evereye:item/sonic/evil_portal_gun/overload",
+    "scanning": "evereye:item/sonic/evil_portal_gun/scanning",
+    "tardis": "evereye:item/sonic/evil_portal_gun/tardis"
+  },
+  "loyalty": {
+    "type": "PILOT"
+  }
+}

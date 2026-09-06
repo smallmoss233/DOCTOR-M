@@ -1,0 +1,7 @@
+{
+	"parent": "evereye:item/sonic/evil_portal_gun",
+	"textures": {
+		"0": "evereye:item/sonic_tools/evil_portal_gun/evil_portal_gun",
+		"particle": "evereye:item/sonic_tools/evil_portal_gun/evil_portal_gun"
+	}
+}
