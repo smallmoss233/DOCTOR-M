@@ -70,7 +70,6 @@ public class KeyofRassilonItem extends KeyItem {
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         Text longDescription = Text.translatable("message.doctor_m.key_of_rassilon.tooltip.line");
         TooltipHelper.addWrappedTooltip(tooltip, longDescription);
-        tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
         super.appendTooltip(stack, world, tooltip, context);
     }
 }
