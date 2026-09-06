@@ -4,14 +4,12 @@ import doctor_m.block.entities.OxygenChargerBlockEntity;
 import doctor_m.client.util.EmissiveRenderHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Vec3d;
 
 public class OxygenChargerRenderer implements BlockEntityRenderer<OxygenChargerBlockEntity> {
 
