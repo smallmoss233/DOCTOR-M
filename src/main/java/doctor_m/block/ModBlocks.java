@@ -28,14 +28,12 @@ public class ModBlocks {
             FabricBlockSettings.copyOf(Blocks.OBSIDIAN)
                     .requiresTool()
                     .nonOpaque()
-                    .luminance(state -> 15)
     );
 
     public static final Block EYE_OF_HARMONY_PART = new EyeOfHarmonyPartBlock(
             FabricBlockSettings.copyOf(Blocks.OBSIDIAN)
                     .dropsNothing()
                     .nonOpaque()
-                    .luminance(state -> 0)
     );
 
     public static final Block TOYOTA_SPINNING_ROTOR = new ToyotaSpinningRotorBlock(
