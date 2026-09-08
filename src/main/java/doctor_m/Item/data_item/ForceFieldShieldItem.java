@@ -2,6 +2,7 @@ package doctor_m.Item.data_item;
 
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
+import doctor_m.module.EmissiveItem;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
@@ -27,7 +28,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class ForceFieldShieldItem extends Item {
+public class ForceFieldShieldItem extends Item implements EmissiveItem {
 
     public static final double SHIELD_RADIUS = 3.5;
 
