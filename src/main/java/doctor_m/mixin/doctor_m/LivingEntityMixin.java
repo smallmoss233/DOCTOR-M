@@ -1,9 +1,9 @@
 package doctor_m.mixin.doctor_m;
 
 import doctor_m.Item.data_item.ForceFieldShieldItem;
-import doctor_m.Item.stcs.STCSItem;
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
+import doctor_m.module.creativity.creativity_data.STCS.STCS;
 import doctor_m.module.creativity.creativity_data.Tlipoca.TlipocaScytheItem;
 import doctor_m.util.creativity.ScytheChargingManager;
 import doctor_m.util.creativity.ScytheSlashManager;
@@ -211,15 +211,15 @@ public class LivingEntityMixin {
         if (!player.isSneaking()) return;
 
         ItemStack stcsStack = null;
-        STCSItem stcsItem = null;
+        STCS stcsItem = null;
 
         ItemStack main = player.getMainHandStack();
         ItemStack off = player.getOffHandStack();
 
-        if (main.getItem() instanceof STCSItem s) {
+        if (main.getItem() instanceof STCS s) {
             stcsStack = main;
             stcsItem = s;
-        } else if (off.getItem() instanceof STCSItem s) {
+        } else if (off.getItem() instanceof STCS s) {
             stcsStack = off;
             stcsItem = s;
         }
@@ -286,8 +286,8 @@ public class LivingEntityMixin {
     // ========== STCS 范围伤害共享（AoE） ==========
 
     private static boolean isHoldingSTCS(PlayerEntity player) {
-        return player.getMainHandStack().getItem() instanceof STCSItem
-                || player.getOffHandStack().getItem() instanceof STCSItem;
+        return player.getMainHandStack().getItem() instanceof STCS
+                || player.getOffHandStack().getItem() instanceof STCS;
     }
 
     private static void applyStcsAoE(LivingEntity victim, LivingEntity attacker, float amount) {

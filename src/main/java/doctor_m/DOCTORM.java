@@ -58,11 +58,11 @@ public class DOCTORM implements ModInitializer {
         TitleNetwork.register();
         UpdateObeliskPacket.registerServerReceiver();
 
-        KeytoTimeCore.INSTANCE.register();
-        PocketWatchFunction.INSTANCE.register();
-        GemDeathSaveHandler.INSTANCE.register();
-        GemTickHandler.INSTANCE.register();
-        STCSNetworking.INSTANCE.register();
+        KeytoTimeCore.register();
+        PocketWatchFunction.register();
+        GemDeathSaveHandler.register();
+        GemTickHandler.register();
+        STCSNetworking.register();
 
         TardisTypeLoader.init();
         item_group.registerItems();

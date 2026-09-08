@@ -81,6 +81,7 @@
 -  星图黑名单系统，默认无法搜索到KTT有关的结构，可在data/doctor_m/tags/worldgen/structure/astral_map_blacklist.json当中新增黑名单结构ID，支持标签和单结构ID嵌套 / Astral Map Blacklist KTT-related structures are blocked by default. Customize the blacklist at data/doctor_m/tags/worldgen/structure/astral_map_blacklist.json – supports both single structure IDs and tag-based entries (with nesting).
 -  永恒之眼废墟现在经过了重置！它刷新在接近世界底层的附近，被深板岩包裹，在里面有大量丰盛的战利品！ / Evereye Ruins have been revamped! They now generate near the bottom of the world, encased in deepslate, and contain plenty of rich loot inside!
 -  斯格废墟也重置了！ / Sig Ruins have also been revamped!
+-  Kotlin不再是依赖项 / Kotlin is no longer a dependency
 
 ---
 

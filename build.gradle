@@ -1,7 +1,6 @@
 plugins {
     id 'fabric-loom' version "${loom_version}"
     id 'maven-publish'
-    id 'org.jetbrains.kotlin.jvm' version '2.4.0'
 }
 
 version = project.mod_version
@@ -62,7 +61,6 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-    modImplementation "net.fabricmc:fabric-language-kotlin:${project.kotlin_version}"
     modApi("dev.amblelabs:modkit:${project.amblekit_version}") {exclude(group: "net.fabricmc.fabric-api")}
     modImplementation "dev.amblelabs:ait:${project.ait_version}"
     modImplementation "maven.modrinth:5aaWibi9:AHxQGtuC"

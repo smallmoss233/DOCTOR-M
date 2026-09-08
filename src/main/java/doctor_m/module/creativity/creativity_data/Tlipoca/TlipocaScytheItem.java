@@ -131,7 +131,7 @@ public class TlipocaScytheItem extends Item implements EmissiveItem {
         if (level <= 0) return;
 
         if (level == ScytheChargingManager.MAX_CHARGE_LEVEL) {
-            INVERTSCREENPACKETNetwork.INSTANCE.sendInvertScreenPacket(player, 20);
+            INVERTSCREENPACKETNetwork.sendInvertScreenPacket(player, 20);
         }
 
         ScytheSlashManager.performChargedSlash(

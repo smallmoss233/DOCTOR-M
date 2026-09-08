@@ -16,6 +16,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Pair;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -236,9 +237,9 @@ public class PocketWatchItem extends Item implements KeytoTime {
             long now = System.currentTimeMillis();
             if (now < cooldownEnd) {
                 long remaining = cooldownEnd - now;
-                kotlin.Pair<Integer, Integer> parts = PocketWatchFunction.getRemainingTimeParts(remaining);
-                int minutes = parts.getFirst();
-                int seconds = parts.getSecond();
+                Pair<Integer, Integer> parts = PocketWatchFunction.getRemainingTimeParts(remaining);
+                int minutes = parts.getLeft();
+                int seconds = parts.getRight();
                 Text longDescription = Text.translatable("message.doctor_m.pocket_watch.cooldown", minutes, seconds);
                 TooltipHelper.addWrappedTooltip(tooltip, longDescription);
             }

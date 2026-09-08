@@ -1,10 +1,10 @@
 package doctor_m.module.creativity;
 
-import doctor_m.Item.stcs.STCAItem;
-import doctor_m.Item.stcs.STCHItem;
-import doctor_m.Item.stcs.STCLItem;
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
+import doctor_m.module.creativity.creativity_data.STCS.STCAItem;
+import doctor_m.module.creativity.creativity_data.STCS.STCHItem;
+import doctor_m.module.creativity.creativity_data.STCS.STCLItem;
 import doctor_m.module.creativity.creativity_data.Tlipoca.TlipocaScytheItem;
 import doctor_m.util.creativity.PercentageDamageHelper;
 import net.minecraft.item.Item;

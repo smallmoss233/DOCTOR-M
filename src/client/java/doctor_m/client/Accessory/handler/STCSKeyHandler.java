@@ -1,7 +1,7 @@
 package doctor_m.client.Accessory.handler;
 
-import doctor_m.Item.stcs.STCSItem;
 import doctor_m.client.Accessory.AccessoryKeyHandler;
+import doctor_m.module.creativity.creativity_data.STCS.STCS;
 import doctor_m.network.STCSNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -17,8 +17,8 @@ public class STCSKeyHandler implements AccessoryKeyHandler {
     @Override
     public boolean isActive(PlayerEntity player) {
         // STCS 只认主手和副手
-        return player.getMainHandStack().getItem() instanceof STCSItem
-                || player.getOffHandStack().getItem() instanceof STCSItem;
+        return player.getMainHandStack().getItem() instanceof STCS
+                || player.getOffHandStack().getItem() instanceof STCS;
     }
 
     @Override
