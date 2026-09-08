@@ -5,6 +5,7 @@ import dev.emi.trinkets.api.TrinketItem;
 import dev.emi.trinkets.api.TrinketsApi;
 import doctor_m.Item.KeytoTime;
 import doctor_m.handler.KeytoTime.KeytoTimeCore;
+import doctor_m.module.EmissiveItem;
 import doctor_m.util.creativity.DynamicColorHelper;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import doctor_m.util.tooltip.TooltipHelper;
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.List;
 
-public class KeytoTimeItem extends TrinketItem implements KeytoTime {
+public class KeytoTimeItem extends TrinketItem implements KeytoTime, EmissiveItem {
 
     private static final String TITLE_KEY = "CustomTitle";
 

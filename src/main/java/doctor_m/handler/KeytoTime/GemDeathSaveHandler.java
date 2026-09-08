@@ -1,8 +1,8 @@
 package doctor_m.handler.KeytoTime;
 
-import dev.emi.trinkets.api.TrinketsApi;
-import dev.emi.trinkets.api.TrinketComponent;
 import dev.emi.trinkets.api.SlotReference;
+import dev.emi.trinkets.api.TrinketComponent;
+import dev.emi.trinkets.api.TrinketsApi;
 import doctor_m.Item.data_item.KeytoTimeFragment.RelicGemItem;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.effect.StatusEffectInstance;

@@ -2,6 +2,7 @@ package doctor_m.module.creativity.creativity_data.STCS;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import doctor_m.module.EmissiveItem;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class STCS extends Item {
+public abstract class STCS extends Item implements EmissiveItem {
 
     public static final String STCS_TAG = "STCS";
     public static final String ENERGY_KEY = "energy";
