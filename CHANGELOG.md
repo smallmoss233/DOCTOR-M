@@ -91,3 +91,4 @@
 -  所有的塔迪斯废墟结构现在都能正常生成 / All TARDIS ruin structures now generate correctly
 -  所有有光影的内饰预览图都经过拍摄了 / All interior preview images with shaders have been captured
 -  红石火把起子的物品栏渲染位置终于改了 / The inventory rendering position of the Redstone Torch Screwdriver has finally been changed.
+-  evereye目录被合并到了doctor_m目录，这意味着之前的自定义内容可能会失效！ / The evereye directory has been merged into the doctor_m directory, which means that previous custom content might stop working!
