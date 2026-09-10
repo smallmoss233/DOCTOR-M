@@ -1,6 +1,6 @@
 {
-	"parent": "ait:item/sonic/song",
+  "parent": "doctor_m:item/sonic/mobius",
 	"textures": {
-		"0": "doctor_m:item/sonic_tools/mobius/overload"
+		"5": "doctor_m:item/sonic_tools/mobius/overload"
 	}
 }

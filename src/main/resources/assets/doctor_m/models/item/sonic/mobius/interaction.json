@@ -1,6 +1,6 @@
 {
-	"parent": "ait:item/sonic/song",
-	"textures": {
-		"0": "doctor_m:item/sonic_tools/mobius/interaction"
+  "parent": "doctor_m:item/sonic/mobius",
+  "textures": {
+		"5": "doctor_m:item/sonic_tools/mobius/interaction"
 	}
 }

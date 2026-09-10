@@ -1,6 +1,6 @@
 {
-	"parent": "ait:item/sonic/crystalline",
+  "parent": "doctor_m:item/sonic/master",
 	"textures": {
-		"2": "doctor_m:item/sonic_tools/master/scanning"
+		"4": "doctor_m:item/sonic_tools/master/scanning"
 	}
 }

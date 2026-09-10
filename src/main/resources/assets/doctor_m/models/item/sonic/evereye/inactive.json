@@ -1,6 +1,6 @@
 {
 	"parent": "doctor_m:item/sonic/evereye",
 	"textures": {
-		"0": "doctor_m:item/sonic_tools/evereye/inactive"
+		"1": "doctor_m:item/sonic_tools/evereye/inactive"
 	}
 }
