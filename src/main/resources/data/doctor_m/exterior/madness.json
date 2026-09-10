@@ -1,0 +1,6 @@
+{
+  "id": "doctor_m:madness",
+  "category": "ait:exterior/capsule",
+  "parent": "ait:exterior/capsule/default",
+  "texture": "doctor_m:textures/exteriors/madness_default.png"
+}

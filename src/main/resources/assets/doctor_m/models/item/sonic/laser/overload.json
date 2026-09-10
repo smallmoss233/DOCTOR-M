@@ -1,0 +1,6 @@
+{
+  "parent": "doctor_m:item/sonic/laser",
+  "textures": {
+    "1": "doctor_m:item/sonic_tools/laser/overload"
+  }
+}

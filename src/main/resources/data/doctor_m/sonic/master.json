@@ -1,0 +1,13 @@
+{
+  "id": "doctor_m:master",
+  "models": {
+    "inactive": "doctor_m:item/sonic/master/inactive",
+    "interaction": "doctor_m:item/sonic/master/interaction",
+    "overload": "doctor_m:item/sonic/master/overload",
+    "scanning": "doctor_m:item/sonic/master/scanning",
+    "tardis": "doctor_m:item/sonic/master/tardis"
+  },
+  "loyalty": {
+    "type": "PILOT"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "id": "doctor_m:romantic",
+  "parent": "ait:console/renaissance",
+  "texture": "doctor_m:textures/consoles/romantic.png",
+  "emission": "doctor_m:textures/consoles/romantic_emission.png"
+}

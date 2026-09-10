@@ -1,6 +1,0 @@
-{
-	"parent": "ait:item/sonic/crystalline",
-	"textures": {
-		"2": "evereye:item/sonic_tools/master/tardis"
-	}
-}

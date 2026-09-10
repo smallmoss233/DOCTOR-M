@@ -1,0 +1,6 @@
+{
+  "id": "doctor_m:copper_dalek",
+  "parent": "ait:console/copper",
+  "texture": "doctor_m:textures/consoles/copper_dalek.png",
+  "emission": "ait:textures/blockentities/consoles/copper_console_emission.png"
+}

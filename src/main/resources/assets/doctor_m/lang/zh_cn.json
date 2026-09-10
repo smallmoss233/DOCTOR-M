@@ -512,5 +512,38 @@
   "dimension.minecraft.the_end": "末路之地",
   "dimension.minecraft.the_nether": "下界",
   "dimension.doctor_m.trenzalore": "§3特兰泽洛",
-  "dimension.doctor_m.titan": "土卫六-泰坦"
+  "dimension.doctor_m.titan": "土卫六-泰坦",
+
+  "desktop.doctor_m.evereye": "永恒之眼",
+  "desktop.doctor_m.evereye_2": "永恒之眼[45型]",
+  "desktop.doctor_m.neon": "霓虹",
+  "desktop.doctor_m.watcher": "守望",
+  "desktop.doctor_m.erte": "尔特",
+  "desktop.doctor_m.madness": "恶疯",
+  "desktop.doctor_m.inferno": "烈火",
+  "desktop.doctor_m.ever_bell": "永恒之钟",
+  "desktop.doctor_m.permanence": "恒朽",
+  "desktop.doctor_m.coister": "回廊",
+  "desktop.doctor_m.crystalline_zeiton": "泽顿水晶",
+  "desktop.doctor_m.rift": "时隙",
+  "desktop.doctor_m.rift_2": "时隙[战争往事]",
+  "desktop.doctor_m.magic_square": "幻方",
+  "desktop.doctor_m.ancient_library": "古图书馆",
+  "desktop.doctor_m.romantic": "浪漫",
+
+  "sonic.doctor_m.evereye": "玛丽.谨",
+  "sonic.doctor_m.template_torch": "红石火把",
+  "sonic.doctor_m.mobius": "莫比乌斯",
+  "sonic.doctor_m.master": "法师",
+  "sonic.doctor_m.laser": "激光起子",
+  "sonic.doctor_m.portal_gun": "传送枪",
+
+  "console.doctor_m.evereye": "永恒之眼",
+  "console.doctor_m.copper_dalek": "戴立克",
+  "console.doctor_m.watcher": "守望",
+  "console.doctor_m.romantic": "浪漫",
+  "console.doctor_m.bloodiness": "血腥",
+
+  "exterior.doctor_m.madness": "恶疯",
+  "exterior.doctor_m.evereyebox": "永恒之眼警亭"
 }

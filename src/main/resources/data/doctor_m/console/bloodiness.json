@@ -1,0 +1,6 @@
+{
+  "id": "doctor_m:bloodiness",
+  "parent": "ait:console/alnico",
+  "texture": "doctor_m:textures/consoles/bloodiness.png",
+  "emission": "doctor_m:textures/consoles/bloodiness_emission.png"
+}

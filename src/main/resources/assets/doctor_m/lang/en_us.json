@@ -512,5 +512,38 @@
   "dimension.minecraft.the_end": "The End",
   "dimension.minecraft.the_nether": "The Nether",
   "dimension.doctor_m.trenzalore": "§3Trenzalore",
-  "dimension.doctor_m.titan": "Saturn VI-Titan"
+  "dimension.doctor_m.titan": "Saturn VI-Titan",
+
+  "desktop.doctor_m.evereye": "Evereye",
+  "desktop.doctor_m.evereye_2": "Everye [Type45]",
+  "desktop.doctor_m.neon": "Neon",
+  "desktop.doctor_m.watcher": "Watcher",
+  "desktop.doctor_m.erte": "Erte",
+  "desktop.doctor_m.madness": "Madness",
+  "desktop.doctor_m.inferno": "Inferno",
+  "desktop.doctor_m.ever_bell": "Eternal Bell",
+  "desktop.doctor_m.permanence": "Permanence",
+  "desktop.doctor_m.coister": "Coister",
+  "desktop.doctor_m.crystalline_zeiton": "Crystalline Zeiton",
+  "desktop.doctor_m.rift": "The Rift",
+  "desktop.doctor_m.rift_2": "The Rift [War Stories]",
+  "desktop.doctor_m.magic_square": "Magic Square",
+  "desktop.doctor_m.ancient_library": "Ancient Library",
+  "desktop.doctor_m.romantic": "Romantic",
+
+  "sonic.doctor_m.evereye": "Mary.Jin",
+  "sonic.doctor_m.template_torch": "Redstone Torch",
+  "sonic.doctor_m.mobius": "Mobius",
+  "sonic.doctor_m.master": "Master",
+  "sonic.doctor_m.laser":"Laser Screwdriver",
+  "sonic.doctor_m.portal_gun": "PortalGun",
+
+  "console.doctor_m.evereye": "Evereye",
+  "console.doctor_m.copper_dalek": "Dalek",
+  "console.doctor_m.watcher": "Watcher",
+  "console.doctor_m.romantic": "Romantic",
+  "console.doctor_m.bloodiness": "Bloodiness",
+
+  "exterior.doctor_m.madness": "Madness",
+  "exterior.doctor_m.evereyebox": "Evereye Police Box"
 }

@@ -1,0 +1,13 @@
+{
+  "id": "doctor_m:evereye",
+  "models": {
+    "inactive": "doctor_m:item/sonic/evereye/inactive",
+    "interaction": "doctor_m:item/sonic/evereye/interaction",
+    "overload": "doctor_m:item/sonic/evereye/overload",
+    "scanning": "doctor_m:item/sonic/evereye/scanning",
+    "tardis": "doctor_m:item/sonic/evereye/tardis"
+  },
+  "loyalty": {
+    "type": "PILOT"
+  }
+}

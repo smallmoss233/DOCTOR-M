@@ -1,0 +1,6 @@
+{
+  "id": "doctor_m:watcher",
+  "parent": "ait:console/toyota",
+  "texture": "doctor_m:textures/consoles/watcher.png",
+  "emission": "doctor_m:textures/consoles/watcher_emission.png"
+}

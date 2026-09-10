@@ -1,0 +1,13 @@
+{
+  "id": "doctor_m:mobius",
+  "models": {
+    "inactive": "doctor_m:item/sonic/mobius/inactive",
+    "interaction": "doctor_m:item/sonic/mobius/interaction",
+    "overload": "doctor_m:item/sonic/mobius/overload",
+    "scanning": "doctor_m:item/sonic/mobius/scanning",
+    "tardis": "doctor_m:item/sonic/mobius/tardis"
+  },
+  "loyalty": {
+    "type": "PILOT"
+  }
+}

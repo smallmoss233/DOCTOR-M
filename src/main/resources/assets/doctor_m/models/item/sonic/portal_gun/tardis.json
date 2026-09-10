@@ -1,0 +1,6 @@
+{
+	"parent": "doctor_m:item/sonic/portal_gun",
+	"textures": {
+		"0": "doctor_m:item/sonic_tools/portal_gun/portal_gun"
+	}
+}

@@ -1,6 +1,0 @@
-{
-  "id": "everye:watcher",
-  "parent": "ait:console/toyota",
-  "texture": "evereye:textures/consoles/watcher.png",
-  "emission": "evereye:textures/consoles/watcher_emission.png"
-}

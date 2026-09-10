@@ -1,0 +1,13 @@
+{
+  "id": "doctor_m:laser",
+  "models": {
+    "inactive": "doctor_m:item/sonic/laser/inactive",
+    "interaction": "doctor_m:item/sonic/laser/interaction",
+    "overload": "doctor_m:item/sonic/laser/overload",
+    "scanning": "doctor_m:item/sonic/laser/scanning",
+    "tardis": "doctor_m:item/sonic/laser/tardis"
+  },
+  "loyalty": {
+    "type": "PILOT"
+  }
+}

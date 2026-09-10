@@ -1,6 +1,0 @@
-{
-  "id": "evereye:madness",
-  "category": "ait:exterior/capsule",
-  "parent": "ait:exterior/capsule/default",
-  "texture": "evereye:textures/exteriors/madness_default.png"
-}

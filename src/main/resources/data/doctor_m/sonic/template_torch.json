@@ -1,0 +1,13 @@
+{
+  "id": "doctor_m:template_torch",
+  "models": {
+    "inactive": "doctor_m:item/sonic/template_torch/inactive",
+    "interaction": "doctor_m:item/sonic/template_torch/interaction",
+    "overload": "doctor_m:item/sonic/template_torch/overload",
+    "scanning": "doctor_m:item/sonic/template_torch/scanning",
+    "tardis": "doctor_m:item/sonic/template_torch/tardis"
+  },
+  "loyalty": {
+    "type": "PILOT"
+  }
+}
