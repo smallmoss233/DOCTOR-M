@@ -1,0 +1,13 @@
+{
+  "id": "doctor_m:evil_portal_gun",
+  "models": {
+    "inactive": "doctor_m:item/sonic/evil_portal_gun/inactive",
+    "interaction": "doctor_m:item/sonic/evil_portal_gun/interaction",
+    "overload": "doctor_m:item/sonic/evil_portal_gun/overload",
+    "scanning": "doctor_m:item/sonic/evil_portal_gun/scanning",
+    "tardis": "doctor_m:item/sonic/evil_portal_gun/tardis"
+  },
+  "loyalty": {
+    "type": "PILOT"
+  }
+}
