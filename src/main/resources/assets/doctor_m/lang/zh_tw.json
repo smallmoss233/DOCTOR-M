@@ -458,6 +458,7 @@
   "message.doctor_m.vm.time_sickness": "§4警告：時間流撕裂了你的生理結構。無防護躍遷後遺症發作，預計持續 %d 秒。",
   "message.doctor_m.vm.out_of_bounds": "§c目標座標超出安全邊界，系統安全鎖定啟動。",
   "message.doctor_m.vm.distance_too_far": "§c預計消耗 %d 能量，超出設備能量極限，系統安全鎖定啟動。",
+  "gui.doctor_m.vm.go.cooldown": "冷卻中 %s 秒",
   "message.doctor_m.stca.description": "協議已驗證，轉交控制權。",
   "message.doctor_m.stch.description": "或許你需要一套好點的骨骼使用它？",
   "message.doctor_m.stcl.description": "專注，計劃，攻擊！",

@@ -19,13 +19,51 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 public class VortexManipulatorScreen extends Screen {
+
+    // ===== 布局常量 =====
+    private static final int PANEL_W = 360;
+    private static final int PANEL_H = 210;
+    private static final int HEADER_H = 26;
+    private static final int PAD = 14;
+    private static final int COL_GAP = 24;
+    private static final int LABEL_W = 16;
+    private static final int LABEL_GAP = 6;
+    private static final int FIELD_W = 120;
+    private static final int FIELD_H = 18;
+    private static final int ROW_SPACING = 26;
+    private static final int BTN_H = 20;
+    private static final int BTN_W = 140;
+
+    // ===== 配色 =====
+    private static final int C_BG           = 0xEE0A0512;
+    private static final int C_BORDER       = 0xFF7B3FB0;
+    private static final int C_BORDER_GLOW  = 0x40B070FF;
+    private static final int C_ACCENT       = 0xFF00D4FF;
+    private static final int C_HEADER_BG    = 0x60000000;
+    private static final int C_PANEL_INNER  = 0x25000000;
+    private static final int C_PANEL_BORDER = 0x30FFFFFF;
+    private static final int C_DIVIDER      = 0x30FFFFFF;
+    private static final int C_TEXT         = 0xFFFFFFFF;
+    private static final int C_TEXT_DIM     = 0xFF9A8AA8;
+
     private static final ModConfig CONFIG = ConfigManager.getConfig();
 
     private final PlayerEntity player;
     private TextFieldWidget xField, yField, zField;
+    private ButtonWidget goBtn;   // ★ 传送按钮引用
 
     private int lastX = Integer.MIN_VALUE, lastY = Integer.MIN_VALUE, lastZ = Integer.MIN_VALUE;
     private String lastDim = null;
+
+    // ===== 运行时布局 =====
+    private int panelX, panelY;
+    private int leftColX, rightColX, rightW;
+    private int zFieldY, yFieldY, xFieldY;
+    private int fieldX;
+    private int dimLabelY, dimRowY;
+    private int presetY1, presetY2;
+    private int fuelY, heatY;
+    private int bottomBtnY;
 
     public VortexManipulatorScreen(PlayerEntity player, ItemStack stack) {
         super(Text.translatable("gui.doctor_m.vm.title"));
@@ -42,29 +80,35 @@ public class VortexManipulatorScreen extends Screen {
 
     @Override
     protected void init() {
-        int centerX = this.width / 2;
-        int centerY = this.height / 2;
+        super.init();
 
-        int bgW = 340;
-        int bgH = 185;
-        int bgX = centerX - bgW / 2;
-        int padding = 16;
+        // 面板居中
+        this.panelX = (this.width - PANEL_W) / 2;
+        this.panelY = (this.height - PANEL_H) / 2;
 
-        int labelWidth = 14;
-        int labelGap = 8;
-        int fieldWidth = 110;
-        int leftX = bgX + padding + labelWidth + labelGap;
+        // 左右列
+        this.leftColX = panelX + PAD;
+        this.rightColX = leftColX + (LABEL_W + LABEL_GAP + FIELD_W) + COL_GAP;
+        this.rightW = panelX + PANEL_W - PAD - rightColX;
 
-        int gap = 10;
-        int dividerX = centerX;
-        int rightX = centerX + gap / 2;
-        int rightWidth = 148;
+        // 坐标字段
+        this.fieldX = leftColX + LABEL_W + LABEL_GAP;
+        this.zFieldY = panelY + HEADER_H + 14;
+        this.yFieldY = zFieldY + ROW_SPACING;
+        this.xFieldY = yFieldY + ROW_SPACING;
 
-        int startY = centerY - 50;
+        // 维度
+        this.dimLabelY = panelY + HEADER_H + 12;
+        this.dimRowY = dimLabelY + 16;
+        this.presetY1 = dimRowY + 28;
+        this.presetY2 = presetY1 + 26;
 
-        int bottomBtnW = 140;
-        int bottomLeftX = centerX - 145;
-        int bottomRightX = centerX + 5;
+        // 燃料 / 热量
+        this.fuelY = xFieldY + ROW_SPACING + 14;
+        this.heatY = fuelY + 16;
+
+        // 底部
+        this.bottomBtnY = panelY + PANEL_H - BTN_H - 14;
 
         ItemStack stack = getVMStack();
         if (stack.isEmpty()) {
@@ -72,55 +116,90 @@ public class VortexManipulatorScreen extends Screen {
             return;
         }
 
-        this.zField = new TextFieldWidget(this.textRenderer, leftX, startY, fieldWidth, 18, Text.literal("Z"));
+        // ===== 坐标输入 =====
+        this.zField = new TextFieldWidget(this.textRenderer, fieldX, zFieldY, FIELD_W, FIELD_H, Text.literal("Z"));
         this.zField.setText(String.valueOf((int) VortexManipulatorItem.getDestZ(stack)));
         this.addDrawableChild(this.zField);
 
-        this.yField = new TextFieldWidget(this.textRenderer, leftX, startY + 26, fieldWidth, 18, Text.literal("Y"));
+        this.yField = new TextFieldWidget(this.textRenderer, fieldX, yFieldY, FIELD_W, FIELD_H, Text.literal("Y"));
         this.yField.setText(String.valueOf((int) VortexManipulatorItem.getDestY(stack)));
         this.addDrawableChild(this.yField);
 
-        this.xField = new TextFieldWidget(this.textRenderer, leftX, startY + 52, fieldWidth, 18, Text.literal("X"));
+        this.xField = new TextFieldWidget(this.textRenderer, fieldX, xFieldY, FIELD_W, FIELD_H, Text.literal("X"));
         this.xField.setText(String.valueOf((int) VortexManipulatorItem.getDestX(stack)));
         this.addDrawableChild(this.xField);
 
+        // ===== 维度切换 =====
         this.addDrawableChild(ButtonWidget.builder(Text.literal("<"), btn -> {
             var buf = PacketByteBufs.create();
             buf.writeBoolean(true);
             ClientPlayNetworking.send(VMNetwork.CYCLE_DIM, buf);
-        }).position(rightX, startY).size(20, 18).build());
+        }).position(rightColX, dimRowY).size(20, FIELD_H).build());
 
         this.addDrawableChild(ButtonWidget.builder(Text.literal(">"), btn -> {
             var buf = PacketByteBufs.create();
             buf.writeBoolean(false);
             ClientPlayNetworking.send(VMNetwork.CYCLE_DIM, buf);
-        }).position(rightX + rightWidth - 20, startY).size(20, 18).build());
+        }).position(rightColX + rightW - 20, dimRowY).size(20, FIELD_H).build());
 
-        int btnY = startY + 28;
-
+        // ===== 预设按钮 =====
         this.addDrawableChild(ButtonWidget.builder(
                 Text.translatable("gui.doctor_m.vm.set_current"),
                 btn -> ClientPlayNetworking.send(VMNetwork.SET_CURRENT_DEST, PacketByteBufs.empty())
-        ).position(rightX, btnY).size(rightWidth, 20).build());
+        ).position(rightColX, presetY1).size(rightW, BTN_H).build());
 
         this.addDrawableChild(ButtonWidget.builder(
                 Text.translatable("gui.doctor_m.vm.set_prev"),
                 btn -> ClientPlayNetworking.send(VMNetwork.SET_PREV_DEST, PacketByteBufs.empty())
-        ).position(rightX, btnY + 24).size(rightWidth, 20).build());
+        ).position(rightColX, presetY2).size(rightW, BTN_H).build());
 
-        int bottomY = centerY + 60;
+        // ===== 底部按钮 =====
+        int bottomLeftX = panelX + (PANEL_W - BTN_W * 2 - 20) / 2;
+        int bottomRightX = bottomLeftX + BTN_W + 20;
 
         this.addDrawableChild(ButtonWidget.builder(
                 Text.translatable("gui.doctor_m.vm.close"),
                 btn -> this.close()
-        ).position(bottomLeftX, bottomY).size(bottomBtnW, 20).build());
+        ).position(bottomLeftX, bottomBtnY).size(BTN_W, BTN_H).build());
 
-        this.addDrawableChild(ButtonWidget.builder(
-                Text.translatable("gui.doctor_m.vm.go").formatted(Formatting.GREEN),
+        // ★ 保存传送按钮引用，后续 tick 动态更新
+        this.goBtn = this.addDrawableChild(ButtonWidget.builder(
+                Text.translatable("gui.doctor_m.vm.go").formatted(Formatting.GREEN, Formatting.BOLD),
                 btn -> attemptTeleport()
-        ).position(bottomRightX, bottomY).size(bottomBtnW, 20).build());
+        ).position(bottomRightX, bottomBtnY).size(BTN_W, BTN_H).build());
 
         syncLastValues(stack);
+
+        // 初始化时刷新传送按钮状态
+        updateGoButtonState(stack);
+    }
+
+    /** ★ 根据冷却/破损状态更新传送按钮的显示与可用性 */
+    private void updateGoButtonState(ItemStack stack) {
+        if (goBtn == null || stack.isEmpty()) return;
+
+        boolean broken = VortexManipulatorItem.isBroken(stack);
+        boolean onCooldown = VortexManipulatorItem.isOnCooldownSys(stack);
+
+        if (broken) {
+            goBtn.setMessage(Text.translatable("gui.doctor_m.vm.broken_label")
+                    .formatted(Formatting.DARK_RED, Formatting.BOLD));
+            goBtn.active = false;
+            return;
+        }
+
+        if (onCooldown) {
+            long remainingMs = VortexManipulatorItem.getCooldownEndSys(stack) - System.currentTimeMillis();
+            int sec = Math.max(1, (int) Math.ceil(remainingMs / 1000.0));
+            goBtn.setMessage(Text.translatable("gui.doctor_m.vm.go.cooldown", sec)
+                    .formatted(Formatting.RED));
+            goBtn.active = false;
+            return;
+        }
+
+        goBtn.setMessage(Text.translatable("gui.doctor_m.vm.go")
+                .formatted(Formatting.GREEN, Formatting.BOLD));
+        goBtn.active = true;
     }
 
     private void syncLastValues(ItemStack stack) {
@@ -142,8 +221,7 @@ public class VortexManipulatorScreen extends Screen {
             buf.writeDouble(z);
             ClientPlayNetworking.send(VMNetwork.TELEPORT, buf);
             this.close();
-        } catch (NumberFormatException e) {
-            // 忽略
+        } catch (NumberFormatException ignored) {
         }
     }
 
@@ -153,34 +231,7 @@ public class VortexManipulatorScreen extends Screen {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        int centerX = this.width / 2;
-        int centerY = this.height / 2;
-
-        int bgW = 340;
-        int bgH = 185;
-        int bgX = centerX - bgW / 2;
-        int bgY = centerY - bgH / 2;
-        int bgR = bgX + bgW;
-        int bgB = bgY + bgH;
-        int padding = 16;
-
-        int labelWidth = 14;
-        int labelGap = 8;
-        int fieldWidth = 110;
-        int leftX = bgX + padding + labelWidth + labelGap;
-        int labelRightX = leftX - labelGap;
-
-        int gap = 10;
-        int dividerX = centerX;
-        int rightX = centerX + gap / 2;
-        int rightWidth = 148;
-        int startY = centerY - 50;
-
-        int bottomBtnW = 140;
-        int bottomLeftX = centerX - 145;
-        int bottomRightX = centerX + 5;
-
+    public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
         ItemStack stack = getVMStack();
         if (stack.isEmpty()) return;
 
@@ -189,65 +240,128 @@ public class VortexManipulatorScreen extends Screen {
         boolean broken = VortexManipulatorItem.isBroken(stack);
         String dimId = VortexManipulatorItem.getDestDim(stack);
 
-        context.fill(bgX, bgY, bgR, bgB, 0xF0100010);
-        context.fill(bgX, bgY, bgR, bgY + 1, 0x505000FF);
-        context.fill(bgX, bgB - 1, bgR, bgB, 0x505000FF);
-        context.fill(bgX, bgY, bgX + 1, bgB, 0x5028007F);
-        context.fill(bgR - 1, bgY, bgR, bgB, 0x5028007F);
+        int px = panelX, py = panelY;
+        int pr = px + PANEL_W, pb = py + PANEL_H;
 
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, centerX, bgY + 8, 0xFFFFFF);
-        context.fill(bgX + padding, bgY + 20, bgR - padding, bgY + 21, 0x505000FF);
+        // ===== 背景阴影 + 面板 =====
+        ctx.fill(px - 3, py - 3, pr + 3, pb + 3, 0x30000000);
+        ctx.fill(px - 2, py - 2, pr + 2, pb + 2, 0x50000000);
+        ctx.fill(px - 1, py - 1, pr + 1, pb + 1, 0x70000000);
+        ctx.fill(px, py, pr, pb, C_BG);
 
-        context.drawCenteredTextWithShadow(this.textRenderer,
+        // 边框
+        ctx.fill(px, py, pr, py + 1, C_BORDER);
+        ctx.fill(px, pb - 1, pr, pb, C_BORDER);
+        ctx.fill(px, py, px + 1, pb, C_BORDER);
+        ctx.fill(pr - 1, py, pr, pb, C_BORDER);
+
+        // 内发光
+        ctx.fill(px + 1, py + 1, pr - 1, py + 2, C_BORDER_GLOW);
+        ctx.fill(px + 1, py + 1, px + 2, pb - 1, C_BORDER_GLOW);
+
+        // ===== 标题栏 =====
+        ctx.fill(px + 1, py + 1, pr - 1, py + HEADER_H, C_HEADER_BG);
+        ctx.fill(px + 1, py + HEADER_H, pr - 1, py + HEADER_H + 1, C_ACCENT);
+
+        MutableText titleText = Text.literal("✦ ")
+                .formatted(Formatting.AQUA)
+                .append(this.title.copy().formatted(Formatting.WHITE))
+                .append(Text.literal(" ✦").formatted(Formatting.AQUA));
+        ctx.drawCenteredTextWithShadow(this.textRenderer, titleText, px + PANEL_W / 2, py + 8, 0xFFFFFF);
+
+        // ===== 坐标面板 =====
+        drawInnerPanel(ctx,
+                leftColX - 8, zFieldY - 8,
+                LABEL_W + LABEL_GAP + FIELD_W + 16,
+                ROW_SPACING * 3 + 4);
+
+        ctx.drawTextWithShadow(this.textRenderer, "Z", leftColX, zFieldY + 5, C_ACCENT);
+        ctx.drawTextWithShadow(this.textRenderer, "Y", leftColX, yFieldY + 5, C_ACCENT);
+        ctx.drawTextWithShadow(this.textRenderer, "X", leftColX, xFieldY + 5, C_ACCENT);
+
+        // ===== 燃料 / 热量 =====
+        int statW = LABEL_W + LABEL_GAP + FIELD_W;
+
+        float fuelRatio = fuel / (float) CONFIG.vortexManipulatorMaxFuel;
+        int fuelColor;
+        if (fuelRatio > 0.5f)      fuelColor = 0xFF3DDC84;
+        else if (fuelRatio > 0.2f) fuelColor = 0xFFFFC107;
+        else                       fuelColor = 0xFFFF5252;
+
+        drawStatBar(ctx, leftColX, fuelY, statW, fuelRatio, fuelColor,
+                "燃料", fuel + "/" + CONFIG.vortexManipulatorMaxFuel);
+
+        float heatRatio = Math.min(1f, overheat / 100f);
+        int heatColor;
+        if (overheat > 80)      heatColor = 0xFFFF5252;
+        else if (overheat > 50) heatColor = 0xFFFFA726;
+        else                    heatColor = 0xFF3D9EFF;
+
+        drawStatBar(ctx, leftColX, heatY, statW, heatRatio, heatColor,
+                "热量", String.valueOf(overheat));
+
+        // ===== 维度面板 =====
+        drawInnerPanel(ctx,
+                rightColX - 8, dimLabelY - 8,
+                rightW + 16,
+                presetY2 - dimLabelY + BTN_H + 12);
+
+        ctx.drawTextWithShadow(this.textRenderer,
                 Text.translatable("gui.doctor_m.vm.dimension"),
-                rightX + rightWidth / 2, startY - 14, 0xAAAAAA);
+                rightColX, dimLabelY, C_ACCENT);
 
         Text dimText = getDimensionText(dimId);
-        int dimTextWidth = this.textRenderer.getWidth(dimText);
-        int dimAreaCenter = rightX + rightWidth / 2;
-        context.drawTextWithShadow(this.textRenderer, dimText,
-                dimAreaCenter - (dimTextWidth / 2), startY + 4, 0xFFFFFF);
+        int dimTextW = this.textRenderer.getWidth(dimText);
+        int dimCenterX = rightColX + rightW / 2;
+        ctx.drawTextWithShadow(this.textRenderer, dimText,
+                dimCenterX - dimTextW / 2, dimRowY + 4, C_TEXT);
 
-        String[] labelKeys = {
-                "gui.doctor_m.vm.label.z",
-                "gui.doctor_m.vm.label.y",
-                "gui.doctor_m.vm.label.x"
-        };
-        for (int i = 0; i < 3; i++) {
-            Text label = Text.translatable(labelKeys[i]);
-            int lw = this.textRenderer.getWidth(label);
-            int ly = startY + i * 26 + 5;
-            context.drawTextWithShadow(this.textRenderer, label,
-                    labelRightX - lw, ly, 0xAAAAAA);
-        }
-
-        int sepY = startY + 75;
-        context.fill(dividerX, startY - 10, dividerX + 1, sepY, 0x20FFFFFF);
-
-        int statY = centerY + 28;
-        int statLeft = leftX - 4;
-        int statRight = leftX + fieldWidth + 4;
-        context.fill(statLeft, statY - 2, statRight, statY + 22, 0x15FFFFFF);
-
-        // 修改：使用 CONFIG.vortexManipulatorMaxFuel 替代 VortexManipulatorItem.MAX_FUEL
-        Text fuelText = Text.translatable("gui.doctor_m.vm.fuel_label", fuel, CONFIG.vortexManipulatorMaxFuel)
-                .formatted(fuel < 100 ? Formatting.RED : Formatting.GREEN);
-        Text ohText = Text.translatable("gui.doctor_m.vm.heat_label", overheat)
-                .formatted(overheat > 80 ? Formatting.RED : Formatting.YELLOW);
-
-        context.drawTextWithShadow(this.textRenderer, fuelText, leftX, statY, 0xFFFFFF);
-        context.drawTextWithShadow(this.textRenderer, ohText, leftX, statY + 12, 0xFFFFFF);
-
-        int bottomLineY = centerY + 56;
-        context.fill(bottomLeftX, bottomLineY, bottomRightX + bottomBtnW, bottomLineY + 1, 0x30FFFFFF);
+        // ===== 底部 =====
+        ctx.fill(px + PAD, bottomBtnY - 10, pr - PAD, bottomBtnY - 9, C_DIVIDER);
 
         if (broken) {
-            context.drawCenteredTextWithShadow(this.textRenderer,
-                    Text.translatable("gui.doctor_m.vm.broken_label").formatted(Formatting.DARK_RED, Formatting.BOLD),
-                    centerX, bottomLineY + 4, 0xFFFFFF);
+            ctx.drawCenteredTextWithShadow(this.textRenderer,
+                    Text.translatable("gui.doctor_m.vm.broken_label")
+                            .formatted(Formatting.DARK_RED, Formatting.BOLD),
+                    px + PANEL_W / 2, bottomBtnY - 22, 0xFFFFFF);
         }
 
-        super.render(context, mouseX, mouseY, delta);
+        super.render(ctx, mouseX, mouseY, delta);
+    }
+
+    /** 绘制带边框的内嵌面板 */
+    private void drawInnerPanel(DrawContext ctx, int x, int y, int w, int h) {
+        ctx.fill(x, y, x + w, y + h, C_PANEL_INNER);
+        ctx.fill(x, y, x + w, y + 1, C_PANEL_BORDER);
+        ctx.fill(x, y + h - 1, x + w, y + h, C_PANEL_BORDER);
+        ctx.fill(x, y, x + 1, y + h, C_PANEL_BORDER);
+        ctx.fill(x + w - 1, y, x + w, y + h, C_PANEL_BORDER);
+    }
+
+    /** 绘制“标签 + 进度条 + 数值”样式的状态行 */
+    private void drawStatBar(DrawContext ctx, int x, int y, int totalW,
+                             float ratio, int color, String label, String value) {
+        ratio = Math.max(0f, Math.min(1f, ratio));
+
+        int labelW = 32;
+        int valueW = this.textRenderer.getWidth(value) + 4;
+        int barW = totalW - labelW - valueW - 4;
+        int barH = 6;
+        int barY = y + 4;
+
+        ctx.drawTextWithShadow(this.textRenderer, label, x, y, C_TEXT_DIM);
+
+        int barX = x + labelW;
+        ctx.fill(barX, barY, barX + barW, barY + barH, 0x60000000);
+        ctx.fill(barX, barY, barX + barW, barY + 1, 0x30FFFFFF);
+        ctx.fill(barX, barY + barH - 1, barX + barW, barY + barH, 0x30FFFFFF);
+
+        int fillW = (int)(ratio * (barW - 2));
+        if (fillW > 0) {
+            ctx.fill(barX + 1, barY + 1, barX + 1 + fillW, barY + barH - 1, color);
+        }
+
+        ctx.drawTextWithShadow(this.textRenderer, value, barX + barW + 4, y, C_TEXT);
     }
 
     @Override
@@ -279,6 +393,9 @@ public class VortexManipulatorScreen extends Screen {
         }
 
         lastDim = cdim;
+
+        // ★ 每 tick 刷新传送按钮冷却状态
+        updateGoButtonState(current);
     }
 
     @Override

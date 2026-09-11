@@ -458,6 +458,7 @@
   "message.doctor_m.vm.time_sickness": "§4Warning: The time stream has torn your physiology. Unprotected jump sequelae active, expected to last %d seconds.",
   "message.doctor_m.vm.out_of_bounds": "§cTarget coordinates exceed safe boundaries. System safety lock engaged.",
   "message.doctor_m.vm.distance_too_far": "§cEstimated fuel cost: %d — exceeds device limit. System safety lock engaged.",
+  "gui.doctor_m.vm.go.cooldown": "Cooling down %ss",
   "message.doctor_m.stca.description": "Protocol verified. Control transferred.",
   "message.doctor_m.stch.description": "Maybe you need a better set of bones to wield this?",
   "message.doctor_m.stcl.description": "Focus. Plan. Attack!",

@@ -230,6 +230,11 @@ public class VMServerHandler {
         VortexManipulatorItem.setLastUsed(stack, time);
         VortexManipulatorItem.setCooldownEndSys(stack, System.currentTimeMillis() + CONFIG.vortexManipulatorCooldownTicks * 50L);
 
+        // ★ 同步物品 NBT 到客户端，确保冷却显示一致
+        if (player.getMainHandStack() == stack || player.getOffHandStack() == stack) {
+            player.currentScreenHandler.syncState();
+        }
+
         player.teleport(targetWorld, x, y, z, player.getYaw(), player.getPitch());
         targetWorld.playSound(null, player.getBlockPos(),
                 net.minecraft.sound.SoundEvents.ENTITY_ENDERMAN_TELEPORT,
