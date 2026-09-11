@@ -1,0 +1,9 @@
+{
+	"format_version": "1.21.11",
+	"credit": "Made with Blockbench",
+	"parent": "doctor_m:item/sonic/evil_portal_gun",
+	"textures": {
+		"0": "doctor_m:item/sonic_tools/evil_portal_gun/evil_portal_gun",
+		"particle": "doctor_m:item/sonic_tools/evil_portal_gun/evil_portal_gun"
+	}
+}

@@ -538,6 +538,7 @@
   "sonic.doctor_m.master": "Master",
   "sonic.doctor_m.laser":"Laser Screwdriver",
   "sonic.doctor_m.portal_gun": "PortalGun",
+  "sonic.doctor_m.evil_portal_gun": "Evil PortalGun",
 
   "console.doctor_m.evereye": "Evereye",
   "console.doctor_m.copper_dalek": "Dalek",
