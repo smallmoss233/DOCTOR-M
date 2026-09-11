@@ -1,14 +1,14 @@
 {
   "ait:type_40": "Type 40",
-  "evereye:coister": "Type 60",
-  "evereye:evereye": "Type 50 / 103W",
-  "evereye:evereye_2": "Type 45 / 103W",
-  "evereye:ancient_library": "Type 45",
-  "evereye:rift": "Type 50",
-  "evereye:rift_2": "Type 50",
-  "evereye:inferno": "Type 50",
-  "evereye:watcher": "Type 102",
-  "evereye:neon": "Type 75",
-  "evereye:magic_square": "Type 75",
-  "evereye:madness": "Type 1 / ???"
+  "doctor_m:coister": "Type 60",
+  "doctor_m:evereye": "Type 50",
+  "doctor_m:evereye_2": "Type 45",
+  "doctor_m:ancient_library": "Type 45",
+  "doctor_m:rift": "Type 50",
+  "doctor_m:rift_2": "Type 50",
+  "doctor_m:inferno": "Type 50",
+  "doctor_m:watcher": "Type 102",
+  "doctor_m:neon": "Type 75",
+  "doctor_m:magic_square": "Type 75",
+  "doctor_m:madness": "Type 1 / ???"
 }
