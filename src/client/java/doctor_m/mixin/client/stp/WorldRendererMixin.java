@@ -1,135 +1,153 @@
 package doctor_m.mixin.client.stp;
 
-import com.google.common.collect.Queues;
 import doctor_m.client.util.stp.STPWorldRenderer;
+import doctor_m.module.STP;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilderStorage;
 import net.minecraft.client.render.BuiltChunkStorage;
-import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.chunk.ChunkBuilder;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkSectionPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayDeque;
-import java.util.LinkedHashSet;
-import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * 关键优化：绕过原版 WorldRenderer.setWorld() 的完整资源重载。
- * 只重建 renderable chunks 列表，保留 chunkBuilder 和现有几何体。
- */
 @Mixin(WorldRenderer.class)
 public abstract class WorldRendererMixin implements STPWorldRenderer {
 
     @Shadow private @Nullable ChunkBuilder chunkBuilder;
     @Shadow @Final private EntityRenderDispatcher entityRenderDispatcher;
     @Shadow private @Nullable ClientWorld world;
-    @Shadow public abstract void reload();
-    @Shadow @Final private ObjectArrayList<WorldRenderer.ChunkInfo> chunkInfos;
-    @Shadow @Final private Set<BlockEntity> noCullingBlockEntities;
-    @Shadow private int cameraChunkZ;
-    @Shadow private int cameraChunkY;
+    @Shadow private @Nullable BuiltChunkStorage chunks;
+    @Shadow @Final private MinecraftClient client;
     @Shadow private int cameraChunkX;
+    @Shadow private int cameraChunkY;
+    @Shadow private int cameraChunkZ;
     @Shadow private double lastCameraChunkUpdateX;
     @Shadow private double lastCameraChunkUpdateY;
     @Shadow private double lastCameraChunkUpdateZ;
-    @Shadow private @Nullable BuiltChunkStorage chunks;
-    @Shadow @Final private MinecraftClient client;
-    @Shadow protected abstract void enqueueChunksInViewDistance(Camera camera, Queue<WorldRenderer.ChunkInfo> queue);
-    @Shadow protected abstract void collectRenderableChunks(LinkedHashSet<WorldRenderer.ChunkInfo> chunks,
-                                                            WorldRenderer.ChunkInfoList chunkInfoList,
-                                                            Vec3d cameraPos,
-                                                            Queue<WorldRenderer.ChunkInfo> queue,
-                                                            boolean chunkCullingEnabled);
+    @Shadow @Final private Set<BlockEntity> noCullingBlockEntities;
+    @Shadow @Final private ObjectArrayList<WorldRenderer.ChunkInfo> chunkInfos;
     @Shadow @Final private AtomicReference<WorldRenderer.RenderableChunks> renderableChunks;
     @Shadow @Final private AtomicBoolean updateFinished;
-    @Shadow protected abstract void updateChunks(Camera camera);
+
+    /** ★ 用 WorldRenderer 实际持有的 BufferBuilderStorage */
+    @Shadow @Final private BufferBuilderStorage bufferBuilders;
 
     @Override
     public void stp$setWorld(ClientWorld world) {
+        // ==================== 世界卸载 ====================
         if (world == null) {
-            // ---- 世界卸载：完整清理 ----
-            this.lastCameraChunkUpdateX = Double.MIN_VALUE;
-            this.lastCameraChunkUpdateY = Double.MIN_VALUE;
-            this.lastCameraChunkUpdateZ = Double.MIN_VALUE;
-            this.cameraChunkX = Integer.MIN_VALUE;
-            this.cameraChunkY = Integer.MIN_VALUE;
-            this.cameraChunkZ = Integer.MIN_VALUE;
-
-            this.entityRenderDispatcher.setWorld(null);
-            this.world = null;
-
             if (this.chunks != null) {
                 this.chunks.clear();
                 this.chunks = null;
             }
-            if (this.chunkBuilder != null) this.chunkBuilder.stop();
-            this.chunkBuilder = null;
-
-            this.noCullingBlockEntities.clear();
+            if (this.chunkBuilder != null) {
+                ChunkBuilder old = this.chunkBuilder;
+                this.chunkBuilder = null;
+                CompletableFuture.runAsync(() -> {
+                    try { old.stop(); } catch (Throwable t) {
+                        STP.LOGGER.warn("Background chunkBuilder.stop() failed", t);
+                    }
+                });
+            }
             this.renderableChunks.set(null);
             this.chunkInfos.clear();
+            this.noCullingBlockEntities.clear();
+            this.entityRenderDispatcher.setWorld(null);
+            this.world = null;
             return;
         }
 
-        // ---- 世界切换：保留几何体，只更新可见区块列表 ----
+        // ==================== 世界切换 ====================
+
+        // 1. 立即清空可见列表
+        this.renderableChunks.set(null);
+        this.chunkInfos.clear();
+        this.noCullingBlockEntities.clear();
+
+        // 2. 保存旧引用
+        BuiltChunkStorage oldChunks = this.chunks;
+        ChunkBuilder oldBuilder = this.chunkBuilder;
+
+        // 3. 更新世界引用
         this.entityRenderDispatcher.setWorld(world);
         this.world = world;
-        this.reload();
 
-        Camera camera = this.client.gameRenderer.getCamera();
+        // 4. 主线程快速创建新的 ChunkBuilder 和 BuiltChunkStorage
+        //    ★ 从 bufferBuilders 里取 BlockBufferBuilderStorage
+        ChunkBuilder newBuilder = new ChunkBuilder(
+                world,
+                (WorldRenderer) (Object) this,
+                Util.getMainWorkerExecutor(),
+                this.client.is64Bit(),
+                this.bufferBuilders.getBlockBufferBuilders());
 
-        double px = this.client.player.getX();
-        double py = this.client.player.getY();
-        double pz = this.client.player.getZ();
-        int cx = ChunkSectionPos.getSectionCoord(px);
-        int cy = ChunkSectionPos.getSectionCoord(py);
-        int cz = ChunkSectionPos.getSectionCoord(pz);
+        BuiltChunkStorage newChunks = new BuiltChunkStorage(
+                newBuilder,
+                world,
+                this.client.options.getViewDistance().getValue(),
+                (WorldRenderer) (Object) this);
 
-        if (this.cameraChunkX != cx || this.cameraChunkY != cy || this.cameraChunkZ != cz) {
-            this.lastCameraChunkUpdateX = px;
-            this.lastCameraChunkUpdateY = py;
-            this.lastCameraChunkUpdateZ = pz;
-            this.cameraChunkX = cx;
-            this.cameraChunkY = cy;
-            this.cameraChunkZ = cz;
-            this.chunks.updateCameraPosition(px, pz);
+        this.chunkBuilder = newBuilder;
+        this.chunks = newChunks;
+
+        // 5. 强制所有 BuiltChunk 重建
+        if (newChunks.chunks != null) {
+            int scheduled = 0;
+            for (ChunkBuilder.BuiltChunk chunk : newChunks.chunks) {
+                if (chunk == null) continue;
+                try {
+                    chunk.scheduleRebuild(false);
+                    scheduled++;
+                } catch (Throwable t) {
+                    STP.LOGGER.warn("Failed to schedule rebuild for BuiltChunk", t);
+                }
+            }
+            STP.LOGGER.debug("stp$setWorld: scheduled rebuild for {} BuiltChunks", scheduled);
         }
 
-        Vec3d cameraPos = camera.getPos();
-        BlockPos cameraBlockPos = camera.getBlockPos();
-        this.chunkBuilder.setCameraPosition(cameraPos);
+        // 6. 重置相机缓存
+        this.cameraChunkX = Integer.MIN_VALUE;
+        this.cameraChunkY = Integer.MIN_VALUE;
+        this.cameraChunkZ = Integer.MIN_VALUE;
+        this.lastCameraChunkUpdateX = Double.MIN_VALUE;
+        this.lastCameraChunkUpdateY = Double.MIN_VALUE;
+        this.lastCameraChunkUpdateZ = Double.MIN_VALUE;
 
-        // 传送瞬间禁用区块剔除，避免视觉空洞
-        // 原代码里这部分是刻意的优化（boolean bl = false;）
-        boolean chunkCullingEnabled = false;
-
-        ArrayDeque<WorldRenderer.ChunkInfo> queue = Queues.newArrayDeque();
-        this.enqueueChunksInViewDistance(camera, queue);
-
-        WorldRenderer.RenderableChunks newRenderable =
-                new WorldRenderer.RenderableChunks(this.chunks.chunks.length);
-        this.collectRenderableChunks(newRenderable.chunks, newRenderable.chunkInfoList,
-                cameraPos, queue, chunkCullingEnabled);
-
-        this.renderableChunks.set(newRenderable);
         this.updateFinished.set(true);
 
-        this.chunkInfos.clear();
-        this.chunkInfos.addAll(newRenderable.chunks);
+        // 7. 主线程释放旧 VBO
+        if (oldChunks != null) {
+            try {
+                oldChunks.clear();
+            } catch (Throwable t) {
+                STP.LOGGER.warn("Failed to clear old chunks on main thread", t);
+            }
+        }
 
-        this.updateChunks(camera);
+        // 8. 后台异步停止旧 worker 线程
+        if (oldBuilder != null) {
+            CompletableFuture.runAsync(() -> {
+                try {
+                    oldBuilder.stop();
+                } catch (Throwable t) {
+                    STP.LOGGER.warn("Background chunkBuilder.stop() failed", t);
+                }
+            });
+        }
+
+        STP.LOGGER.debug("stp$setWorld: fast-swapped to {}",
+                world.getRegistryKey().getValue());
     }
 }

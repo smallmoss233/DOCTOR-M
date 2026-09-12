@@ -1,6 +1,7 @@
 package doctor_m.mixin.client.stp;
 
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+import dev.amble.ait.api.ClientWorldEvents;
 import doctor_m.client.util.stp.STPMinecraftClient;
 import doctor_m.module.STP;
 import net.minecraft.block.entity.SkullBlockEntity;
@@ -30,6 +31,8 @@ public abstract class MinecraftClientMixin implements STPMinecraftClient {
 
     @Override
     public void stp$joinWorld(ClientWorld world) {
+        ClientWorld previous = this.world;
+
         this.world = world;
 
         MinecraftClient client = (MinecraftClient) (Object) this;
@@ -37,8 +40,17 @@ public abstract class MinecraftClientMixin implements STPMinecraftClient {
         this.blockEntityRenderDispatcher.setWorld(world);
         this.updateWindowTitle();
 
-        // 非集成服务器（真实服务器）场景下，重新初始化认证服务
-        // 用 try-catch 包裹，避免网络异常影响传送
+        // ★ 关键修复：通知 AIT 等模组"世界已切换"
+        // AIT 的 SoundHandler、ClientTardisUtil、和谐之眼渲染器等监听此事件，
+        // 会清理旧维度的音效（塔迪斯嗡嗡声）和渲染状态（和谐之眼）。
+        // 少了这一行 → 塔迪斯音效持续播放、和谐之眼跑到其他维度。
+        try {
+            ClientWorldEvents.CHANGE_WORLD.invoker().onChange(client, world);
+        } catch (Throwable t) {
+            STP.LOGGER.warn("Failed to fire ClientWorldEvents.CHANGE_WORLD", t);
+        }
+
+        // 单机时跳过认证服务初始化；连服务器时需要重建
         if (!this.integratedServerRunning) {
             try {
                 ApiServices apiServices = ApiServices.create(this.authenticationService, this.runDirectory);

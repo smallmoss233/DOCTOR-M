@@ -49,16 +49,19 @@ import java.util.concurrent.ConcurrentHashMap;
  *   <li>接收 TP 包，手动重建 ClientWorld 并从缓存中加载区块</li>
  *   <li>处理 UNLOAD / 断线清缓存</li>
  * </ul>
+ *
+ * <p>关键修复：
+ * <ul>
+ *   <li>新 ClientPlayerEntity 继承旧位置与视角，避免第一帧跳变</li>
+ *   <li>手动同步 lastRenderX/Y/Z 和 prevX/Y/Z，避免手部/摄像机插值突变</li>
+ *   <li>不再强制 setYaw(-180)，保留原始朝向</li>
+ * </ul>
  */
 @Environment(EnvType.CLIENT)
 public class ClientSTP implements ClientModInitializer {
 
-    /** 世界ID -> 预加载的区块数据集合。 */
     private static final Map<Identifier, Set<CompleteChunkData>> MAP = new ConcurrentHashMap<>();
 
-    /**
-     * 预加载区块数据。用 record 的自动 hashCode/equals（原 STP 手写的 hashCode 有碰撞风险）。
-     */
     record CompleteChunkData(int x, int z, ChunkData chunkData, LightData lightData) {
         public CompleteChunkData(ChunkDataS2CPacket packet) {
             this(packet.getX(), packet.getZ(), packet.getChunkData(), packet.getLightData());
@@ -67,7 +70,7 @@ public class ClientSTP implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        // ---- TP 包：真正重建世界 ----
+        // ---- TP 包 ----
         ClientPlayNetworking.registerGlobalReceiver(STP.TP, (client, handler, buf, response) -> {
             RegistryKey<DimensionType> dimensionTypeKey = buf.readRegistryKey(RegistryKeys.DIMENSION_TYPE);
             RegistryKey<World> worldKey = buf.readRegistryKey(RegistryKeys.WORLD);
@@ -90,13 +93,17 @@ public class ClientSTP implements ClientModInitializer {
                                 .get(RegistryKeys.DIMENSION_TYPE)
                                 .entryOf(dimensionTypeKey);
 
-                tp(accessor, client, client.player, dimensionTypeEntry,
-                        worldKey, sha256Seed, gameMode, previousGameMode,
-                        debugWorld, flatWorld, flag, lastDeathPos, portalCooldown);
+                try {
+                    tp(accessor, client, client.player, dimensionTypeEntry,
+                            worldKey, sha256Seed, gameMode, previousGameMode,
+                            debugWorld, flatWorld, flag, lastDeathPos, portalCooldown);
+                } catch (Throwable t) {
+                    STP.LOGGER.error("STP tp() failed", t);
+                }
             });
         });
 
-        // ---- PRELOAD 包：缓存区块 ----
+        // ---- PRELOAD ----
         ClientPlayNetworking.registerGlobalReceiver(STP.PRELOAD, (client, handler, buf, sender) -> {
             Identifier id = buf.readIdentifier();
             ChunkDataS2CPacket packet = new ChunkDataS2CPacket(buf);
@@ -105,7 +112,7 @@ public class ClientSTP implements ClientModInitializer {
                     .add(new CompleteChunkData(packet));
         });
 
-        // ---- UNLOAD 包：清缓存 ----
+        // ---- UNLOAD ----
         ClientPlayNetworking.registerGlobalReceiver(STP.UNLOAD, (client, handler, buf, sender) -> {
             Identifier id = buf.readIdentifier();
             Set<CompleteChunkData> set = MAP.remove(id);
@@ -115,24 +122,23 @@ public class ClientSTP implements ClientModInitializer {
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> MAP.clear());
     }
 
-    /**
-     * 从缓存加载区块到指定 ClientWorld。
-     * 每个区块独立 try-catch，避免单个坏块导致全部失败。
-     *
-     * @return 是否成功从缓存加载过
-     */
     private static boolean tryLoadCache(ClientWorld world) {
         Set<CompleteChunkData> set = MAP.remove(world.getRegistryKey().getValue());
         if (set == null) return false;
 
+        int loaded = 0;
         for (CompleteChunkData complete : set) {
             try {
                 loadChunk(world, complete);
+                loaded++;
             } catch (Throwable t) {
                 STP.LOGGER.error("Failed to load preloaded chunk ({},{})",
                         complete.x(), complete.z(), t);
             }
         }
+
+        STP.LOGGER.debug("Loaded {} of {} cached chunks for {}",
+                loaded, set.size(), world.getRegistryKey().getValue());
         return true;
     }
 
@@ -147,30 +153,34 @@ public class ClientSTP implements ClientModInitializer {
                 chunkData.getHeightmap(), chunkData.getBlockEntities(x, z));
 
         world.enqueueChunkUpdate(() -> {
-            LightingProvider lightingProvider = world.getChunkManager().getLightingProvider();
+            try {
+                LightingProvider lightingProvider = world.getChunkManager().getLightingProvider();
 
-            updateLighting(world, x, z, lightingProvider, LightType.SKY,
-                    lightData.getInitedSky(), lightData.getUninitedSky(),
-                    lightData.getSkyNibbles().iterator());
+                updateLighting(world, x, z, lightingProvider, LightType.SKY,
+                        lightData.getInitedSky(), lightData.getUninitedSky(),
+                        lightData.getSkyNibbles().iterator());
 
-            updateLighting(world, x, z, lightingProvider, LightType.BLOCK,
-                    lightData.getInitedBlock(), lightData.getUninitedBlock(),
-                    lightData.getBlockNibbles().iterator());
+                updateLighting(world, x, z, lightingProvider, LightType.BLOCK,
+                        lightData.getInitedBlock(), lightData.getUninitedBlock(),
+                        lightData.getBlockNibbles().iterator());
 
-            lightingProvider.setColumnEnabled(new ChunkPos(x, z), true);
+                lightingProvider.setColumnEnabled(new ChunkPos(x, z), true);
 
-            WorldChunk worldChunk = world.getChunkManager().getWorldChunk(x, z, false);
-            if (worldChunk != null) {
-                ChunkSection[] sections = worldChunk.getSectionArray();
-                ChunkPos chunkPos = worldChunk.getPos();
+                WorldChunk worldChunk = world.getChunkManager().getWorldChunk(x, z, false);
+                if (worldChunk != null) {
+                    ChunkSection[] sections = worldChunk.getSectionArray();
+                    ChunkPos chunkPos = worldChunk.getPos();
 
-                for (int i = 0; i < sections.length; i++) {
-                    ChunkSection section = sections[i];
-                    int coord = world.sectionIndexToCoord(i);
-                    lightingProvider.setSectionStatus(
-                            ChunkSectionPos.from(chunkPos, coord), section.isEmpty());
-                    world.scheduleBlockRenders(x, coord, z);
+                    for (int i = 0; i < sections.length; i++) {
+                        ChunkSection section = sections[i];
+                        int coord = world.sectionIndexToCoord(i);
+                        lightingProvider.setSectionStatus(
+                                ChunkSectionPos.from(chunkPos, coord), section.isEmpty());
+                        world.scheduleBlockRenders(x, coord, z);
+                    }
                 }
+            } catch (Throwable t) {
+                STP.LOGGER.error("Failed to update lighting for chunk ({},{})", x, z, t);
             }
         });
     }
@@ -200,9 +210,19 @@ public class ClientSTP implements ClientModInitializer {
 
         ClientWorld world = accessor.getWorld();
         int entityId = player.getId();
+        boolean dimensionChanged = toWorldKey != player.getWorld().getRegistryKey();
+
+        // ★ 保存旧 player 的位置与视角，用于同步新 player
+        double oldX = player.getX();
+        double oldY = player.getY();
+        double oldZ = player.getZ();
+        float oldYaw = player.getYaw();
+        float oldPitch = player.getPitch();
+        float oldHeadYaw = player.getHeadYaw();
+        float oldBodyYaw = player.getBodyYaw();
 
         // ---- 维度切换：手动构造 ClientWorld ----
-        if (toWorldKey != player.getWorld().getRegistryKey()) {
+        if (dimensionChanged) {
             ClientWorld.Properties oldProperties = accessor.getWorldProperties();
             ClientWorld.Properties newProperties = new ClientWorld.Properties(
                     oldProperties.getDifficulty(), oldProperties.isHardcore(), flatWorld);
@@ -223,35 +243,64 @@ public class ClientSTP implements ClientModInitializer {
             ((ClientWorldInvoker) world).stp$putMapStates(mapStates);
 
             ((STPMinecraftClient) client).stp$joinWorld(world);
+
+            // 换维度时停止旧音乐
+            client.getMusicTracker().stop();
         }
 
         // ---- 创建新的 ClientPlayerEntity ----
         String brand = player.getServerBrand();
         client.cameraEntity = null;
 
-        if (player.shouldCloseHandledScreenOnRespawn()) player.closeHandledScreen();
+        if (player.shouldCloseHandledScreenOnRespawn()) {
+            player.closeHandledScreen();
+        }
 
         ClientPlayerEntity newPlayer = (flag & 2) != 0
                 ? client.interactionManager.createPlayer(world, player.getStatHandler(),
                 player.getRecipeBook(), player.isSneaking(), player.isSprinting())
                 : client.interactionManager.createPlayer(world, player.getStatHandler(), player.getRecipeBook());
 
+        if (newPlayer == null) {
+            STP.LOGGER.error("createPlayer returned null, aborting STP");
+            return;
+        }
+
         newPlayer.setId(entityId);
+
+        // ★ 关键修复 1：继承旧 player 的位置与视角，避免第一帧跳变
+        newPlayer.refreshPositionAndAngles(oldX, oldY, oldZ, oldYaw, oldPitch);
+        newPlayer.setHeadYaw(oldHeadYaw);
+        newPlayer.setBodyYaw(oldBodyYaw);
+
+        // ★ 关键修复 2：同步渲染插值历史，避免手部/摄像机从 (0,0,0) 突变
+        newPlayer.lastRenderX = oldX;
+        newPlayer.lastRenderY = oldY;
+        newPlayer.lastRenderZ = oldZ;
+        newPlayer.prevX = oldX;
+        newPlayer.prevY = oldY;
+        newPlayer.prevZ = oldZ;
+        newPlayer.prevYaw = oldYaw;
+        newPlayer.prevPitch = oldPitch;
+        newPlayer.prevHeadYaw = oldHeadYaw;
+        newPlayer.prevBodyYaw = oldBodyYaw;
+
         client.player = newPlayer;
-
-        if (toWorldKey != player.getWorld().getRegistryKey()) client.getMusicTracker().stop();
-
         client.cameraEntity = newPlayer;
 
         // ---- 状态迁移 ----
         List<DataTracker.SerializedEntry<?>> entries = player.getDataTracker().getChangedEntries();
-        if ((flag & 2) != 0 && entries != null) newPlayer.getDataTracker().writeUpdatedEntries(entries);
-        if ((flag & 1) != 0) newPlayer.getAttributes().setFrom(player.getAttributes());
+        if ((flag & 2) != 0 && entries != null) {
+            newPlayer.getDataTracker().writeUpdatedEntries(entries);
+        }
+        if ((flag & 1) != 0) {
+            newPlayer.getAttributes().setFrom(player.getAttributes());
+        }
 
         newPlayer.init();
         newPlayer.setServerBrand(brand);
         world.addPlayer(entityId, newPlayer);
-        newPlayer.setYaw(-180.0f);
+
         newPlayer.input = new KeyboardInput(client.options);
 
         client.interactionManager.copyAbilities(newPlayer);
@@ -271,11 +320,8 @@ public class ClientSTP implements ClientModInitializer {
 
         client.interactionManager.setGameModes(gameMode, previousGameMode);
 
-        // ---- 世界渲染器：优先走缓存路径 ----
-        if (tryLoadCache(world)) {
-            ((STPWorldRenderer) client.worldRenderer).stp$setWorld(world);
-        } else {
-            client.worldRenderer.setWorld(world);
-        }
+        // ---- 世界渲染器 ----
+        tryLoadCache(world);
+        client.worldRenderer.setWorld(world);
     }
 }
