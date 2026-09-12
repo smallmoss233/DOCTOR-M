@@ -288,7 +288,8 @@ public class VortexManipulatorScreen extends Screen {
         else                       fuelColor = 0xFFFF5252;
 
         drawStatBar(ctx, leftColX, fuelY, statW, fuelRatio, fuelColor,
-                "燃料", fuel + "/" + CONFIG.vortexManipulatorMaxFuel);
+                Text.translatable("gui.doctor_m.vm.fuel_label").getString(),
+                fuel + "/" + CONFIG.vortexManipulatorMaxFuel);
 
         float heatRatio = Math.min(1f, overheat / 100f);
         int heatColor;
@@ -297,7 +298,8 @@ public class VortexManipulatorScreen extends Screen {
         else                    heatColor = 0xFF3D9EFF;
 
         drawStatBar(ctx, leftColX, heatY, statW, heatRatio, heatColor,
-                "热量", String.valueOf(overheat));
+                Text.translatable("gui.doctor_m.vm.heat_label").getString(),
+                String.valueOf(overheat));
 
         // ===== 维度面板 =====
         drawInnerPanel(ctx,
@@ -342,7 +344,7 @@ public class VortexManipulatorScreen extends Screen {
                              float ratio, int color, String label, String value) {
         ratio = Math.max(0f, Math.min(1f, ratio));
 
-        int labelW = 32;
+        int labelW = this.textRenderer.getWidth(label) + 6;
         int valueW = this.textRenderer.getWidth(value) + 4;
         int barW = totalW - labelW - valueW - 4;
         int barH = 6;
