@@ -19,6 +19,7 @@ import doctor_m.client.gui.EyeOfHarmonyObeliskScreen;
 import doctor_m.client.gui.PocketWatchHudOverlay;
 import doctor_m.client.gui.VortexManipulatorScreen;
 import doctor_m.client.network.AITMixinClientNetworking;
+import doctor_m.client.network.ConfigOpenHandler;
 import doctor_m.client.network.DeMatGunClientNetwork;
 import doctor_m.client.network.KeytoTimeTeleportClient;
 import doctor_m.client.render.EmissiveBlockEntityRenderer;
@@ -96,6 +97,7 @@ public class DOCTORMClient implements ClientModInitializer {
         registerNetworking();
         registerClientTicks();
         registerScreenOpeners();
+        ConfigOpenHandler.register();
     }
 
     private void registerKeybinds() {

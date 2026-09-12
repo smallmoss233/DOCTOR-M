@@ -29,19 +29,19 @@ public class ModConfig {
     public int shieldCostPerDamage = 5;             // 每 1 点伤害消耗的能量
 
     //时间钥匙
-    public static final int KeytoTimeDamage = 1;//冷却
-    public static final double KeytoTimeMultiplier = 2;//扣血倍率
-    public static final double KeytoTimeExtra = 15.0;//最低扣血量（百分比）
+    public int keytoTimeDamage = 1;              // 冷却（tick）
+    public double keytoTimeMultiplier = 2.0;     // 扣血倍率
+    public double keytoTimeExtra = 15.0;         // 最低扣血量（百分比）
 
     //永恒水晶
-    public static final int eternalCrystalDamage = 100;//冷却
-    public static final double eternalCrystalMultiplier = 0.5;//扣血倍率
-    public static final double eternalCrystalExtra = 2.5;//最低扣血量（百分比）
+    public int eternalCrystalDamage = 100;       // 冷却（tick）
+    public double eternalCrystalMultiplier = 0.5;// 扣血倍率
+    public double eternalCrystalExtra = 2.5;     // 最低扣血量（百分比）
 
     //特莉波卡的镰刀
-    public static final int tlipocaScytheDamage = 30;//冷却
-    public static final double tlipocaScytheMultiplier = 1.0;//扣血倍率
-    public static final double tlipocaScytheExtra = 25.0;//最低扣血量（百分比）
+    public int tlipocaScytheDamage = 30;         // 冷却（tick）
+    public double tlipocaScytheMultiplier = 1.0; // 扣血倍率
+    public double tlipocaScytheExtra = 25.0;     // 最低扣血量（百分比）
     public float slashDamage = 500.0f;               // 右键伤害值
     public double tlipocaScytheAoeRadius = 5.0;                  // 伤害共享/AoE 半径
     public int tlipocaScytheFoodBase = 1;                        // 饥饿回复基础值

@@ -6,7 +6,7 @@ import doctor_m.api.AutoRegister;
 import doctor_m.api.ModSounds;
 import doctor_m.block.ModBlockEntities;
 import doctor_m.block.ModBlocks;
-import doctor_m.command.AITTardisBuilderCommand;
+import doctor_m.command.DOCTORMCommand;
 import doctor_m.config.ConfigManager;
 import doctor_m.entities.Entities;
 import doctor_m.handler.KeytoTime.GemDeathSaveHandler;
@@ -70,7 +70,7 @@ public class DOCTORM implements ModInitializer {
         TardisTypeLoader.init();
 
         //命令与配置
-        CommandRegistrationCallback.EVENT.register(AITTardisBuilderCommand::register);
+        CommandRegistrationCallback.EVENT.register(DOCTORMCommand::register);
         ConfigManager.loadConfig();
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {

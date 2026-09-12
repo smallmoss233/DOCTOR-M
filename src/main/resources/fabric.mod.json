@@ -37,6 +37,9 @@
       "doctor_m.DOCTORMClient",
       "doctor_m.client.util.stp.ClientSTP"
     ],
+    "modmenu": [
+      "doctor_m.client.Config.ModMenuIntegration"
+    ],
     "fabric-datagen": [
       "doctor_m.DOCTORMDataGenerator"
     ]
@@ -57,6 +60,7 @@
     "timelordregen": "*",
     "ait_extras": "*",
     "Create": "*",
-    "another-mod": "*"
+    "another-mod": "*",
+    "modmenu": "*"
   }
 }

@@ -63,7 +63,7 @@
 -  指令创建塔迪斯功能 / Command to create TARDIS functionality
 -  拉斯隆之钥可以当塔迪斯的钥匙 / Rassilon key can be used as TARDIS key
 -  塔迪斯自毁的爆炸威力更大，更壮观 / The explosion from TARDIS self-destruction is now more powerful and more spectacular.
--  现在有非常的可配置项在config/doctor_m里！/ There are now many configurable options available in the config/doctor_m directory!
+-  现在有非常的可配置项在config/doctor_m里！而且可以使用ModMenu打开！ / There are now many configurable options in `config/doctor_m`! And you can open them with ModMenu!
 -  时间钥匙被动超级加强！不再有复活冷却，且复活优先级被拉到最大！ / Time Key passive massively buffed! Resurrection cooldown removed, and resurrection priority is now set to maximum!
 -  增强音速起子 / Enhanced Sonic
    扫描模式：能探测墙后空间/生物类型，敌对状况/时间，维度，坐标 / Scan Mode: Can detect spaces behind walls, entity types, hostility status, time, dimension, and coordinates.

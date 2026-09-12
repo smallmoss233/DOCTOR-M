@@ -1,5 +1,6 @@
 package doctor_m.client.util.stp;
 
+import doctor_m.config.ConfigManager;
 import doctor_m.mixin.client.stp.ClientPlayNetworkHandlerAccessor;
 import doctor_m.mixin.client.stp.ClientWorldInvoker;
 import doctor_m.module.STP;
@@ -8,6 +9,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.DeathScreen;
 import net.minecraft.client.input.KeyboardInput;
@@ -23,6 +25,8 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
@@ -120,6 +124,33 @@ public class ClientSTP implements ClientModInitializer {
         });
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> MAP.clear());
+
+        // ★ 进游戏时检测 IP 冲突并提示
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            client.execute(() -> {
+                if (client.player == null) return;
+
+                // 是否装了沉浸式传送门
+                boolean hasIP = FabricLoader.getInstance().isModLoaded("immersive_portals")
+                        || FabricLoader.getInstance().isModLoaded("imm_ptl_core");
+                if (!hasIP) return;
+
+                // 玩家是否手动开着 STP
+                if (!ConfigManager.getConfig().seamlessTeleportEnabled) return;
+
+                // 发两条提示
+                client.player.sendMessage(
+                        Text.translatable("gui.doctor_m.stp.ip_conflict.warning")
+                                .formatted(Formatting.YELLOW),
+                        false
+                );
+                client.player.sendMessage(
+                        Text.translatable("gui.doctor_m.stp.ip_conflict.hint")
+                                .formatted(Formatting.GRAY),
+                        false
+                );
+            });
+        });
     }
 
     private static boolean tryLoadCache(ClientWorld world) {

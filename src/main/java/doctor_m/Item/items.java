@@ -55,16 +55,16 @@ public class items {
         ModConfig config = ConfigManager.getConfig();
 
         new PercentageDamageHelper(new PercentageDamageHelper.Config(
-                ModConfig.KeytoTimeDamage,
-                ModConfig.KeytoTimeMultiplier,
-                ModConfig.KeytoTimeExtra,
+                config.keytoTimeDamage,
+                config.keytoTimeMultiplier,
+                config.keytoTimeExtra,
                 PercentageDamageHelper.hasAnyOfItems(KEY_TO_TIME)
         ));
 
         new PercentageDamageHelper(new PercentageDamageHelper.Config(
-                ModConfig.eternalCrystalDamage,
-                ModConfig.eternalCrystalMultiplier,
-                ModConfig.eternalCrystalExtra,
+                config.eternalCrystalDamage,
+                config.eternalCrystalMultiplier,
+                config.eternalCrystalExtra,
                 PercentageDamageHelper.hasAnyOfItems(ETERNAL_CRYSTAL)
         ));
     }

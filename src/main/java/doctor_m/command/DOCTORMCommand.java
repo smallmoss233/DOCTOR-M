@@ -24,6 +24,9 @@ import dev.amble.ait.data.schema.exterior.ExteriorVariantSchema;
 import dev.amble.ait.registry.impl.DesktopRegistry;
 import dev.amble.ait.registry.impl.exterior.ExteriorVariantRegistry;
 import dev.amble.lib.data.CachedDirectedGlobalPos;
+import doctor_m.network.ConfigOpenPacket;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.Vec3ArgumentType;
 import net.minecraft.server.command.CommandManager;
@@ -39,7 +42,7 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.Set;
 
-public class AITTardisBuilderCommand {
+public class DOCTORMCommand {
 
     public enum SubSystemMode {
         FULL("full"),
@@ -83,9 +86,11 @@ public class AITTardisBuilderCommand {
                                 CommandRegistryAccess registryAccess,
                                 CommandManager.RegistrationEnvironment environment) {
         dispatcher.register(CommandManager.literal("doctor_m")
-                .requires(source -> source.hasPermissionLevel(2))
+
+                //构建塔迪斯
                 .then(CommandManager.literal("build")
-                        .executes(AITTardisBuilderCommand::executeDefault)
+                        .requires(source -> source.hasPermissionLevel(2))
+                        .executes(DOCTORMCommand::executeDefault)
 
                         // /doctor_m build <desktop>
                         .then(CommandManager.argument("desktop", StringArgumentType.string())
@@ -193,6 +198,15 @@ public class AITTardisBuilderCommand {
                                         )
                                 )
                         )
+                )
+
+                //配置文件
+                .then(CommandManager.literal("config")
+                        .executes(ctx -> {
+                            ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
+                            ServerPlayNetworking.send(player, ConfigOpenPacket.ID, PacketByteBufs.empty());
+                            return 1;
+                        })
                 )
         );
     }
