@@ -3,26 +3,28 @@
   "id": "doctor_m",
   "version": "${version}",
   "name": "DOCTOR M",
-  "description": "AIT的扩展MOD,至于为啥叫DOCTOR M? 你别管 (An extension MOD of AIT. As for why it's called DOCTOR M? Don't worry about it.)",
+  "description": "AIT的扩展MOD,至于为啥叫DOCTOR M? 你别管 \n An extension MOD of AIT. As for why it's called DOCTOR M? Don't worry about it.",
   "authors": [
-    "天体干预局/Celestial Intervention Agency:",
-    "---",
-    "作者(Author):Small Moss",
-    "二把手(Handles):TC-020",
-    "---",
-    "贡献者(Contributor):白桦下的赤俄",
-    "贡献者(Contributor):名游茶",
-    "贡献者(Contributor):斯格.尔特",
-    "贡献者(Contributor):慢跑者",
-    "贡献者(Contributor):Tsinafs-Bcim",
-    "贡献者(Contributor):NX-Seeker",
-    "---",
-    "特别贡献者(Special Contributor):asdjdfk",
-    "特别贡献者(Special Contributor):T天玄X"
+    "天体干预局 \n Celestial Intervention Agency:",
+    "——————————————————————",
+    "✦作者(Author):Small Moss/全栈开发者，在中国，俗称为“劳模” \n Full-stack developers in China are casually called 'model workers'.",
+    "*二把手(Handles):TC-020/AIT自定义内容收录与时隙内饰和部分结构作者 \n AIT custom content inclusion and slot interior and some structural author",
+    "——————————————————————",
+    "*贡献者(Contributor):白桦下的赤俄/守望作者兼部分美术 \n Watcher, author and part of the art team",
+    "*贡献者(Contributor):名游茶/霓虹，守望等内饰作者 \n Interiors authors like Neon and Watcher",
+    "*贡献者(Contributor):慢跑者/红石火把起子作者与AIT汉化合作者 \n Redstone Torch Screwdriver author and AIT Chinese localization collaborator",
+    "*贡献者(Contributor):NX-Seeker/音速起子批发商 \n Sonic Screwdriver Wholesaler",
+    "*贡献者(Contributor):Tsinafs-Bcim/灵感贡献者 \n Inspiration Contributor",
+    "*贡献者(Contributor):斯格.尔特/尔特等内饰作者和灵感提供者 \n Erte and other interior designers and sources of inspiration",
+    "——————————————————————",
+    "*特别贡献者(Special Contributor):T天玄X/部分中文翻译与灵感提供者 \n Some Chinese translators and sources of inspiration",
+    "*特别贡献者(Special Contributor):asdjdfk/部分中文翻译与灵感提供者 \n Some Chinese translators and sources of inspiration"
   ],
   "contact": {
     "homepage": "https://github.com/smallmoss233",
-    "sources": "https://github.com/smallmoss233/DOCTOR-M"
+    "sources": "https://github.com/smallmoss233/DOCTOR-M",
+    "issues": "https://github.com/smallmoss233/DOCTOR-M/issues",
+    "wiki": "https://github.com/smallmoss233/DOCTOR-M/wiki"
   },
   "license": "GPL-3.0-only",
   "icon": "assets/doctor_m/icon.png",
@@ -53,7 +55,7 @@
     "minecraft": "~1.20.1",
     "java": ">=21",
     "fabric-api": "*",
-    "trinkets": "3.7.2",
+    "trinkets": ">=3.7.0",
     "ait": "*"
   },
   "suggests": {
