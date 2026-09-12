@@ -82,6 +82,7 @@
 -  永恒之眼废墟现在经过了重置！它刷新在接近世界底层的附近，被深板岩包裹，在里面有大量丰盛的战利品！ / Evereye Ruins have been revamped! They now generate near the bottom of the world, encased in deepslate, and contain plenty of rich loot inside!
 -  斯格废墟也重置了！ / Sig Ruins have also been revamped!
 -  Kotlin不再是依赖项 / Kotlin is no longer a dependency
+-  STP（无缝传送）！从AIT的荒废分支[无缝传送](https://github.com/amblelabs/ait/tree/DrTheodor/seamless-teleport)里重移植回来！ / STP (Seamless Teleport)! Ported back from AIT's abandoned [Seamless Teleport](https://github.com/amblelabs/ait/tree/DrTheodor/seamless-teleport) branch!
 
 ---
 

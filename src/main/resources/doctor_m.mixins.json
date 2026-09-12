@@ -41,7 +41,11 @@
     "sonic_mode.ScanningSonicModeMixin",
     "sonic_mode.ScanningSonicOverloadMixin",
     "sonic_mode.SonicItemMixin",
-    "sonic_mode.TardisSonicModeMixin"
+    "sonic_mode.TardisSonicModeMixin",
+    "stp.DoorBlockEntityMixin",
+    "stp.EntityInvoker",
+    "stp.ServerPlayerEntityInvoker",
+    "stp.TardisUtilMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -178,28 +178,27 @@ public class VortexManipulatorScreen extends Screen {
     private void updateGoButtonState(ItemStack stack) {
         if (goBtn == null || stack.isEmpty()) return;
 
-        boolean broken = VortexManipulatorItem.isBroken(stack);
-        boolean onCooldown = VortexManipulatorItem.isOnCooldownSys(stack);
-
-        if (broken) {
+        // 优先判定损坏状态
+        if (VortexManipulatorItem.isBrokenNow(stack)) {
             goBtn.setMessage(Text.translatable("gui.doctor_m.vm.broken_label")
                     .formatted(Formatting.DARK_RED, Formatting.BOLD));
             goBtn.active = false;
             return;
         }
 
-        if (onCooldown) {
-            long remainingMs = VortexManipulatorItem.getCooldownEndSys(stack) - System.currentTimeMillis();
-            int sec = Math.max(1, (int) Math.ceil(remainingMs / 1000.0));
+        // 其次判定冷却
+        if (VortexManipulatorItem.isOnCooldownSys(stack)) {
+            int sec = VortexManipulatorItem.getCooldownRemainingSeconds(stack);
             goBtn.setMessage(Text.translatable("gui.doctor_m.vm.go.cooldown", sec)
                     .formatted(Formatting.RED));
             goBtn.active = false;
             return;
         }
 
-        goBtn.setMessage(Text.translatable("gui.doctor_m.vm.go")
-                .formatted(Formatting.GREEN, Formatting.BOLD));
-        goBtn.active = true;
+            // 正常状态
+            goBtn.setMessage(Text.translatable("gui.doctor_m.vm.go")
+                    .formatted(Formatting.GREEN, Formatting.BOLD));
+            goBtn.active = true;
     }
 
     private void syncLastValues(ItemStack stack) {
@@ -237,7 +236,7 @@ public class VortexManipulatorScreen extends Screen {
 
         int fuel = VortexManipulatorItem.getFuel(stack);
         int overheat = VortexManipulatorItem.getOverheat(stack);
-        boolean broken = VortexManipulatorItem.isBroken(stack);
+        boolean broken = VortexManipulatorItem.isBrokenNow(stack);
         String dimId = VortexManipulatorItem.getDestDim(stack);
 
         int px = panelX, py = panelY;

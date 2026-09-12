@@ -15,6 +15,7 @@ import doctor_m.handler.KeytoTime.KeytoTimeCore;
 import doctor_m.handler.KeytoTime.PocketWatchFunction;
 import doctor_m.handler.ShieldDamageHandler;
 import doctor_m.handler.VMServerHandler;
+import doctor_m.module.STP;
 import doctor_m.module.creativity.CreativityItems;
 import doctor_m.module.creativity.creativity_data.Tlipoca.TlipocaScytheEvents;
 import doctor_m.module.space_plus.VacuumEatingHandler;
@@ -22,6 +23,7 @@ import doctor_m.network.*;
 import doctor_m.util.type.TardisTypeLoader;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.util.Identifier;
 
 public class DOCTORM implements ModInitializer {
@@ -70,5 +72,9 @@ public class DOCTORM implements ModInitializer {
         //命令与配置
         CommandRegistrationCallback.EVENT.register(AITTardisBuilderCommand::register);
         ConfigManager.loadConfig();
+
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            STP.onPlayerDisconnect(handler.getPlayer());
+        });
     }
 }

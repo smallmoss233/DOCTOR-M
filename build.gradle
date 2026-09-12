@@ -70,6 +70,7 @@ dependencies {
 
 loom {
     splitEnvironmentSourceSets()
+    accessWidenerPath = file("src/main/resources/doctor_m.accesswidener")
     mods {
         "doctor_m" {
             sourceSet sourceSets.main

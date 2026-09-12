@@ -123,14 +123,16 @@ public class KeytoTimeTeleportScreen extends Screen {
         int bottomLeftX = panelX + (PANEL_W - 140 * 2 - 20) / 2;
         int bottomRightX = bottomLeftX + 140 + 20;
 
-        this.addDrawableChild(ButtonWidget.builder(
-                Text.translatable("gui.doctor_m.vm.go").formatted(Formatting.GREEN, Formatting.BOLD),
-                btn -> attemptTeleport()
-        ).position(bottomLeftX, bottomBtnY).size(140, BTN_H).build());
-
+        // 左：关闭
         this.addDrawableChild(ButtonWidget.builder(
                 Text.translatable("gui.doctor_m.vm.close"),
                 btn -> this.close()
+        ).position(bottomLeftX, bottomBtnY).size(140, BTN_H).build());
+
+        // 右：前往
+        this.addDrawableChild(ButtonWidget.builder(
+                Text.translatable("gui.doctor_m.vm.go").formatted(Formatting.GREEN, Formatting.BOLD),
+                btn -> attemptTeleport()
         ).position(bottomRightX, bottomBtnY).size(140, BTN_H).build());
     }
 

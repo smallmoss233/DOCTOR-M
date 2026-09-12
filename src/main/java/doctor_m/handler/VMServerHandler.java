@@ -6,6 +6,7 @@ import dev.amble.ait.core.util.WorldUtil;
 import doctor_m.Item.data_item.VortexManipulatorItem;
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
+import doctor_m.module.STP;
 import doctor_m.network.VMNetwork;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
@@ -13,9 +14,12 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -53,10 +57,6 @@ public class VMServerHandler {
         return VortexManipulatorItem.findInHands(player);
     }
 
-    private static long getTime(ServerPlayerEntity player) {
-        return player.getServer().getOverworld().getTime();
-    }
-
     private static void cycleDimension(ServerPlayerEntity player, boolean left) {
         ItemStack stack = getVM(player);
         if (stack.isEmpty()) return;
@@ -88,7 +88,7 @@ public class VMServerHandler {
 
         String dim = player.getWorld().getRegistryKey().getValue().toString();
         if (dim.startsWith("ait-tardis:")) {
-            player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.invalid_dimension")
+            player.sendMessage(Text.translatable("message.doctor_m.vm.invalid_dimension")
                     .formatted(Formatting.RED), true);
             return;
         }
@@ -106,20 +106,19 @@ public class VMServerHandler {
         ItemStack stack = getVM(player);
         if (stack.isEmpty()) return;
 
-        long time = getTime(player);
+        // ===== 损坏 / 冷却检查（统一使用系统毫秒时间戳） =====
+        if (handleBrokenState(player, stack)) return;
 
-        if (handleBrokenState(player, stack, time)) return;
-
-        if (VortexManipulatorItem.isOnCooldown(stack, time)) {
-            int sec = VortexManipulatorItem.getCooldownRemaining(stack, time);
-            player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.cooldown", sec)
+        if (VortexManipulatorItem.isOnCooldownSys(stack)) {
+            int sec = VortexManipulatorItem.getCooldownRemainingSeconds(stack);
+            player.sendMessage(Text.translatable("message.doctor_m.vm.cooldown", sec)
                     .formatted(Formatting.YELLOW), true);
             return;
         }
 
         String dimId = VortexManipulatorItem.getDestDim(stack);
         if (dimId.startsWith("ait-tardis:")) {
-            player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.invalid_dimension")
+            player.sendMessage(Text.translatable("message.doctor_m.vm.invalid_dimension")
                     .formatted(Formatting.RED), true);
             return;
         }
@@ -127,7 +126,7 @@ public class VMServerHandler {
         RegistryKey<World> targetKey = RegistryKey.of(RegistryKeys.WORLD, new Identifier(dimId));
         ServerWorld targetWorld = player.getServer().getWorld(targetKey);
         if (targetWorld == null) {
-            player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.invalid_dimension")
+            player.sendMessage(Text.translatable("message.doctor_m.vm.invalid_dimension")
                     .formatted(Formatting.RED), true);
             return;
         }
@@ -135,14 +134,14 @@ public class VMServerHandler {
         if (AITMod.CONFIG.lockDimensions) {
             var locked = LockedDimensionRegistry.getInstance().get(targetWorld);
             if (locked != null) {
-                player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.dimension_locked")
+                player.sendMessage(Text.translatable("message.doctor_m.vm.dimension_locked")
                         .formatted(Formatting.RED), true);
                 return;
             }
         }
 
         if (Math.abs(x) > 30_000_000 || Math.abs(z) > 30_000_000 || y < -128 || y > 512) {
-            player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.out_of_bounds")
+            player.sendMessage(Text.translatable("message.doctor_m.vm.out_of_bounds")
                     .formatted(Formatting.RED), true);
             return;
         }
@@ -166,7 +165,7 @@ public class VMServerHandler {
         }
 
         if (fuelCost > CONFIG.vortexManipulatorMaxFuel * 2) {
-            player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.distance_too_far", fuelCost)
+            player.sendMessage(Text.translatable("message.doctor_m.vm.distance_too_far", fuelCost)
                     .formatted(Formatting.RED), true);
             return;
         }
@@ -175,12 +174,12 @@ public class VMServerHandler {
         int fuel = VortexManipulatorItem.getFuel(stack);
 
         if (fuel < fuelCost) {
-            player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.not_enough_fuel", fuelCost)
+            player.sendMessage(Text.translatable("message.doctor_m.vm.not_enough_fuel", fuelCost)
                     .formatted(Formatting.RED), true);
             return;
         }
 
-        performTeleport(player, stack, targetWorld, x, y, z, fuel, fuelCost, overheatCost, time, dist);
+        performTeleport(player, stack, targetWorld, x, y, z, fuel, fuelCost, overheatCost, dist);
     }
 
     private static boolean isSafeLanding(ServerWorld world, int x, int y, int z) {
@@ -193,28 +192,33 @@ public class VMServerHandler {
         return false;
     }
 
-    private static boolean handleBrokenState(ServerPlayerEntity player, ItemStack stack, long time) {
+    private static boolean handleBrokenState(ServerPlayerEntity player, ItemStack stack) {
         long brokenUntil = VortexManipulatorItem.getBrokenUntil(stack);
         if (brokenUntil == 0) return false;
 
-        if (brokenUntil > time) {
+        if (VortexManipulatorItem.isBrokenNow(stack)) {
             VortexManipulatorItem.punishBrokenUse(player);
-            long days = (brokenUntil - time) / 24000;
-            player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.broken_days", days)
+            int[] dh = VortexManipulatorItem.getBrokenRemainingDH(stack);
+            player.sendMessage(Text.translatable("message.doctor_m.vm.broken_days", dh[0])
                     .formatted(Formatting.DARK_RED), true);
             return true;
         }
 
+        // 已过损坏期，清理状态
         VortexManipulatorItem.setBrokenUntil(stack, 0);
         VortexManipulatorItem.setOverheat(stack, 0);
-        player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.cooled_down")
+        player.sendMessage(Text.translatable("message.doctor_m.vm.cooled_down")
                 .formatted(Formatting.GREEN), true);
         return false;
     }
 
     private static void performTeleport(ServerPlayerEntity player, ItemStack stack, ServerWorld targetWorld,
                                         double x, double y, double z,
-                                        int fuel, int fuelCost, int overheatCost, long time, double dist) {
+                                        int fuel, int fuelCost, int overheatCost, double dist) {
+
+        long nowMs = System.currentTimeMillis();
+
+        // ---- 1. 更新物品 NBT ----
         VortexManipulatorItem.setPrevX(stack, VortexManipulatorItem.getDestX(stack));
         VortexManipulatorItem.setPrevY(stack, VortexManipulatorItem.getDestY(stack));
         VortexManipulatorItem.setPrevZ(stack, VortexManipulatorItem.getDestZ(stack));
@@ -227,22 +231,53 @@ public class VMServerHandler {
         VortexManipulatorItem.setFuel(stack, fuel - fuelCost);
         int newOverheat = VortexManipulatorItem.getOverheat(stack) + overheatCost;
         VortexManipulatorItem.setOverheat(stack, newOverheat);
-        VortexManipulatorItem.setLastUsed(stack, time);
-        VortexManipulatorItem.setCooldownEndSys(stack, System.currentTimeMillis() + CONFIG.vortexManipulatorCooldownTicks * 50L);
+        VortexManipulatorItem.setLastUsed(stack, nowMs);
+        VortexManipulatorItem.setCooldownEndSys(stack,
+                nowMs + CONFIG.vortexManipulatorCooldownTicks * 50L);
 
-        // ★ 同步物品 NBT 到客户端，确保冷却显示一致
+        // 同步物品 NBT 到客户端，确保冷却显示一致
         if (player.getMainHandStack() == stack || player.getOffHandStack() == stack) {
             player.currentScreenHandler.syncState();
         }
 
-        player.teleport(targetWorld, x, y, z, player.getYaw(), player.getPitch());
+        // ---- 2. 判断是否跨维度 ----
+        boolean crossDimension = player.getWorld() != targetWorld;
+        boolean stpAvailable = crossDimension;
+
+        // ---- 3. 跨维度时预加载目标区块 ----
+        if (stpAvailable) {
+            int blockX = (int) Math.floor(x);
+            int blockZ = (int) Math.floor(z);
+            ChunkPos targetChunk = new ChunkPos(blockX >> 4, blockZ >> 4);
+
+            try {
+                STP.preloadAll(player, targetWorld, targetChunk);
+                STP.LOGGER.debug("VM: preloaded 5x5 chunks around {} for {}",
+                        targetChunk, player.getName().getString());
+            } catch (Throwable t) {
+                STP.LOGGER.warn("VM: preload failed, falling back to vanilla teleport", t);
+                stpAvailable = false;
+            }
+        }
+
+        // ---- 4. 执行传送 ----
+        if (stpAvailable) {
+            STP.teleport(player, targetWorld,
+                    new Vec3d(x, y, z),
+                    player.getYaw(), player.getPitch());
+        } else {
+            player.teleport(targetWorld, x, y, z, player.getYaw(), player.getPitch());
+        }
+
+        // ---- 5. 音效与消息 ----
         targetWorld.playSound(null, player.getBlockPos(),
                 net.minecraft.sound.SoundEvents.ENTITY_ENDERMAN_TELEPORT,
                 net.minecraft.sound.SoundCategory.PLAYERS, 1.0f, 1.0f);
 
-        player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.teleported", fuelCost, overheatCost)
+        player.sendMessage(Text.translatable("message.doctor_m.vm.teleported", fuelCost, overheatCost)
                 .formatted(Formatting.GREEN), true);
 
+        // ---- 6. 时间病 ----
         if (dist > 500.0) {
             double chance = dist > 5000.0 ? 0.15 : 0.10;
             if (player.getRandom().nextDouble() < chance) {
@@ -260,15 +295,17 @@ public class VMServerHandler {
                 player.addStatusEffect(new net.minecraft.entity.effect.StatusEffectInstance(
                         net.minecraft.entity.effect.StatusEffects.HUNGER, durationTicks, 1, false, false, true));
 
-                player.sendMessage(net.minecraft.text.Text.translatable(
+                player.sendMessage(Text.translatable(
                                 "message.doctor_m.vm.time_sickness", durationSec)
                         .formatted(Formatting.DARK_PURPLE), true);
             }
         }
 
+        // ---- 7. 过热熔毁 ----
         if (newOverheat >= CONFIG.vortexManipulatorMaxOverheat) {
-            VortexManipulatorItem.setBrokenUntil(stack, time + CONFIG.vortexManipulatorBrokenCooldownTicks);
-            player.sendMessage(net.minecraft.text.Text.translatable("message.doctor_m.vm.overheated_3days")
+            VortexManipulatorItem.setBrokenUntil(stack,
+                    nowMs + CONFIG.vortexManipulatorBrokenCooldownTicks * 50L);
+            player.sendMessage(Text.translatable("message.doctor_m.vm.overheated_3days")
                     .formatted(Formatting.DARK_RED, Formatting.BOLD), true);
             player.damage(player.getDamageSources().generic(), 4.0f);
             player.addStatusEffect(new net.minecraft.entity.effect.StatusEffectInstance(

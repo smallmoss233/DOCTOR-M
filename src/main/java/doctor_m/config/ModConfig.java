@@ -5,6 +5,9 @@ public class ModConfig {
     //涡旋背景
     public boolean enableVortexTitleBackground = true; // 默认开启
 
+    //STP无缝传送技术
+    public boolean seamlessTeleportEnabled = true;
+
     //TT护盾半径
     public double shieldHalfSize = 4.0;  // 护盾立方体半边长（总边长 = 2 * 此值），默认 4 格
 

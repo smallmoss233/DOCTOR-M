@@ -1,14 +1,18 @@
 package doctor_m.network;
 
 import dev.amble.ait.core.util.WorldUtil;
+import doctor_m.module.STP;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -48,7 +52,7 @@ public class KeytoTimeTeleportNetwork {
 
             server.execute(() -> {
                 RegistryKey<World> targetKey = RegistryKey.of(RegistryKeys.WORLD, new Identifier(dimId));
-                var targetWorld = server.getWorld(targetKey);
+                ServerWorld targetWorld = server.getWorld(targetKey);
                 if (targetWorld == null) {
                     player.sendMessage(
                             Text.translatable("message.doctor_m.vm.invalid_dimension")
@@ -57,7 +61,34 @@ public class KeytoTimeTeleportNetwork {
                     );
                     return;
                 }
-                player.teleport(targetWorld, x, y, z, player.getYaw(), player.getPitch());
+
+                // 同维度直接走原版
+                if (player.getWorld() == targetWorld) {
+                    player.teleport(targetWorld, x, y, z, player.getYaw(), player.getPitch());
+                    return;
+                }
+
+                // 跨维度：等预加载完成后走 STP
+                ChunkPos targetChunk = new ChunkPos(
+                        ((int) Math.floor(x)) >> 4,
+                        ((int) Math.floor(z)) >> 4);
+
+                STP.preloadAllAsync(player, targetWorld, targetChunk).thenRun(() -> {
+                    server.execute(() -> {
+                        if (player.isDisconnected()) return;
+                        if (player.getWorld() == targetWorld) return;
+
+                        try {
+                            STP.teleport(player, targetWorld,
+                                    new Vec3d(x, y, z),
+                                    player.getYaw(), player.getPitch());
+                        } catch (Throwable t) {
+                            STP.LOGGER.warn("KeyToTime STP failed, falling back to vanilla", t);
+                            player.teleport(targetWorld, x, y, z,
+                                    player.getYaw(), player.getPitch());
+                        }
+                    });
+                });
             });
         });
     }

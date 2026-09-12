@@ -11,6 +11,10 @@
       "doctor_m.ParticleManagerMixin",
       "doctor_m.ScytheFirstPersonMixin",
       "doctor_m.SonicSettingsScreenMixin",
+      "stp.ClientPlayNetworkHandlerAccessor",
+      "stp.ClientWorldInvoker",
+      "stp.MinecraftClientMixin",
+      "stp.WorldRendererMixin",
       "title.ChatHudMixin",
       "title.LivingEntityRendererMixin",
       "title.PlayerListHudMixin"

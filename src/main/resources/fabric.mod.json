@@ -6,17 +6,17 @@
   "description": "AIT的扩展MOD,至于为啥叫DOCTOR M? 你别管 (An extension MOD of AIT. As for why it's called DOCTOR M? Don't worry about it.)",
   "authors": [
     "天体干预局/Celestial Intervention Agency:",
-
+    "---",
     "作者(Author):Small Moss",
-
+    "二把手(Handles):TC-020",
+    "---",
     "贡献者(Contributor):白桦下的赤俄",
     "贡献者(Contributor):名游茶",
     "贡献者(Contributor):斯格.尔特",
     "贡献者(Contributor):慢跑者",
-    "贡献者(Contributor):TC-020",
     "贡献者(Contributor):Tsinafs-Bcim",
     "贡献者(Contributor):NX-Seeker",
-
+    "---",
     "特别贡献者(Special Contributor):asdjdfk",
     "特别贡献者(Special Contributor):T天玄X"
   ],
@@ -27,12 +27,15 @@
   "license": "GPL-3.0-only",
   "icon": "assets/doctor_m/icon.png",
   "environment": "*",
+  "accessWidener": "doctor_m.accesswidener",
   "entrypoints": {
     "main": [
-      "doctor_m.DOCTORM"
+      "doctor_m.DOCTORM",
+      "doctor_m.module.STP"
     ],
     "client": [
-      "doctor_m.DOCTORMClient"
+      "doctor_m.DOCTORMClient",
+      "doctor_m.client.util.stp.ClientSTP"
     ],
     "fabric-datagen": [
       "doctor_m.DOCTORMDataGenerator"

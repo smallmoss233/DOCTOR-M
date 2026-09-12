@@ -56,6 +56,7 @@ public class VortexManipulatorItem extends Item {
     }
 
     // ========== Client: Item Bar ==========
+
     @Override
     public boolean isItemBarVisible(ItemStack stack) {
         return true;
@@ -63,18 +64,19 @@ public class VortexManipulatorItem extends Item {
 
     @Override
     public int getItemBarStep(ItemStack stack) {
-        if (getBrokenUntil(stack) > 0) return 13;
+        if (isBrokenNow(stack)) return 13;
         return Math.round(13f * getFuel(stack) / CONFIG.vortexManipulatorMaxFuel);
     }
 
     @Override
     public int getItemBarColor(ItemStack stack) {
-        if (getBrokenUntil(stack) > 0) return COLOR_BROKEN;
+        if (isBrokenNow(stack)) return COLOR_BROKEN;
         if (isOnCooldownSys(stack)) return COLOR_COOLDOWN;
         return COLOR_FUEL;
     }
 
     // ========== Client: Tooltip ==========
+
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         String dimId = getDestDim(stack);
@@ -88,7 +90,6 @@ public class VortexManipulatorItem extends Item {
 
         int fuel = getFuel(stack);
         int overheat = getOverheat(stack);
-        long brokenUntil = getBrokenUntil(stack);
 
         tooltip.add(Text.translatable("tooltip.doctor_m.vm.fuel", fuel, CONFIG.vortexManipulatorMaxFuel)
                 .formatted(fuel < 100 ? Formatting.RED : Formatting.GOLD));
@@ -96,21 +97,15 @@ public class VortexManipulatorItem extends Item {
         tooltip.add(Text.translatable("tooltip.doctor_m.vm.heat", overheat)
                 .formatted(overheat > 80 ? Formatting.DARK_RED : Formatting.YELLOW));
 
-        if (isOnCooldownSys(stack) && brokenUntil == 0) {
-            long remainingMs = getCooldownEndSys(stack) - System.currentTimeMillis();
-            int sec = Math.max(0, (int) (remainingMs / 1000));
-            tooltip.add(Text.translatable("tooltip.doctor_m.vm.cooldown", sec)
+        if (isOnCooldownSys(stack) && !isBrokenNow(stack)) {
+            tooltip.add(Text.translatable("tooltip.doctor_m.vm.cooldown", getCooldownRemainingSeconds(stack))
                     .formatted(Formatting.RED, Formatting.BOLD));
         }
 
-        if (brokenUntil > 0 && world != null) {
-            long remaining = brokenUntil - getOverworldTime(world);
-            if (remaining > 0) {
-                int days = (int) (remaining / 24000);
-                int hours = (int) ((remaining % 24000) / 1000);
-                tooltip.add(Text.translatable("tooltip.doctor_m.vm.broken", days, hours)
-                        .formatted(Formatting.DARK_RED, Formatting.BOLD));
-            }
+        if (isBrokenNow(stack)) {
+            int[] dh = getBrokenRemainingDH(stack);
+            tooltip.add(Text.translatable("tooltip.doctor_m.vm.broken", dh[0], dh[1])
+                    .formatted(Formatting.DARK_RED, Formatting.BOLD));
         }
 
         ShiftTooltipInvoker.addShiftTooltip(tooltip,
@@ -120,6 +115,7 @@ public class VortexManipulatorItem extends Item {
     }
 
     // ========== Use ==========
+
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
@@ -149,10 +145,11 @@ public class VortexManipulatorItem extends Item {
     }
 
     // ========== Server: Inventory Tick (散热) ==========
+
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if (world.isClient || !(entity instanceof ServerPlayerEntity player)) return;
-        if (getBrokenUntil(stack) != 0) return;
+        if (isBrokenNow(stack)) return;
 
         long time = getOverworldTime(world);
         int interval = CONFIG.vortexManipulatorCoolingIntervalTicks;
@@ -245,10 +242,9 @@ public class VortexManipulatorItem extends Item {
     }
 
     public static void tryAutoRepair(ItemStack stack, World world) {
-        long brokenUntil = getBrokenUntil(stack);
-        if (brokenUntil == 0) return;
-        long time = getOverworldTime(world);
-        if (brokenUntil <= time) {
+        if (!isBrokenNow(stack)) return;
+        // 若已过损坏时间，仅清理状态；损坏结束的提示由服务端在传送时处理
+        if (getBrokenUntil(stack) > 0 && !isBrokenNow(stack)) {
             setBrokenUntil(stack, 0);
             setOverheat(stack, 0);
         }
@@ -360,22 +356,43 @@ public class VortexManipulatorItem extends Item {
         stack.getOrCreateNbt().putLong(COOLDOWN_END_SYS, v);
     }
 
-    // ========== Derived State ==========
+    // ========== Derived State（统一使用系统毫秒时间戳） ==========
 
+    /** 唯一冷却判断：结束时刻在系统毫秒时间戳之后即为冷却中。 */
     public static boolean isOnCooldownSys(ItemStack stack) {
         return getCooldownEndSys(stack) > System.currentTimeMillis();
     }
 
-    public static boolean isOnCooldown(ItemStack stack, long overworldTime) {
-        return overworldTime - getLastUsed(stack) < CONFIG.vortexManipulatorCooldownTicks;
+    /** 冷却剩余秒数（向上取整，UI / tooltip 共用）。 */
+    public static int getCooldownRemainingSeconds(ItemStack stack) {
+        long remainingMs = getCooldownEndSys(stack) - System.currentTimeMillis();
+        if (remainingMs <= 0) return 0;
+        return (int) Math.ceil(remainingMs / 1000.0);
     }
 
-    public static int getCooldownRemaining(ItemStack stack, long overworldTime) {
-        return (int) Math.max(0, (CONFIG.vortexManipulatorCooldownTicks - (overworldTime - getLastUsed(stack))) / 20);
+    /** 损坏结束时刻（毫秒时间戳）在之后即为损坏中。 */
+    public static boolean isBrokenNow(ItemStack stack) {
+        long until = getBrokenUntil(stack);
+        return until > System.currentTimeMillis();
     }
 
-    public static boolean isBroken(ItemStack stack) {
+    /** 热量是否达到熔毁阈值（不涉及时间，仅判定状态）。 */
+    public static boolean isOverheated(ItemStack stack) {
         return getOverheat(stack) >= CONFIG.vortexManipulatorMaxOverheat;
+    }
+
+    /**
+     * 损坏剩余时间换算为「天 / 小时」。
+     * @return int[]{days, hours}
+     */
+    public static int[] getBrokenRemainingDH(ItemStack stack) {
+        long remainingMs = getBrokenUntil(stack) - System.currentTimeMillis();
+        if (remainingMs <= 0) return new int[]{0, 0};
+
+        long remainingTicks = remainingMs / 50L;
+        int days = (int) (remainingTicks / 24000);
+        int hours = (int) ((remainingTicks % 24000) / 1000);
+        return new int[]{days, hours};
     }
 
     public static int calcFuelCost(double dist) {
