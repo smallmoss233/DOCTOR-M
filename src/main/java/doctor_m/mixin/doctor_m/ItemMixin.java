@@ -2,6 +2,7 @@ package doctor_m.mixin.doctor_m;
 
 import dev.amble.ait.core.item.SonicItem;
 import doctor_m.Item.items;
+import doctor_m.block.ModBlocks;
 import doctor_m.module.sonic_plus.UpgradeModuleManager;
 import doctor_m.util.tooltip.ShiftTooltipInvoker;
 import net.minecraft.client.item.TooltipContext;
@@ -40,7 +41,6 @@ public class ItemMixin {
                                          CallbackInfo ci) {
         Item item = stack.getItem();
 
-        // 升级模块
         if (item == items.ENERGY_UPGRADE_MODULE || item == items.REGENERATION_MODULE) {
             tooltip.add(t("message.tooltip.doctor_m.upgrade"));
             tooltip.add(t("message.tooltip.doctor_m.removed_upgrade"));
@@ -50,55 +50,48 @@ public class ItemMixin {
             return;
         }
 
-        if (item == items.COFFEE_MACHINE) {
+        if (item == ModBlocks.COFFEE_MACHINE.asItem()) {
             ShiftTooltipInvoker.addShiftTooltip(tooltip, t("message.tooltip.doctor_m.coffee_machine"));
         }
-
-        // 玩偶（直接显示）
-        else if (item == items.DOLL_JIN_MARY) {
+        else if (item == ModBlocks.DOLL_JIN_MARY.asItem()) {
             tooltip.add(t("message.tooltip.doctor_m.doll_jin_mary"));
         }
-        else if (item == items.DOLL_SMALLMOSS_OLD) {
+        else if (item == ModBlocks.DOLL_SMALLMOSS_OLD.asItem()) {
             tooltip.add(t("message.tooltip.doctor_m.doll_smallmoss_old"));
         }
-        else if (item == items.DOLL_SIGEERTE) {
+        else if (item == ModBlocks.DOLL_SIGEERTE.asItem()) {
             tooltip.add(t("message.tooltip.doctor_m.doll_sigeerte"));
         }
-        else if (item == items.DOLL_TSINAFS_BCIM) {
+        else if (item == ModBlocks.DOLL_TSINAFS_BCIM.asItem()) {
             tooltip.add(t("message.tooltip.doctor_m.doll_tsinafs_bcim"));
         }
-        else if (item == items.DOLL_TC020) {
+        else if (item == ModBlocks.DOLL_TC020.asItem()) {
             tooltip.add(t("message.tooltip.doctor_m.doll_tc020"));
         }
-        else if (item == items.DOLL_ASDJDFK) {
+        else if (item == ModBlocks.DOLL_ASDJDFK.asItem()) {
             tooltip.add(t("message.tooltip.doctor_m.doll_asdjdfk"));
         }
-        else if (item == items.DOLL_TIANX) {
+        else if (item == ModBlocks.DOLL_TIANX.asItem()) {
             tooltip.add(t("message.tooltip.doctor_m.doll_tianx"));
         }
-
-        else if (item == items.OXYGEN_CHARGER) {
+        else if (item == ModBlocks.OXYGEN_CHARGER.asItem()) {
             ShiftTooltipInvoker.addShiftTooltip(tooltip, t("message.doctor_m.oxygen_charger"));
         }
-
-        else if (item == items.UNDERWATER_OXYGEN_GENERATOR) {
+        else if (item == ModBlocks.UNDERWATER_OXYGEN_GENERATOR.asItem()) {
             ShiftTooltipInvoker.addShiftTooltip(tooltip, t("message.doctor_m.underwater_oxygen_generator"));
         }
-
-        else if (item == items.EYE_OF_HARMONY_OBELISK) {
+        else if (item == ModBlocks.EYE_OF_HARMONY_OBELISK.asItem()) {
             ShiftTooltipInvoker.addShiftTooltip(tooltip, t("message.tooltip.doctor_m.eye_of_harmony_obelisk"));
         }
-
-        else if (item == items.TOYOTA_SPINNING_ROTOR) {
+        else if (item == ModBlocks.TOYOTA_SPINNING_ROTOR.asItem()) {
             ShiftTooltipInvoker.addShiftTooltip(tooltip, t("message.tooltip.doctor_m.toyota_spinning_rotor"));
         }
-
         else if (stack.isOf(items.SEAL_OF_THE_HIGH_COUNCIL)) {
             tooltip.add(t("message.doctor_m.tip.not.done"));
         }
     }
 
     private static Text t(String key) {
-        return Text.translatable(key).formatted(Formatting.DARK_GRAY, Formatting.ITALIC);
+        return Text.translatable(key).formatted(Formatting.GRAY, Formatting.ITALIC);
     }
 }

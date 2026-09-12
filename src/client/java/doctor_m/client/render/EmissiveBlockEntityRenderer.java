@@ -1,8 +1,8 @@
-package doctor_m.client.render.Layers;
+package doctor_m.client.render;
 
-import doctor_m.block.entities.OxygenChargerBlockEntity;
 import doctor_m.client.util.EmissiveRenderHelper;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
@@ -11,12 +11,24 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
-public class OxygenChargerRenderer implements BlockEntityRenderer<OxygenChargerBlockEntity> {
+/**
+ * 通用方块实体发光层渲染器。
+ *
+ * <p>无需针对每个 BlockEntity 写单独的渲染器：只要方块有对应的
+ * {@code xxx_emissive.png} 纹理，就可以用本渲染器为其方块实体渲染发光层。
+ *
+ * <p>使用方式：
+ * <pre>{@code
+ * BlockEntityRendererRegistry.register(ModBlockEntities.FOO, EmissiveBlockEntityRenderer::new);
+ * BlockEntityRendererRegistry.register(ModBlockEntities.BAR, EmissiveBlockEntityRenderer::new);
+ * }</pre>
+ */
+public class EmissiveBlockEntityRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
 
-    public OxygenChargerRenderer(BlockEntityRendererFactory.Context ctx) {}
+    public EmissiveBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {}
 
     @Override
-    public void render(OxygenChargerBlockEntity entity, float tickDelta, MatrixStack matrices,
+    public void render(T entity, float tickDelta, MatrixStack matrices,
                        VertexConsumerProvider vertexConsumers, int light, int overlay) {
         if (entity.getWorld() == null) return;
 
@@ -24,7 +36,6 @@ public class OxygenChargerRenderer implements BlockEntityRenderer<OxygenChargerB
         MinecraftClient client = MinecraftClient.getInstance();
         BakedModel model = client.getBlockRenderManager().getModel(state);
 
-        // 2. 渲染发光层
         ItemStack stack = new ItemStack(state.getBlock().asItem());
         EmissiveRenderHelper.renderEmissive(stack, model, matrices, vertexConsumers, light, overlay);
     }

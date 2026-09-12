@@ -8,6 +8,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import static doctor_m.Item.items.*;
+import static doctor_m.block.ModBlocks.*;
 import static doctor_m.module.creativity.CreativityItems.*;
 
 public class item_group {

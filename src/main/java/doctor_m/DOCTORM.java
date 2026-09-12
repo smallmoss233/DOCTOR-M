@@ -22,18 +22,11 @@ import doctor_m.network.*;
 import doctor_m.util.type.TardisTypeLoader;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 public class DOCTORM implements ModInitializer {
-    public static final String MOD_ID = "doctor_m";
 
-    private static SoundEvent register(String name) {
-        Identifier id = new Identifier(DOCTORM.MOD_ID, name);
-        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
-    }
+    public static final String MOD_ID = "doctor_m";
 
     public static Identifier id(String path) {
         return new Identifier(MOD_ID, path);
@@ -41,35 +34,40 @@ public class DOCTORM implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        AutoRegister.items(items.class, MOD_ID);
-        AutoRegister.items(CreativityItems.class, MOD_ID);
-
-        ShieldDamageHandler.register();
+        //方块 / 方块实体 / 实体
         ModBlocks.register();
         ModBlockEntities.register();
-        VacuumEatingHandler.register();
-        VMServerHandler.register();
-        TlipocaScytheEvents.register();
+        Entities.register();
 
+        //物品
+        AutoRegister.items(items.class, MOD_ID);
+        AutoRegister.items(CreativityItems.class, MOD_ID);
+        item_group.registerItems();
+
+        //网络通道
         KeytoTimeTeleportNetwork.register();
         KeytoTimeNetwork.register();
         KeytoTimeActiveNetwork.register();
         DeMatGunNetwork.registerServerReceiver();
         TitleNetwork.register();
         UpdateObeliskPacket.registerServerReceiver();
+        STCSNetworking.register();
 
+        //事件与处理器
+        ShieldDamageHandler.register();
+        VacuumEatingHandler.register();
+        VMServerHandler.register();
+        TlipocaScytheEvents.register();
         KeytoTimeCore.register();
         PocketWatchFunction.register();
         GemDeathSaveHandler.register();
         GemTickHandler.register();
-        STCSNetworking.register();
 
-        TardisTypeLoader.init();
-        item_group.registerItems();
-        Entities.registerAttributes();
-
+        //杂项
         ModSounds.init();
+        TardisTypeLoader.init();
 
+        //命令与配置
         CommandRegistrationCallback.EVENT.register(AITTardisBuilderCommand::register);
         ConfigManager.loadConfig();
     }

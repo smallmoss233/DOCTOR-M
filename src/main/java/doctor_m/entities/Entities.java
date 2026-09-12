@@ -1,6 +1,7 @@
 package doctor_m.entities;
 
 import doctor_m.DOCTORM;
+import doctor_m.api.AutoRegister;
 import doctor_m.entities.data.Entity103Tardis;
 import doctor_m.entities.data.Marian_Jin;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
@@ -11,8 +12,6 @@ import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.SpawnRestriction;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -24,44 +23,42 @@ import net.minecraft.world.biome.BiomeKeys;
 
 public class Entities {
 
-    public static final EntityType<Entity103Tardis> TYPE_103_TARDIS = Registry.register(
-            Registries.ENTITY_TYPE,
-            new Identifier(DOCTORM.MOD_ID, "type_103_tardis"),
+    public static final EntityType<Entity103Tardis> TYPE_103_TARDIS =
             FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, Entity103Tardis::new)
                     .dimensions(EntityDimensions.fixed(0.6f, 1.8f))
-                    .build()
-    );
+                    .build();
 
-    public static final EntityType<Marian_Jin> MARIAN_JIN = Registry.register(
-            Registries.ENTITY_TYPE,
-            new Identifier(DOCTORM.MOD_ID, "marian_jin"),
+    public static final EntityType<Marian_Jin> MARIAN_JIN =
             FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, Marian_Jin::new)
                     .dimensions(EntityDimensions.fixed(0.6f, 1.8f))
-                    .build()
+                    .build();
+
+    private static final RegistryKey<World> TRENZALORE_DIM = RegistryKey.of(
+            RegistryKeys.WORLD, new Identifier("doctor_m", "trenzalore")
     );
 
-    public static void registerAttributes() {
+    /** 统一注册入口：实体类型 → 属性 → 生成 */
+    public static void register() {
+        AutoRegister.entities(Entities.class, DOCTORM.MOD_ID);
+        registerAttributes();
+        registerSpawns();
+    }
+
+    private static void registerAttributes() {
         FabricDefaultAttributeRegistry.register(TYPE_103_TARDIS, Entity103Tardis.createMobAttributes());
         FabricDefaultAttributeRegistry.register(MARIAN_JIN, Marian_Jin.createMobAttributes());
     }
-        private static final RegistryKey<World> TRENZALORE_DIM = RegistryKey.of(
-                RegistryKeys.WORLD, new Identifier("doctor_m", "trenzalore")
-        );
 
-        public static void registerSpawns() {
-        // 103型：主世界所有群系都注册（SpawnRestriction 负责过滤海洋）
+    private static void registerSpawns() {
         BiomeModifications.addSpawn(
                 BiomeSelectors.foundInOverworld(),
-                SpawnGroup.CREATURE, Entities.TYPE_103_TARDIS, 2, 1, 1
+                SpawnGroup.CREATURE, TYPE_103_TARDIS, 2, 1, 1
         );
-
-        // 玛丽安：同上，全主世界注册，实际概率由 SpawnRestriction 控制
         BiomeModifications.addSpawn(
                 BiomeSelectors.foundInOverworld(),
-                SpawnGroup.CREATURE, Entities.MARIAN_JIN, 2, 1, 1
+                SpawnGroup.CREATURE, MARIAN_JIN, 2, 1, 1
         );
 
-        // 103型生成限制：不在海洋生成
         SpawnRestriction.register(TYPE_103_TARDIS,
                 SpawnRestriction.Location.ON_GROUND,
                 Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
@@ -75,7 +72,6 @@ public class Entities {
                 }
         );
 
-        // 玛丽安生成限制：雪原正常概率，其他陆地极低，海洋不生成
         SpawnRestriction.register(MARIAN_JIN,
                 SpawnRestriction.Location.ON_GROUND,
                 Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
@@ -86,7 +82,7 @@ public class Entities {
                     RegistryKey<World> dim = world.toServerWorld().getRegistryKey();
                     if (dim == World.OVERWORLD) {
                         if (isSnowy(biome)) return random.nextFloat() < 0.08f;
-                        return random.nextFloat() < 0.02f; // 其他陆地群系极低
+                        return random.nextFloat() < 0.02f;
                     }
                     if (dim.equals(TRENZALORE_DIM)) return random.nextFloat() < 0.3f;
                     return false;

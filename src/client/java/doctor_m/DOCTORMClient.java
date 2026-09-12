@@ -21,8 +21,8 @@ import doctor_m.client.gui.VortexManipulatorScreen;
 import doctor_m.client.network.AITMixinClientNetworking;
 import doctor_m.client.network.DeMatGunClientNetwork;
 import doctor_m.client.network.KeytoTimeTeleportClient;
+import doctor_m.client.render.EmissiveBlockEntityRenderer;
 import doctor_m.client.render.EyeOfHarmonyObeliskBlockEntityRenderer;
-import doctor_m.client.render.Layers.OxygenChargerRenderer;
 import doctor_m.client.render.ToyotaSpinningRotor.ToyotaSpinningRotorRenderer;
 import doctor_m.client.render.TrinketRenderer.SCTrinketRenderer;
 import doctor_m.client.render.TrinketRenderer.VMTrinketRenderer;
@@ -60,76 +60,134 @@ import static doctor_m.block.ModBlocks.*;
 @Environment(EnvType.CLIENT)
 public class DOCTORMClient implements ClientModInitializer {
 
-    public static final EntityModelLayer PLAYER_LAYER = new EntityModelLayer(new Identifier("minecraft", "player"), "main");
-    public static final EntityModelLayer PLAYER_SLIM_LAYER = new EntityModelLayer(new Identifier("minecraft", "player_slim"), "main");
+    public static final EntityModelLayer PLAYER_LAYER =
+            new EntityModelLayer(new Identifier("minecraft", "player"), "main");
+    public static final EntityModelLayer PLAYER_SLIM_LAYER =
+            new EntityModelLayer(new Identifier("minecraft", "player_slim"), "main");
+
+    /** 需要以 cutout 层渲染的玩偶方块 */
+    private static final Block[] DOLL_BLOCKS = {
+            DOLL_JIN_MARY,
+            DOLL_SMALLMOSS_OLD,
+            DOLL_TC020,
+            DOLL_ASDJDFK,
+            DOLL_SIGEERTE,
+            DOLL_TSINAFS_BCIM,
+            DOLL_ASNIT_PNQING,
+            DOLL_TIANX,
+            DOLL_KILIN_MUS,
+            DOLL_JOGGEST,
+            DOLL_NX_SEEKER
+    };
+
+    /** 反色效果的剩余 tick 数，由 client tick 递减 */
+    private static int invertRemainingTicks = 0;
+    private static boolean invertActive = false;
 
     @Override
     public void onInitializeClient() {
+        registerKeybinds();
+        registerItemModels();
+        registerHudOverlays();
+        registerDimensionEffects();
+        registerBlockEntityRenderers();
+        registerBlockRenderLayers();
+        registerEntityRenderers();
+        registerNetworking();
+        registerClientTicks();
+        registerScreenOpeners();
+    }
 
-        //按键系统
+    private void registerKeybinds() {
         AccessoryPassiveButton.register();
         AccessoryKeyRegistry.register(new STCSKeyHandler());
         AccessoryKeyRegistry.register(new KeytoTimeKeyHandler());
+    }
 
+    private void registerItemModels() {
         ModelPredicateProviderRegistry.register(
                 items.POCKET_WATCH,
                 new Identifier("doctor_m", "open"),
                 (stack, world, entity, seed) -> PocketWatchItem.isOpen(stack) ? 1.0f : 0.0f
         );
 
-        HudRenderCallback.EVENT.register(new PocketWatchHudOverlay());
+        FabricModelPredicateProviderRegistry.register(
+                FORCE_FIELD_SHIELD,
+                new Identifier("blocking"),
+                (stack, world, entity, seed) ->
+                        entity != null && entity.isUsingItem() && entity.getActiveItem() == stack
+                                ? 1.0F : 0.0F
+        );
+    }
 
-        // 泰坦维度效果
+    private void registerHudOverlays() {
+        HudRenderCallback.EVENT.register(new PocketWatchHudOverlay());
+        HudRenderCallback.EVENT.register(new ShieldOverlay());
+    }
+
+    private void registerDimensionEffects() {
         DimensionRenderingRegistry.registerDimensionEffects(
                 new Identifier("doctor_m", "titan"),
                 new TitanDimensionEffects()
         );
+    }
 
-        //和谐之眼
+    //方块实体相关
+    private void registerBlockEntityRenderers() {
         BlockEntityRendererFactories.register(
                 ModBlockEntities.EYE_OF_HARMONY_OBELISK,
                 EyeOfHarmonyObeliskBlockEntityRenderer::new
         );
 
-        EyeOfHarmonyObeliskBlock.OPEN_SCREEN_CALLBACK = obelisk -> {
-            MinecraftClient.getInstance().setScreen(new EyeOfHarmonyObeliskScreen(obelisk));
-        };
+        BlockEntityRendererRegistry.register(
+                ModBlockEntities.OXYGEN_CHARGER_ENTITY,
+                EmissiveBlockEntityRenderer::new
+        );
 
+        BlockEntityRendererRegistry.register(
+                ModBlockEntities.UNDERWATER_OXYGEN_GENERATOR_ENTITY,
+                EmissiveBlockEntityRenderer::new
+        );
+
+        BlockEntityRendererRegistry.register(
+                ModBlockEntities.TOYOTA_SPINNING_ROTOR,
+                ToyotaSpinningRotorRenderer::new
+        );
+    }
+
+    private void registerBlockRenderLayers() {
+        for (Block block : DOLL_BLOCKS) {
+            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getCutout());
+        }
+    }
+
+    private void registerEntityRenderers() {
+        EntityRendererRegistry.register(Entities.TYPE_103_TARDIS, Type103Renderer::new);
+        EntityRendererRegistry.register(Entities.MARIAN_JIN, MarianJinRenderer::new);
+    }
+
+    private void registerNetworking() {
         KeytoTimeTeleportClient.register();
         ShieldNetworkingClient.register();
         ForceFieldClientRenderer.register();
         VMTrinketRenderer.register();
         SCTrinketRenderer.register();
-
-        BlockEntityRendererRegistry.register(ModBlockEntities.OXYGEN_CHARGER_ENTITY, OxygenChargerRenderer::new);
-
-        HudRenderCallback.EVENT.register(new ShieldOverlay());
         AITMixinClientNetworking.init();
         PlayerTitleCache.register();
 
-        EntityRendererRegistry.register(Entities.TYPE_103_TARDIS, Type103Renderer::new);
-        EntityRendererRegistry.register(Entities.MARIAN_JIN, MarianJinRenderer::new);
+        ClientPlayNetworking.registerGlobalReceiver(
+                INVERTSCREENPACKETNetwork.INVERT_SCREEN_PACKET,
+                (client, handler, buf, responseSender) -> {
+                    int duration = buf.readInt();
+                    client.execute(() -> startInvertEffect(client, duration));
+                }
+        );
+    }
 
-        //玩偶不透明图层
-        Block[] dollBlocks = {
-                DOLL_JIN_MARY,
-                DOLL_SMALLMOSS_OLD,
-                DOLL_TC020,
-                DOLL_ASDJDFK,
-                DOLL_SIGEERTE,
-                DOLL_TSINAFS_BCIM,
-                DOLL_ASNIT_PNQING,
-                DOLL_TIANX,
-                DOLL_KILIN_MUS,
-                DOLL_JOGGEST,
-                DOLL_NX_SEEKER
-        };
-
-        for (Block block : dollBlocks) {
-            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getCutout());
-        }
-
+    private void registerClientTicks() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            tickInvertEffect(client);
+
             PlayerEntity player = client.player;
             if (player == null) return;
 
@@ -137,63 +195,53 @@ public class DOCTORMClient implements ClientModInitializer {
             if (!(stack.getItem() instanceof DeMatGunItem gun)) return;
             if (!player.getItemCooldownManager().isCoolingDown(gun)
                     && client.options.attackKey.isPressed()) {
-
                 boolean isAds = client.options.useKey.isPressed();
                 DeMatGunClientNetwork.sendShootPacket(isAds);
             }
         });
+    }
 
-        FabricModelPredicateProviderRegistry.register(
-                FORCE_FIELD_SHIELD,
-                new Identifier("blocking"),
-                (stack, world, entity, seed) ->
-                        entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F
-        );
+    private void registerScreenOpeners() {
+        EyeOfHarmonyObeliskBlock.OPEN_SCREEN_CALLBACK = obelisk ->
+                MinecraftClient.getInstance().setScreen(new EyeOfHarmonyObeliskScreen(obelisk));
 
         VMClientScreenOpener.opener = (player, stack) ->
                 MinecraftClient.getInstance().setScreen(new VortexManipulatorScreen(player, stack));
+    }
 
-        BlockEntityRendererRegistry.register(
-                ModBlockEntities.TOYOTA_SPINNING_ROTOR,
-                ToyotaSpinningRotorRenderer::new
-        );
+    // ==================== 反色效果 ====================
 
-        //反色效果
-        ClientPlayNetworking.registerGlobalReceiver(
-                INVERTSCREENPACKETNetwork.INVERT_SCREEN_PACKET,
-                (client, handler, buf, responseSender) -> {
-                    int duration = buf.readInt();
-                    client.execute(() -> {
-                        GameRenderer gameRenderer = client.gameRenderer;
+    /** 启动反色效果，持续 duration 个 tick。 */
+    private static void startInvertEffect(MinecraftClient client, int durationTicks) {
+        GameRenderer gameRenderer = client.gameRenderer;
 
-                        // 通过反射加载反色后处理着色器
-                        try {
-                            Method loadMethod = GameRenderer.class.getDeclaredMethod("loadPostProcessor", Identifier.class);
-                            loadMethod.setAccessible(true);
-                            loadMethod.invoke(gameRenderer, new Identifier("shaders/post/invert.json"));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+        try {
+            Method loadMethod = GameRenderer.class.getDeclaredMethod(
+                    "loadPostProcessor", Identifier.class);
+            loadMethod.setAccessible(true);
+            loadMethod.invoke(gameRenderer, new Identifier("shaders/post/invert.json"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
 
-                        // 延迟恢复
-                        new Thread(() -> {
-                            try {
-                                Thread.sleep(duration * 50L); // 1 tick = 50ms
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            client.execute(() -> {
-                                try {
-                                    Method disableMethod = GameRenderer.class.getDeclaredMethod("disablePostProcessor");
-                                    disableMethod.setAccessible(true);
-                                    disableMethod.invoke(gameRenderer);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            });
-                        }).start();
-                    });
-                }
-        );
+        invertRemainingTicks = Math.max(1, durationTicks);
+        invertActive = true;
+    }
+
+    /** 每个客户端 tick 递减倒计时，归零时关闭反色效果。 */
+    private static void tickInvertEffect(MinecraftClient client) {
+        if (!invertActive) return;
+        if (--invertRemainingTicks > 0) return;
+
+        invertActive = false;
+
+        try {
+            Method disableMethod = GameRenderer.class.getDeclaredMethod("disablePostProcessor");
+            disableMethod.setAccessible(true);
+            disableMethod.invoke(client.gameRenderer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

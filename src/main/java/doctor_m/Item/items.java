@@ -41,32 +41,10 @@ public class items {
     public static final Item KEY_OF_RASSILON = new KeyofRassilonItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
 
     //氧气相关
-    public static final Item OXYGEN_CHARGER = new BlockItem(ModBlocks.OXYGEN_CHARGER, new Item.Settings());
-    public static final Item UNDERWATER_OXYGEN_GENERATOR = new BlockItem(ModBlocks.UNDERWATER_OXYGEN_GENERATOR, new Item.Settings());
     public static final Item OXYGEN_TANK = new OxygenTankItem(new Item.Settings().maxCount(1));
     public static final Item ADVANCED_OXYGEN_TANK = new AdvancedOxygenTankItem(new Item.Settings().maxCount(1));
     public static final Item SUPER_OXYGEN_TANK = new SuperOxygenTankItem(new Item.Settings().maxCount(1));
     public static final Item JET_OXYGEN_TANK = new JetOxygenTankItem(new Item.Settings().maxCount(1));
-
-    //穹顶转子和咖啡机
-    public static final Item TOYOTA_SPINNING_ROTOR = new BlockItem(ModBlocks.TOYOTA_SPINNING_ROTOR, new Item.Settings());
-    public static final Item COFFEE_MACHINE = new BlockItem(ModBlocks.COFFEE_MACHINE, new Item.Settings());
-
-    //玩偶
-    public static final Item DOLL_JIN_MARY = new BlockItem(ModBlocks.DOLL_JIN_MARY, new Item.Settings());
-    public static final Item DOLL_SMALLMOSS_OLD = new BlockItem(ModBlocks.DOLL_SMALLMOSS_OLD, new Item.Settings());
-    public static final Item DOLL_TC020 = new BlockItem(ModBlocks.DOLL_TC020, new Item.Settings());
-    public static final Item DOLL_ASDJDFK =new BlockItem(ModBlocks.DOLL_ASDJDFK, new Item.Settings());
-    public static final Item DOLL_SIGEERTE =new BlockItem(ModBlocks.DOLL_SIGEERTE, new Item.Settings());
-    public static final Item DOLL_TSINAFS_BCIM =new BlockItem(ModBlocks.DOLL_TSINAFS_BCIM, new Item.Settings());
-    public static final Item DOLL_ASNIT_PNQING =new BlockItem(ModBlocks.DOLL_ASNIT_PNQING, new Item.Settings());
-    public static final Item DOLL_TIANX =new BlockItem(ModBlocks.DOLL_TIANX, new Item.Settings());
-    public static final Item DOLL_KILIN_MUS =new BlockItem(ModBlocks.DOLL_KILIN_MUS, new Item.Settings());
-    public static final Item DOLL_JOGGEST =new BlockItem(ModBlocks.DOLL_JOGGEST, new Item.Settings());
-    public static final Item DOLL_NX_SEEKER =new BlockItem(ModBlocks.DOLL_NX_SEEKER, new Item.Settings());
-
-    //和谐之眼
-    public static final Item EYE_OF_HARMONY_OBELISK = new BlockItem(ModBlocks.EYE_OF_HARMONY_OBELISK, new Item.Settings());
 
     //刷怪蛋
     public static final Item TYPE_103_SPAWN = new SpawnEggItem(
