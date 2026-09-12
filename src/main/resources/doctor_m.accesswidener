@@ -5,7 +5,6 @@ accessible class net/minecraft/client/render/WorldRenderer$ChunkInfo
 accessible class net/minecraft/client/render/WorldRenderer$ChunkInfoList
 accessible class net/minecraft/client/render/WorldRenderer$RenderableChunks
 
-# 打开内部类的字段（构造 RenderableChunks 后要操作它们）
-accessible field net/minecraft/client/render/WorldRenderer$ChunkInfoList chunks Lit/it/unimi/dsi/fastutil/objects/ObjectArrayList;
-accessible field net/minecraft/client/render/WorldRenderer$RenderableChunks chunks Lit/it/unimi/dsi/fastutil/objects/ObjectArrayList;
+# RenderableChunks 的两个字段
+accessible field net/minecraft/client/render/WorldRenderer$RenderableChunks chunks Ljava/util/LinkedHashSet;
 accessible field net/minecraft/client/render/WorldRenderer$RenderableChunks chunkInfoList Lnet/minecraft/client/render/WorldRenderer$ChunkInfoList;
