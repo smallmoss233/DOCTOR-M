@@ -28,6 +28,8 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 
 * [**Tough as nails**](https://modrinth.com/mod/tough-as-nails) - AIT's spacesuit will provide warmth.
 
+* [**Mod Menu**](https://modrinth.com/mod/modmenu) - Why did I even write this here...
+
 ---
 
 ### **Credits for Custom Content**
