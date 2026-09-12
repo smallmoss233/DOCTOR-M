@@ -5,6 +5,7 @@ import doctor_m.config.ModConfig;
 import doctor_m.mixin.stp.EntityInvoker;
 import doctor_m.mixin.stp.ServerPlayerEntityInvoker;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
@@ -216,6 +217,9 @@ public class STP implements ModInitializer {
 
         player.refreshPositionAndAngles(pos.getX(), pos.getY(), pos.getZ(), yaw, pitch);
         player.setServerWorld(targetWorld);
+
+        ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.invoker()
+                .afterChangeWorld(player, serverWorld, targetWorld);
 
         targetWorld.onPlayerTeleport(player);
         ((ServerPlayerEntityInvoker) player).stp$worldChanged(serverWorld);
