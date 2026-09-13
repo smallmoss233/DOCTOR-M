@@ -30,11 +30,15 @@ import java.util.List;
 
 public class TracerItem extends Item {
 
-    private static final ModConfig CONFIG = ConfigManager.getConfig();
     private int tickCooldown = 0;
 
     public TracerItem(Settings settings) {
         super(settings.maxCount(1).fireproof());
+    }
+
+    /** 动态读取配置，避免缓存导致运行时改配置不生效 */
+    private static ModConfig config() {
+        return ConfigManager.getConfig();
     }
 
     // ========== 手持自动扫描（掉落物 + 展示框 + 生物携带） ==========
@@ -49,7 +53,7 @@ public class TracerItem extends Item {
 
         if (tickCooldown-- > 0) return;
 
-        double scanRange = CONFIG.tracerScanRange;
+        double scanRange = config().tracerScanRange;
         double scanRangeSq = scanRange * scanRange;
 
         Vec3d eye = player.getEyePos();
@@ -123,8 +127,9 @@ public class TracerItem extends Item {
             return TypedActionResult.success(stack);
         }
 
-        double scanRange = CONFIG.tracerScanRange;
-        int containerScanRange = CONFIG.tracerContainerScanRange;
+        ModConfig cfg = config();
+        double scanRange = cfg.tracerScanRange;
+        int containerScanRange = cfg.tracerContainerScanRange;
 
         Vec3d playerPos = user.getPos();
         double nearestSq = Double.MAX_VALUE;

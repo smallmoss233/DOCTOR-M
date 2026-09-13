@@ -105,6 +105,26 @@ public class ModConfig {
     //追踪器
     public double tracerScanRange = 45.0;      // 手持自动扫描半径（格）
     public int tracerContainerScanRange = 45; // 右键扫描容器半径（格）
+    /** 心灵感应电路远程搜索半径（格） */
+    public double tracerTelepathicScanRange = 5120;
+    /** 结构搜索半径（格） */
+    public int tracerStructureSearchRadius = 51200;
+    /** 黑名单容差半径（格）—— 同一结构在这么近的距离内视为已标记 */
+    public int tracerBlacklistTolerance = 128;
+    /** 结构搜索最大重试次数 */
+    public int tracerMaxChainAttempts = 5;
+    /** 锁定碎片消耗的塔迪斯燃料 */
+    public int tracerFragmentFuelCost = 300;
+    /** 锁定结构消耗的塔迪斯燃料 */
+    public int tracerStructureFuelCost = 600;
+    /** 塔迪斯着陆偏移（±N 格）—— 避免直接卡进结构内部 */
+    public int tracerLandingOffset = 40;
+    /** 心灵感应电路空手潜行右键的回血量（HP） */
+    public double tracerHealAmount = 8.0;
+    /** 心灵感应电路空手潜行右键的饱食度回复 */
+    public int tracerHealFood = 4;
+    /** 心灵感应电路空手潜行右键的饱和度回复 */
+    public double tracerHealSaturation = 0.5;
 
     //涡旋操纵器
     public int vortexManipulatorMaxFuel = 1500;                // 最大燃料

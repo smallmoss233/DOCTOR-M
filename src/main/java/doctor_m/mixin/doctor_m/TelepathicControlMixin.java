@@ -9,6 +9,8 @@ import dev.amble.ait.core.tardis.util.AsyncLocatorUtil;
 import dev.amble.lib.data.CachedDirectedGlobalPos;
 import doctor_m.Item.KeytoTime;
 import doctor_m.Item.data_item.TracerItem;
+import doctor_m.config.ConfigManager;
+import doctor_m.config.ModConfig;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
@@ -38,21 +40,17 @@ import java.util.*;
 @Mixin(TelepathicControl.class)
 public abstract class TelepathicControlMixin {
 
-    private static final double SCAN_RANGE = 5120.0;
-    private static final double SCAN_RANGE_SQ = SCAN_RANGE * SCAN_RANGE;
-    private static final int STRUCTURE_SEARCH_RADIUS = 5120;
-
-    private static final Map<UUID, Set<BlockPos>> EXPLORED_STRUCTURES = new HashMap<>();
-
-    private static final int BLACKLIST_TOLERANCE = 128;
-    private static final int BLACKLIST_TOLERANCE_SQ = BLACKLIST_TOLERANCE * BLACKLIST_TOLERANCE;
-
-    private static final int MAX_CHAIN_ATTEMPTS = 5;
-
     private static final TagKey<Structure> KTT_STRUCTURES = TagKey.of(
             RegistryKeys.STRUCTURE,
             new Identifier("doctor_m", "ktt_fragment_structures")
     );
+
+    /** 已探索结构记录：塔迪斯 UUID -> 已标记坐标集合 */
+    private static final Map<UUID, Set<BlockPos>> EXPLORED_STRUCTURES = new HashMap<>();
+
+    private static ModConfig config() {
+        return ConfigManager.getConfig();
+    }
 
     @Inject(method = "runServer", at = @At("HEAD"), cancellable = true)
     private void doctor_m$tracerMode(Tardis tardis, ServerPlayerEntity player, ServerWorld world,
@@ -68,9 +66,11 @@ public abstract class TelepathicControlMixin {
         }
 
         if (!(consoleBe.getSonicScrewdriver().getItem() instanceof TracerItem)) {
+            // 没插追踪器 → 空手潜行右键治疗
             if (player.isSneaking() && player.getMainHandStack().isEmpty()) {
-                player.heal(8.0f);
-                player.getHungerManager().add(4, 0.5f);
+                ModConfig cfg = config();
+                player.heal((float) cfg.tracerHealAmount);
+                player.getHungerManager().add(cfg.tracerHealFood, (float) cfg.tracerHealSaturation);
                 cir.setReturnValue(Control.Result.SUCCESS);
             }
             return;
@@ -84,8 +84,12 @@ public abstract class TelepathicControlMixin {
         cir.setReturnValue(doctor_m$searchAndLock(tardis, player, world, console));
     }
 
+    // ==================== 标记并排除 ====================
+
     private static Control.Result doctor_m$markAndExclude(Tardis tardis, ServerPlayerEntity player,
                                                           ServerWorld consoleWorld, BlockPos console) {
+        ModConfig cfg = config();
+
         CachedDirectedGlobalPos exterior = tardis.travel().position();
         if (exterior == null) {
             player.sendMessage(Text.translatable("tooltip.doctor_m.tracer.tardis_position_unknown"), true);
@@ -103,7 +107,7 @@ public abstract class TelepathicControlMixin {
                 SoundEvents.BLOCK_BEACON_AMBIENT, SoundCategory.BLOCKS, 0.8f, 1.2f);
 
         AsyncLocatorUtil.locate(extWorld, KTT_STRUCTURES, exterior.getPos(),
-                STRUCTURE_SEARCH_RADIUS, false).thenOnServerThread(result -> {
+                cfg.tracerStructureSearchRadius, false).thenOnServerThread(result -> {
 
             if (result == null) {
                 player.sendMessage(Text.translatable("tooltip.doctor_m.tracer.no_structure_to_mark"), true);
@@ -120,6 +124,8 @@ public abstract class TelepathicControlMixin {
         return Control.Result.SUCCESS;
     }
 
+    // ==================== 黑名单管理 ====================
+
     private static UUID getTardisId(Tardis tardis) {
         return tardis.getUuid();
     }
@@ -132,19 +138,26 @@ public abstract class TelepathicControlMixin {
         Set<BlockPos> list = EXPLORED_STRUCTURES.get(getTardisId(tardis));
         if (list == null || list.isEmpty()) return false;
 
+        int tolerance = config().tracerBlacklistTolerance;
+        int toleranceSq = tolerance * tolerance;
+
         for (BlockPos blacklisted : list) {
             double dx = pos.getX() - blacklisted.getX();
             double dy = pos.getY() - blacklisted.getY();
             double dz = pos.getZ() - blacklisted.getZ();
-            if (dx * dx + dy * dy + dz * dz < BLACKLIST_TOLERANCE_SQ) {
+            if (dx * dx + dy * dy + dz * dz < toleranceSq) {
                 return true;
             }
         }
         return false;
     }
 
+    // ==================== 搜索并锁定 ====================
+
     private static Control.Result doctor_m$searchAndLock(Tardis tardis, ServerPlayerEntity player,
                                                          ServerWorld consoleWorld, BlockPos console) {
+        ModConfig cfg = config();
+
         CachedDirectedGlobalPos exterior = tardis.travel().position();
         if (exterior == null) {
             player.sendMessage(Text.translatable("tooltip.doctor_m.tracer.tardis_position_unknown"), true);
@@ -157,11 +170,14 @@ public abstract class TelepathicControlMixin {
             return Control.Result.FAILURE;
         }
 
+        double scanRange = cfg.tracerTelepathicScanRange;
+        double scanRangeSq = scanRange * scanRange;
+
         Vec3d center = Vec3d.ofCenter(exterior.getPos());
-        double bestSq = SCAN_RANGE_SQ + 1;
+        double bestSq = scanRangeSq + 1;
         BlockPos foundPos = null;
         boolean foundInContainer = false;
-        Box box = new Box(center, center).expand(SCAN_RANGE);
+        Box box = new Box(center, center).expand(scanRange);
 
         // 1. 掉落物
         for (ItemEntity item : extWorld.getEntitiesByClass(
@@ -214,7 +230,7 @@ public abstract class TelepathicControlMixin {
         if (foundPos == null || bestSq > 256) {
             int cX = exterior.getPos().getX() >> 4;
             int cZ = exterior.getPos().getZ() >> 4;
-            int range = (int) (SCAN_RANGE / 16) + 1;
+            int range = (int) (scanRange / 16) + 1;
 
             for (int cx = cX - range; cx <= cX + range; cx++) {
                 for (int cz = cZ - range; cz <= cZ + range; cz++) {
@@ -225,7 +241,7 @@ public abstract class TelepathicControlMixin {
                         if (!(be instanceof Inventory inv)) continue;
 
                         double d = Vec3d.ofCenter(be.getPos()).squaredDistanceTo(center);
-                        if (d > SCAN_RANGE_SQ) continue;
+                        if (d > scanRangeSq) continue;
 
                         for (int i = 0; i < inv.size(); i++) {
                             if (inv.getStack(i).getItem() instanceof KeytoTime) {
@@ -242,13 +258,13 @@ public abstract class TelepathicControlMixin {
             }
         }
 
-        // 3. 实时目标找到 → 直接设航线
+        // 3. 找到实时目标 → 设航线
         if (foundPos != null) {
             setDestination(tardis, player, consoleWorld, console, extWorld, foundPos, foundInContainer);
             return Control.Result.SUCCESS;
         }
 
-        // 4. 没找到 → 异步链式搜结构（自动跳过已标记）
+        // 4. 没找到 → 异步搜结构
         player.sendMessage(Text.translatable("tooltip.doctor_m.tracer.scanning_structures"), true);
         consoleWorld.playSound(null, console,
                 SoundEvents.BLOCK_BEACON_AMBIENT, SoundCategory.BLOCKS, 1f, 0.7f);
@@ -257,14 +273,19 @@ public abstract class TelepathicControlMixin {
         return Control.Result.SUCCESS;
     }
 
+    // ==================== 设定航线 ====================
+
     private static void setDestination(Tardis tardis, ServerPlayerEntity player,
                                        ServerWorld consoleWorld, BlockPos console,
                                        ServerWorld extWorld, BlockPos targetPos,
                                        boolean inContainer) {
+        ModConfig cfg = config();
+        int offset = cfg.tracerLandingOffset;
+
         BlockPos dest = targetPos.add(
-                extWorld.random.nextInt(80) - 40,
+                extWorld.random.nextInt(offset * 2) - offset,
                 0,
-                extWorld.random.nextInt(80) - 40
+                extWorld.random.nextInt(offset * 2) - offset
         );
 
         tardis.travel().forceDestination(
@@ -274,7 +295,7 @@ public abstract class TelepathicControlMixin {
                         (byte) extWorld.random.nextInt(16)
                 )
         );
-        tardis.removeFuel(300);
+        tardis.removeFuel(cfg.tracerFragmentFuelCost);
 
         consoleWorld.playSound(null, console,
                 SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.BLOCKS, 1f, 2f);
@@ -285,9 +306,13 @@ public abstract class TelepathicControlMixin {
         player.sendMessage(Text.translatable(typeKey), true);
     }
 
+    // ==================== 结构搜索 ====================
+
     private static void searchStructuresAsync(Tardis tardis, ServerPlayerEntity player,
                                               ServerWorld consoleWorld, BlockPos console,
                                               ServerWorld extWorld, BlockPos searchCenter) {
+        ModConfig cfg = config();
+
         var holderSet = extWorld.getRegistryManager()
                 .get(RegistryKeys.STRUCTURE)
                 .getEntryList(KTT_STRUCTURES);
@@ -301,7 +326,8 @@ public abstract class TelepathicControlMixin {
         }
 
         tryLocateNext(tardis, player, consoleWorld, console, extWorld,
-                searchCenter, searchCenter, STRUCTURE_SEARCH_RADIUS, null, MAX_CHAIN_ATTEMPTS);
+                searchCenter, searchCenter, cfg.tracerStructureSearchRadius,
+                null, cfg.tracerMaxChainAttempts);
     }
 
     private static void tryLocateNext(Tardis tardis, ServerPlayerEntity player,
@@ -309,6 +335,7 @@ public abstract class TelepathicControlMixin {
                                       ServerWorld extWorld, BlockPos originalCenter,
                                       BlockPos currentCenter, int radius,
                                       @Nullable BlockPos excludePos, int attemptsLeft) {
+        ModConfig cfg = config();
 
         if (attemptsLeft <= 0) {
             consoleWorld.playSound(null, console,
@@ -324,15 +351,16 @@ public abstract class TelepathicControlMixin {
                                 SoundEvents.BLOCK_NOTE_BLOCK_DIDGERIDOO.value(), SoundCategory.BLOCKS, 1f, 0.5f);
                         player.sendMessage(Text.translatable(
                                 "tooltip.doctor_m.tracer.no_structure_signal",
-                                STRUCTURE_SEARCH_RADIUS
+                                cfg.tracerStructureSearchRadius
                         ), true);
                         return;
                     }
 
+                    int toleranceSq = cfg.tracerBlacklistTolerance * cfg.tracerBlacklistTolerance;
+
                     // 检查 locate 是否又返回了同一个结构（递归时）
                     if (excludePos != null
-                            && result.getSquaredDistance(excludePos) < BLACKLIST_TOLERANCE_SQ) {
-                        // 偏移搜索中心后重试
+                            && result.getSquaredDistance(excludePos) < toleranceSq) {
                         BlockPos offset = currentCenter.add(
                                 extWorld.random.nextInt(600) - 300,
                                 0,
@@ -345,12 +373,13 @@ public abstract class TelepathicControlMixin {
 
                     // 检查是否在原始搜索半径内
                     double distToOriginal = result.getSquaredDistance(originalCenter);
-                    if (distToOriginal > (long) STRUCTURE_SEARCH_RADIUS * STRUCTURE_SEARCH_RADIUS) {
+                    long searchRadiusSq = (long) cfg.tracerStructureSearchRadius * cfg.tracerStructureSearchRadius;
+                    if (distToOriginal > searchRadiusSq) {
                         consoleWorld.playSound(null, console,
                                 SoundEvents.BLOCK_NOTE_BLOCK_DIDGERIDOO.value(), SoundCategory.BLOCKS, 1f, 0.5f);
                         player.sendMessage(Text.translatable(
                                 "tooltip.doctor_m.tracer.no_structure_signal",
-                                STRUCTURE_SEARCH_RADIUS
+                                cfg.tracerStructureSearchRadius
                         ), true);
                         return;
                     }
@@ -358,17 +387,17 @@ public abstract class TelepathicControlMixin {
                     // 检查黑名单
                     if (isBlacklisted(tardis, result)) {
                         player.sendMessage(Text.translatable("tooltip.doctor_m.tracer.skipping_explored"), true);
-                        // 以该结构为中心继续搜索下一个
                         tryLocateNext(tardis, player, consoleWorld, console, extWorld,
                                 originalCenter, result, radius, result, attemptsLeft - 1);
                         return;
                     }
 
-                    // 找到了未标记的结构，锁定
+                    // 找到未标记结构 → 锁定航线
+                    int offset = cfg.tracerLandingOffset;
                     BlockPos dest = result.add(
-                            extWorld.random.nextInt(80) - 40,
+                            extWorld.random.nextInt(offset * 2) - offset,
                             0,
-                            extWorld.random.nextInt(80) - 40
+                            extWorld.random.nextInt(offset * 2) - offset
                     );
 
                     tardis.travel().forceDestination(
@@ -378,7 +407,7 @@ public abstract class TelepathicControlMixin {
                                     (byte) extWorld.random.nextInt(16)
                             )
                     );
-                    tardis.removeFuel(600);
+                    tardis.removeFuel(cfg.tracerStructureFuelCost);
 
                     consoleWorld.playSound(null, console,
                             SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.BLOCKS, 1f, 1.8f);
