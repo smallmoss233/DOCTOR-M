@@ -16,6 +16,8 @@ But it’s not just new items – DOCTOR M also modifies vanilla AIT! For exampl
 
 In short, DOCTOR M is an expansion mod built for AIT. What will be added in the future? I have no idea either :D
 
+Don’t understand how to play some things? No worries! Because [DOCTOR M has now officially launched a WIKI website!](https://smallmoss233.github.io/DOCTORM-Wiki/)
+
 ---
 
 ### **Compatibility**
