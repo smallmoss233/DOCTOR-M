@@ -96,11 +96,12 @@ public class PocketWatchItem extends Item implements KeytoTime {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        if (!TimelordRegenCompat.isLoaded()) {
-            return super.use(world, user, hand);
-        }
-
         ItemStack stack = user.getStackInHand(hand);
+
+        if (!TimelordRegenCompat.isLoaded()) {
+            setOpen(stack, !isOpen(stack));
+            return TypedActionResult.success(stack);
+        }
 
         if (isOpen(stack)) {
             setOpen(stack, false);
