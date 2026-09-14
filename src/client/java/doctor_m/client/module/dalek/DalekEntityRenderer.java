@@ -1,17 +1,30 @@
 package doctor_m.client.module.dalek;
 
 import doctor_m.module.dalek.DalekEntity;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.MobEntityRenderer;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 public class DalekEntityRenderer<T extends DalekEntity> extends MobEntityRenderer<T, DalekModel<T>> {
 
+    private static final float SCALE = 1.015f;
+
     private Identifier texture;
 
     public DalekEntityRenderer(EntityRendererFactory.Context ctx) {
-        super(ctx, new DalekModel<>(DalekModel.getTexturedModelData().createModel()), 0.5f);
+        super(ctx, new DalekModel<>(DalekModel.getTexturedModelData().createModel()), 0.5f * SCALE);
         this.addFeature(new DalekLightFeatureRenderer<>(this));
+    }
+
+    @Override
+    public void render(T entity, float entityYaw, float tickDelta,
+                       MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+        matrices.push();
+        matrices.scale(SCALE, SCALE, SCALE);
+        super.render(entity, entityYaw, tickDelta, matrices, vertexConsumers, light);
+        matrices.pop();
     }
 
     public void updateDalek(DalekEntity dalekEntity) {
