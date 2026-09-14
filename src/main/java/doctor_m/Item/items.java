@@ -49,6 +49,8 @@ public class items {
             Entities.TYPE_103_TARDIS, 0xFFFFFFFF, 0xFFFFFFFF, new Item.Settings());
     public static final Item MARIAN_JIN_SPAWN = new SpawnEggItem(
             Entities.MARIAN_JIN, 0xFFFFFFFF, 0xFFFFFFFF, new Item.Settings());
+    public static final Item DALEK_SPAWN_EGG = new SpawnEggItem(
+            Entities.DALEK, 0xB87333, 0x000080, new Item.Settings());
 
     //强制百分比扣血
     public static void registerAbilities() {

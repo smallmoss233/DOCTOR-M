@@ -33,6 +33,7 @@ public static void registerItems() {
                                 entries.add(EYE_OF_HARMONY_OBELISK);
                                 entries.add(TYPE_103_SPAWN);
                                 entries.add(MARIAN_JIN_SPAWN);
+                                entries.add(DALEK_SPAWN_EGG);
                                 entries.add(OXYGEN_TANK);
                                 entries.add(ADVANCED_OXYGEN_TANK);
                                 entries.add(SUPER_OXYGEN_TANK);

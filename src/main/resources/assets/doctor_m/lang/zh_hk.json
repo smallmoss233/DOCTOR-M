@@ -224,6 +224,7 @@
   "item.doctor_m.tracer": "追蹤器",
   "item.doctor_m.toymaker_hammer": "玩具匠的錘子",
   "item.doctor_m.seal_of_the_high_council": "至高議會勳章",
+  "item.doctor_m.dalek_spawn_egg": "戴立克刷怪蛋",
 
   "block.doctor_m.oxygen_charger": "氧氣補充機",
   "block.doctor_m.underwater_oxygen_generator": "水下製氧機",
@@ -244,6 +245,7 @@
 
   "entity.doctor_m.marian_jin": "瑪麗安.謹",
   "entity.doctor_m.103_tardis.name.default": "103型塔迪斯",
+  "entity.doctor_m.dalek": "戴立克",
 
   "entity.doctor_m.marian_jin.dialog.stage1.0": "§f[瑪麗安] §r§c你幹嘛打我！很痛的欸！",
   "entity.doctor_m.marian_jin.dialog.stage1.1": "§f[瑪麗安] §r§c嗚...你欺負人！我要還手了！",

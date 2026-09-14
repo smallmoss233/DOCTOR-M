@@ -224,6 +224,7 @@
   "item.doctor_m.tracer": "Tracer",
   "item.doctor_m.toymaker_hammer": "Toymaker's Hammer",
   "item.doctor_m.seal_of_the_high_council": "Seal of The High Council",
+  "item.doctor_m.dalek_spawn_egg": "Dalek Spawn Egg",
 
   "block.doctor_m.oxygen_charger": "Oxygen Recharger",
   "block.doctor_m.underwater_oxygen_generator": "Underwater Oxygen Generator",
@@ -244,6 +245,7 @@
 
   "entity.doctor_m.marian_jin": "Marian.Jin",
   "entity.doctor_m.103_tardis.name.default": "Type 103 TARDIS",
+  "entity.doctor_m.dalek": "Dalek",
 
   "entity.doctor_m.marian_jin.dialog.stage1.0": "§f[Marian] §r§cWhy are you hitting me! That hurts!",
   "entity.doctor_m.marian_jin.dialog.stage1.1": "§f[Marian] §r§cUgh... you're bullying me! I'm fighting back!",

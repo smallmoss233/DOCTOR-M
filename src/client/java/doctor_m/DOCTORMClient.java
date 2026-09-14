@@ -18,6 +18,7 @@ import doctor_m.client.entity.Type103Renderer;
 import doctor_m.client.gui.EyeOfHarmonyObeliskScreen;
 import doctor_m.client.gui.PocketWatchHudOverlay;
 import doctor_m.client.gui.VortexManipulatorScreen;
+import doctor_m.client.module.dalek.DalekEntityRenderer;
 import doctor_m.client.network.AITMixinClientNetworking;
 import doctor_m.client.network.ConfigOpenHandler;
 import doctor_m.client.network.DeMatGunClientNetwork;
@@ -98,6 +99,7 @@ public class DOCTORMClient implements ClientModInitializer {
         registerClientTicks();
         registerScreenOpeners();
         ConfigOpenHandler.register();
+        EntityRendererRegistry.register(Entities.DALEK, ctx -> new DalekEntityRenderer<>(ctx));
     }
 
     private void registerKeybinds() {

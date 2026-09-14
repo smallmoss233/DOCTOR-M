@@ -4,6 +4,8 @@ import doctor_m.DOCTORM;
 import doctor_m.api.AutoRegister;
 import doctor_m.entities.data.Entity103Tardis;
 import doctor_m.entities.data.Marian_Jin;
+import doctor_m.module.dalek.DalekEntity;
+import doctor_m.module.dalek.DalekRegistry;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -33,6 +35,11 @@ public class Entities {
                     .dimensions(EntityDimensions.fixed(0.6f, 1.8f))
                     .build();
 
+    public static final EntityType<DalekEntity> DALEK =
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, DalekEntity::new)
+                    .dimensions(EntityDimensions.fixed(0.9f, 1.8f))
+                    .build();
+
     private static final RegistryKey<World> TRENZALORE_DIM = RegistryKey.of(
             RegistryKeys.WORLD, new Identifier("doctor_m", "trenzalore")
     );
@@ -40,6 +47,7 @@ public class Entities {
     /** 统一注册入口：实体类型 → 属性 → 生成 */
     public static void register() {
         AutoRegister.entities(Entities.class, DOCTORM.MOD_ID);
+        DalekRegistry.getInstance().onCommonInit();
         registerAttributes();
         registerSpawns();
     }
@@ -47,6 +55,7 @@ public class Entities {
     private static void registerAttributes() {
         FabricDefaultAttributeRegistry.register(TYPE_103_TARDIS, Entity103Tardis.createMobAttributes());
         FabricDefaultAttributeRegistry.register(MARIAN_JIN, Marian_Jin.createMobAttributes());
+        FabricDefaultAttributeRegistry.register(DALEK, DalekEntity.createDalekAttributes());
     }
 
     private static void registerSpawns() {
@@ -57,6 +66,10 @@ public class Entities {
         BiomeModifications.addSpawn(
                 BiomeSelectors.foundInOverworld(),
                 SpawnGroup.CREATURE, MARIAN_JIN, 2, 1, 1
+        );
+        BiomeModifications.addSpawn(
+                BiomeSelectors.foundInOverworld(),
+                SpawnGroup.MONSTER, DALEK, 1, 1, 1
         );
 
         SpawnRestriction.register(TYPE_103_TARDIS,
@@ -85,6 +98,19 @@ public class Entities {
                         return random.nextFloat() < 0.02f;
                     }
                     if (dim.equals(TRENZALORE_DIM)) return random.nextFloat() < 0.3f;
+                    return false;
+                }
+        );
+
+        SpawnRestriction.register(DALEK,
+                SpawnRestriction.Location.ON_GROUND,
+                Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
+                (type, world, reason, pos, random) -> {
+                    if (isOcean(world.getBiome(pos))) return false;
+
+                    RegistryKey<World> dim = world.toServerWorld().getRegistryKey();
+                    if (dim == World.OVERWORLD) return random.nextFloat() < 0.05f;
+                    if (dim.equals(TRENZALORE_DIM)) return random.nextFloat() < 0.15f;
                     return false;
                 }
         );

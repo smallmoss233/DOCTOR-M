@@ -32,5 +32,33 @@
     "sounds": [
       "doctor_m:spinning/ticking_end"
     ]
+  },
+
+  "dalek_ambiance": {
+    "sounds": ["doctor_m:dalek/dalek_ambiance"]
+  },
+  "dalek_death": {
+    "sounds": ["doctor_m:dalek/dalek_death"]
+  },
+  "dalek_move": {
+    "sounds": ["doctor_m:dalek/dalek_move"]
+  },
+  "dalek_plunger": {
+    "sounds": ["doctor_m:dalek/plunger"]
+  },
+  "imperial_fire": {
+    "sounds": ["doctor_m:dalek/imperial/imperial_fire"]
+  },
+  "imperial_exterminate": {
+    "sounds": ["doctor_m:dalek/imperial/imperial_exterminate"]
+  },
+  "imperial_exterminate_alt": {
+    "sounds": ["doctor_m:dalek/imperial/imperial_exterminate_alt"]
+  },
+  "imperial_stay": {
+    "sounds": ["doctor_m:dalek/imperial/imperial_stay"]
+  },
+  "imperial_do_not_move": {
+    "sounds": ["doctor_m:dalek/imperial/imperial_do_not_move"]
   }
 }

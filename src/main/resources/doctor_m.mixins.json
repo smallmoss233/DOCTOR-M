@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "PlayerEntityAccessor",
+    "RaidAccessor",
     "ait_oxygenatedmixin.MixinLivingEntityEat",
     "ait_oxygenatedmixin.MixinOxygenatedEffect",
     "ait_oxygenatedmixin.MixinOxygenatorBlockEntity",
