@@ -37,7 +37,7 @@
     ],
     "client": [
       "doctor_m.DOCTORMClient",
-      "doctor_m.client.util.stp.ClientSTP"
+      "doctor_m.client.module.stp.ClientSTP"
     ],
     "modmenu": [
       "doctor_m.client.Config.ModMenuIntegration"

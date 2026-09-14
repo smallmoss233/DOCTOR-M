@@ -2,7 +2,7 @@ package doctor_m.mixin.client.stp;
 
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import dev.amble.ait.api.ClientWorldEvents;
-import doctor_m.client.util.stp.STPMinecraftClient;
+import doctor_m.client.module.stp.STPMinecraftClient;
 import doctor_m.module.STP;
 import net.minecraft.block.entity.SkullBlockEntity;
 import net.minecraft.client.MinecraftClient;

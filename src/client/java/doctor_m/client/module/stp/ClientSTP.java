@@ -1,4 +1,4 @@
-package doctor_m.client.util.stp;
+package doctor_m.client.module.stp;
 
 import doctor_m.config.ConfigManager;
 import doctor_m.mixin.client.stp.ClientPlayNetworkHandlerAccessor;

@@ -1,4 +1,4 @@
-package doctor_m.client.util.stp;
+package doctor_m.client.module.stp;
 
 import net.minecraft.client.world.ClientWorld;
 

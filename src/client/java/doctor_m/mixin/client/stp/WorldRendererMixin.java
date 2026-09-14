@@ -1,6 +1,6 @@
 package doctor_m.mixin.client.stp;
 
-import doctor_m.client.util.stp.STPWorldRenderer;
+import doctor_m.client.module.stp.STPWorldRenderer;
 import doctor_m.module.STP;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.block.entity.BlockEntity;
