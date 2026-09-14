@@ -4,31 +4,33 @@
       "doctor_m:shieldcore"
     ]
   },
+
   "item.de_mat_gun.fire": {
     "sounds": [
-      "doctor_m:de_mat_gun_fire"
+      "doctor_m:dmg/de_mat_gun_fire"
     ],
     "subtitle": "subtitles.doctor_m.de_mat_gun.fire"
   },
   "entity.de_mat_gun.erase": {
     "sounds": [
-      "doctor_m:de_mat_gun_erase"
+      "doctor_m:dmg/de_mat_gun_erase"
     ],
     "subtitle": "subtitles.doctor_m.de_mat_gun.erase"
   },
+
   "toyota_ticking_loop": {
     "sounds": [
-      "doctor_m:ticking_loop"
+      "doctor_m:spinning/ticking_loop"
     ]
   },
   "toyota_ticking_start": {
     "sounds": [
-      "doctor_m:ticking_start"
+      "doctor_m:spinning/ticking_start"
     ]
   },
   "toyota_ticking_stop": {
     "sounds": [
-      "doctor_m:ticking_end"
+      "doctor_m:spinning/ticking_end"
     ]
   }
 }

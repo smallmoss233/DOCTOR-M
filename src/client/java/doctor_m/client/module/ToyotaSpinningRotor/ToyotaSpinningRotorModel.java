@@ -1,4 +1,4 @@
-package doctor_m.client.render.ToyotaSpinningRotor;
+package doctor_m.client.module.ToyotaSpinningRotor;
 
 import dev.amble.ait.core.tardis.handler.travel.TravelHandlerBase;
 import doctor_m.block.entities.ToyotaSpinningRotorBlockEntity;

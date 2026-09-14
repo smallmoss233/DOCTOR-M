@@ -24,7 +24,7 @@ import doctor_m.client.network.DeMatGunClientNetwork;
 import doctor_m.client.network.KeytoTimeTeleportClient;
 import doctor_m.client.render.EmissiveBlockEntityRenderer;
 import doctor_m.client.render.EyeOfHarmonyObeliskBlockEntityRenderer;
-import doctor_m.client.render.ToyotaSpinningRotor.ToyotaSpinningRotorRenderer;
+import doctor_m.client.module.ToyotaSpinningRotor.ToyotaSpinningRotorRenderer;
 import doctor_m.client.render.TrinketRenderer.SCTrinketRenderer;
 import doctor_m.client.render.TrinketRenderer.VMTrinketRenderer;
 import doctor_m.client.util.id.PlayerTitleCache;

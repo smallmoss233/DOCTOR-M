@@ -1,4 +1,4 @@
-package doctor_m.client.render.ToyotaSpinningRotor;
+package doctor_m.client.module.ToyotaSpinningRotor;
 
 import net.minecraft.client.render.entity.animation.Animation;
 import net.minecraft.client.render.entity.animation.AnimationHelper;
