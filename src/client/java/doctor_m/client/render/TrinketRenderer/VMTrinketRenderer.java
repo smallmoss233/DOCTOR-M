@@ -44,14 +44,14 @@ public class VMTrinketRenderer implements TrinketRenderer {
         TrinketRenderer.translateToRightArm(matrices, playerModel, player);
 
         if (isSlim) {
-            matrices.translate(0.03, -0.1, -0.12);
-            matrices.scale(1f, 1f, 1f);
+            matrices.translate(0.026, -0.5, 0.15);
+            matrices.scale(0.8f, 1f, 1.18f);
         } else {
-            matrices.translate(0.0, -0.1, -0.12);
-            matrices.scale(1.1f, 1.1f, 1.1f);
+            matrices.translate(-0.012, -0.5, 0.15);
+            matrices.scale(1f, 1f, 1.1f);
         }
 
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90));
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
 
         MinecraftClient.getInstance().getItemRenderer().renderItem(
