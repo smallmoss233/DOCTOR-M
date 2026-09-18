@@ -28,7 +28,9 @@ import java.util.List;
 
 public class VMServerHandler {
 
-    private static final ModConfig CONFIG = ConfigManager.getConfig();
+    private static ModConfig config() {
+        return ConfigManager.getConfig();
+    }
 
     public static void register() {
         ServerPlayNetworking.registerGlobalReceiver(VMNetwork.CYCLE_DIM, (server, player, handler, buf, responseSender) -> {
@@ -165,7 +167,7 @@ public class VMServerHandler {
             fuelCost = (int) Math.ceil(fuelCost * 1.2);
         }
 
-        if (fuelCost > CONFIG.vortexManipulatorMaxFuel * 2) {
+        if (fuelCost > config().vortexManipulatorMaxFuel * 2) {
             player.sendMessage(Text.translatable("message.doctor_m.vm.distance_too_far", fuelCost)
                     .formatted(Formatting.RED), true);
             return;
@@ -240,7 +242,7 @@ public class VMServerHandler {
         VortexManipulatorItem.setOverheat(stack, newOverheat);
         VortexManipulatorItem.setLastUsed(stack, nowMs);
         VortexManipulatorItem.setCooldownEndSys(stack,
-                nowMs + CONFIG.vortexManipulatorCooldownTicks * 50L);
+                nowMs + config().vortexManipulatorCooldownTicks * 50L);
 
         // 同步物品 NBT 到客户端，确保冷却显示一致
         if (player.getMainHandStack() == stack || player.getOffHandStack() == stack) {
@@ -315,9 +317,9 @@ public class VMServerHandler {
         }
 
         // ---- 7. 过热熔毁 ----
-        if (newOverheat >= CONFIG.vortexManipulatorMaxOverheat) {
+        if (newOverheat >= config().vortexManipulatorMaxOverheat) {
             VortexManipulatorItem.setBrokenUntil(stack,
-                    nowMs + CONFIG.vortexManipulatorBrokenCooldownTicks * 50L);
+                    nowMs + config().vortexManipulatorBrokenCooldownTicks * 50L);
             player.sendMessage(Text.translatable("message.doctor_m.vm.overheated_3days")
                     .formatted(Formatting.DARK_RED, Formatting.BOLD), true);
             player.damage(player.getDamageSources().generic(), 4.0f);
