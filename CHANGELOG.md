@@ -1,4 +1,4 @@
-# [ v2.1 - 过去的历史...与尚未发生的.../past... and what hasn't happened yet...]
+# 2.1 - 过去的历史...与尚未发生的.../past... and what hasn't happened yet...
 
 > ### 更新日志 / Changelog
 
