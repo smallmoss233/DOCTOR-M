@@ -10,6 +10,7 @@ import doctor_m.module.STP;
 import doctor_m.network.VMNetwork;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -216,6 +217,12 @@ public class VMServerHandler {
                                         double x, double y, double z,
                                         int fuel, int fuelCost, int overheatCost, double dist) {
 
+        // ---- 0. 起点中心闪光 ----
+        player.getServerWorld().spawnParticles(
+                ParticleTypes.FLASH,
+                player.getX(), player.getY() + 1.0, player.getZ(),
+                1, 0.0, 0.0, 0.0, 1.0);
+
         long nowMs = System.currentTimeMillis();
 
         // ---- 1. 更新物品 NBT ----
@@ -268,6 +275,12 @@ public class VMServerHandler {
         } else {
             player.teleport(targetWorld, x, y, z, player.getYaw(), player.getPitch());
         }
+
+        // ---- 4.5 终点中心闪光 ----
+        targetWorld.spawnParticles(
+                ParticleTypes.FLASH,
+                x, y + 1.0, z,
+                1, 0.0, 0.0, 0.0, 1.0);
 
         // ---- 5. 音效与消息 ----
         targetWorld.playSound(null, player.getBlockPos(),
