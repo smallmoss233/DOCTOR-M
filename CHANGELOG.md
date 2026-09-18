@@ -1,10 +1,6 @@
-# 更新日志 / Changelog
+# [ v2.1 - 过去的历史...与尚未发生的.../past... and what hasn't happened yet...]
 
----
-
-## [ v2.1 - 过去的历史...与尚未发生的.../past... and what hasn't happened yet...]
-
-### 更新 / Change
+> ### 更新日志 / Changelog
 
 - 土卫六-泰坦 / Saturn VI-Titan
 
@@ -54,10 +50,6 @@
 -  氧气瓶模型！与更多氧气瓶！ / Oxygen Tank Model! And More Oxygen Tanks!
    高级氧气瓶，超级氧气瓶，容量更大与更更大的氧气瓶 / Advanced Oxygen Tank, Super Oxygen Tank — with larger and even larger capacities.
    喷气氧气瓶，什么叫你把珍贵的氧气当助推剂 / Jet Oxygen Tank — using precious oxygen as propellant? Really?
-
-
----
-
 -  AIT的哈赞卓水晶不再是消耗物品本身，而是消耗物品耐久（16） / AIT's Hazandra Crystal no longer consumes the item itself, but instead consumes item durability (16).
 -  增强神秘宝石（遗物宝石）[@TC-020 iss12](https://github.com/smallmoss233/DOCTOR-M/issues/11) / Enhance Mysterious Gem (Relic Gem) [@TC-020 iss12](https://github.com/smallmoss233/DOCTOR-M/issues/11)
 -  指令创建塔迪斯功能 / Command to create TARDIS functionality
@@ -87,7 +79,7 @@
 
 ---
 
-### 修复 / Repair
+> ### 修复 / Repair
 
 -  贡献者名字修改：Asnit_PnQing改为名游茶 / Change the contributor name from "Asnit_PnQing" to "名游茶".
 -  所有的塔迪斯废墟结构现在都能正常生成 / All TARDIS ruin structures now generate correctly
