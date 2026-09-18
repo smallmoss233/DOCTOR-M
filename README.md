@@ -3,7 +3,7 @@
 ---
 ## **Introduction**
 
-**This mod's code uses artificial intelligence (AI). If you encounter a crash, [please report it on GitHub](https://github.com/smallmoss233/DOCTOR-M/issues). If you don't like AI, you can avoid this mod.**
+> **This mod's code uses artificial intelligence (AI). If you encounter a crash, [please report it on GitHub](https://github.com/smallmoss233/DOCTOR-M/issues). If you don't like AI, you can avoid this mod.**
 
 **What is DOCTOR M? You'd better not ask—I can't really explain it either.**  
 It could be DOCTOR MC, DOCTOR MOD, DOCTOR MOSS, or even DOCTOR MARY—but none of that really matters.
@@ -16,7 +16,17 @@ But it’s not just new items – DOCTOR M also modifies vanilla AIT! For exampl
 
 In short, DOCTOR M is an expansion mod built for AIT. What will be added in the future? I have no idea either :D
 
-Don’t understand how to play some things? No worries! Because [DOCTOR M has now officially launched a WIKI website!](https://smallmoss233.github.io/DOCTORM-Wiki/)
+> Some content in DOCTOR M is ported from AIT branches. Currently, this includes:
+
+- [feat/spinny-thing](https://github.com/amblelabs/ait/tree/feat/spinny-thing) (ported)
+
+- [DrTheodor/seamless-teleport](https://github.com/amblelabs/ait/tree/DrTheodor/seamless-teleport) (reimplemented after reverse-engineering its mechanics)
+
+- [feat/dalek](https://github.com/amblelabs/ait/tree/feat/dalek) (ported; not merged into the main branch)
+
+A huge thank you to them for creating these features!
+
+> **Don’t understand how to play some things? No worries! Because [DOCTOR M has now officially launched a WIKI website!](https://smallmoss233.github.io/DOCTORM-Wiki/)**
 
 ---
 
@@ -54,9 +64,9 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 
 * *Laser, Portal Gun sonic screwdriver*: [NX-Seeker](https://modrinth.com/user/NX-Seeker), asdjdfk
 
-### Also, special thanks to [AmbleLabs](https://amblelabs.dev/) for creating AIT.
+> ### Also, special thanks to [AmbleLabs](https://amblelabs.dev/) for creating AIT.
 
 ---
 ### *Modpack distribution and restricted resource statement.*
 
-* ### You may include the DOCTOR M mod in your modpack, but please be sure to credit the source. Restricted assets (including but not limited to interiors, sonic screwdrivers, control panels, and exteriors) may not be ported to other mods or redistributed without permission.
+>### You may include the DOCTOR M mod in your modpack, but please be sure to credit the source. Restricted assets (including but not limited to interiors, sonic screwdrivers, control panels, and exteriors) may not be ported to other mods or redistributed without permission.
