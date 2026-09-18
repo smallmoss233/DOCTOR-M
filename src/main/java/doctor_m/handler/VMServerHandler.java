@@ -10,6 +10,7 @@ import doctor_m.module.STP;
 import doctor_m.network.VMNetwork;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -27,7 +28,9 @@ import java.util.List;
 
 public class VMServerHandler {
 
-    private static final ModConfig CONFIG = ConfigManager.getConfig();
+    private static ModConfig config() {
+        return ConfigManager.getConfig();
+    }
 
     public static void register() {
         ServerPlayNetworking.registerGlobalReceiver(VMNetwork.CYCLE_DIM, (server, player, handler, buf, responseSender) -> {
@@ -164,7 +167,7 @@ public class VMServerHandler {
             fuelCost = (int) Math.ceil(fuelCost * 1.2);
         }
 
-        if (fuelCost > CONFIG.vortexManipulatorMaxFuel * 2) {
+        if (fuelCost > config().vortexManipulatorMaxFuel * 2) {
             player.sendMessage(Text.translatable("message.doctor_m.vm.distance_too_far", fuelCost)
                     .formatted(Formatting.RED), true);
             return;
@@ -216,6 +219,12 @@ public class VMServerHandler {
                                         double x, double y, double z,
                                         int fuel, int fuelCost, int overheatCost, double dist) {
 
+        // ---- 0. 起点中心闪光 ----
+        player.getServerWorld().spawnParticles(
+                ParticleTypes.FLASH,
+                player.getX(), player.getY() + 1.0, player.getZ(),
+                1, 0.0, 0.0, 0.0, 1.0);
+
         long nowMs = System.currentTimeMillis();
 
         // ---- 1. 更新物品 NBT ----
@@ -233,7 +242,7 @@ public class VMServerHandler {
         VortexManipulatorItem.setOverheat(stack, newOverheat);
         VortexManipulatorItem.setLastUsed(stack, nowMs);
         VortexManipulatorItem.setCooldownEndSys(stack,
-                nowMs + CONFIG.vortexManipulatorCooldownTicks * 50L);
+                nowMs + config().vortexManipulatorCooldownTicks * 50L);
 
         // 同步物品 NBT 到客户端，确保冷却显示一致
         if (player.getMainHandStack() == stack || player.getOffHandStack() == stack) {
@@ -269,6 +278,12 @@ public class VMServerHandler {
             player.teleport(targetWorld, x, y, z, player.getYaw(), player.getPitch());
         }
 
+        // ---- 4.5 终点中心闪光 ----
+        targetWorld.spawnParticles(
+                ParticleTypes.FLASH,
+                x, y + 1.0, z,
+                1, 0.0, 0.0, 0.0, 1.0);
+
         // ---- 5. 音效与消息 ----
         targetWorld.playSound(null, player.getBlockPos(),
                 net.minecraft.sound.SoundEvents.ENTITY_ENDERMAN_TELEPORT,
@@ -302,9 +317,9 @@ public class VMServerHandler {
         }
 
         // ---- 7. 过热熔毁 ----
-        if (newOverheat >= CONFIG.vortexManipulatorMaxOverheat) {
+        if (newOverheat >= config().vortexManipulatorMaxOverheat) {
             VortexManipulatorItem.setBrokenUntil(stack,
-                    nowMs + CONFIG.vortexManipulatorBrokenCooldownTicks * 50L);
+                    nowMs + config().vortexManipulatorBrokenCooldownTicks * 50L);
             player.sendMessage(Text.translatable("message.doctor_m.vm.overheated_3days")
                     .formatted(Formatting.DARK_RED, Formatting.BOLD), true);
             player.damage(player.getDamageSources().generic(), 4.0f);

@@ -149,6 +149,9 @@
   "gui.doctor_m.config.tracerHealAmount": "心靈感應電路 - 治療回血量",
   "gui.doctor_m.config.tracerHealFood": "心靈感應電路 - 治療飽食度",
   "gui.doctor_m.config.tracerHealSaturation": "心靈感應電路 - 治療飽和度",
+  "gui.doctor_m.config.eyeOfHarmonyGenerationRate": "和諧之眼方尖碑 - 阿特隆能量每 tick 產生量",
+  "gui.doctor_m.config.eyeOfHarmonyMaxStorage": "和諧之眼方尖碑 - 阿特隆能量最大儲存量",
+  "gui.doctor_m.config.eyeOfHarmonyTransferRate": "和諧之眼方尖碑 - 阿特隆能量傳輸速率上限",
 
   "gui.doctor_m.vm.title": "渦旋操縱器",
   "gui.doctor_m.vm.dimension": "目標維度",

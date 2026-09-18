@@ -126,10 +126,15 @@ public class ModConfig {
     /** 心灵感应电路空手潜行右键的饱和度回复 */
     public double tracerHealSaturation = 0.5;
 
+    //和谐之眼方尖碑
+    public int eyeOfHarmonyGenerationRate = 20;        // 每 tick 产生量（Artron）
+    public double eyeOfHarmonyMaxStorage = 100000.0;   // 最大存储
+    public double eyeOfHarmonyTransferRate = 400.0;    // 每次传输上限
+
     //涡旋操纵器
     public int vortexManipulatorMaxFuel = 1500;                // 最大燃料
     public int vortexManipulatorMaxOverheat = 100;             // 最大过热
-    public int vortexManipulatorCooldownTicks = 1200;          // 普通冷却（tick，1200=60秒）
+    public int vortexManipulatorCooldownTicks = 200;          // 普通冷却（tick，200=10秒）
     public long vortexManipulatorBrokenCooldownTicks = 72000L; // 损坏恢复时间（3游戏日）
     public int vortexManipulatorCoolingIntervalTicks = 80;     // 散热间隔（tick）
     public int vortexManipulatorCoolingPerInterval = 1;        // 每次散热减少的过热量

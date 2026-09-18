@@ -36,7 +36,9 @@ public class ForceFieldShieldItem extends Item implements EmissiveItem {
     private static final String COOLING_KEY = "force_field_cooling";
     private static final String COOLDOWN_KEY = "force_field_cooldown";
 
-    private static final ModConfig CONFIG = ConfigManager.getConfig();
+    private static ModConfig config() {
+        return ConfigManager.getConfig();
+    }
 
     public ForceFieldShieldItem(Settings settings) {
         super(settings.maxCount(1));
@@ -69,7 +71,7 @@ public class ForceFieldShieldItem extends Item implements EmissiveItem {
         if (isCooling(stack) || getCooldown(stack) > 0) return;
 
         int energy = getEnergy(stack);
-        int drain = CONFIG.forceFieldDrainPerTick;
+        int drain = config().forceFieldDrainPerTick;
         if (energy >= drain) {
             int newEnergy = energy - drain;
             setEnergy(stack, newEnergy);
@@ -90,7 +92,7 @@ public class ForceFieldShieldItem extends Item implements EmissiveItem {
         if (isCooling(stack) || getCooldown(stack) > 0 || getEnergy(stack) <= 0) return;
 
         applyReleasePush(world, player);
-        setCooldown(stack, CONFIG.forceFieldCooldownTicks);
+        setCooldown(stack, config().forceFieldCooldownTicks);
     }
 
     @Override
@@ -111,10 +113,10 @@ public class ForceFieldShieldItem extends Item implements EmissiveItem {
 
         if (!cooling && cd <= 0 && isUsingThis) return;
 
-        int current = nbt.contains(ENERGY_KEY) ? nbt.getInt(ENERGY_KEY) : CONFIG.forceFieldMaxEnergy;
-        int max = CONFIG.forceFieldMaxEnergy;
+        int current = nbt.contains(ENERGY_KEY) ? nbt.getInt(ENERGY_KEY) : config().forceFieldMaxEnergy;
+        int max = config().forceFieldMaxEnergy;
         if (current < max) {
-            int newEnergy = Math.min(max, current + CONFIG.forceFieldRechargePerTick * 4);
+            int newEnergy = Math.min(max, current + config().forceFieldRechargePerTick * 4);
             if (newEnergy != current) {
                 nbt.putInt(ENERGY_KEY, newEnergy);
                 if (newEnergy >= max && cooling) {
@@ -140,7 +142,7 @@ public class ForceFieldShieldItem extends Item implements EmissiveItem {
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
         tooltip.add(Text.translatable("message.doctor_m.force_field_shield.energy",
-                getEnergy(stack), CONFIG.forceFieldMaxEnergy).formatted(Formatting.GRAY));
+                getEnergy(stack), config().forceFieldMaxEnergy).formatted(Formatting.GRAY));
         ShiftTooltipInvoker.addShiftTooltip(tooltip,
                 Text.translatable("message.doctor_m.force_field_shield.detail"));
     }
@@ -154,7 +156,7 @@ public class ForceFieldShieldItem extends Item implements EmissiveItem {
 
     @Override
     public int getItemBarStep(ItemStack stack) {
-        return Math.round((float) getEnergy(stack) * 13.0F / (float) CONFIG.forceFieldMaxEnergy);
+        return Math.round((float) getEnergy(stack) * 13.0F / (float) config().forceFieldMaxEnergy);
     }
 
     @Override
@@ -168,11 +170,11 @@ public class ForceFieldShieldItem extends Item implements EmissiveItem {
 
     public static int getEnergy(ItemStack stack) {
         NbtCompound nbt = stack.getNbt();
-        return (nbt != null && nbt.contains(ENERGY_KEY)) ? nbt.getInt(ENERGY_KEY) : CONFIG.forceFieldMaxEnergy;
+        return (nbt != null && nbt.contains(ENERGY_KEY)) ? nbt.getInt(ENERGY_KEY) : config().forceFieldMaxEnergy;
     }
 
     public static void setEnergy(ItemStack stack, int energy) {
-        int clamped = Math.min(CONFIG.forceFieldMaxEnergy, Math.max(0, energy));
+        int clamped = Math.min(config().forceFieldMaxEnergy, Math.max(0, energy));
         NbtCompound nbt = stack.getOrCreateNbt();
         if (nbt.getInt(ENERGY_KEY) != clamped) {
             nbt.putInt(ENERGY_KEY, clamped);
@@ -243,25 +245,21 @@ public class ForceFieldShieldItem extends Item implements EmissiveItem {
     private void applyForceFieldEffects(World world, PlayerEntity player) {
         Vec3d centerPos = player.getPos().add(0, player.getHeight() / 2.0, 0);
         double radius = SHIELD_RADIUS;
-        // Box 粗筛，再用距离精筛实现真圆形
         Box box = Box.of(centerPos, radius * 2, radius * 2, radius * 2);
         double radiusSq = radius * radius;
 
         boolean playedSoundThisTick = false;
         for (Entity entity : world.getOtherEntities(player, box)) {
-            // 排除掉落物，其余全部处理
             if (entity instanceof ItemEntity) continue;
 
             Vec3d diff = entity.getPos().subtract(centerPos);
             double distSq = diff.lengthSquared();
 
-            // 圆形范围过滤
             if (distSq > radiusSq) continue;
             if (distSq < 1.0E-4) continue;
 
             Vec3d pushDir = diff.normalize();
 
-            // 弹射物直接销毁
             if (entity instanceof ProjectileEntity projectile) {
                 if (!playedSoundThisTick) {
                     world.playSound(null, projectile.getBlockPos(), SoundEvents.ENTITY_GENERIC_BURN,
@@ -272,8 +270,7 @@ public class ForceFieldShieldItem extends Item implements EmissiveItem {
                 continue;
             }
 
-            // 推开一切其他实体（包括玩家、不可推动的实体等）
-            Vec3d motion = pushDir.multiply(CONFIG.forceFieldPushStrength);
+            Vec3d motion = pushDir.multiply(config().forceFieldPushStrength);
             entity.setVelocity(entity.getVelocity().add(motion));
             entity.velocityDirty = true;
         }
@@ -283,7 +280,7 @@ public class ForceFieldShieldItem extends Item implements EmissiveItem {
 
     private void applyReleasePush(World world, PlayerEntity player) {
         Vec3d centerPos = player.getPos().add(0, player.getHeight() / 2.0, 0);
-        double radius = CONFIG.forceFieldReleaseRadius;
+        double radius = config().forceFieldReleaseRadius;
         Box box = Box.of(centerPos, radius * 2, radius * 2, radius * 2);
         double radiusSq = radius * radius;
 
@@ -298,9 +295,9 @@ public class ForceFieldShieldItem extends Item implements EmissiveItem {
 
             Vec3d dir = diff.normalize();
             Vec3d motion = new Vec3d(
-                    dir.x * CONFIG.forceFieldReleaseStrength,
-                    CONFIG.forceFieldReleaseUpward,
-                    dir.z * CONFIG.forceFieldReleaseStrength
+                    dir.x * config().forceFieldReleaseStrength,
+                    config().forceFieldReleaseUpward,
+                    dir.z * config().forceFieldReleaseStrength
             );
             entity.setVelocity(entity.getVelocity().add(motion));
             entity.velocityDirty = true;

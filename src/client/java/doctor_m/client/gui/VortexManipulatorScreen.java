@@ -46,7 +46,9 @@ public class VortexManipulatorScreen extends Screen {
     private static final int C_TEXT         = 0xFFFFFFFF;
     private static final int C_TEXT_DIM     = 0xFF9A8AA8;
 
-    private static final ModConfig CONFIG = ConfigManager.getConfig();
+    private static ModConfig config() {
+        return ConfigManager.getConfig();
+    }
 
     private final PlayerEntity player;
     private TextFieldWidget xField, yField, zField;
@@ -281,7 +283,7 @@ public class VortexManipulatorScreen extends Screen {
         // ===== 燃料 / 热量 =====
         int statW = LABEL_W + LABEL_GAP + FIELD_W;
 
-        float fuelRatio = fuel / (float) CONFIG.vortexManipulatorMaxFuel;
+        float fuelRatio = fuel / (float) config().vortexManipulatorMaxFuel;
         int fuelColor;
         if (fuelRatio > 0.5f)      fuelColor = 0xFF3DDC84;
         else if (fuelRatio > 0.2f) fuelColor = 0xFFFFC107;
@@ -289,7 +291,7 @@ public class VortexManipulatorScreen extends Screen {
 
         drawStatBar(ctx, leftColX, fuelY, statW, fuelRatio, fuelColor,
                 Text.translatable("gui.doctor_m.vm.fuel_label").getString(),
-                fuel + "/" + CONFIG.vortexManipulatorMaxFuel);
+                fuel + "/" + config().vortexManipulatorMaxFuel);
 
         float heatRatio = Math.min(1f, overheat / 100f);
         int heatColor;

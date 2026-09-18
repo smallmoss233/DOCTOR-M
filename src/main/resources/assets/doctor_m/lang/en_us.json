@@ -149,6 +149,9 @@
   "gui.doctor_m.config.tracerHealAmount": "Telepathic Circuit - Heal Amount",
   "gui.doctor_m.config.tracerHealFood": "Telepathic Circuit - Heal Food",
   "gui.doctor_m.config.tracerHealSaturation": "Telepathic Circuit - Heal Saturation",
+  "gui.doctor_m.config.eyeOfHarmonyGenerationRate": "Eye of Harmony - Artron/tick",
+  "gui.doctor_m.config.eyeOfHarmonyMaxStorage": "Eye of Harmony - Max Artron",
+  "gui.doctor_m.config.eyeOfHarmonyTransferRate": "Eye of Harmony - Transfer Rate",
 
   "gui.doctor_m.vm.title": "Vortex Manipulator",
   "gui.doctor_m.vm.dimension": "Target Dimension",

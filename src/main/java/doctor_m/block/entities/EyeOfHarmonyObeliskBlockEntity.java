@@ -4,6 +4,7 @@ import dev.amble.ait.api.ArtronHolder;
 import dev.amble.ait.core.engine.link.IFluidLink;
 import dev.amble.ait.core.engine.link.IFluidSource;
 import doctor_m.block.ModBlockEntities;
+import doctor_m.config.ConfigManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -31,16 +32,18 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
 
     // ====== 能量存储 ======
     private double artronAmount = 0.0;
-    public static final double GENERATION_RATE = 20;      // 每 tick 产生量
-    public static final double MAX_STORAGE = 100000.0;      // 最大存储
-    public static final double TRANSFER_RATE = 200;       // 每次传输上限
     private int generationCounter = 0;
+
+    // ---- 配置读取 ----
+    private static double generationRate() { return ConfigManager.getConfig().eyeOfHarmonyGenerationRate; }
+    private static double maxStorage()     { return ConfigManager.getConfig().eyeOfHarmonyMaxStorage; }
+    private static double transferRate()   { return ConfigManager.getConfig().eyeOfHarmonyTransferRate; }
 
     public EyeOfHarmonyObeliskBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.EYE_OF_HARMONY_OBELISK, pos, state);
     }
 
-    // ====== getter/setter（原有方法保持不变） ======
+    // ====== getter/setter ======
     public float getYOffset() { return yOffset; }
     public void setYOffset(float yOffset) {
         this.yOffset = yOffset;
@@ -111,7 +114,8 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
 
     // ====== 供 GUI 调用的方法 ======
     public double getEnergyPercentage() {
-        return artronAmount / MAX_STORAGE;
+        double max = maxStorage();
+        return max > 0 ? artronAmount / max : 0.0;
     }
 
     // ====== 核心 tick ======
@@ -122,13 +126,11 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
             return;
         }
 
-        // 服务端逻辑
         if (redstoneMode) {
             updateRedstoneState();
         }
         if (!active) return;
 
-        // 产生能量（每 tick 产生，每 20 tick 结算）
         generationCounter++;
         if (generationCounter >= 20) {
             generationCounter = 0;
@@ -138,8 +140,9 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
 
     // ====== 产生并分发 ======
     private void produceAndDistribute() {
-        double produced = GENERATION_RATE * 20;
-        artronAmount = Math.min(artronAmount + produced, MAX_STORAGE);
+        double max = maxStorage();
+        double produced = generationRate() * 20;
+        artronAmount = Math.min(artronAmount + produced, max);
         markDirty();
         sync();
 
@@ -148,12 +151,11 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
         }
     }
 
-    //阿特隆能量传输
+    // 阿特隆能量传输
     private void distributeToNetwork() {
         if (world == null || world.isClient) return;
         if (artronAmount <= 0) return;
 
-        // BFS 遍历所有连接的 IFluidLink
         Set<BlockPos> visited = new HashSet<>();
         Queue<BlockPos> queue = new LinkedList<>();
         queue.add(pos);
@@ -163,7 +165,6 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
             BlockPos current = queue.poll();
             BlockEntity currentBE = world.getBlockEntity(current);
 
-            // 【新增】1. 如果当前节点自身是 IFluidSource 且不是自己，直接传输
             if (currentBE instanceof IFluidSource && currentBE != this) {
                 IFluidSource source = (IFluidSource) currentBE;
                 if (!isTargetFull(source)) {
@@ -172,7 +173,6 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
                 }
             }
 
-            // 2. 如果当前节点是 IFluidLink，尝试通过它的 source() 获取目标
             if (currentBE instanceof IFluidLink link) {
                 IFluidSource target = link.source(true);
                 if (target != null && target != this && !isTargetFull(target)) {
@@ -197,7 +197,7 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
     private void transferToTarget(IFluidSource target) {
         if (target == null || target == this || artronAmount <= 0) return;
 
-        double transferAmount = Math.min(artronAmount, TRANSFER_RATE);
+        double transferAmount = Math.min(artronAmount, transferRate());
         double actualTransfer = 0;
 
         if (target instanceof ArtronHolder holder) {
@@ -234,13 +234,13 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
 
     @Override
     public void setLevel(double level) {
-        this.artronAmount = Math.min(level, MAX_STORAGE);
+        this.artronAmount = Math.min(level, maxStorage());
         markDirty();
         sync();
     }
 
     @Override
-    public double maxLevel() { return MAX_STORAGE; }
+    public double maxLevel() { return maxStorage(); }
 
     @Override
     public void removeLevel(double amount) {
@@ -251,29 +251,25 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
 
     @Override
     public void addLevel(double amount) {
-        this.artronAmount = Math.min(this.artronAmount + amount, MAX_STORAGE);
+        this.artronAmount = Math.min(this.artronAmount + amount, maxStorage());
         markDirty();
         sync();
     }
 
     @Override
-    public void onChange(double before, double after) { /* 可留空 */ }
+    public void onChange(double before, double after) { }
 
     @Override
-    public IFluidSource source(boolean search) {
-        return this;
-    }
+    public IFluidSource source(boolean search) { return this; }
 
     @Override
-    public void setSource(IFluidSource source) { /* 作为源不需要设置 */ }
+    public void setSource(IFluidSource source) { }
 
     @Override
-    public IFluidLink last() {
-        return null;
-    }
+    public IFluidLink last() { return null; }
 
     @Override
-    public void setLast(IFluidLink last) { /* 作为源不需要设置 */ }
+    public void setLast(IFluidLink last) { }
 
     // ====== ArtronHolder 实现 ======
     @Override
@@ -281,13 +277,13 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
 
     @Override
     public void setCurrentFuel(double fuel) {
-        this.artronAmount = Math.min(fuel, MAX_STORAGE);
+        this.artronAmount = Math.min(fuel, maxStorage());
         markDirty();
         sync();
     }
 
     @Override
-    public double getMaxFuel() { return MAX_STORAGE; }
+    public double getMaxFuel() { return maxStorage(); }
 
     @Override
     public void removeFuel(double amount) {
@@ -298,7 +294,7 @@ public class EyeOfHarmonyObeliskBlockEntity extends BlockEntity implements IFlui
 
     @Override
     public double addFuel(double amount) {
-        double added = Math.min(amount, MAX_STORAGE - this.artronAmount);
+        double added = Math.min(amount, maxStorage() - this.artronAmount);
         this.artronAmount += added;
         markDirty();
         sync();

@@ -29,7 +29,9 @@ import java.util.List;
 
 public class VortexManipulatorItem extends Item {
 
-    private static final ModConfig CONFIG = ConfigManager.getConfig();
+    private static ModConfig config() {
+        return ConfigManager.getConfig();
+    }
 
     // ========== NBT Keys ==========
     public static final String DEST_X = "DestX";
@@ -65,7 +67,7 @@ public class VortexManipulatorItem extends Item {
     @Override
     public int getItemBarStep(ItemStack stack) {
         if (isBrokenNow(stack)) return 13;
-        return Math.round(13f * getFuel(stack) / CONFIG.vortexManipulatorMaxFuel);
+        return Math.round(13f * getFuel(stack) / config().vortexManipulatorMaxFuel);
     }
 
     @Override
@@ -91,7 +93,7 @@ public class VortexManipulatorItem extends Item {
         int fuel = getFuel(stack);
         int overheat = getOverheat(stack);
 
-        tooltip.add(Text.translatable("tooltip.doctor_m.vm.fuel", fuel, CONFIG.vortexManipulatorMaxFuel)
+        tooltip.add(Text.translatable("tooltip.doctor_m.vm.fuel", fuel, config().vortexManipulatorMaxFuel)
                 .formatted(fuel < 100 ? Formatting.RED : Formatting.GOLD));
 
         tooltip.add(Text.translatable("tooltip.doctor_m.vm.heat", overheat)
@@ -152,13 +154,13 @@ public class VortexManipulatorItem extends Item {
         if (isBrokenNow(stack)) return;
 
         long time = getOverworldTime(world);
-        int interval = CONFIG.vortexManipulatorCoolingIntervalTicks;
+        int interval = config().vortexManipulatorCoolingIntervalTicks;
         if (interval <= 0) return;
         if (time % interval != 0) return;
 
         int overheat = getOverheat(stack);
         if (overheat > 0) {
-            int decrease = CONFIG.vortexManipulatorCoolingPerInterval;
+            int decrease = config().vortexManipulatorCoolingPerInterval;
             setOverheat(stack, Math.max(0, overheat - decrease));
         }
     }
@@ -190,7 +192,7 @@ public class VortexManipulatorItem extends Item {
 
     private static TypedActionResult<ItemStack> chargeFromCollector(PlayerEntity player, ItemStack vmStack, ItemStack collectorStack) {
         int vmFuel = getFuel(vmStack);
-        int maxFuel = CONFIG.vortexManipulatorMaxFuel;
+        int maxFuel = config().vortexManipulatorMaxFuel;
         if (vmFuel >= maxFuel) {
             player.sendMessage(Text.translatable("message.doctor_m.vm.fully_charged")
                     .formatted(Formatting.YELLOW), true);
@@ -321,7 +323,7 @@ public class VortexManipulatorItem extends Item {
         return nbt != null ? nbt.getInt(FUEL) : 0;
     }
     public static void setFuel(ItemStack stack, int v) {
-        stack.getOrCreateNbt().putInt(FUEL, Math.min(v, CONFIG.vortexManipulatorMaxFuel));
+        stack.getOrCreateNbt().putInt(FUEL, Math.min(v, config().vortexManipulatorMaxFuel));
     }
 
     public static int getOverheat(ItemStack stack) {
@@ -329,7 +331,7 @@ public class VortexManipulatorItem extends Item {
         return nbt != null ? nbt.getInt(OVERHEAT) : 0;
     }
     public static void setOverheat(ItemStack stack, int v) {
-        stack.getOrCreateNbt().putInt(OVERHEAT, Math.min(v, CONFIG.vortexManipulatorMaxOverheat));
+        stack.getOrCreateNbt().putInt(OVERHEAT, Math.min(v, config().vortexManipulatorMaxOverheat));
     }
 
     public static long getLastUsed(ItemStack stack) {
@@ -378,7 +380,7 @@ public class VortexManipulatorItem extends Item {
 
     /** 热量是否达到熔毁阈值（不涉及时间，仅判定状态）。 */
     public static boolean isOverheated(ItemStack stack) {
-        return getOverheat(stack) >= CONFIG.vortexManipulatorMaxOverheat;
+        return getOverheat(stack) >= config().vortexManipulatorMaxOverheat;
     }
 
     /**
