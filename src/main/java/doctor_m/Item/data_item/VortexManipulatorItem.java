@@ -5,7 +5,7 @@ import doctor_m.Item.items;
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
 import doctor_m.util.VMClientScreenOpener;
-import doctor_m.util.tooltip.ShiftTooltipInvoker;
+import mosslib.util.tooltip.ShiftTooltipInvoker;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.item.TooltipContext;

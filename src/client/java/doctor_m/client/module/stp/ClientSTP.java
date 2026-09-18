@@ -1,8 +1,8 @@
 package doctor_m.client.module.stp;
 
 import doctor_m.config.ConfigManager;
-import doctor_m.mixin.client.stp.ClientPlayNetworkHandlerAccessor;
-import doctor_m.mixin.client.stp.ClientWorldInvoker;
+import doctor_m.client.mixin.stp.ClientPlayNetworkHandlerAccessor;
+import doctor_m.client.mixin.stp.ClientWorldInvoker;
 import doctor_m.module.STP;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;

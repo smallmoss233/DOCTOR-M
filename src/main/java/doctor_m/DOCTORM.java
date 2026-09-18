@@ -2,7 +2,7 @@ package doctor_m;
 
 import doctor_m.Item.item_group;
 import doctor_m.Item.items;
-import doctor_m.api.AutoRegister;
+import mosslib.api.AutoRegister;
 import doctor_m.api.ModSounds;
 import doctor_m.block.ModBlockEntities;
 import doctor_m.block.ModBlocks;

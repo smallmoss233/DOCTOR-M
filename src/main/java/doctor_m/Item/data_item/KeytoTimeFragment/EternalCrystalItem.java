@@ -2,8 +2,8 @@ package doctor_m.Item.data_item.KeytoTimeFragment;
 
 import dev.emi.trinkets.api.TrinketItem;
 import doctor_m.Item.KeytoTime;
-import doctor_m.util.tooltip.ShiftTooltipInvoker;
-import doctor_m.util.tooltip.TooltipHelper;
+import mosslib.util.tooltip.ShiftTooltipInvoker;
+import mosslib.util.tooltip.TooltipHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;

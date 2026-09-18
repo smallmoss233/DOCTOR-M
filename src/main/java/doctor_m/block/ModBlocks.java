@@ -1,7 +1,7 @@
 package doctor_m.block;
 
 import doctor_m.DOCTORM;
-import doctor_m.api.AutoRegister;
+import mosslib.api.AutoRegister;
 import doctor_m.block.data_block.*;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.AbstractBlock;

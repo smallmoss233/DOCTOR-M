@@ -3,7 +3,7 @@ package doctor_m.module.creativity.creativity_data.STCS;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import doctor_m.module.EmissiveItem;
-import doctor_m.util.tooltip.ShiftTooltipInvoker;
+import mosslib.util.tooltip.ShiftTooltipInvoker;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;

@@ -1,7 +1,7 @@
 package doctor_m.entities;
 
 import doctor_m.DOCTORM;
-import doctor_m.api.AutoRegister;
+import mosslib.api.AutoRegister;
 import doctor_m.entities.data.Entity103Tardis;
 import doctor_m.entities.data.Marian_Jin;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;

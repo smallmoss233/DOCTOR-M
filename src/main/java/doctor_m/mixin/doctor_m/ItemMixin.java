@@ -4,7 +4,7 @@ import dev.amble.ait.core.item.SonicItem;
 import doctor_m.Item.items;
 import doctor_m.block.ModBlocks;
 import doctor_m.module.sonic_plus.UpgradeModuleManager;
-import doctor_m.util.tooltip.ShiftTooltipInvoker;
+import mosslib.util.tooltip.ShiftTooltipInvoker;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;

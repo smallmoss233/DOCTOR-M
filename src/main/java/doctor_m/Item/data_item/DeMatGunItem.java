@@ -4,7 +4,7 @@ import dev.amble.ait.module.gun.core.item.BaseGunItem;
 import doctor_m.Item.Authorizable;
 import doctor_m.api.ModSounds;
 import doctor_m.util.creativity.DynamicColorHelper;
-import doctor_m.util.tooltip.ShiftTooltipInvoker;
+import mosslib.util.tooltip.ShiftTooltipInvoker;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;

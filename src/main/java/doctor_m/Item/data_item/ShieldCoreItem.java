@@ -3,7 +3,7 @@ package doctor_m.Item.data_item;
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketItem;
 import doctor_m.config.ConfigManager;
-import doctor_m.util.tooltip.ShiftTooltipInvoker;
+import mosslib.util.tooltip.ShiftTooltipInvoker;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;

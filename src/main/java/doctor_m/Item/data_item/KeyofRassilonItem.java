@@ -2,7 +2,7 @@ package doctor_m.Item.data_item;
 
 import dev.amble.ait.core.item.KeyItem;
 import doctor_m.Item.Authorizable;
-import doctor_m.util.tooltip.TooltipHelper;
+import mosslib.util.tooltip.TooltipHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
