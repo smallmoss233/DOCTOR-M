@@ -29,13 +29,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {
 
-    private static final ModConfig CONFIG = ConfigManager.getConfig();
+    private static ModConfig config() {
+        return ConfigManager.getConfig();
+    }
 
     private static final ThreadLocal<Boolean> TLIPOCA_AOE_LOCK = ThreadLocal.withInitial(() -> false);
     private static final ThreadLocal<Boolean> STCS_BLOCK_LOCK = ThreadLocal.withInitial(() -> false);
     private static final ThreadLocal<Boolean> STCS_AOE_LOCK = ThreadLocal.withInitial(() -> false);
 
-    // ========== 力场盾==========
+    // ========== 力场盾 ==========
     private static boolean isHoldingForceFieldShield(PlayerEntity player) {
         if (!player.isUsingItem()) return false;
         return player.getActiveItem().getItem() instanceof ForceFieldShieldItem;
@@ -48,7 +50,7 @@ public class LivingEntityMixin {
         if (!isHoldingForceFieldShield(player)) return;
         if (ForceFieldShieldItem.isEnvironmentalOrSpecialDamage(source)) return;
 
-        if (CONFIG.forceFieldBlockAllNonEnvironmental) {
+        if (config().forceFieldBlockAllNonEnvironmental) {
             cir.setReturnValue(false);
         }
     }
@@ -59,7 +61,7 @@ public class LivingEntityMixin {
         if (!(self instanceof PlayerEntity player)) return amount;
         if (!isHoldingForceFieldShield(player)) return amount;
         if (ForceFieldShieldItem.isEnvironmentalOrSpecialDamage(source)) {
-            return amount * (float) CONFIG.forceFieldEnvironmentalDamageMultiplier;
+            return amount * (float) config().forceFieldEnvironmentalDamageMultiplier;
         }
         return amount;
     }
@@ -125,12 +127,12 @@ public class LivingEntityMixin {
             ScytheSlashManager.spawnSlashArcParticles(world, player);
         }
 
-        float healRatio = isExecution ? (float) CONFIG.tlipocaScytheExecuteHealRatio : (float) CONFIG.tlipocaScytheNormalHealRatio;
+        float healRatio = isExecution ? (float) config().tlipocaScytheExecuteHealRatio : (float) config().tlipocaScytheNormalHealRatio;
         float heal = amount * healRatio;
         player.heal(heal);
 
-        int food = Math.max(CONFIG.tlipocaScytheFoodBase, (int) heal);
-        player.getHungerManager().add(food, food * (float) CONFIG.tlipocaScytheSaturationMultiplier);
+        int food = Math.max(config().tlipocaScytheFoodBase, (int) heal);
+        player.getHungerManager().add(food, food * (float) config().tlipocaScytheSaturationMultiplier);
 
         if (!(victim.getWorld() instanceof ServerWorld world)) return;
 
@@ -160,7 +162,7 @@ public class LivingEntityMixin {
         // AoE
         TLIPOCA_AOE_LOCK.set(true);
         try {
-            double radius = CONFIG.tlipocaScytheAoeRadius;
+            double radius = config().tlipocaScytheAoeRadius;
             double radiusSq = radius * radius;
             Box aoeBox = new Box(victim.getPos(), victim.getPos()).expand(radius);
 
@@ -170,7 +172,7 @@ public class LivingEntityMixin {
                 if (entity.squaredDistanceTo(victim) > radiusSq) continue;
 
                 if (isExecution) {
-                    if (CONFIG.tlipocaScytheExecuteAoEDamageIgnoresArmor) {
+                    if (config().tlipocaScytheExecuteAoEDamageIgnoresArmor) {
                         float newHealth = living.getHealth() - amount;
                         living.setHealth(Math.max(0.0f, newHealth));
                     } else {
@@ -234,7 +236,7 @@ public class LivingEntityMixin {
 
         float costPerDamage = stcsItem.getEnergyCostPerDamage();
         int energyCost = (int) Math.ceil(amount * costPerDamage);
-        energyCost = Math.max(CONFIG.stcsMinEnergyCost, energyCost);
+        energyCost = Math.max(config().stcsMinEnergyCost, energyCost);
 
         int energy = stcsItem.getEnergy(stcsStack);
         if (energy < energyCost) return;
@@ -296,7 +298,7 @@ public class LivingEntityMixin {
 
         STCS_AOE_LOCK.set(true);
         try {
-            double radius = CONFIG.stcsAoeRadius;
+            double radius = config().stcsAoeRadius;
             double radiusSq = radius * radius;
             Box aoeBox = new Box(victim.getPos(), victim.getPos()).expand(radius);
 

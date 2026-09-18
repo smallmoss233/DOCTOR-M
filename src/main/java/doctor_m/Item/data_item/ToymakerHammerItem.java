@@ -64,7 +64,10 @@ import java.util.UUID;
 public class ToymakerHammerItem extends Item {
 
     private static final int MIN_CHARGE_TICKS = 40;
-    private static final ModConfig CONFIG = ConfigManager.getConfig();
+
+    private static ModConfig config() {
+        return ConfigManager.getConfig();
+    }
 
     public ToymakerHammerItem(Settings settings) {
         super(settings.maxCount(1));
@@ -103,7 +106,7 @@ public class ToymakerHammerItem extends Item {
         int chargeTicks = this.getMaxUseTime(stack) - remainingUseTicks;
         if (chargeTicks < MIN_CHARGE_TICKS) return;
 
-        double reachDist = CONFIG.toymakerHammerReachDistance;
+        double reachDist = config().toymakerHammerReachDistance;
         Vec3d eyePos = player.getEyePos();
         Vec3d reachPos = eyePos.add(player.getRotationVec(1.0F).multiply(reachDist));
         BlockHitResult hit = world.raycast(new RaycastContext(
@@ -130,7 +133,7 @@ public class ToymakerHammerItem extends Item {
         if (horizontalLook.lengthSquared() < 0.01) horizontalLook = new Vec3d(0, 0, -1);
         horizontalLook = horizontalLook.normalize();
 
-        int offsetBlocks = CONFIG.toymakerHammerSpawnOffsetBlocks;
+        int offsetBlocks = config().toymakerHammerSpawnOffsetBlocks;
         BlockPos spawnPos = targetPos.add(
                 (int) Math.round(horizontalLook.x * offsetBlocks), 0,
                 (int) Math.round(horizontalLook.z * offsetBlocks)
@@ -428,10 +431,10 @@ public class ToymakerHammerItem extends Item {
         int copiedBlockEntities = 0;
         int copiedEntities = 0;
 
-        int chunkRadius = CONFIG.toymakerHammerCopyChunkRadius;
-        boolean copyBlockEntities = CONFIG.toymakerHammerCopyBlockEntities;
-        boolean copyEntities = CONFIG.toymakerHammerCopyEntities;
-        int blockUpdateFlags = CONFIG.toymakerHammerBlockUpdateFlags;
+        int chunkRadius = config().toymakerHammerCopyChunkRadius;
+        boolean copyBlockEntities = config().toymakerHammerCopyBlockEntities;
+        boolean copyEntities = config().toymakerHammerCopyEntities;
+        int blockUpdateFlags = config().toymakerHammerBlockUpdateFlags;
 
         for (int cx = -chunkRadius; cx <= chunkRadius; cx++) {
             for (int cz = -chunkRadius; cz <= chunkRadius; cz++) {
