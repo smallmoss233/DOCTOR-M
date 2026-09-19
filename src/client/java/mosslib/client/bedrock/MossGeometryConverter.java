@@ -11,12 +11,12 @@ import java.util.*;
 @Environment(EnvType.CLIENT)
 final class MossGeometryConverter {
 
-    /** 薄片厚度：极小值，视觉上不可见 */
-    private static final float THIN = 0.001f;
+    private static final int DEFAULT_TEX_W = 64;
+    private static final int DEFAULT_TEX_H = 64;
 
     private MossGeometryConverter() {}
 
-    static TexturedModelData convert(MossGeometry model, String wantedGeometry) {
+    static MossBedrockModel convert(MossGeometry model, String wantedGeometry, float uvScale) {
         if (model.geometries == null || model.geometries.isEmpty()) {
             throw new MossGeometryException("Model has no geometry entries");
         }
@@ -33,10 +33,20 @@ final class MossGeometryConverter {
         ModelData data = new ModelData();
         Map<String, Bone> boneIndex = indexBones(geometry.bones);
         Map<String, ModelPartData> built = new HashMap<>();
+        List<MossPerFaceCube> deferred = new ArrayList<>();
 
-        buildBones(geometry.bones, boneIndex, built, data);
+        buildBones(geometry.bones, boneIndex, built, data, uvScale, deferred);
 
-        return TexturedModelData.of(data, desc.textureWidth, desc.textureHeight);
+        int texW = desc.textureWidth  != null ? desc.textureWidth  : DEFAULT_TEX_W;
+        int texH = desc.textureHeight != null ? desc.textureHeight : DEFAULT_TEX_H;
+        int scaledW = Math.round(texW * uvScale);
+        int scaledH = Math.round(texH * uvScale);
+
+        return new MossBedrockModel(
+                TexturedModelData.of(data, scaledW, scaledH),
+                deferred,
+                scaledW,
+                scaledH);
     }
 
     private static Geometry selectGeometry(List<Geometry> all, String wanted) {
@@ -58,8 +68,11 @@ final class MossGeometryConverter {
         return map;
     }
 
+    // ─── 骨骼遍历 ────────────────────────────────────
+
     private static void buildBones(List<Bone> bones, Map<String, Bone> index,
-                                   Map<String, ModelPartData> built, ModelData data) {
+                                   Map<String, ModelPartData> built, ModelData data,
+                                   float uvScale, List<MossPerFaceCube> deferred) {
         List<Bone> pending = new ArrayList<>(bones);
         int guard = pending.size() + 1;
 
@@ -68,7 +81,7 @@ final class MossGeometryConverter {
             while (it.hasNext()) {
                 Bone bone = it.next();
                 if (isResolvable(bone, built)) {
-                    built.put(bone.name, buildBone(bone, index, built, data));
+                    built.put(bone.name, buildBone(bone, index, built, data, uvScale, deferred));
                     it.remove();
                 }
             }
@@ -86,39 +99,86 @@ final class MossGeometryConverter {
         return bone.parent == null || bone.parent.isEmpty() || built.containsKey(bone.parent);
     }
 
+    private static String pathOf(Bone bone, Map<String, Bone> index) {
+        List<String> parts = new ArrayList<>();
+        Bone cur = bone;
+        while (cur != null) {
+            parts.add(cur.name);
+            if (cur.parent == null || cur.parent.isEmpty()) break;
+            cur = index.get(cur.parent);
+        }
+        Collections.reverse(parts);
+        return String.join("/", parts);
+    }
+
     private static ModelPartData buildBone(Bone bone, Map<String, Bone> index,
-                                           Map<String, ModelPartData> built, ModelData data) {
+                                           Map<String, ModelPartData> built, ModelData data,
+                                           float uvScale, List<MossPerFaceCube> deferred) {
         ModelPartData parentPart = resolveParent(bone, built, data);
         ModelTransform boneTransform = buildBoneTransform(bone, index);
 
         ModelPartBuilder flatBuilder = ModelPartBuilder.create();
-        List<Cube> perFaceCubes = new ArrayList<>();
-        List<Cube> rotatedCubes = new ArrayList<>();
+        List<ModelPartBuilder> rotatedSubs = new ArrayList<>();
+        List<ModelTransform> rotatedTransforms = new ArrayList<>();
 
         if (bone.cubes != null) {
             Vec3 bonePivot = orZero(bone.pivot);
             for (Cube cube : bone.cubes) {
                 if (cube.uv == null) continue;
 
-                boolean isRotated = cube.rotation != null && !cube.rotation.isZero();
+                boolean hasRotation = cube.hasRotation();
+                Vec3 pivot = cube.pivot != null ? cube.pivot : bonePivot;
+                ModelPartBuilder target = hasRotation ? ModelPartBuilder.create() : flatBuilder;
 
-                if (isRotated) {
-                    rotatedCubes.add(cube);
-                } else if (cube.uv.isBox()) {
-                    addBoxCube(flatBuilder, cube, bonePivot, bone.name);
+                Vec3 origin = orZero(cube.origin);
+                Vec3 size = orZero(cube.size);
+
+                // AmbleKit 的坐标公式
+                float ox = origin.x - pivot.x;
+                float oy = -(origin.y - pivot.y + size.y);
+                float oz = origin.z - pivot.z;
+
+                if (cube.uv.isBox()) {
+                    target.uv(Math.round(cube.uv.box[0] * uvScale),
+                            Math.round(cube.uv.box[1] * uvScale));
+                    if (cube.isMirror()) target.mirrored();
+                    target.cuboid(ox, oy, oz, size.x, size.y, size.z, new Dilation(cube.inflate));
+                    if (cube.isMirror()) target.mirrored(false);
                 } else {
-                    perFaceCubes.add(cube);
+                    // per-face：记进 deferred
+                    float[] cubePivot = new float[]{ pivot.x, pivot.y, pivot.z };
+                    float[] cubeRot = new float[]{
+                            cube.rotation != null ? cube.rotation.x : 0f,
+                            cube.rotation != null ? cube.rotation.y : 0f,
+                            cube.rotation != null ? cube.rotation.z : 0f
+                    };
+                    deferred.add(new MossPerFaceCube(
+                            pathOf(bone, index),
+                            ox, oy, oz,
+                            size.x, size.y, size.z,
+                            cube.inflate, cube.isMirror(),
+                            cube.uv,
+                            cubePivot, cubeRot
+                    ));
+                }
+
+                if (hasRotation) {
+                    ModelTransform tf = ModelTransform.of(
+                            -(bonePivot.x - pivot.x),
+                            bonePivot.y - pivot.y,
+                            -(bonePivot.z - pivot.z),
+                            rad(cube.rotation.x), rad(cube.rotation.y), rad(cube.rotation.z)
+                    );
+                    rotatedSubs.add(target);
+                    rotatedTransforms.add(tf);
                 }
             }
         }
 
         ModelPartData bonePart = parentPart.addChild(bone.name, flatBuilder, boneTransform);
 
-        for (int i = 0; i < perFaceCubes.size(); i++) {
-            addPerFaceCube(bonePart, bone, perFaceCubes.get(i), "pf" + i);
-        }
-        for (int i = 0; i < rotatedCubes.size(); i++) {
-            addRotatedCube(bonePart, bone, rotatedCubes.get(i), i);
+        for (int i = 0; i < rotatedSubs.size(); i++) {
+            bonePart.addChild(bone.name + "_r" + i, rotatedSubs.get(i), rotatedTransforms.get(i));
         }
 
         return bonePart;
@@ -143,166 +203,14 @@ final class MossGeometryConverter {
         }
 
         Vec3 parentPivot = orZero(index.get(bone.parent).pivot);
-        float px = pivot.x - parentPivot.x;
+        // AmbleKit：X/Z 反号，Y 不反
+        float px = -(parentPivot.x - pivot.x);
         float py = parentPivot.y - pivot.y;
-        float pz = pivot.z - parentPivot.z;
+        float pz = -(parentPivot.z - pivot.z);
 
         return ModelTransform.of(px, py, pz, rad(rot.x), rad(rot.y), rad(rot.z));
     }
 
-    // ─── Box UV cube ──────────────────────────────────
-
-    private static void addBoxCube(ModelPartBuilder builder, Cube cube, Vec3 pivotRef, String boneName) {
-        Vec3 origin = orZero(cube.origin);
-        Vec3 size = orZero(cube.size);
-
-        float ox = origin.x - pivotRef.x;
-        float oy = -(origin.y - pivotRef.y + size.y);
-        float oz = origin.z - pivotRef.z;
-
-        builder.uv(cube.uv.box[0], cube.uv.box[1]);
-        builder.mirrored(cube.mirror);
-        builder.cuboid(ox, oy, oz, size.x, size.y, size.z, new Dilation(cube.inflate));
-        builder.mirrored(false);
-    }
-
-    // ─── Per-face UV cube：6 个薄片 ──────────────────
-
-    private static void addPerFaceCube(ModelPartData bonePart, Bone bone, Cube cube, String tag) {
-        Vec3 bonePivot = orZero(bone.pivot);
-        Vec3 origin = orZero(cube.origin);
-        Vec3 size = orZero(cube.size);
-
-        float ox = origin.x - bonePivot.x;
-        float oy = -(origin.y - bonePivot.y + size.y);
-        float oz = origin.z - bonePivot.z;
-
-        float w = size.x;
-        float h = size.y;
-        float d = size.z;
-
-        UV uv = cube.uv;
-        Dilation dil = new Dilation(cube.inflate);
-        boolean mir = cube.mirror;
-        ModelTransform zero = ModelTransform.pivot(0f, 0f, 0f);
-
-        if (uv.north != null) {
-            int[] p = faceUV(uv.north);
-            ModelPartBuilder b = ModelPartBuilder.create();
-            b.uv(p[0], p[1]);
-            b.mirrored(mir);
-            b.cuboid(ox, oy, oz - THIN, w, h, THIN, dil);
-            b.mirrored(false);
-            bonePart.addChild(bone.name + "_" + tag + "_n", b, zero);
-        }
-
-        if (uv.south != null) {
-            int[] p = faceUV(uv.south);
-            ModelPartBuilder b = ModelPartBuilder.create();
-            b.uv(p[0] - (int) w, p[1]);
-            b.mirrored(mir);
-            b.cuboid(ox, oy, oz + d, w, h, THIN, dil);
-            b.mirrored(false);
-            bonePart.addChild(bone.name + "_" + tag + "_s", b, zero);
-        }
-
-        if (uv.east != null) {
-            int[] p = faceUV(uv.east);
-            ModelPartBuilder b = ModelPartBuilder.create();
-            b.uv(p[0], p[1] - (int) d);
-            b.mirrored(mir);
-            b.cuboid(ox + w, oy, oz, THIN, h, d, dil);
-            b.mirrored(false);
-            bonePart.addChild(bone.name + "_" + tag + "_e", b, zero);
-        }
-
-        if (uv.west != null) {
-            int[] p = faceUV(uv.west);
-            ModelPartBuilder b = ModelPartBuilder.create();
-            b.uv(p[0] - (int) d, p[1] - (int) d);
-            b.mirrored(mir);
-            b.cuboid(ox - THIN, oy, oz, THIN, h, d, dil);
-            b.mirrored(false);
-            bonePart.addChild(bone.name + "_" + tag + "_w", b, zero);
-        }
-
-        if (uv.up != null) {
-            int[] p = faceUV(uv.up);
-            ModelPartBuilder b = ModelPartBuilder.create();
-            b.uv(p[0] - (int) d, p[1]);
-            b.mirrored(mir);
-            b.cuboid(ox, oy + h, oz, w, THIN, d, dil);
-            b.mirrored(false);
-            bonePart.addChild(bone.name + "_" + tag + "_u", b, zero);
-        }
-
-        if (uv.down != null) {
-            int[] p = faceUV(uv.down);
-            ModelPartBuilder b = ModelPartBuilder.create();
-            b.uv(p[0] - (int) d - (int) w, p[1]);
-            b.mirrored(mir);
-            b.cuboid(ox, oy - THIN, oz, w, THIN, d, dil);
-            b.mirrored(false);
-            bonePart.addChild(bone.name + "_" + tag + "_d", b, zero);
-        }
-    }
-
-    private static int[] faceUV(UV.Face face) {
-        if (face == null || face.uv() == null || face.uv().length < 2) return new int[]{0, 0};
-        return new int[]{(int) face.uv()[0], (int) face.uv()[1]};
-    }
-
-    // ─── Rotated cube（per-face 降级） ────────────────
-
-    private static void addRotatedCube(ModelPartData bonePart, Bone bone, Cube cube, int index) {
-        Vec3 bonePivot = orZero(bone.pivot);
-        Vec3 cubePivot = orZero(cube.pivot);
-
-        float px = cubePivot.x - bonePivot.x;
-        float py = bonePivot.y - cubePivot.y;
-        float pz = cubePivot.z - bonePivot.z;
-
-        Vec3 rot = orZero(cube.rotation);
-
-        int u, v;
-        if (cube.uv.isBox()) {
-            u = cube.uv.box[0];
-            v = cube.uv.box[1];
-        } else {
-            UV.Face north = cube.uv.north;
-            if (north == null || north.uv() == null || north.uv().length < 2) {
-                throw new MossGeometryException(
-                        "Bone '" + bone.name + "': rotated per-face cube missing 'north'");
-            }
-            int d = (int) orZero(cube.size).z;
-            u = (int) north.uv()[0] - d;
-            v = (int) north.uv()[1] - d;
-        }
-
-        Vec3 origin = orZero(cube.origin);
-        Vec3 size = orZero(cube.size);
-
-        float ox = origin.x - cubePivot.x;
-        float oy = -(origin.y - cubePivot.y + size.y);
-        float oz = origin.z - cubePivot.z;
-
-        ModelPartBuilder builder = ModelPartBuilder.create();
-        builder.uv(u, v);
-        builder.mirrored(cube.mirror);
-        builder.cuboid(ox, oy, oz, size.x, size.y, size.z, new Dilation(cube.inflate));
-        builder.mirrored(false);
-
-        ModelTransform tf = ModelTransform.of(px, py, pz, rad(rot.x), rad(rot.y), rad(rot.z));
-        bonePart.addChild(bone.name + "_r" + index, builder, tf);
-    }
-
-    // ─── 小工具 ──────────────────────────────────────
-
-    private static Vec3 orZero(Vec3 v) {
-        return v == null ? Vec3.ZERO : v;
-    }
-
-    private static float rad(float deg) {
-        return (float) Math.toRadians(deg);
-    }
+    private static Vec3 orZero(Vec3 v) { return v == null ? Vec3.ZERO : v; }
+    private static float rad(float deg) { return (float) Math.toRadians(deg); }
 }

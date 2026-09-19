@@ -39,8 +39,9 @@ final class MossGeometry {
 
     static final class Description {
         String identifier;
-        @SerializedName("texture_width")  int textureWidth;
-        @SerializedName("texture_height") int textureHeight;
+        // ★ 用包装类型：缺省时为 null，避免 Gson 填 0 导致 TexturedModelData.of(0,0) 崩溃
+        @SerializedName("texture_width")  Integer textureWidth;
+        @SerializedName("texture_height") Integer textureHeight;
     }
 
     // ─── 骨骼 ─────────────────────────────────────────
@@ -68,7 +69,17 @@ final class MossGeometry {
         Vec3 rotation;
         UV uv;
         float inflate;
-        boolean mirror;
+        // ★ 用包装类型，防止 Blockbench 把 "true"/"false" 当字符串时静默失败
+        @SerializedName("mirror")
+        Boolean mirror;
+
+        boolean isMirror() {
+            return Boolean.TRUE.equals(mirror);
+        }
+
+        boolean hasRotation() {
+            return rotation != null && !rotation.isZero();
+        }
     }
 
     // ─── 向量 ─────────────────────────────────────────
@@ -91,9 +102,8 @@ final class MossGeometry {
     // ─── UV ───────────────────────────────────────────
 
     static final class UV {
-        // box UV: [u, v] —— 大部分 Blockbench 默认导出
-        int[] box;
-        // per-face UV（暂不支持，保留字段以便将来扩展）
+        // ★ 改成 float[]：Box UV 可以是浮点，直接取整会导致累计 1~3 像素漂移
+        float[] box;
         Face north, east, south, west, up, down;
 
         boolean isBox() {
@@ -123,8 +133,8 @@ final class MossGeometry {
             UV uv = new UV();
             if (json.isJsonArray()) {
                 JsonArray a = json.getAsJsonArray();
-                uv.box = new int[a.size()];
-                for (int i = 0; i < a.size(); i++) uv.box[i] = a.get(i).getAsInt();
+                uv.box = new float[a.size()];
+                for (int i = 0; i < a.size(); i++) uv.box[i] = a.get(i).getAsFloat();
                 return uv;
             }
             JsonObject o = json.getAsJsonObject();

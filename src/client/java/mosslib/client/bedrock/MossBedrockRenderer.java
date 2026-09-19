@@ -8,6 +8,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
@@ -17,18 +18,19 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Environment(EnvType.CLIENT)
 public class MossBedrockRenderer<T extends BlockEntity & MossBedrockRenderable>
         implements BlockEntityRenderer<T> {
 
-    /** 模型缓存：ID → ModelPart。所有方块共享，相同 ID 只 build 一次。 */
-    private static final Map<Identifier, ModelPart> MODEL_CACHE = new ConcurrentHashMap<>();
+    private record CachedModel(ModelPart root, MossBedrockModel model) {}
 
-    public MossBedrockRenderer(BlockEntityRendererFactory.Context ctx) {
-        // 不需要 context，留着以后可能要
-    }
+    private static final Map<Identifier, CachedModel> MODEL_CACHE = new ConcurrentHashMap<>();
+    private static final Set<Identifier> DIAGNOSED = ConcurrentHashMap.newKeySet();
+
+    public MossBedrockRenderer(BlockEntityRendererFactory.Context ctx) {}
 
     @Override
     public boolean rendersOutsideBoundingBox(T blockEntity) {
@@ -42,53 +44,83 @@ public class MossBedrockRenderer<T extends BlockEntity & MossBedrockRenderable>
         Identifier modelId = entity.getMossModel();
         if (modelId == null) return;
 
-        ModelPart root = MODEL_CACHE.computeIfAbsent(modelId, id -> {
-            ResourceManager rm = MinecraftClient.getInstance().getResourceManager();
-            return MossBedrock.load(rm, id).createModel();
+        Identifier texId = entity.getMossTexture();
+        if (texId == null) return;
+
+        ResourceManager rm = MinecraftClient.getInstance().getResourceManager();
+
+        if (DIAGNOSED.add(modelId)) {
+            MossTextureInfo.diagnose(rm, modelId, texId);
+        }
+
+        CachedModel cached = MODEL_CACHE.computeIfAbsent(modelId, id -> {
+            MossBedrockModel model = MossBedrock.load(rm, id, null, texId);
+            return new CachedModel(model.createModel(), model);
         });
 
         matrices.push();
-
-        // 方块中心偏移
         matrices.translate(0.5, 0.0, 0.5);
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180F));   // ★ 加回来
 
-        // Bedrock Y 轴朝下 → Java Y 轴朝上，翻转过来
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180f));
-
-        // 朝向
         float yaw = entity.getMossYaw(tickDelta);
         if (yaw != 0f) {
             matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(yaw));
         }
 
         // 主纹理
-        Identifier tex = entity.getMossTexture();
-        if (tex != null) {
-            root.render(matrices,
-                    vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(tex)),
+        VertexConsumer vc = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(texId));
+        cached.root().render(matrices, vc, light, overlay, 1f, 1f, 1f, 1f);
+
+        // per-face 部分
+        if (!cached.model().deferred().isEmpty()) {
+            matrices.push();
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180F));  // ★ AmbleKit 的额外翻转
+            MossPerFaceRenderer.render(
+                    cached.root(),
+                    cached.model().deferred(),
+                    matrices,
+                    vc,
                     light, overlay,
-                    1f, 1f, 1f, 1f);
+                    1f, 1f, 1f, 1f,
+                    cached.model().textureWidth(),
+                    cached.model().textureHeight());
+            matrices.pop();
         }
 
-        // 发光层（可选）
+        // 发光层
         Identifier emission = entity.getMossEmission();
         if (emission != null) {
-            root.render(matrices,
-                    vertexConsumers.getBuffer(RenderLayer.getEntityCutoutNoCullZOffset(emission)),
-                    LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay,
-                    1f, 1f, 1f, 1f);
+            VertexConsumer vcE = vertexConsumers.getBuffer(
+                    RenderLayer.getEntityCutoutNoCullZOffset(emission));
+            cached.root().render(matrices, vcE,
+                    LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay, 1f, 1f, 1f, 1f);
+
+            if (!cached.model().deferred().isEmpty()) {
+                matrices.push();
+                matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180F));
+                MossPerFaceRenderer.render(
+                        cached.root(),
+                        cached.model().deferred(),
+                        matrices,
+                        vcE,
+                        LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay,
+                        1f, 1f, 1f, 1f,
+                        cached.model().textureWidth(),
+                        cached.model().textureHeight());
+                matrices.pop();
+            }
         }
 
         matrices.pop();
     }
 
-    /** 资源重载 / 换模型时调用 */
     public static void clearModelCache() {
         MODEL_CACHE.clear();
+        DIAGNOSED.clear();
     }
 
-    /** 只清某一个模型 */
     public static void invalidate(Identifier id) {
         MODEL_CACHE.remove(id);
+        DIAGNOSED.remove(id);
     }
 }
