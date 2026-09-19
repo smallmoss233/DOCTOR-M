@@ -33,7 +33,8 @@ import java.util.List;
 
 public class CoffeeMachineBlock extends Block implements BlockEntityProvider {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
-    private static final VoxelShape SHAPE = Block.createCuboidShape(3.0, 0.0, 2.0, 13.0, 15.0, 15.0);
+    private static final VoxelShape COLLISION_SHAPE =
+            Block.createCuboidShape(2.0, 0.0, 2.0, 14.0, 15.2, 14.0);
 
     public CoffeeMachineBlock(Settings settings) {
         super(settings.nonOpaque());
@@ -54,7 +55,14 @@ public class CoffeeMachineBlock extends Block implements BlockEntityProvider {
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.INVISIBLE;
     }
-
+    @Override
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return COLLISION_SHAPE;
+    }
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return COLLISION_SHAPE;
+    }
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos,
                               PlayerEntity player, Hand hand, BlockHitResult hit) {
@@ -119,10 +127,5 @@ public class CoffeeMachineBlock extends Block implements BlockEntityProvider {
     private static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> checkType(
             BlockEntityType<A> given, BlockEntityType<E> expected, BlockEntityTicker<? super E> ticker) {
         return expected == given ? (BlockEntityTicker<A>) ticker : null;
-    }
-
-    @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return SHAPE;
     }
 }

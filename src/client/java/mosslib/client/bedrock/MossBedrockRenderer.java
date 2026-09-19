@@ -25,6 +25,19 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MossBedrockRenderer<T extends BlockEntity & MossBedrockRenderable>
         implements BlockEntityRenderer<T> {
 
+    /** 方块坐标系下模型整体绕 X 轴翻转，使 Bedrock 模型的 Y-down 与方块世界对齐。 */
+    private static final float MODEL_X_ROTATION_DEG = 180F;
+
+    /** per-face 渲染相对根模型额外绕 Y 翻转（AmbleKit 约定）。 */
+    private static final float PER_FACE_Y_ROTATION_DEG = 180F;
+
+    /** 模型置于方块中心：方块占地 [0,1]，模型原点在方块西北角。 */
+    private static final float MODEL_OFFSET_X = 0.5F;
+    private static final float MODEL_OFFSET_Y = 0.0F;
+    private static final float MODEL_OFFSET_Z = 0.5F;
+
+    private static final float WHITE = 1F;
+
     private record CachedModel(ModelPart root, MossBedrockModel model) {}
 
     private static final Map<Identifier, CachedModel> MODEL_CACHE = new ConcurrentHashMap<>();
@@ -42,10 +55,14 @@ public class MossBedrockRenderer<T extends BlockEntity & MossBedrockRenderable>
                        VertexConsumerProvider vertexConsumers, int light, int overlay) {
 
         Identifier modelId = entity.getMossModel();
-        if (modelId == null) return;
+        if (modelId == null) {
+            return;
+        }
 
         Identifier texId = entity.getMossTexture();
-        if (texId == null) return;
+        if (texId == null) {
+            return;
+        }
 
         ResourceManager rm = MinecraftClient.getInstance().getResourceManager();
 
@@ -59,59 +76,70 @@ public class MossBedrockRenderer<T extends BlockEntity & MossBedrockRenderable>
         });
 
         matrices.push();
-        matrices.translate(0.5, 0.0, 0.5);
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180F));   // ★ 加回来
+        try {
+            applyModelTransform(matrices, entity, tickDelta);
+
+            // 主纹理层：实体半透明
+            VertexConsumer mainVc = vertexConsumers.getBuffer(
+                    RenderLayer.getEntityTranslucent(texId));
+            renderModel(cached, matrices, mainVc, light, overlay);
+
+            // 发光层：cutout no-cull z-offset
+            Identifier emission = entity.getMossEmission();
+            if (emission != null) {
+                VertexConsumer emissionVc = vertexConsumers.getBuffer(
+                        RenderLayer.getEntityCutoutNoCullZOffset(emission));
+                renderModel(cached, matrices, emissionVc,
+                        LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay);
+            }
+        } finally {
+            matrices.pop();
+        }
+    }
+
+    // 变换
+    private void applyModelTransform(MatrixStack matrices, T entity, float tickDelta) {
+        matrices.translate(MODEL_OFFSET_X, MODEL_OFFSET_Y, MODEL_OFFSET_Z);
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(MODEL_X_ROTATION_DEG));
 
         float yaw = entity.getMossYaw(tickDelta);
-        if (yaw != 0f) {
+        if (yaw != 0F) {
             matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(yaw));
         }
+    }
 
-        // 主纹理
-        VertexConsumer vc = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(texId));
-        cached.root().render(matrices, vc, light, overlay, 1f, 1f, 1f, 1f);
+    // 模型渲染
+    private static void renderModel(CachedModel cached, MatrixStack matrices,
+                                    VertexConsumer vc, int light, int overlay) {
+        cached.root().render(matrices, vc, light, overlay,
+                WHITE, WHITE, WHITE, WHITE);
+        renderDeferred(cached, matrices, vc, light, overlay);
+    }
 
-        // per-face 部分
-        if (!cached.model().deferred().isEmpty()) {
-            matrices.push();
-            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180F));  // ★ AmbleKit 的额外翻转
+    private static void renderDeferred(CachedModel cached, MatrixStack matrices,
+                                       VertexConsumer vc, int light, int overlay) {
+        MossBedrockModel model = cached.model();
+        if (model.deferred().isEmpty()) {
+            return;
+        }
+
+        matrices.push();
+        try {
+            matrices.multiply(
+                    RotationAxis.POSITIVE_Y.rotationDegrees(PER_FACE_Y_ROTATION_DEG));
+
             MossPerFaceRenderer.render(
                     cached.root(),
-                    cached.model().deferred(),
+                    model.deferred(),
                     matrices,
                     vc,
                     light, overlay,
-                    1f, 1f, 1f, 1f,
-                    cached.model().textureWidth(),
-                    cached.model().textureHeight());
+                    WHITE, WHITE, WHITE, WHITE,
+                    model.textureWidth(),
+                    model.textureHeight());
+        } finally {
             matrices.pop();
         }
-
-        // 发光层
-        Identifier emission = entity.getMossEmission();
-        if (emission != null) {
-            VertexConsumer vcE = vertexConsumers.getBuffer(
-                    RenderLayer.getEntityCutoutNoCullZOffset(emission));
-            cached.root().render(matrices, vcE,
-                    LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay, 1f, 1f, 1f, 1f);
-
-            if (!cached.model().deferred().isEmpty()) {
-                matrices.push();
-                matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180F));
-                MossPerFaceRenderer.render(
-                        cached.root(),
-                        cached.model().deferred(),
-                        matrices,
-                        vcE,
-                        LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay,
-                        1f, 1f, 1f, 1f,
-                        cached.model().textureWidth(),
-                        cached.model().textureHeight());
-                matrices.pop();
-            }
-        }
-
-        matrices.pop();
     }
 
     public static void clearModelCache() {

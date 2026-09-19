@@ -1,6 +1,13 @@
 package mosslib.client.bedrock;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 
 import java.lang.reflect.Type;
@@ -22,15 +29,15 @@ final class MossGeometry {
 
     static MossGeometry fromJson(JsonObject json) {
         try {
-            MossGeometry m = GSON.fromJson(json, MossGeometry.class);
-            if (m == null) throw new MossGeometryException("Root JSON parsed to null");
-            return m;
+            MossGeometry geometry = GSON.fromJson(json, MossGeometry.class);
+            if (geometry == null) {
+                throw new MossGeometryException("Root JSON parsed to null");
+            }
+            return geometry;
         } catch (JsonSyntaxException e) {
             throw new MossGeometryException("Malformed bedrock geometry JSON", e);
         }
     }
-
-    // ─── 几何体 ───────────────────────────────────────
 
     static final class Geometry {
         Description description;
@@ -39,12 +46,14 @@ final class MossGeometry {
 
     static final class Description {
         String identifier;
-        // ★ 用包装类型：缺省时为 null，避免 Gson 填 0 导致 TexturedModelData.of(0,0) 崩溃
-        @SerializedName("texture_width")  Integer textureWidth;
-        @SerializedName("texture_height") Integer textureHeight;
-    }
 
-    // ─── 骨骼 ─────────────────────────────────────────
+        // 包装类型：缺失时保持 null，避免被 Gson 填成 0。
+        @SerializedName("texture_width")
+        Integer textureWidth;
+
+        @SerializedName("texture_height")
+        Integer textureHeight;
+    }
 
     static final class Bone {
         String name;
@@ -60,8 +69,6 @@ final class MossGeometry {
         Vec3 rotation;
     }
 
-    // ─── 立方体 ───────────────────────────────────────
-
     static final class Cube {
         Vec3 origin;
         Vec3 size;
@@ -69,8 +76,9 @@ final class MossGeometry {
         Vec3 rotation;
         UV uv;
         float inflate;
-        // ★ 用包装类型，防止 Blockbench 把 "true"/"false" 当字符串时静默失败
-        @SerializedName("mirror")
+
+        // 包装类型：Blockbench 有时把 mirror 写成 "true" / "false" 字符串，
+        // 用 Boolean 可以让缺省与显式 false 区分开。
         Boolean mirror;
 
         boolean isMirror() {
@@ -82,11 +90,12 @@ final class MossGeometry {
         }
     }
 
-    // ─── 向量 ─────────────────────────────────────────
-
     static final class Vec3 {
-        static final Vec3 ZERO = new Vec3(0, 0, 0);
-        final float x, y, z;
+        static final Vec3 ZERO = new Vec3(0f, 0f, 0f);
+
+        final float x;
+        final float y;
+        final float z;
 
         Vec3(float x, float y, float z) {
             this.x = x;
@@ -99,12 +108,19 @@ final class MossGeometry {
         }
     }
 
-    // ─── UV ───────────────────────────────────────────
-
     static final class UV {
-        // ★ 改成 float[]：Box UV 可以是浮点，直接取整会导致累计 1~3 像素漂移
+        /**
+         * Box UV，存为 {@code [u, v, width, height]} 浮点数组。
+         * 使用 float 而非 int：Blockbench 支持亚像素 UV，取整会导致累计漂移。
+         */
         float[] box;
-        Face north, east, south, west, up, down;
+
+        Face north;
+        Face east;
+        Face south;
+        Face west;
+        Face up;
+        Face down;
 
         boolean isBox() {
             return box != null && box.length >= 2;
@@ -113,17 +129,18 @@ final class MossGeometry {
         record Face(float[] uv, float[] uvSize) {}
     }
 
-    // ─── Gson 适配器 ──────────────────────────────────
-
+    /** 接受 {@code [x, y, z]} 数组、缺失字段或显式 null（→ {@link Vec3#ZERO}）。 */
     private static final class Vec3Adapter implements JsonDeserializer<Vec3> {
         @Override
         public Vec3 deserialize(JsonElement json, Type type, JsonDeserializationContext ctx) {
-            if (json == null || json.isJsonNull()) return Vec3.ZERO;
-            JsonArray a = json.getAsJsonArray();
-            float x = a.size() > 0 ? a.get(0).getAsFloat() : 0f;
-            float y = a.size() > 1 ? a.get(1).getAsFloat() : 0f;
-            float z = a.size() > 2 ? a.get(2).getAsFloat() : 0f;
-            return new Vec3(x, y, z);
+            if (json == null || json.isJsonNull()) {
+                return Vec3.ZERO;
+            }
+            JsonArray array = json.getAsJsonArray();
+            return new Vec3(
+                    readFloat(array, 0),
+                    readFloat(array, 1),
+                    readFloat(array, 2));
         }
     }
 
@@ -131,34 +148,52 @@ final class MossGeometry {
         @Override
         public UV deserialize(JsonElement json, Type type, JsonDeserializationContext ctx) {
             UV uv = new UV();
+
             if (json.isJsonArray()) {
-                JsonArray a = json.getAsJsonArray();
-                uv.box = new float[a.size()];
-                for (int i = 0; i < a.size(); i++) uv.box[i] = a.get(i).getAsFloat();
+                uv.box = readFloats(json.getAsJsonArray());
                 return uv;
             }
-            JsonObject o = json.getAsJsonObject();
-            uv.north = face(o, "north");
-            uv.east  = face(o, "east");
-            uv.south = face(o, "south");
-            uv.west  = face(o, "west");
-            uv.up    = face(o, "up");
-            uv.down  = face(o, "down");
+
+            JsonObject obj = json.getAsJsonObject();
+            uv.north = readFace(obj, "north");
+            uv.east  = readFace(obj, "east");
+            uv.south = readFace(obj, "south");
+            uv.west  = readFace(obj, "west");
+            uv.up    = readFace(obj, "up");
+            uv.down  = readFace(obj, "down");
             return uv;
         }
 
-        private static UV.Face face(JsonObject o, String key) {
-            if (!o.has(key)) return null;
-            JsonObject f = o.getAsJsonObject(key);
-            return new UV.Face(readFloats(f.getAsJsonArray("uv")),
-                    readFloats(f.getAsJsonArray("uv_size")));
+        private static UV.Face readFace(JsonObject parent, String key) {
+            JsonElement element = parent.get(key);
+            if (element == null || element.isJsonNull()) {
+                return null;
+            }
+            JsonObject face = element.getAsJsonObject();
+            return new UV.Face(
+                    readFloats(face.getAsJsonArray("uv")),
+                    readFloats(face.getAsJsonArray("uv_size")));
         }
+    }
 
-        private static float[] readFloats(JsonArray arr) {
-            if (arr == null) return new float[0];
-            float[] out = new float[arr.size()];
-            for (int i = 0; i < arr.size(); i++) out[i] = arr.get(i).getAsFloat();
-            return out;
+    private static float readFloat(JsonArray array, int index) {
+        if (array == null || index >= array.size()) {
+            return 0f;
         }
+        JsonElement element = array.get(index);
+        return element == null || element.isJsonNull() ? 0f : element.getAsFloat();
+    }
+
+    private static float[] readFloats(JsonArray array) {
+        if (array == null) {
+            return new float[0];
+        }
+        int size = array.size();
+        float[] out = new float[size];
+        for (int i = 0; i < size; i++) {
+            JsonElement element = array.get(i);
+            out[i] = (element == null || element.isJsonNull()) ? 0f : element.getAsFloat();
+        }
+        return out;
     }
 }

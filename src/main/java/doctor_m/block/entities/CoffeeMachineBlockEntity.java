@@ -163,11 +163,11 @@ public class CoffeeMachineBlockEntity extends BlockEntity implements MossBedrock
     public float getMossYaw(float tickDelta) {
         Direction facing = getCachedState().get(CoffeeMachineBlock.FACING);
         return switch (facing) {
-            case NORTH -> 180f;   // 原来是 0f
-            case EAST  -> 270f;   // 原来是 90f
-            case SOUTH -> 0f;     // 原来是 180f
-            case WEST  -> 90f;    // 原来是 270f
-            default    -> 180f;
+            case NORTH -> 0f;
+            case EAST  -> 90f;
+            case SOUTH -> 180f;
+            case WEST  -> 270f;
+            default-> 0f;
         };
     }
 

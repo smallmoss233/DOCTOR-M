@@ -17,9 +17,20 @@ import net.minecraft.util.math.RotationAxis;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class MossPerFaceRenderer {
+
+    private static final float BEDROCK_UNIT = 1.0F / 16.0F;
+
+    private static final int FACES_PER_CUBE = 6;
+
+    private static final Map<ModelPart, Map<String, ModelPart>> BONE_PATH_CACHE =
+            Collections.synchronizedMap(new WeakHashMap<>());
 
     private MossPerFaceRenderer() {}
 
@@ -28,155 +39,199 @@ public final class MossPerFaceRenderer {
                               MatrixStack matrices,
                               VertexConsumer vertices,
                               int light, int overlay,
-                              float r, float g, float b, float a,
-                              int texW, int texH) {
+                              float red, float green, float blue, float alpha,
+                              int textureWidth, int textureHeight) {
 
-        // 进入 1/16 单位的模型空间
+        if (deferred.isEmpty()) {
+            return;
+        }
+
         matrices.push();
-        matrices.scale(1f / 16f, 1f / 16f, 1f / 16f);
+        try {
+            matrices.scale(BEDROCK_UNIT, BEDROCK_UNIT, BEDROCK_UNIT);
 
-        for (MossPerFaceCube cube : deferred) {
-            ModelPart bone = resolveBone(root, cube.bonePath());
-            if (bone == null) continue;
+            List<MossPerFaceQuad> quads = new ArrayList<>(FACES_PER_CUBE);
 
-            matrices.push();
+            for (MossPerFaceCube cube : deferred) {
+                ModelPart bone = getBoneByPath(root, cube.bonePath());
+                if (bone == null) {
+                    continue;
+                }
 
-            // 骨骼当前变换（默认 = 转换时写入的 pivot + 旋转；动画会改这些值）
-            applyBoneTransform(matrices, bone);
+                matrices.push();
+                try {
+                    applyCubeTransform(matrices, bone, cube);
 
-            // cube 相对骨骼或 cube pivot 的偏移
-            float[] pivot = cube.cubePivot();
-            matrices.translate(pivot[0], pivot[1], pivot[2]);
+                    MatrixStack.Entry entry = matrices.peek();
 
-            float[] rot = cube.cubeRotation();
-            if (rot[0] != 0f) matrices.multiply(RotationAxis.POSITIVE_X.rotation((float) Math.toRadians(rot[0])));
-            if (rot[1] != 0f) matrices.multiply(RotationAxis.POSITIVE_Y.rotation((float) Math.toRadians(rot[1])));
-            if (rot[2] != 0f) matrices.multiply(RotationAxis.POSITIVE_Z.rotation((float) Math.toRadians(rot[2])));
-
-            MatrixStack.Entry entry = matrices.peek();
-            for (MossPerFaceQuad q : buildQuads(cube, texW, texH)) {
-                q.render(entry, vertices, light, overlay, r, g, b, a);
+                    quads.clear();
+                    buildQuadsInto(quads, cube, textureWidth, textureHeight);
+                    for (int i = 0, n = quads.size(); i < n; i++) {
+                        quads.get(i).render(entry, vertices, light, overlay,
+                                red, green, blue, alpha);
+                    }
+                } finally {
+                    matrices.pop();
+                }
             }
-
+        } finally {
             matrices.pop();
         }
-
-        matrices.pop();
     }
 
-    /** 把 ModelPart 自身的 pivot + 旋转加到矩阵上。以后动画改 part 的字段会自动生效。 */
-    private static void applyBoneTransform(MatrixStack matrices, ModelPart part) {
-        matrices.translate(part.pivotX, part.pivotY, part.pivotZ);
-        if (part.roll  != 0f) matrices.multiply(RotationAxis.POSITIVE_Z.rotation(part.roll));
-        if (part.yaw   != 0f) matrices.multiply(RotationAxis.POSITIVE_Y.rotation(part.yaw));
-        if (part.pitch != 0f) matrices.multiply(RotationAxis.POSITIVE_X.rotation(part.pitch));
+    // 变换
+    private static void applyCubeTransform(MatrixStack matrices, ModelPart bone, MossPerFaceCube cube) {
+        float[] pivot = cube.cubePivot();
+        float[] rot = cube.cubeRotation();
+
+        matrices.scale(bone.xScale, bone.yScale, bone.zScale);
+        matrices.translate(pivot[0], -pivot[1], pivot[2]);
+
+        matrices.multiply(RotationAxis.POSITIVE_X.rotation(
+                bone.pitch == 0.0F ? (float) Math.toRadians(rot[0]) : bone.pitch));
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotation(
+                bone.yaw == 0.0F ? (float) Math.toRadians(rot[1]) : bone.yaw));
+        matrices.multiply(RotationAxis.POSITIVE_Z.rotation(
+                bone.roll == 0.0F ? (float) Math.toRadians(rot[2]) : bone.roll));
     }
 
-    /** 沿 "a/b/c" 路径逐级 getChild */
-    private static ModelPart resolveBone(ModelPart root, String path) {
-        if (path == null || path.isEmpty()) return root;
-        ModelPart cur = root;
-        for (String seg : path.split("/")) {
-            if (!cur.hasChild(seg)) return null;
-            cur = cur.getChild(seg);
+    // 骨骼路径解析
+    private static ModelPart getBoneByPath(ModelPart root, String path) {
+        if (path == null || path.isEmpty()) {
+            return root;
         }
-        return cur;
+
+        Map<String, ModelPart> cache = BONE_PATH_CACHE.computeIfAbsent(
+                root, r -> new ConcurrentHashMap<>());
+
+        ModelPart cached = cache.get(path);
+        if (cached != null) {
+            return cached;
+        }
+
+        ModelPart resolved = resolveBonePath(root, path);
+        if (resolved != null) {
+            cache.put(path, resolved);
+        }
+        return resolved;
     }
 
-    // ─── 6 个面拆成独立 quad ────────────────────────
+    /** 不使用 {@code split} 的路径解析实现，避免正则编译和临时数组。 */
+    private static ModelPart resolveBonePath(ModelPart root, String path) {
+        ModelPart current = root;
+        int start = 0;
+        final int length = path.length();
 
+        while (start < length) {
+            int end = path.indexOf('/', start);
+            if (end < 0) {
+                end = length;
+            }
+
+            String segment = path.substring(start, end);
+            if (!current.hasChild(segment)) {
+                return null;
+            }
+            current = current.getChild(segment);
+            start = end + 1;
+        }
+        return current;
+    }
+
+    // 四边形构建
+    /** 保留旧 API：为单个立方体构建其所有面。 */
     public static List<MossPerFaceQuad> buildQuads(MossPerFaceCube cube, int texW, int texH) {
-        List<MossPerFaceQuad> out = new ArrayList<>(6);
-
-        float x0 = cube.x() - cube.inflate();
-        float y0 = cube.y() - cube.inflate();
-        float z0 = cube.z() - cube.inflate();
-        float x1 = cube.x() + cube.sizeX() + cube.inflate();
-        float y1 = cube.y() + cube.sizeY() + cube.inflate();
-        float z1 = cube.z() + cube.sizeZ() + cube.inflate();
-
-        emit(out, cube.uv().north, Dir.NORTH, cube.mirror(), x0, y0, z0, x1, y1, z1, texW, texH);
-        emit(out, cube.uv().south, Dir.SOUTH, cube.mirror(), x0, y0, z0, x1, y1, z1, texW, texH);
-        emit(out, cube.uv().east,  Dir.EAST,  cube.mirror(), x0, y0, z0, x1, y1, z1, texW, texH);
-        emit(out, cube.uv().west,  Dir.WEST,  cube.mirror(), x0, y0, z0, x1, y1, z1, texW, texH);
-        emit(out, cube.uv().up,    Dir.UP,    cube.mirror(), x0, y0, z0, x1, y1, z1, texW, texH);
-        emit(out, cube.uv().down,  Dir.DOWN,  cube.mirror(), x0, y0, z0, x1, y1, z1, texW, texH);
-
-        return out;
+        List<MossPerFaceQuad> quads = new ArrayList<>(FACES_PER_CUBE);
+        buildQuadsInto(quads, cube, texW, texH);
+        return quads;
     }
 
-    private enum Dir { NORTH, SOUTH, EAST, WEST, UP, DOWN }
+    /** 内部版本：写入调用方提供的列表，避免热路径中反复分配。 */
+    private static void buildQuadsInto(List<MossPerFaceQuad> out, MossPerFaceCube cube,
+                                       int texW, int texH) {
+        float inflate = cube.inflate();
+        float x0 = cube.x() - inflate;
+        float y0 = cube.y() - inflate;
+        float z0 = cube.z() - inflate;
+        float x1 = cube.x() + cube.sizeX() + inflate;
+        float y1 = cube.y() + cube.sizeY() + inflate;
+        float z1 = cube.z() + cube.sizeZ() + inflate;
 
-    private static void emit(List<MossPerFaceQuad> out, MossGeometry.UV.Face face, Dir dir,
+        boolean mirror = cube.mirror();
+        MossGeometry.UV uv = cube.uv();
+
+        emit(out, uv.north, FaceDir.NORTH, mirror, x0, y0, z0, x1, y1, z1, texW, texH);
+        emit(out, uv.south, FaceDir.SOUTH, mirror, x0, y0, z0, x1, y1, z1, texW, texH);
+        // 注意：以下两个映射（east↔west）是 Bedrock 约定下刻意保留的，不要修改。
+        emit(out, uv.east,  FaceDir.WEST,  mirror, x0, y0, z0, x1, y1, z1, texW, texH);
+        emit(out, uv.west,  FaceDir.EAST,  mirror, x0, y0, z0, x1, y1, z1, texW, texH);
+        emit(out, uv.up,    FaceDir.UP,    mirror, x0, y0, z0, x1, y1, z1, texW, texH);
+        emit(out, uv.down,  FaceDir.DOWN,  mirror, x0, y0, z0, x1, y1, z1, texW, texH);
+    }
+
+    /** 面方向枚举，替代字符串 switch，避免每次哈希。 */
+    private enum FaceDir { NORTH, SOUTH, EAST, WEST, UP, DOWN }
+
+    private static void emit(List<MossPerFaceQuad> out, MossGeometry.UV.Face face, FaceDir dir,
                              boolean mirror,
                              float x0, float y0, float z0, float x1, float y1, float z1,
                              int texW, int texH) {
-        if (face == null || face.uv() == null || face.uv().length < 2) return;
+        if (face == null || face.uv() == null || face.uv().length < 2) {
+            return;
+        }
 
-        float u = face.uv()[0], v = face.uv()[1];
+        float u = face.uv()[0];
+        float v = face.uv()[1];
+
         float w = (face.uvSize() != null && face.uvSize().length >= 2) ? face.uvSize()[0] : 1f;
         float h = (face.uvSize() != null && face.uvSize().length >= 2) ? face.uvSize()[1] : 1f;
 
-        float u0 = u / texW, v0 = v / texH;
-        float u1 = (u + w) / texW, v1 = (v + h) / texH;
-        if (mirror) { float t = u0; u0 = u1; u1 = t; }
+        float u0 = u / texW;
+        float v0 = v / texH;
+        float u1 = (u + w) / texW;
+        float v1 = (v + h) / texH;
 
-        Vector3f p0, p1, p2, p3;
-        Vector3f normal;
-        float uu0, vv0, uu1, vv1;
-
-        switch (dir) {
-            case NORTH -> {
-                p0 = new Vector3f(x0, y0, z0);
-                p1 = new Vector3f(x1, y0, z0);
-                p2 = new Vector3f(x1, y1, z0);
-                p3 = new Vector3f(x0, y1, z0);
-                normal = new Vector3f(0, 0, -1);
-                uu0 = u0; vv0 = v1; uu1 = u1; vv1 = v0;
-            }
-            case SOUTH -> {
-                p0 = new Vector3f(x1, y0, z1);
-                p1 = new Vector3f(x0, y0, z1);
-                p2 = new Vector3f(x0, y1, z1);
-                p3 = new Vector3f(x1, y1, z1);
-                normal = new Vector3f(0, 0, 1);
-                uu0 = u0; vv0 = v1; uu1 = u1; vv1 = v0;
-            }
-            case EAST -> {
-                p0 = new Vector3f(x1, y0, z1);
-                p1 = new Vector3f(x1, y0, z0);
-                p2 = new Vector3f(x1, y1, z0);
-                p3 = new Vector3f(x1, y1, z1);
-                normal = new Vector3f(1, 0, 0);
-                uu0 = u0; vv0 = v1; uu1 = u1; vv1 = v0;
-            }
-            case WEST -> {
-                p0 = new Vector3f(x0, y0, z0);
-                p1 = new Vector3f(x0, y0, z1);
-                p2 = new Vector3f(x0, y1, z1);
-                p3 = new Vector3f(x0, y1, z0);
-                normal = new Vector3f(-1, 0, 0);
-                uu0 = u0; vv0 = v1; uu1 = u1; vv1 = v0;
-            }
-            case UP -> {
-                p0 = new Vector3f(x0, y1, z0);
-                p1 = new Vector3f(x1, y1, z0);
-                p2 = new Vector3f(x1, y1, z1);
-                p3 = new Vector3f(x0, y1, z1);
-                normal = new Vector3f(0, 1, 0);
-                uu0 = u0; vv0 = v1; uu1 = u1; vv1 = v0;
-            }
-            case DOWN -> {
-                p0 = new Vector3f(x0, y0, z1);
-                p1 = new Vector3f(x1, y0, z1);
-                p2 = new Vector3f(x1, y0, z0);
-                p3 = new Vector3f(x0, y0, z0);
-                normal = new Vector3f(0, -1, 0);
-                uu0 = u0; vv0 = v1; uu1 = u1; vv1 = v0;
-            }
-            default -> { return; }
+        if (mirror) {
+            float t = u0; u0 = u1; u1 = t;
         }
 
-        out.add(new MossPerFaceQuad(p0, p1, p2, p3, uu0, vv0, uu1, vv1, normal));
+        switch (dir) {
+            case NORTH -> out.add(new MossPerFaceQuad(
+                    new Vector3f(x1, y0, z0), new Vector3f(x0, y0, z0),
+                    new Vector3f(x0, y1, z0), new Vector3f(x1, y1, z0),
+                    u1, v0, u0, v1,
+                    new Vector3f(0, 0, -1)
+            ));
+            case SOUTH -> out.add(new MossPerFaceQuad(
+                    new Vector3f(x0, y0, z1), new Vector3f(x1, y0, z1),
+                    new Vector3f(x1, y1, z1), new Vector3f(x0, y1, z1),
+                    u1, v0, u0, v1,
+                    new Vector3f(0, 0, 1)
+            ));
+            case EAST -> out.add(new MossPerFaceQuad(
+                    new Vector3f(x1, y0, z1), new Vector3f(x1, y0, z0),
+                    new Vector3f(x1, y1, z0), new Vector3f(x1, y1, z1),
+                    u1, v0, u0, v1,
+                    new Vector3f(1, 0, 0)
+            ));
+            case WEST -> out.add(new MossPerFaceQuad(
+                    new Vector3f(x0, y0, z0), new Vector3f(x0, y0, z1),
+                    new Vector3f(x0, y1, z1), new Vector3f(x0, y1, z0),
+                    u1, v0, u0, v1,
+                    new Vector3f(-1, 0, 0)
+            ));
+            case UP -> out.add(new MossPerFaceQuad(
+                    new Vector3f(x0, y0, z0), new Vector3f(x1, y0, z0),
+                    new Vector3f(x1, y0, z1), new Vector3f(x0, y0, z1),
+                    u0, v1, u1, v0,
+                    new Vector3f(0, -1, 0)
+            ));
+            case DOWN -> out.add(new MossPerFaceQuad(
+                    new Vector3f(x0, y1, z1), new Vector3f(x1, y1, z1),
+                    new Vector3f(x1, y1, z0), new Vector3f(x0, y1, z0),
+                    u0, v1, u1, v0,
+                    new Vector3f(0, 1, 0)
+            ));
+        }
     }
 }
