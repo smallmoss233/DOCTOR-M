@@ -8,7 +8,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-package mosslib.client.bedrock;
+package mosslib.bedrockbolck;
 
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.VertexConsumer;

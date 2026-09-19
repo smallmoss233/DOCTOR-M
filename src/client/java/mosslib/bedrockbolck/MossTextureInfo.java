@@ -1,4 +1,4 @@
-package mosslib.client.bedrock;
+package mosslib.bedrockbolck;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

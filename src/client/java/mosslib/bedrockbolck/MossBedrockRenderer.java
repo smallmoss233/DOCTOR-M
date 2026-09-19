@@ -1,4 +1,4 @@
-package mosslib.client.bedrock;
+package mosslib.bedrockbolck;
 
 import mosslib.api.MossBedrockRenderable;
 import net.fabricmc.api.EnvType;

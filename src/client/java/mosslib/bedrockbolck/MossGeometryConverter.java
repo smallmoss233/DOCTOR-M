@@ -1,6 +1,6 @@
-package mosslib.client.bedrock;
+package mosslib.bedrockbolck;
 
-import mosslib.client.bedrock.MossGeometry.*;
+import mosslib.bedrockbolck.MossGeometry.*;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
