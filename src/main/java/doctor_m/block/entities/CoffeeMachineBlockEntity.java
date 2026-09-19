@@ -5,6 +5,8 @@ import dev.amble.ait.core.AITSounds;
 import dev.amble.ait.core.drinks.DrinkRegistry;
 import dev.amble.ait.core.drinks.DrinkUtil;
 import doctor_m.block.ModBlockEntities;
+import doctor_m.block.data_block.CoffeeMachineBlock;
+import mosslib.api.MossBedrockRenderable;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.ItemEntity;
@@ -17,14 +19,17 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CoffeeMachineBlockEntity extends BlockEntity {
+public class CoffeeMachineBlockEntity extends BlockEntity implements MossBedrockRenderable {
+
     private static final int WORK_DURATION = 45;
     private int currentDrinkIndex = 0;
     private boolean working = false;
@@ -142,6 +147,28 @@ public class CoffeeMachineBlockEntity extends BlockEntity {
         working = nbt.getBoolean("Working");
         workTicks = nbt.getInt("WorkTicks");
         pendingDrinkIndex = nbt.contains("PendingIndex") ? nbt.getInt("PendingIndex") : -1;
+    }
+
+    @Override
+    public Identifier getMossModel() {
+        return new Identifier("doctor_m", "coffee_machine");
+    }
+
+    @Override
+    public Identifier getMossTexture() {
+        return new Identifier("doctor_m", "textures/block/coffee_machine.png");
+    }
+
+    @Override
+    public float getMossYaw(float tickDelta) {
+        Direction facing = getCachedState().get(CoffeeMachineBlock.FACING);
+        return switch (facing) {
+            case NORTH -> 180f;   // 原来是 0f
+            case EAST  -> 270f;   // 原来是 90f
+            case SOUTH -> 0f;     // 原来是 180f
+            case WEST  -> 90f;    // 原来是 270f
+            default    -> 180f;
+        };
     }
 
     @Nullable

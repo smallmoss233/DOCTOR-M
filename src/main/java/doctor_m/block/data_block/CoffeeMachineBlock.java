@@ -6,10 +6,7 @@ import dev.amble.ait.core.drinks.DrinkRegistry;
 import dev.amble.ait.core.drinks.DrinkUtil;
 import doctor_m.block.ModBlockEntities;
 import doctor_m.block.entities.CoffeeMachineBlockEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
@@ -52,6 +49,10 @@ public class CoffeeMachineBlock extends Block implements BlockEntityProvider {
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         return getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+    }
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.INVISIBLE;
     }
 
     @Override

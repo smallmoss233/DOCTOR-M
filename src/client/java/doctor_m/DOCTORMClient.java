@@ -31,6 +31,8 @@ import doctor_m.client.util.id.PlayerTitleCache;
 import doctor_m.entities.Entities;
 import doctor_m.network.INVERTSCREENPACKETNetwork;
 import doctor_m.util.VMClientScreenOpener;
+import mosslib.client.bedrock.MossBedrockReloader;
+import mosslib.client.bedrock.MossBedrockRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -98,6 +100,11 @@ public class DOCTORMClient implements ClientModInitializer {
         registerClientTicks();
         registerScreenOpeners();
         ConfigOpenHandler.register();
+        MossBedrockReloader.register();
+        BlockEntityRendererFactories.register(
+                ModBlockEntities.COFFEE_MACHINE,
+                MossBedrockRenderer::new
+        );
     }
 
     private void registerKeybinds() {
