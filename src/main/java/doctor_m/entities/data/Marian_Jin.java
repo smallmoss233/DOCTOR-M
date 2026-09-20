@@ -1,7 +1,10 @@
 package doctor_m.entities.data;
 
+import doctor_m.DOCTORM;
 import doctor_m.trading.TradeManager;
 import doctor_m.trading.TradeOffer;
+import mosslib.api.BlinkingEntity;
+import mosslib.api.MossAnimatedEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.*;
@@ -30,12 +33,13 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class Marian_Jin extends PathAwareEntity {
+public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , BlinkingEntity {
 
     public enum AIState { IDLE, TRADING, COMBAT, RETALIATING }
 
@@ -67,6 +71,11 @@ public class Marian_Jin extends PathAwareEntity {
             BASE + ".dialog.hurt.0", BASE + ".dialog.hurt.1", BASE + ".dialog.hurt.2",
             BASE + ".dialog.hurt.3", BASE + ".dialog.hurt.4"
     };
+
+    // ==================== 眨眼 ====================
+    private static final int BLINK_TICKS = 4;   // 0.2 秒
+    private int blinkCooldown = 100;             // 首次进游戏 5 秒后眨
+    private int blinkDuration = 0;
 
     private static final int RETALIATE_COOLDOWN = 20;
     private static final long AGGRESSION_MEMORY = 48000L;   // 2 game days
@@ -122,6 +131,14 @@ public class Marian_Jin extends PathAwareEntity {
     @Override
     public void tick() {
         super.tick();
+
+        // 客户端：眨眼是纯视觉，不需要同步
+        if (this.getWorld().isClient()) {
+            tickBlink();
+            return;
+        }
+
+        // 下面全是服务端逻辑
         if (!(this.getWorld() instanceof ServerWorld sw)) {
             return;
         }
@@ -459,5 +476,122 @@ public class Marian_Jin extends PathAwareEntity {
                 SoundEvents.ENTITY_WITHER_AMBIENT,
                 SoundCategory.HOSTILE, 1.0f, 0.8f
         );
+    }
+
+    // =====================================================================
+    // MossBedrock 集成
+    // =====================================================================
+
+    /** 上一次解析出的动画 ID，用于检测切换。 */
+    @Nullable
+    private Identifier mossLastAnimId = null;
+
+    /** 上一次动画切换时的 age。用于让动画切换时归零。 */
+    private int mossAnimStartAge = 0;
+
+    // ── MossBedrockRenderable ──
+
+    @Override
+    public Identifier getMossModel() {
+        return Identifier.of(DOCTORM.MOD_ID, "marian_jin");
+    }
+
+    @Override
+    public Identifier getMossTexture() {
+        // 你的纹理路径 —— 按实际改
+        return Identifier.of(DOCTORM.MOD_ID, "textures/entity/marian_jin.png");
+    }
+
+    @Override
+    public Identifier getMossEmission() {
+        return null;   // 没有发光层
+    }
+
+    @Override
+    public float getMossYaw(float tickDelta) {
+        return 0f;     // 实体渲染走 bodyYaw，这个不用
+    }
+
+    // ── MossAnimatedEntity ──
+
+    @Override
+    public net.minecraft.entity.Entity asEntity() {
+        return this;
+    }
+
+    @Override
+    public Identifier getMossAnimationId() {
+        Identifier next = computeMossAnimId();
+
+        // 检测切换 —— 换动画时把起始年龄归零
+        if (!java.util.Objects.equals(next, mossLastAnimId)) {
+            mossLastAnimId = next;
+            mossAnimStartAge = this.age;
+        }
+
+        return next;
+    }
+
+    @Override
+    public long getAnimationElapsedMs() {
+        return (long) (this.age - mossAnimStartAge) * 50L;
+    }
+
+    /**
+     * 根据实体当前状态决定用哪个动画。
+     * 返回 null 表示"这一帧不播 Bedrock 动画" → 渲染器走原版回退。
+     */
+    @Nullable
+    private Identifier computeMossAnimId() {
+        // 优先级从高到低
+
+        // 1. 生气状态 → 愤怒动画
+        if (this.isAngry) {
+            return Identifier.of(DOCTORM.MOD_ID, "marian_jin/angry");
+        }
+
+        // 2. 交易状态 → 交易动画（如果 K 了的话）
+        //    没 K 的话这行删掉，让它走 idle
+        if (getState() == AIState.TRADING) {
+            return Identifier.of(DOCTORM.MOD_ID, "marian_jin/trade");
+        }
+
+        // 3. 移动中 → 走路动画
+        if (this.getVelocity().horizontalLengthSquared() > 1.0E-4) {
+            return Identifier.of(DOCTORM.MOD_ID, "marian_jin/walk");
+        }
+
+        // 4. 默认 → 站立
+        return Identifier.of(DOCTORM.MOD_ID, "marian_jin/idle");
+    }
+
+    private void tickBlink() {
+        if (blinkDuration > 0) {
+            blinkDuration--;
+            if (blinkDuration == 0) {
+                // 眨完一次，安排下一次
+                blinkCooldown = 60 + this.random.nextInt(180);   // 3~12 秒
+            }
+        } else {
+            blinkCooldown--;
+            if (blinkCooldown <= 0) {
+                blinkDuration = BLINK_TICKS;
+            }
+        }
+    }
+
+    @Override
+    public boolean isBlinking() {
+        return blinkDuration > 0;
+    }
+
+    @Override
+    public float getBlinkScale() {
+        if (blinkDuration <= 0) return 1.0f;
+        int elapsed = BLINK_TICKS - blinkDuration;
+        float t = (float) elapsed / BLINK_TICKS;
+        // 三角波：0 → 1 → 0
+        float closed = t < 0.5f ? t * 2f : (1f - t) * 2f;
+        return 1.0f - closed * 0.9f;   // 1.0 → 0.1
     }
 }

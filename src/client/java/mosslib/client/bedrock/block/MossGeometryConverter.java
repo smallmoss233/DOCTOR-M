@@ -1,6 +1,6 @@
-package mosslib.bedrockbolck;
+package mosslib.client.bedrock.block;
 
-import mosslib.bedrockbolck.MossGeometry.*;
+import mosslib.client.bedrock.block.MossGeometry.*;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -199,11 +199,16 @@ final class MossGeometryConverter {
         Vec3 rot = orZero(bone.rotation);
 
         if (bone.parent == null || bone.parent.isEmpty()) {
-            return ModelTransform.of(0f, 0f, 0f, rad(rot.x), rad(rot.y), rad(rot.z));
+            // 根骨骼：用绝对 pivot。
+            // Y 取反 —— 和子骨骼保持一致的约定，因为渲染时会整体 X 轴 180° 翻转。
+            return ModelTransform.of(
+                    pivot.x,
+                    -pivot.y,
+                    pivot.z,
+                    rad(rot.x), rad(rot.y), rad(rot.z));
         }
 
         Vec3 parentPivot = orZero(index.get(bone.parent).pivot);
-        // AmbleKit：X/Z 反号，Y 不反
         float px = -(parentPivot.x - pivot.x);
         float py = parentPivot.y - pivot.y;
         float pz = -(parentPivot.z - pivot.z);

@@ -9,6 +9,7 @@ import doctor_m.client.Accessory.AccessoryKeyRegistry;
 import doctor_m.client.Accessory.AccessoryPassiveButton;
 import doctor_m.client.Accessory.handler.KeytoTimeKeyHandler;
 import doctor_m.client.Accessory.handler.STCSKeyHandler;
+import doctor_m.client.module.ToyotaSpinningRotor.ToyotaSpinningRotorRenderer;
 import doctor_m.client.render.Shield.ForceFieldClientRenderer;
 import doctor_m.client.render.Shield.ShieldNetworkingClient;
 import doctor_m.client.render.Shield.ShieldOverlay;
@@ -24,15 +25,15 @@ import doctor_m.client.network.DeMatGunClientNetwork;
 import doctor_m.client.network.KeytoTimeTeleportClient;
 import doctor_m.client.render.EmissiveBlockEntityRenderer;
 import doctor_m.client.render.EyeOfHarmonyObeliskBlockEntityRenderer;
-import doctor_m.client.module.ToyotaSpinningRotor.ToyotaSpinningRotorRenderer;
 import doctor_m.client.render.TrinketRenderer.SCTrinketRenderer;
 import doctor_m.client.render.TrinketRenderer.VMTrinketRenderer;
 import doctor_m.client.util.id.PlayerTitleCache;
 import doctor_m.entities.Entities;
 import doctor_m.network.INVERTSCREENPACKETNetwork;
 import doctor_m.util.VMClientScreenOpener;
-import mosslib.bedrockbolck.MossBedrockReloader;
-import mosslib.bedrockbolck.MossBedrockRenderer;
+import mosslib.client.bedrock.block.MossBedrockReloader;
+import mosslib.client.bedrock.block.MossBedrockRenderer;
+import mosslib.client.bedrock.entity.MossBedrockEntityRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -172,7 +173,7 @@ public class DOCTORMClient implements ClientModInitializer {
 
     private void registerEntityRenderers() {
         EntityRendererRegistry.register(Entities.TYPE_103_TARDIS, Type103Renderer::new);
-        EntityRendererRegistry.register(Entities.MARIAN_JIN, MarianJinRenderer::new);
+        EntityRendererRegistry.register(Entities.MARIAN_JIN, MossBedrockEntityRenderer::new);
     }
 
     private void registerNetworking() {

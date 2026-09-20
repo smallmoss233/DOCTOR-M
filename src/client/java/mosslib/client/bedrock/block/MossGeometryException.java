@@ -1,4 +1,4 @@
-package mosslib.bedrockbolck;
+package mosslib.client.bedrock.block;
 
 public class MossGeometryException extends RuntimeException {
 

@@ -8,9 +8,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-package mosslib.bedrockbolck;
+package mosslib.client.bedrock.block;
 
-import mosslib.bedrockbolck.MossGeometry.UV;
+import mosslib.client.bedrock.block.MossGeometry.UV;
 
 public record MossPerFaceCube(
         String bonePath,          // 从 root 开始的路径，如 "bb_main/zhongbu"
