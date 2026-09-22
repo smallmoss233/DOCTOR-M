@@ -37,14 +37,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
-public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , BlinkingEntity {
+public class Marian_Jin extends PathAwareEntity
+        implements MossAnimatedEntity, BlinkingEntity {
 
     public enum AIState { IDLE, TRADING, COMBAT, RETALIATING }
 
     public static final TrackedData<Integer> CURRENT_STATE =
             DataTracker.registerData(Marian_Jin.class, TrackedDataHandlerRegistry.INTEGER);
+
+    public static final TrackedData<String> ONE_SHOT_ID =
+            DataTracker.registerData(Marian_Jin.class, TrackedDataHandlerRegistry.STRING);
+    public static final TrackedData<Long> ONE_SHOT_UNTIL =
+            DataTracker.registerData(Marian_Jin.class, TrackedDataHandlerRegistry.LONG);
 
     private static final String BASE = "entity.doctor_m.marian_jin";
     public static final String[] STAGE1_KEYS = new String[] {
@@ -73,13 +80,29 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
     };
 
     // ==================== 眨眼 ====================
-    private static final int BLINK_TICKS = 4;   // 0.2 秒
-    private int blinkCooldown = 100;             // 首次进游戏 5 秒后眨
+    private static final int BLINK_TICKS = 4;
+    private int blinkCooldown = 100;
     private int blinkDuration = 0;
 
+    // ==================== 待机姿势 + 叠加动作 ====================
+    private static final Identifier IDLE_POSTURE =
+            Identifier.of(DOCTORM.MOD_ID, "marian_jin/idle_posture");
+
+    private record Gesture(Identifier id, int durationTicks) {}
+
+    private static final Gesture[] IDLE_GESTURES = {
+            new Gesture(Identifier.of(DOCTORM.MOD_ID, "marian_jin/idle_gesture_a"), 30),
+            new Gesture(Identifier.of(DOCTORM.MOD_ID, "marian_jin/idle_gesture_b"), 40)
+    };
+
+    @Nullable private Gesture activeGesture = null;
+    private int gestureStartAge = 0;
+    private int gestureEndAge = 0;
+    private int nextGestureCooldown = 100;
+
     private static final int RETALIATE_COOLDOWN = 20;
-    private static final long AGGRESSION_MEMORY = 48000L;   // 2 game days
-    private static final int ANGER_DURATION = 7200;         // 6 minutes
+    private static final long AGGRESSION_MEMORY = 48000L;
+    private static final int ANGER_DURATION = 7200;
     private static final String TRADE_POOL_FILE = "marian_trade.json";
 
     private static final Text TRADE_HEADER = Text.literal("§7════════════════════════");
@@ -128,19 +151,27 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
         this.targetSelector.add(1, new RevengeGoal(this, PlayerEntity.class));
     }
 
+    // =====================================================================
+    // tick
+    // =====================================================================
+
     @Override
     public void tick() {
         super.tick();
 
-        // 客户端：眨眼是纯视觉，不需要同步
+        // 客户端：视觉逻辑
         if (this.getWorld().isClient()) {
             tickBlink();
+            tickIdleGesture();
             return;
         }
 
-        // 下面全是服务端逻辑
-        if (!(this.getWorld() instanceof ServerWorld sw)) {
-            return;
+        // 服务端
+        if (!(this.getWorld() instanceof ServerWorld sw)) return;
+
+        String oneShot = this.dataTracker.get(ONE_SHOT_ID);
+        if (!oneShot.isEmpty() && sw.getTime() >= this.dataTracker.get(ONE_SHOT_UNTIL)) {
+            this.dataTracker.set(ONE_SHOT_ID, "");
         }
 
         if (this.isAngry && --this.angerTimer <= 0) {
@@ -159,6 +190,62 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
             }
         }
     }
+
+    // =====================================================================
+    // 待机动作 —— 客户端
+    // =====================================================================
+
+    private void tickIdleGesture() {
+        // 有动作在播 → 到点就清空
+        if (activeGesture != null) {
+            if (this.age >= gestureEndAge) {
+                activeGesture = null;
+                // 播完歇 5~15 秒
+                nextGestureCooldown = 100 + this.random.nextInt(200);
+            }
+            return;
+        }
+
+        // 移动时不触发，重置倒计时
+        if (this.getVelocity().horizontalLengthSquared() > 1.0E-4) {
+            nextGestureCooldown = 100;
+            return;
+        }
+
+        // 倒计时结束 → 随机挑一个动作
+        if (--nextGestureCooldown <= 0) {
+            Gesture g = IDLE_GESTURES[this.random.nextInt(IDLE_GESTURES.length)];
+            activeGesture = g;
+            gestureStartAge = this.age;
+            gestureEndAge = this.age + g.durationTicks();
+        }
+    }
+
+    @Override
+    @Nullable
+    public Identifier getMossOverlayAnimationId() {
+        return activeGesture == null ? null : activeGesture.id();
+    }
+
+    @Override
+    public long getMossOverlayElapsedMs() {
+        if (activeGesture == null) return 0L;
+        return (long) (this.age - gestureStartAge) * 50L;
+    }
+
+    // =====================================================================
+    // 一次性动画
+    // =====================================================================
+
+    public void playOneShot(String animPath, int durationTicks) {
+        if (this.getWorld().isClient()) return;
+        this.dataTracker.set(ONE_SHOT_ID, animPath);
+        this.dataTracker.set(ONE_SHOT_UNTIL, this.getWorld().getTime() + durationTicks);
+    }
+
+    // =====================================================================
+    // 原有业务逻辑
+    // =====================================================================
 
     private void calmDown() {
         this.isAngry = false;
@@ -184,13 +271,8 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
         long now = this.getWorld().getTime();
         this.lastDamageTime = now;
 
-        if (this.getHealth() <= 0.0f) {
-            return damaged;
-        }
-
-        if (!(source.getAttacker() instanceof LivingEntity attacker)) {
-            return damaged;
-        }
+        if (this.getHealth() <= 0.0f) return damaged;
+        if (!(source.getAttacker() instanceof LivingEntity attacker)) return damaged;
 
         UUID attackerId = attacker.getUuid();
         boolean isNewAggression = this.lastAggressorUUID == null
@@ -214,9 +296,7 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
             return damaged;
         }
 
-        if (now - this.lastRetaliateTime < RETALIATE_COOLDOWN) {
-            return damaged;
-        }
+        if (now - this.lastRetaliateTime < RETALIATE_COOLDOWN) return damaged;
         this.lastRetaliateTime = now;
         this.lastAggressionTime = now;
         this.aggressionCount++;
@@ -268,9 +348,18 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
         applyDebuffCombo(attacker);
 
         switch (this.random.nextInt(3)) {
-            case 0 -> retaliateTeleportVortex(attacker);
-            case 1 -> retaliateHighAltitude(attacker);
-            case 2 -> retaliateParadoxPull(attacker);
+            case 0 -> {
+                playOneShot("retaliate_teleport", 30);
+                retaliateTeleportVortex(attacker);
+            }
+            case 1 -> {
+                playOneShot("retaliate_teleport", 30);
+                retaliateHighAltitude(attacker);
+            }
+            case 2 -> {
+                playOneShot("retaliate_melee", 20);
+                retaliateParadoxPull(attacker);
+            }
         }
     }
 
@@ -288,7 +377,6 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
     private void applyParadoxDamage(LivingEntity attacker) {
         float paradoxDamage = attacker.getMaxHealth() * 0.2f + 8.0f;
         attacker.damage(this.getDamageSources().magic(), paradoxDamage);
-
         if (attacker instanceof ServerPlayerEntity player) {
             player.sendMessage(Text.translatable("entity.doctor_m.marian_jin.retaliation.paradox_damage"), true);
         }
@@ -322,7 +410,6 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
         if (!(attacker instanceof ServerPlayerEntity player)) return;
         RegistryKey<World> vortexDim = RegistryKey.of(RegistryKeys.WORLD, new Identifier("ait", "time_vortex"));
         ServerWorld vortexWorld = player.getServer().getWorld(vortexDim);
-
         if (vortexWorld != null) {
             player.teleport(vortexWorld, player.getX(), 350.0, player.getZ(), player.getYaw(), player.getPitch());
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 160, 2));
@@ -337,6 +424,8 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         if (this.getWorld().isClient()) return ActionResult.SUCCESS;
         if (!(player instanceof ServerPlayerEntity serverPlayer)) return ActionResult.SUCCESS;
+
+        playOneShot("interact", 25);
 
         if (this.isAngry) {
             player.sendMessage(Text.translatable(ANGRY_KEYS[this.random.nextInt(ANGRY_KEYS.length)]), false);
@@ -374,7 +463,6 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
             player.sendMessage(Text.translatable("doctor_m.dialog.common.trade.no_item"), false);
             return;
         }
-
         var heldItem = held.getItem();
         int heldCount = held.getCount();
         TradeOffer bestMatch = null;
@@ -410,10 +498,16 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
         }
     }
 
+    // =====================================================================
+    // 状态 / DataTracker / NBT
+    // =====================================================================
+
     @Override
     protected void initDataTracker() {
         super.initDataTracker();
         this.dataTracker.startTracking(CURRENT_STATE, AIState.IDLE.ordinal());
+        this.dataTracker.startTracking(ONE_SHOT_ID, "");
+        this.dataTracker.startTracking(ONE_SHOT_UNTIL, 0L);
     }
 
     public void setState(AIState state) {
@@ -438,7 +532,6 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
         if (this.lastAggressorUUID != null) {
             nbt.putUuid("LastAggressor", this.lastAggressorUUID);
         }
-
         nbt.putLong("LastTradeRefreshDay", this.lastTradeRefreshDay);
         if (!this.dailyTrades.isEmpty()) {
             nbt.put("DailyTrades", TradeManager.writeOffersToNbt(this.dailyTrades));
@@ -457,7 +550,6 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
         if (nbt.contains("LastAggressor")) {
             this.lastAggressorUUID = nbt.getUuid("LastAggressor");
         }
-
         this.lastTradeRefreshDay = nbt.contains("LastTradeRefreshDay") ? nbt.getLong("LastTradeRefreshDay") : -1;
         if (nbt.contains("DailyTrades", 9)) {
             this.dailyTrades = TradeManager.readOffersFromNbt(nbt.getList("DailyTrades", 10));
@@ -466,30 +558,20 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
 
     private void spawnRetaliateParticles() {
         if (!(this.getWorld() instanceof ServerWorld sw)) return;
-        sw.spawnParticles(
-                ParticleTypes.REVERSE_PORTAL,
+        sw.spawnParticles(ParticleTypes.REVERSE_PORTAL,
                 this.getX(), this.getY() + 1.5, this.getZ(),
-                30, 0.5, 0.5, 0.5, 0.2
-        );
-        sw.playSound(
-                null, this.getBlockPos(),
+                30, 0.5, 0.5, 0.5, 0.2);
+        sw.playSound(null, this.getBlockPos(),
                 SoundEvents.ENTITY_WITHER_AMBIENT,
-                SoundCategory.HOSTILE, 1.0f, 0.8f
-        );
+                SoundCategory.HOSTILE, 1.0f, 0.8f);
     }
 
     // =====================================================================
     // MossBedrock 集成
     // =====================================================================
 
-    /** 上一次解析出的动画 ID，用于检测切换。 */
-    @Nullable
-    private Identifier mossLastAnimId = null;
-
-    /** 上一次动画切换时的 age。用于让动画切换时归零。 */
+    @Nullable private Identifier mossLastAnimId = null;
     private int mossAnimStartAge = 0;
-
-    // ── MossBedrockRenderable ──
 
     @Override
     public Identifier getMossModel() {
@@ -498,21 +580,18 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
 
     @Override
     public Identifier getMossTexture() {
-        // 你的纹理路径 —— 按实际改
         return Identifier.of(DOCTORM.MOD_ID, "textures/entity/marian_jin.png");
     }
 
     @Override
     public Identifier getMossEmission() {
-        return null;   // 没有发光层
+        return null;
     }
 
     @Override
     public float getMossYaw(float tickDelta) {
-        return 0f;     // 实体渲染走 bodyYaw，这个不用
+        return 0f;
     }
-
-    // ── MossAnimatedEntity ──
 
     @Override
     public net.minecraft.entity.Entity asEntity() {
@@ -522,13 +601,10 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
     @Override
     public Identifier getMossAnimationId() {
         Identifier next = computeMossAnimId();
-
-        // 检测切换 —— 换动画时把起始年龄归零
-        if (!java.util.Objects.equals(next, mossLastAnimId)) {
+        if (!Objects.equals(next, mossLastAnimId)) {
             mossLastAnimId = next;
             mossAnimStartAge = this.age;
         }
-
         return next;
     }
 
@@ -537,40 +613,52 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
         return (long) (this.age - mossAnimStartAge) * 50L;
     }
 
-    /**
-     * 根据实体当前状态决定用哪个动画。
-     * 返回 null 表示"这一帧不播 Bedrock 动画" → 渲染器走原版回退。
-     */
     @Nullable
     private Identifier computeMossAnimId() {
-        // 优先级从高到低
+        // 1. 一次性动画
+        String oneShot = this.dataTracker.get(ONE_SHOT_ID);
+        if (!oneShot.isEmpty()) {
+            long until = this.dataTracker.get(ONE_SHOT_UNTIL);
+            if (this.getWorld().getTime() < until) {
+                return Identifier.of(DOCTORM.MOD_ID, "marian_jin/" + oneShot);
+            }
+        }
 
-        // 1. 生气状态 → 愤怒动画
+        // 2. 生气
         if (this.isAngry) {
             return Identifier.of(DOCTORM.MOD_ID, "marian_jin/angry");
         }
 
-        // 2. 交易状态 → 交易动画（如果 K 了的话）
-        //    没 K 的话这行删掉，让它走 idle
+        // 3. 交易
         if (getState() == AIState.TRADING) {
             return Identifier.of(DOCTORM.MOD_ID, "marian_jin/trade");
         }
 
-        // 3. 移动中 → 走路动画
-        if (this.getVelocity().horizontalLengthSquared() > 1.0E-4) {
-            return Identifier.of(DOCTORM.MOD_ID, "marian_jin/walk");
+        // 4. 移动
+        double speedSq = this.getVelocity().horizontalLengthSquared();
+        if (speedSq > 0.001) {
+            LivingEntity target = this.getTarget();
+            LivingEntity attacker = this.getAttacker();
+            boolean threatened =
+                    (target != null && !(target instanceof PlayerEntity))
+                            || (attacker != null && !(attacker instanceof PlayerEntity));
+            return Identifier.of(DOCTORM.MOD_ID,
+                    threatened ? "marian_jin/flee" : "marian_jin/walk");
         }
 
-        // 4. 默认 → 站立
-        return Identifier.of(DOCTORM.MOD_ID, "marian_jin/idle");
+        // 5. 默认 → 姿势（叠加动作走 overlay）
+        return IDLE_POSTURE;
     }
+
+    // =====================================================================
+    // 眨眼
+    // =====================================================================
 
     private void tickBlink() {
         if (blinkDuration > 0) {
             blinkDuration--;
             if (blinkDuration == 0) {
-                // 眨完一次，安排下一次
-                blinkCooldown = 60 + this.random.nextInt(180);   // 3~12 秒
+                blinkCooldown = 60 + this.random.nextInt(180);
             }
         } else {
             blinkCooldown--;
@@ -590,8 +678,7 @@ public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity , 
         if (blinkDuration <= 0) return 1.0f;
         int elapsed = BLINK_TICKS - blinkDuration;
         float t = (float) elapsed / BLINK_TICKS;
-        // 三角波：0 → 1 → 0
         float closed = t < 0.5f ? t * 2f : (1f - t) * 2f;
-        return 1.0f - closed * 0.9f;   // 1.0 → 0.1
+        return 1.0f - closed * 0.9f;
     }
 }

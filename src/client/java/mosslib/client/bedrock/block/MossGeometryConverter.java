@@ -199,8 +199,6 @@ final class MossGeometryConverter {
         Vec3 rot = orZero(bone.rotation);
 
         if (bone.parent == null || bone.parent.isEmpty()) {
-            // 根骨骼：用绝对 pivot。
-            // Y 取反 —— 和子骨骼保持一致的约定，因为渲染时会整体 X 轴 180° 翻转。
             return ModelTransform.of(
                     pivot.x,
                     -pivot.y,
