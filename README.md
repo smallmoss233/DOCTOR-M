@@ -56,11 +56,11 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 
 * *时隙(The Rift) interior*: [TC020](https://modrinth.com/user/TC020)
 
-* *Redstone Torch Sonic Screwdriver author*: 慢跑者
+* *Redstone Torch Sonic Screwdriver author*: [慢跑者(Joggest)](https://modrinth.com/user/Joggest)
 
 * *Partial item models*：[Tsinafs-Bcim](https://modrinth.com/user/Tsinafs-Bcim)
 
-* *Partial achievement text and item tooltip text*：斯格尔特(Sigeerte), [asdjdfk](https://modrinth.com/user/asdjdfk), T天玄X
+* *Partial achievement text and item tooltip text*：斯格尔特(Sigeerte), [asdjdfk](https://modrinth.com/user/asdjdfk), [T天玄X(TX-sonb)](https://modrinth.com/user/TX-sonb)
 
 * *Laser, Portal Gun sonic screwdriver*: [NX-Seeker](https://modrinth.com/user/NX-Seeker), asdjdfk
 
