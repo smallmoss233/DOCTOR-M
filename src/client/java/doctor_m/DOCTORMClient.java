@@ -173,7 +173,7 @@ public class DOCTORMClient implements ClientModInitializer {
 
     private void registerEntityRenderers() {
         EntityRendererRegistry.register(Entities.TYPE_103_TARDIS, Type103Renderer::new);
-        EntityRendererRegistry.register(Entities.MARIAN_JIN, MossBedrockEntityRenderer::new);
+        EntityRendererRegistry.register(Entities.MARIAN_JIN, MarianJinRenderer::new);  //K动画后记得换成MossBedrockEntityRenderer
     }
 
     private void registerNetworking() {

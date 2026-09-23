@@ -16,7 +16,8 @@ final class MossGeometryConverter {
 
     private MossGeometryConverter() {}
 
-    static MossBedrockModel convert(MossGeometry model, String wantedGeometry, float uvScale) {
+    static MossBedrockModel convert(MossGeometry model, String wantedGeometry,
+                                    float uvScale, boolean applyRootPivot) {
         if (model.geometries == null || model.geometries.isEmpty()) {
             throw new MossGeometryException("Model has no geometry entries");
         }
@@ -35,7 +36,7 @@ final class MossGeometryConverter {
         Map<String, ModelPartData> built = new HashMap<>();
         List<MossPerFaceCube> deferred = new ArrayList<>();
 
-        buildBones(geometry.bones, boneIndex, built, data, uvScale, deferred);
+        buildBones(geometry.bones, boneIndex, built, data, uvScale, deferred, applyRootPivot);
 
         int texW = desc.textureWidth  != null ? desc.textureWidth  : DEFAULT_TEX_W;
         int texH = desc.textureHeight != null ? desc.textureHeight : DEFAULT_TEX_H;
@@ -72,7 +73,8 @@ final class MossGeometryConverter {
 
     private static void buildBones(List<Bone> bones, Map<String, Bone> index,
                                    Map<String, ModelPartData> built, ModelData data,
-                                   float uvScale, List<MossPerFaceCube> deferred) {
+                                   float uvScale, List<MossPerFaceCube> deferred,
+                                   boolean applyRootPivot) {
         List<Bone> pending = new ArrayList<>(bones);
         int guard = pending.size() + 1;
 
@@ -81,7 +83,8 @@ final class MossGeometryConverter {
             while (it.hasNext()) {
                 Bone bone = it.next();
                 if (isResolvable(bone, built)) {
-                    built.put(bone.name, buildBone(bone, index, built, data, uvScale, deferred));
+                    built.put(bone.name, buildBone(bone, index, built, data,
+                            uvScale, deferred, applyRootPivot));
                     it.remove();
                 }
             }
@@ -113,9 +116,10 @@ final class MossGeometryConverter {
 
     private static ModelPartData buildBone(Bone bone, Map<String, Bone> index,
                                            Map<String, ModelPartData> built, ModelData data,
-                                           float uvScale, List<MossPerFaceCube> deferred) {
+                                           float uvScale, List<MossPerFaceCube> deferred,
+                                           boolean applyRootPivot) {
         ModelPartData parentPart = resolveParent(bone, built, data);
-        ModelTransform boneTransform = buildBoneTransform(bone, index);
+        ModelTransform boneTransform = buildBoneTransform(bone, index, applyRootPivot);
 
         ModelPartBuilder flatBuilder = ModelPartBuilder.create();
         List<ModelPartBuilder> rotatedSubs = new ArrayList<>();
@@ -146,7 +150,11 @@ final class MossGeometryConverter {
                     if (cube.isMirror()) target.mirrored(false);
                 } else {
                     // per-face：记进 deferred
-                    float[] cubePivot = new float[]{ pivot.x, pivot.y, pivot.z };
+                    float[] cubePivot = new float[]{
+                            pivot.x - bonePivot.x,
+                            pivot.y - bonePivot.y,
+                            pivot.z - bonePivot.z
+                    };
                     float[] cubeRot = new float[]{
                             cube.rotation != null ? cube.rotation.x : 0f,
                             cube.rotation != null ? cube.rotation.y : 0f,
@@ -194,15 +202,22 @@ final class MossGeometryConverter {
         return parent;
     }
 
-    private static ModelTransform buildBoneTransform(Bone bone, Map<String, Bone> index) {
+    private static ModelTransform buildBoneTransform(Bone bone, Map<String, Bone> index,
+                                                     boolean applyRootPivot) {
         Vec3 pivot = orZero(bone.pivot);
         Vec3 rot = orZero(bone.rotation);
 
         if (bone.parent == null || bone.parent.isEmpty()) {
-            return ModelTransform.of(
-                    pivot.x,
-                    -pivot.y,
-                    pivot.z,
+            if (applyRootPivot) {
+                // 实体模型：根骨骼用真实 pivot（Bedrock Y-up → ModelPart Y-down）
+                return ModelTransform.of(
+                        pivot.x,
+                        -pivot.y,
+                        pivot.z,
+                        rad(rot.x), rad(rot.y), rad(rot.z));
+            }
+            // 方块模型：根骨骼 pivot 抹成 0（保持旧行为）
+            return ModelTransform.of(0f, 0f, 0f,
                     rad(rot.x), rad(rot.y), rad(rot.z));
         }
 

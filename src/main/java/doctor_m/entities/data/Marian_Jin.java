@@ -40,8 +40,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Marian_Jin extends PathAwareEntity
-        implements MossAnimatedEntity, BlinkingEntity {
+public class Marian_Jin extends PathAwareEntity implements MossAnimatedEntity, BlinkingEntity {
 
     public enum AIState { IDLE, TRADING, COMBAT, RETALIATING }
 
@@ -146,8 +145,8 @@ public class Marian_Jin extends PathAwareEntity
         this.goalSelector.add(1, new FleeEntityGoal<>(this, HostileEntity.class, 10.0f, 0.4, 0.8));
         this.goalSelector.add(2, new LookAtEntityGoal(this, PlayerEntity.class, 12.0f));
         this.goalSelector.add(3, new LookAroundGoal(this));
-        this.goalSelector.add(4, new WanderAroundGoal(this, 0.25));
-        this.goalSelector.add(5, new WanderAroundFarGoal(this, 0.4));
+        this.goalSelector.add(4, new WanderAroundGoal(this, 1.0));
+        this.goalSelector.add(5, new WanderAroundFarGoal(this, 1.0));
         this.targetSelector.add(1, new RevengeGoal(this, PlayerEntity.class));
     }
 
@@ -580,7 +579,7 @@ public class Marian_Jin extends PathAwareEntity
 
     @Override
     public Identifier getMossTexture() {
-        return Identifier.of(DOCTORM.MOD_ID, "textures/entity/marian_jin.png");
+        return Identifier.of(DOCTORM.MOD_ID, "textures/entity/marian_jin_animation.png");
     }
 
     @Override

@@ -1,0 +1,91 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.marian_jin.idle_posture": {
+			"loop": true,
+			"animation_length": 2.2917,
+			"bones": {
+				"Right Arm": {
+					"rotation": [61.7593, 67.4125, 32.6242]
+				},
+				"Left Arm": {
+					"rotation": [49.5622, -61.6273, -30.6494]
+				}
+			}
+		},
+		"animation.marian_jin.idle_gesture_a": {
+			"animation_length": 1.875,
+			"bones": {
+				"Head": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.25": [0, 37.5, 0],
+						"0.875": [0, 37.5, 0],
+						"1.375": [0, -40, 0],
+						"1.875": [0, 0, 0]
+					}
+				}
+			}
+		},
+		"animation.marian_jin.idle_gesture_b": {
+			"animation_length": 0.2917,
+			"bones": {
+				"Right Arm": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.25": [-30, 0, 0]
+					}
+				}
+			}
+		},
+		"animation.marian_jin.walk": {
+			"animation_length": 0.5,
+			"bones": {
+				"Head": {
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.3333": [0, 0, -1]
+					}
+				},
+				"Body": {
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.3333": [0, 0, -1]
+					}
+				},
+				"Right Arm": {
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.3333": [0, 0, -1]
+					}
+				},
+				"Left Arm": {
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.3333": [0, 0, -1]
+					}
+				},
+				"Right Leg": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.125": [-12.5, 0, 0],
+						"0.2917": [0, 0, 0]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.125": [0, 1, -1],
+						"0.25": [0, 0, -1]
+					}
+				},
+				"Left Leg": {
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.375": [0, 1, 0],
+						"0.4583": [0, 1, -1],
+						"0.5": [0, 0, -1]
+					}
+				}
+			}
+		}
+	}
+}

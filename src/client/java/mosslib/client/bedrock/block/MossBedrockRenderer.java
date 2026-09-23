@@ -83,7 +83,7 @@ public class MossBedrockRenderer<T extends BlockEntity & MossBedrockRenderable>
         }
 
         MossBedrockModel model = MODEL_CACHE.computeIfAbsent(modelId,
-                id -> MossBedrock.load(rm, id, null, texId));
+                id -> MossBedrock.load(rm, id, null, texId, MossBedrock.ENTITY_MODE));
 
         ModelPart root = resolveRoot(entity, modelId, model, tickDelta);
 

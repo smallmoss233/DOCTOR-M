@@ -16,6 +16,6 @@ public class MarianJinRenderer extends MobEntityRenderer<Marian_Jin, PlayerEntit
 
     @Override
     public Identifier getTexture(Marian_Jin entity) {
-        return new Identifier(DOCTORM.MOD_ID, "textures/entity/evereye.png");
+        return new Identifier(DOCTORM.MOD_ID, "textures/entity/marian_jin.png");
     }
 }

@@ -22,7 +22,13 @@ public final class MossBedrock {
     private static final float DEFAULT_UV_SCALE = 1.0f;
     private static final float UV_SCALE_EPSILON = 1.0e-6f;
 
-    private record ModelCacheKey(Identifier id, String geometryId, float uvScale) {}
+    /** 默认模式：方块（根骨骼 pivot 抹成 0）。 */
+    public static final boolean BLOCK_MODE = false;
+    /** 实体模式：根骨骼使用真实 pivot。 */
+    public static final boolean ENTITY_MODE = true;
+
+    private record ModelCacheKey(Identifier id, String geometryId,
+                                 float uvScale, boolean applyRootPivot) {}
 
     private record UvScaleCacheKey(Identifier modelId, String geometryId, Identifier textureId) {}
 
@@ -31,33 +37,61 @@ public final class MossBedrock {
 
     private MossBedrock() {}
 
+    // =====================================================================
+    // parse
+    // =====================================================================
+
     public static MossBedrockModel parse(JsonObject json) {
-        return parse(json, null, DEFAULT_UV_SCALE);
+        return parse(json, null, DEFAULT_UV_SCALE, BLOCK_MODE);
     }
 
     public static MossBedrockModel parse(JsonObject json, String geometryId) {
-        return parse(json, geometryId, DEFAULT_UV_SCALE);
+        return parse(json, geometryId, DEFAULT_UV_SCALE, BLOCK_MODE);
     }
 
     public static MossBedrockModel parse(JsonObject json, String geometryId, float uvScale) {
-        MossGeometry geometry = MossGeometry.fromJson(json);
-        return MossGeometryConverter.convert(geometry, geometryId, uvScale);
+        return parse(json, geometryId, uvScale, BLOCK_MODE);
     }
 
+    public static MossBedrockModel parse(JsonObject json, String geometryId,
+                                         float uvScale, boolean applyRootPivot) {
+        MossGeometry geometry = MossGeometry.fromJson(json);
+        return MossGeometryConverter.convert(geometry, geometryId, uvScale, applyRootPivot);
+    }
+
+    // =====================================================================
+    // load —— 默认方块模式
+    // =====================================================================
+
     public static MossBedrockModel load(ResourceManager rm, Identifier id) {
-        return load(rm, id, null, null);
+        return load(rm, id, null, null, BLOCK_MODE);
     }
 
     public static MossBedrockModel load(ResourceManager rm, Identifier id, String geometryId) {
-        return load(rm, id, geometryId, null);
+        return load(rm, id, geometryId, null, BLOCK_MODE);
     }
 
     public static MossBedrockModel load(ResourceManager rm, Identifier id,
                                         String geometryId, Identifier textureId) {
-        float uvScale = resolveUvScale(rm, id, geometryId, textureId);
-        ModelCacheKey key = new ModelCacheKey(id, geometryId, uvScale);
-        return MODEL_CACHE.computeIfAbsent(key, k -> readAndParse(rm, id, geometryId, uvScale));
+        return load(rm, id, geometryId, textureId, BLOCK_MODE);
     }
+
+    // =====================================================================
+    // load —— 完整版，带 applyRootPivot
+    // =====================================================================
+
+    public static MossBedrockModel load(ResourceManager rm, Identifier id,
+                                        String geometryId, Identifier textureId,
+                                        boolean applyRootPivot) {
+        float uvScale = resolveUvScale(rm, id, geometryId, textureId);
+        ModelCacheKey key = new ModelCacheKey(id, geometryId, uvScale, applyRootPivot);
+        return MODEL_CACHE.computeIfAbsent(key,
+                k -> readAndParse(rm, id, geometryId, uvScale, applyRootPivot));
+    }
+
+    // =====================================================================
+    // 内部
+    // =====================================================================
 
     private static float resolveUvScale(ResourceManager rm, Identifier modelId,
                                         String geometryId, Identifier textureId) {
@@ -94,7 +128,8 @@ public final class MossBedrock {
     }
 
     private static MossBedrockModel readAndParse(ResourceManager rm, Identifier logicalId,
-                                                 String geometryId, float uvScale) {
+                                                 String geometryId, float uvScale,
+                                                 boolean applyRootPivot) {
         Identifier fileId = new Identifier(
                 logicalId.getNamespace(),
                 BEDROCK_DIRECTORY + logicalId.getPath() + GEO_SUFFIX);
@@ -106,7 +141,7 @@ public final class MossBedrock {
             try (InputStreamReader reader = new InputStreamReader(
                     resource.getInputStream(), StandardCharsets.UTF_8)) {
                 JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
-                return parse(json, geometryId, uvScale);
+                return parse(json, geometryId, uvScale, applyRootPivot);
             }
         } catch (MossGeometryException e) {
             throw e;

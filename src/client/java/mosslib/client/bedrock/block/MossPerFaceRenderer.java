@@ -48,12 +48,18 @@ public final class MossPerFaceRenderer {
             for (MossPerFaceCube cube : deferred) {
                 matrices.push();
                 try {
-                    // ★ 沿骨骼链逐级应用祖先变换
+                    // 1) 沿骨骼链逐级应用祖先变换
                     if (!applyBoneChain(root, cube.bonePath(), matrices)) {
                         continue;
                     }
 
-                    // cube 自身的静态旋转
+                    // ★ 2) 应用 cube 相对骨骼的 pivot 偏移
+                    float[] cpp = cube.cubePivot();
+                    if (cpp[0] != 0F || cpp[1] != 0F || cpp[2] != 0F) {
+                        matrices.translate(cpp[0], -cpp[1], cpp[2]);
+                    }
+
+                    // 3) cube 自身的静态旋转
                     float[] rot = cube.cubeRotation();
                     if (rot[0] != 0F) {
                         matrices.multiply(RotationAxis.POSITIVE_X.rotation(
