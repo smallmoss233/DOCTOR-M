@@ -383,7 +383,7 @@ public abstract class SAR extends Item implements EmissiveItem {
         if (!special.isEmpty()) tooltip.add(Text.translatable("tooltip.doctor_m.sar.special", special));
 
         ShiftTooltipInvoker.addShiftTooltip(tooltip,
-                Text.translatable("message.doctor_m.sars." + variantId.toLowerCase().replace("-", "_") + "_detail")
+                Text.translatable("message.doctor_m.sar." + variantId.toLowerCase().replace("-", "_") + "_detail")
         );
         tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
         super.appendTooltip(stack, world, tooltip, context);
