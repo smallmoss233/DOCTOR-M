@@ -3,7 +3,7 @@ package doctor_m.mixin.doctor_m;
 import doctor_m.Item.data_item.ForceFieldShieldItem;
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
-import doctor_m.module.creativity.creativity_data.STCS.STCS;
+import doctor_m.module.creativity.creativity_data.SAR.SAR;
 import doctor_m.module.creativity.creativity_data.Tlipoca.TlipocaScytheItem;
 import doctor_m.util.creativity.ScytheChargingManager;
 import doctor_m.util.creativity.ScytheSlashManager;
@@ -26,6 +26,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import javax.xml.transform.sax.SAXResult;
+
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {
 
@@ -34,8 +36,8 @@ public class LivingEntityMixin {
     }
 
     private static final ThreadLocal<Boolean> TLIPOCA_AOE_LOCK = ThreadLocal.withInitial(() -> false);
-    private static final ThreadLocal<Boolean> STCS_BLOCK_LOCK = ThreadLocal.withInitial(() -> false);
-    private static final ThreadLocal<Boolean> STCS_AOE_LOCK = ThreadLocal.withInitial(() -> false);
+    private static final ThreadLocal<Boolean> SAR_BLOCK_LOCK = ThreadLocal.withInitial(() -> false);
+    private static final ThreadLocal<Boolean> SAR_AOE_LOCK = ThreadLocal.withInitial(() -> false);
 
     // ========== 力场盾 ==========
     private static boolean isHoldingForceFieldShield(PlayerEntity player) {
@@ -204,8 +206,8 @@ public class LivingEntityMixin {
 
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
     private void doctor_m$stcsBlock(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (STCS_BLOCK_LOCK.get()) return;
-        if (STCS_AOE_LOCK.get()) return;
+        if (SAR_BLOCK_LOCK.get()) return;
+        if (SAR_AOE_LOCK.get()) return;
 
         LivingEntity self = (LivingEntity) (Object) this;
         if (!(self instanceof ServerPlayerEntity player)) return;
@@ -213,20 +215,20 @@ public class LivingEntityMixin {
         if (!player.isSneaking()) return;
 
         ItemStack stcsStack = null;
-        STCS stcsItem = null;
+        SAR sarItem = null;
 
         ItemStack main = player.getMainHandStack();
         ItemStack off = player.getOffHandStack();
 
-        if (main.getItem() instanceof STCS s) {
+        if (main.getItem() instanceof SAR s) {
             stcsStack = main;
-            stcsItem = s;
-        } else if (off.getItem() instanceof STCS s) {
+            sarItem = s;
+        } else if (off.getItem() instanceof SAR s) {
             stcsStack = off;
-            stcsItem = s;
+            sarItem = s;
         }
 
-        if (stcsItem == null || stcsStack == null) return;
+        if (sarItem == null || stcsStack == null) return;
 
         if (source.isOf(net.minecraft.entity.damage.DamageTypes.GENERIC_KILL) ||
                 source.isOf(net.minecraft.entity.damage.DamageTypes.OUT_OF_WORLD) ||
@@ -234,16 +236,16 @@ public class LivingEntityMixin {
             return;
         }
 
-        float costPerDamage = stcsItem.getEnergyCostPerDamage();
+        float costPerDamage = sarItem.getEnergyCostPerDamage();
         int energyCost = (int) Math.ceil(amount * costPerDamage);
         energyCost = Math.max(config().stcsMinEnergyCost, energyCost);
 
-        int energy = stcsItem.getEnergy(stcsStack);
+        int energy = sarItem.getEnergy(stcsStack);
         if (energy < energyCost) return;
 
-        stcsItem.addEnergy(stcsStack, -energyCost);
+        sarItem.addEnergy(stcsStack, -energyCost);
 
-        float reduction = stcsItem.isCoreActive(stcsStack) ? 1.0f : stcsItem.getBlockDamageReduction();
+        float reduction = sarItem.isCoreActive(stcsStack) ? 1.0f : sarItem.getBlockDamageReduction();
         reduction = Math.max(0f, Math.min(1f, reduction));
 
         if (reduction >= 0.8f) {
@@ -261,13 +263,13 @@ public class LivingEntityMixin {
             return;
         }
 
-        STCS_BLOCK_LOCK.set(true);
-        STCS_AOE_LOCK.set(true);
+        SAR_BLOCK_LOCK.set(true);
+        SAR_AOE_LOCK.set(true);
         try {
             player.damage(source, newAmount);
         } finally {
-            STCS_BLOCK_LOCK.set(false);
-            STCS_AOE_LOCK.set(false);
+            SAR_BLOCK_LOCK.set(false);
+            SAR_AOE_LOCK.set(false);
         }
 
         cir.setReturnValue(false);
@@ -288,15 +290,15 @@ public class LivingEntityMixin {
     // ========== STCS 范围伤害共享（AoE） ==========
 
     private static boolean isHoldingSTCS(PlayerEntity player) {
-        return player.getMainHandStack().getItem() instanceof STCS
-                || player.getOffHandStack().getItem() instanceof STCS;
+        return player.getMainHandStack().getItem() instanceof SAR
+                || player.getOffHandStack().getItem() instanceof SAR;
     }
 
     private static void applyStcsAoE(LivingEntity victim, LivingEntity attacker, float amount) {
-        if (STCS_AOE_LOCK.get()) return;
+        if (SAR_AOE_LOCK.get()) return;
         if (!(victim.getWorld() instanceof ServerWorld world)) return;
 
-        STCS_AOE_LOCK.set(true);
+        SAR_AOE_LOCK.set(true);
         try {
             double radius = config().stcsAoeRadius;
             double radiusSq = radius * radius;
@@ -314,14 +316,14 @@ public class LivingEntityMixin {
                 }
             }
         } finally {
-            STCS_AOE_LOCK.set(false);
+            SAR_AOE_LOCK.set(false);
         }
     }
 
     @Inject(method = "damage", at = @At("RETURN"))
     private void doctor_m$stcsAoE(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (!cir.getReturnValue()) return;
-        if (STCS_AOE_LOCK.get()) return;
+        if (SAR_AOE_LOCK.get()) return;
 
         LivingEntity self = (LivingEntity) (Object) this;
         if (!(source.getAttacker() instanceof PlayerEntity player)) return;

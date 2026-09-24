@@ -1,4 +1,4 @@
-package doctor_m.module.creativity.creativity_data.STCS;
+package doctor_m.module.creativity.creativity_data.SAR;
 
 import doctor_m.module.EmissiveItem;
 import doctor_m.network.INVERTSCREENPACKETNetwork;
@@ -19,11 +19,11 @@ import net.minecraft.world.RaycastContext;
 import java.awt.*;
 import java.util.List;
 
-public class STCLItem extends STCS implements EmissiveItem {
+public class SARLItem extends SAR implements EmissiveItem {
 
-    public STCLItem() {
+    public SARLItem() {
         super(new Item.Settings().rarity(Rarity.EPIC),
-                "STC-09L",
+                "SAR-09L",
                 20f,
                 2.8f,
                 10000,

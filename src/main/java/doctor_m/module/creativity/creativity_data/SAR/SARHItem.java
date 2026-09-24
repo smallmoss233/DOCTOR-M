@@ -1,4 +1,4 @@
-package doctor_m.module.creativity.creativity_data.STCS;
+package doctor_m.module.creativity.creativity_data.SAR;
 
 import doctor_m.module.EmissiveItem;
 import doctor_m.util.creativity.DynamicColorHelper;
@@ -16,11 +16,11 @@ import net.minecraft.util.Rarity;
 import java.awt.*;
 import java.util.List;
 
-public class STCHItem extends STCS implements EmissiveItem {
+public class SARHItem extends SAR implements EmissiveItem {
 
-    public STCHItem() {
+    public SARHItem() {
         super(new Item.Settings().rarity(Rarity.EPIC),
-                "STC-07H",
+                "SAR-07H",
                 30f,
                 1.2f,
                 10000,
@@ -38,7 +38,7 @@ public class STCHItem extends STCS implements EmissiveItem {
         int cd = getSkillCooldown(stack);
         if (cd > 0) return;
         if (getEnergy(stack) < STCH_SKILL_COST) {
-            player.sendMessage(Text.translatable("message.doctor_m.stcs.skill_low_energy")
+            player.sendMessage(Text.translatable("message.doctor_m.sar.skill_low_energy")
                     .formatted(Formatting.RED), true);
             return;
         }

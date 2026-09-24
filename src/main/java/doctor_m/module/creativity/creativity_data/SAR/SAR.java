@@ -1,4 +1,4 @@
-package doctor_m.module.creativity.creativity_data.STCS;
+package doctor_m.module.creativity.creativity_data.SAR;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class STCS extends Item implements EmissiveItem {
+public abstract class SAR extends Item implements EmissiveItem {
 
-    public static final String STCS_TAG = "STCS";
+    public static final String SAR_TAG = "SAR";
     public static final String ENERGY_KEY = "energy";
     public static final String MAX_ENERGY_BASE_KEY = "max_energy_base";
     public static final String CORE_ACTIVE_KEY = "core_active";
@@ -69,7 +69,7 @@ public abstract class STCS extends Item implements EmissiveItem {
     protected final float blockDamageReduction;
     protected final String descriptionKey;
 
-    public STCS(Settings settings, String variantId, float baseDamage, float baseAttackSpeed,
+    public SAR(Settings settings, String variantId, float baseDamage, float baseAttackSpeed,
                     int maxEnergy, float blockDamageReduction, String descriptionKey) {
         super(settings.maxCount(1));
         this.variantId = variantId;
@@ -84,10 +84,10 @@ public abstract class STCS extends Item implements EmissiveItem {
 
     public NbtCompound getOrCreateSTCSNbt(ItemStack stack) {
         NbtCompound root = stack.getOrCreateNbt();
-        if (!root.contains(STCS_TAG, NbtElement.COMPOUND_TYPE)) {
-            root.put(STCS_TAG, createDefaultNbt());
+        if (!root.contains(SAR_TAG, NbtElement.COMPOUND_TYPE)) {
+            root.put(SAR_TAG, createDefaultNbt());
         }
-        return root.getCompound(STCS_TAG);
+        return root.getCompound(SAR_TAG);
     }
 
     private NbtCompound createDefaultNbt() {

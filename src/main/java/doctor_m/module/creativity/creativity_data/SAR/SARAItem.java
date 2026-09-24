@@ -1,4 +1,4 @@
-package doctor_m.module.creativity.creativity_data.STCS;
+package doctor_m.module.creativity.creativity_data.SAR;
 
 import doctor_m.module.EmissiveItem;
 import doctor_m.util.creativity.DynamicColorHelper;
@@ -17,9 +17,9 @@ import net.minecraft.util.Rarity;
 import java.awt.*;
 import java.util.List;
 
-public class STCAItem extends STCS implements EmissiveItem {
+public class SARAItem extends SAR implements EmissiveItem {
 
-    public STCAItem() {
+    public SARAItem() {
         super(new Item.Settings().rarity(Rarity.EPIC),
                 "STC-08A",
                 24f,

@@ -1,6 +1,6 @@
 package doctor_m.network;
 
-import doctor_m.module.creativity.creativity_data.STCS.STCS;
+import doctor_m.module.creativity.creativity_data.SAR.SAR;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -14,10 +14,10 @@ public class STCSNetworking {
         ServerPlayNetworking.registerGlobalReceiver(STCS_SKILL_ID, (server, player, handler, buf, responseSender) -> {
             server.execute(() -> {
                 ItemStack stack = player.getMainHandStack();
-                if (!(stack.getItem() instanceof STCS)) {
+                if (!(stack.getItem() instanceof SAR)) {
                     stack = player.getOffHandStack();
                 }
-                if (stack.getItem() instanceof STCS stcsItem) {
+                if (stack.getItem() instanceof SAR stcsItem) {
                     stcsItem.onSkillPressed(player, stack);
                 }
             });
@@ -27,10 +27,10 @@ public class STCSNetworking {
         ServerPlayNetworking.registerGlobalReceiver(STCS_CORE_ID, (server, player, handler, buf, responseSender) -> {
             server.execute(() -> {
                 ItemStack stack = player.getMainHandStack();
-                if (!(stack.getItem() instanceof STCS)) {
+                if (!(stack.getItem() instanceof SAR)) {
                     stack = player.getOffHandStack();
                 }
-                if (stack.getItem() instanceof STCS stcsItem) {
+                if (stack.getItem() instanceof SAR stcsItem) {
                     stcsItem.onCorePressed(player, stack);
                 }
             });
