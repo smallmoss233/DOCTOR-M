@@ -50,9 +50,9 @@ public class ModConfig {
     public double tlipocaScytheNormalHealRatio = 0.25;           // 普通吸血比例
     public boolean tlipocaScytheExecuteAoEDamageIgnoresArmor = true; // 处决 AoE 是否无视护甲/减伤
 
-    //STCS
-    public int stcsMinEnergyCost = 1;                            // 格挡最低能量消耗
-    public double stcsAoeRadius = 3.0;                           // STCS 范围伤害半径
+    //SAR
+    public int sarMinEnergyCost = 1;                            // 格挡最低能量消耗
+    public double sarAoeRadius = 3.0;                           // STCS 范围伤害半径
 
     //塔迪斯自毁
     public boolean enableSelfDestructEnhancement = true;  // 总开关

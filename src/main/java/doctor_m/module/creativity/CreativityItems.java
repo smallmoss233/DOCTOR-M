@@ -18,9 +18,9 @@ public class CreativityItems {
     );
 
     // STCS系列武器
-    public static final Item STCA = new SARAItem();
-    public static final Item STCH = new SARHItem();
-    public static final Item STCL = new SARLItem();
+    public static final Item SARA = new SARAItem();
+    public static final Item SARH = new SARHItem();
+    public static final Item SARL = new SARLItem();
 
     public static void registerAbilities() {
         ModConfig config = ConfigManager.getConfig();

@@ -41,9 +41,9 @@ public static void registerItems() {
                                 entries.add(FORCE_FIELD_SHIELD);
                                 entries.add(VORTEX_MANIPULATOR);
                                 entries.add(TLIPOCA_SCYTHE);
-                                entries.add(STCA);
-                                entries.add(STCH);
-                                entries.add(STCL);
+                                entries.add(SARA);
+                                entries.add(SARH);
+                                entries.add(SARL);
                                 entries.add(TOYMAKER_HAMMER);
                                 entries.add(ENERGY_UPGRADE_MODULE);
                                 entries.add(REGENERATION_MODULE);

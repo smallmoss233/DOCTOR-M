@@ -26,8 +26,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import javax.xml.transform.sax.SAXResult;
-
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {
 
@@ -205,7 +203,7 @@ public class LivingEntityMixin {
     // ========== STCS 剑封锁 ==========
 
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
-    private void doctor_m$stcsBlock(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+    private void doctor_m$sarBlock(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (SAR_BLOCK_LOCK.get()) return;
         if (SAR_AOE_LOCK.get()) return;
 
@@ -238,7 +236,7 @@ public class LivingEntityMixin {
 
         float costPerDamage = sarItem.getEnergyCostPerDamage();
         int energyCost = (int) Math.ceil(amount * costPerDamage);
-        energyCost = Math.max(config().stcsMinEnergyCost, energyCost);
+        energyCost = Math.max(config().sarMinEnergyCost, energyCost);
 
         int energy = sarItem.getEnergy(stcsStack);
         if (energy < energyCost) return;
@@ -249,7 +247,7 @@ public class LivingEntityMixin {
         reduction = Math.max(0f, Math.min(1f, reduction));
 
         if (reduction >= 0.8f) {
-            spawnStcsBlockEffect(player);
+            spawnSarBlockEffect(player);
         }
 
         if (reduction >= 1.0f) {
@@ -275,7 +273,7 @@ public class LivingEntityMixin {
         cir.setReturnValue(false);
     }
 
-    private static void spawnStcsBlockEffect(ServerPlayerEntity player) {
+    private static void spawnSarBlockEffect(ServerPlayerEntity player) {
         ServerWorld world = player.getServerWorld();
         world.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.PLAYERS, 1.0f, 1.0f);
@@ -289,18 +287,18 @@ public class LivingEntityMixin {
 
     // ========== STCS 范围伤害共享（AoE） ==========
 
-    private static boolean isHoldingSTCS(PlayerEntity player) {
+    private static boolean isHoldingSAR(PlayerEntity player) {
         return player.getMainHandStack().getItem() instanceof SAR
                 || player.getOffHandStack().getItem() instanceof SAR;
     }
 
-    private static void applyStcsAoE(LivingEntity victim, LivingEntity attacker, float amount) {
+    private static void applySarAoE(LivingEntity victim, LivingEntity attacker, float amount) {
         if (SAR_AOE_LOCK.get()) return;
         if (!(victim.getWorld() instanceof ServerWorld world)) return;
 
         SAR_AOE_LOCK.set(true);
         try {
-            double radius = config().stcsAoeRadius;
+            double radius = config().sarAoeRadius;
             double radiusSq = radius * radius;
             Box aoeBox = new Box(victim.getPos(), victim.getPos()).expand(radius);
 
@@ -321,14 +319,14 @@ public class LivingEntityMixin {
     }
 
     @Inject(method = "damage", at = @At("RETURN"))
-    private void doctor_m$stcsAoE(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+    private void doctor_m$sarAoE(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (!cir.getReturnValue()) return;
         if (SAR_AOE_LOCK.get()) return;
 
         LivingEntity self = (LivingEntity) (Object) this;
         if (!(source.getAttacker() instanceof PlayerEntity player)) return;
-        if (!isHoldingSTCS(player)) return;
+        if (!isHoldingSAR(player)) return;
 
-        applyStcsAoE(self, player, amount);
+        applySarAoE(self, player, amount);
     }
 }

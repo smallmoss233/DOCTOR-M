@@ -53,7 +53,7 @@ public class DOCTORM implements ModInitializer {
         DeMatGunNetwork.registerServerReceiver();
         TitleNetwork.register();
         UpdateObeliskPacket.registerServerReceiver();
-        STCSNetworking.register();
+        SARNetworking.register();
 
         //事件与处理器
         ShieldDamageHandler.register();
