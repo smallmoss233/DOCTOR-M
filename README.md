@@ -38,7 +38,7 @@ DOCTOR M supports some additional mods. At the same time, DOCTOR M’s custom in
 
 * [**Create**](https://modrinth.com/mod/create-fabric) – Some interiors require blocks from this mod.
 
-* [**Tough as nails**](https://modrinth.com/mod/tough-as-nails) - AIT's spacesuit will provide warmth.
+* [**Tough as Nails**](https://modrinth.com/mod/tough-as-nails) - AIT dimensions (Moon, Mars, Space) are registered as icy biomes. The spacesuit provides warmth, making these dimensions survivable.
 
 * [**Mod Menu**](https://modrinth.com/mod/modmenu) - Why did I even write this here...
 

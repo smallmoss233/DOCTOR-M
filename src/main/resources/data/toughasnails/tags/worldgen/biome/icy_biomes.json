@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "ait:mars_biome",
+    "ait:moon_biome",
+    "ait:space"
+  ]
+}
