@@ -29,7 +29,8 @@ public class AstralMapBlockMixin {
             method = "handleStructureRequest",
             at = @At("HEAD"),
             cancellable = true,
-            remap = false
+            remap = false,
+            require = 0
     )
 
     private static void onHandleStructureRequest(ServerPlayerEntity player, Identifier target, CallbackInfo ci) {

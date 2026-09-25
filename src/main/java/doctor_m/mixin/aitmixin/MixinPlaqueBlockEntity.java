@@ -15,25 +15,57 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PlaqueBlockEntity.class)
 public abstract class MixinPlaqueBlockEntity {
 
-    @Inject(method = "getPlaqueText", at = @At("HEAD"), cancellable = true)
-    private void overridePlaqueText(CallbackInfoReturnable<Text> cir) {
+    // 新版：getPlaqueText() 返回 Text
+    @Inject(
+            method = "getPlaqueText()Lnet/minecraft/text/Text;",
+            at = @At("HEAD"),
+            cancellable = true,
+            require = 0,
+            expect = 0
+    )
+    private void doctor_m$overridePlaqueText_Text(CallbackInfoReturnable<Text> cir) {
+        Text result = doctor_m$computeOverride();
+        if (result != null) {
+            cir.setReturnValue(result);
+        }
+    }
+
+    // 旧版：getPlaqueText() 返回 String
+    @Inject(
+            method = "getPlaqueText()Ljava/lang/String;",
+            at = @At("HEAD"),
+            cancellable = true,
+            require = 0,
+            expect = 0
+    )
+    private void doctor_m$overridePlaqueText_String(CallbackInfoReturnable<String> cir) {
+        Text result = doctor_m$computeOverride();
+        if (result != null) {
+            cir.setReturnValue(result.getString());
+        }
+    }
+
+    /**
+     * 共享取值逻辑。返回 null 表示不干预，交回原版。
+     */
+    private Text doctor_m$computeOverride() {
         PlaqueBlockEntity self = (PlaqueBlockEntity) (Object) this;
         TardisRef ref = self.tardis();
-
-        if (ref == null) return;
+        if (ref == null) return null;
 
         Tardis tardis = ref.get();
-        if (tardis == null) return;
+        if (tardis == null) return null;
 
         TardisDesktop desktop = tardis.getDesktop();
-        if (desktop == null) return;
+        if (desktop == null) return null;
 
         Identifier desktopId = desktop.getSchema().id();
-        if (desktopId == null) return;
+        if (desktopId == null) return null;
 
         String modelType = TardisTypeMapper.getTypeForDesktop(desktopId);
         if (modelType != null && !modelType.isEmpty()) {
-            cir.setReturnValue(Text.literal(modelType));
+            return Text.literal(modelType);
         }
+        return null;
     }
 }
