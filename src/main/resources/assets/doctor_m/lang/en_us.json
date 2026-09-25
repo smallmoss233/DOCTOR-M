@@ -129,8 +129,6 @@
   "gui.doctor_m.config.toymakerHammerSpawnOffsetBlocks": "Toymaker Hammer - Spawn Offset (blocks)",
   "gui.doctor_m.config.toymakerHammerReachDistance": "Toymaker Hammer - Reach Distance",
   "gui.doctor_m.config.toymakerHammerBlockUpdateFlags": "Toymaker Hammer - Block Update Flags",
-  "gui.doctor_m.config.toymakerHammerCopyEntities": "Toymaker Hammer - Copy Entities",
-  "gui.doctor_m.config.toymakerHammerCopyBlockEntities": "Toymaker Hammer - Copy Block Entities",
   "gui.doctor_m.config.tracerScanRange": "Tracer - Auto Scan Range",
   "gui.doctor_m.config.tracerContainerScanRange": "Tracer - Container Scan Range",
   "gui.doctor_m.config.vortexManipulatorMaxFuel": "Vortex Manipulator - Max Fuel",

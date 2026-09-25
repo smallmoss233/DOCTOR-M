@@ -129,8 +129,6 @@
   "gui.doctor_m.config.toymakerHammerSpawnOffsetBlocks": "玩具匠锤子 - 生成偏移 (格)",
   "gui.doctor_m.config.toymakerHammerReachDistance": "玩具匠锤子 - 触及距离",
   "gui.doctor_m.config.toymakerHammerBlockUpdateFlags": "玩具匠锤子 - 方块更新 flags",
-  "gui.doctor_m.config.toymakerHammerCopyEntities": "玩具匠锤子 - 复制实体",
-  "gui.doctor_m.config.toymakerHammerCopyBlockEntities": "玩具匠锤子 - 复制方块实体",
   "gui.doctor_m.config.tracerScanRange": "追踪器 - 自动扫描半径",
   "gui.doctor_m.config.tracerContainerScanRange": "追踪器 - 右键扫描半径",
   "gui.doctor_m.config.vortexManipulatorMaxFuel": "涡旋操纵器 - 最大燃料",

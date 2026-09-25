@@ -99,8 +99,6 @@ public class ModConfig {
     public int toymakerHammerSpawnOffsetBlocks = 2;
     public double toymakerHammerReachDistance = 5.0;
     public int toymakerHammerBlockUpdateFlags = 2 | 16;
-    public boolean toymakerHammerCopyEntities = true;
-    public boolean toymakerHammerCopyBlockEntities = true;
 
     //追踪器
     public double tracerScanRange = 45.0;      // 手持自动扫描半径（格）

@@ -17,6 +17,8 @@ import dev.amble.ait.data.schema.exterior.ExteriorVariantSchema;
 import dev.amble.ait.registry.impl.DesktopRegistry;
 import dev.amble.ait.registry.impl.exterior.ExteriorVariantRegistry;
 import dev.amble.lib.data.CachedDirectedGlobalPos;
+import doctor_m.config.ConfigManager;
+import doctor_m.config.ModConfig;
 import mosslib.util.tooltip.ShiftTooltipInvoker;
 import mosslib.util.tooltip.TooltipHelper;
 import net.minecraft.block.BlockState;
@@ -51,13 +53,17 @@ import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.UUID;
 
 public class ToymakerHammerItem extends Item {
 
     private static final int MIN_CHARGE_TICKS = 40;
-    private static final int COPY_CHUNK_RADIUS = 20; // 320 格范围
+
+    private static ModConfig config() {
+        return ConfigManager.getConfig();
+    }
 
     public ToymakerHammerItem(Settings settings) {
         super(settings.maxCount(1));
@@ -96,12 +102,12 @@ public class ToymakerHammerItem extends Item {
         int chargeTicks = this.getMaxUseTime(stack) - remainingUseTicks;
 
         if (chargeTicks < MIN_CHARGE_TICKS) {
-            // 蓄力时间不足，静默取消
             return;
         }
 
+        double reachDist = config().toymakerHammerReachDistance;
         Vec3d eyePos = player.getEyePos();
-        Vec3d reachPos = eyePos.add(player.getRotationVec(1.0F).multiply(5.0));
+        Vec3d reachPos = eyePos.add(player.getRotationVec(1.0F).multiply(reachDist));
         BlockHitResult hit = world.raycast(new RaycastContext(
                 eyePos, reachPos,
                 RaycastContext.ShapeType.OUTLINE,
@@ -110,7 +116,6 @@ public class ToymakerHammerItem extends Item {
         ));
 
         if (hit.getType() != HitResult.Type.BLOCK) {
-            // 未命中方块，静默取消
             return;
         }
 
@@ -122,13 +127,11 @@ public class ToymakerHammerItem extends Item {
         }
 
         if (exterior.tardis().isEmpty()) {
-            // 外壳未绑定，静默取消
             return;
         }
 
         Tardis source = exterior.tardis().get();
         if (!(source instanceof ServerTardis sourceServer)) {
-            // 非服务端 Tardis，静默取消
             return;
         }
 
@@ -139,10 +142,11 @@ public class ToymakerHammerItem extends Item {
         }
         horizontalLook = horizontalLook.normalize();
 
+        int offsetBlocks = config().toymakerHammerSpawnOffsetBlocks;
         BlockPos spawnPos = targetPos.add(
-                (int) Math.round(horizontalLook.x * 2),
+                (int) Math.round(horizontalLook.x * offsetBlocks),
                 0,
-                (int) Math.round(horizontalLook.z * 2)
+                (int) Math.round(horizontalLook.z * offsetBlocks)
         );
 
         byte sourceRotation = (byte) (int) world.getBlockState(targetPos).get(ExteriorBlock.ROTATION);
@@ -181,6 +185,12 @@ public class ToymakerHammerItem extends Item {
 
             // ===== 步骤5：强制设置新的外部位置 =====
             CachedDirectedGlobalPos newPos = CachedDirectedGlobalPos.create(world, spawnPos, rotation);
+
+            // ★ 精准修复：Gson 反序列化后 ProgressiveTravelHandler.missedHardCap 是普通 int 字段，
+            //   默认值 0。forceDestination → recalculate 里做 missedEvents / prevCap
+            //   会直接整数除零崩溃。调用前必须兜底成非 0。
+            sanitizeProgressiveTravelFields(clone.travel());
+
             clone.travel().forcePosition(newPos);
             clone.travel().forceDestination(newPos);
 
@@ -219,6 +229,60 @@ public class ToymakerHammerItem extends Item {
         }
     }
 
+    /**
+     * 反射修复 ProgressiveTravelHandler 上的普通 int 字段。
+     * Gson 反序列化不会给这些字段赋初值，全部保持 Java 默认 0，
+     * 但 recalculate() 里它们会作为除数参与整数除法：
+     *   this.missedEvents = MathHelper.floor((float)(this.missedEvents / prevCap * this.missedHardCap));
+     * prevCap = missedHardCap，为 0 时整数除法直接抛 ArithmeticException。
+     */
+    private static void sanitizeProgressiveTravelFields(Object travelHandler) {
+        if (travelHandler == null) return;
+
+        // missedHardCap 作为除数，必须 > 0
+        try {
+            Field capField = findField(travelHandler.getClass(), "missedHardCap");
+            if (capField != null) {
+                capField.setAccessible(true);
+                int cap = capField.getInt(travelHandler);
+                if (cap <= 0) {
+                    capField.setInt(travelHandler, 1);
+                    AITMod.LOGGER.warn("[DOCTOR-M] missedHardCap was {}, forced to 1", cap);
+                }
+            } else {
+                AITMod.LOGGER.warn("[DOCTOR-M] missedHardCap field not found on {}",
+                        travelHandler.getClass().getName());
+            }
+        } catch (Exception e) {
+            AITMod.LOGGER.warn("[DOCTOR-M] Failed to fix missedHardCap: {}", e.getMessage());
+        }
+
+        // missedEvents 作为被除数，负数无意义，顺手规范化
+        try {
+            Field evtField = findField(travelHandler.getClass(), "missedEvents");
+            if (evtField != null) {
+                evtField.setAccessible(true);
+                int evt = evtField.getInt(travelHandler);
+                if (evt < 0) {
+                    evtField.setInt(travelHandler, 0);
+                }
+            }
+        } catch (Exception e) {
+            AITMod.LOGGER.warn("[DOCTOR-M] Failed to fix missedEvents: {}", e.getMessage());
+        }
+    }
+
+    private static Field findField(Class<?> clazz, String name) {
+        while (clazz != null) {
+            try {
+                return clazz.getDeclaredField(name);
+            } catch (NoSuchFieldException e) {
+                clazz = clazz.getSuperclass();
+            }
+        }
+        return null;
+    }
+
     private void copyInteriorDimension(ServerTardis source, ServerTardis clone, ServerPlayerEntity player) {
         ServerWorld srcWorld = source.world();
         ServerWorld dstWorld = clone.world();
@@ -227,9 +291,11 @@ public class ToymakerHammerItem extends Item {
         int copiedBlockEntities = 0;
         int copiedEntities = 0;
 
-        for (int cx = -COPY_CHUNK_RADIUS; cx <= COPY_CHUNK_RADIUS; cx++) {
-            for (int cz = -COPY_CHUNK_RADIUS; cz <= COPY_CHUNK_RADIUS; cz++) {
-                // 关键修复：getChunk 强制加载，而不是 getChunkManager().getChunk(..., false)
+        int chunkRadius = config().toymakerHammerCopyChunkRadius;
+        int blockUpdateFlags = config().toymakerHammerBlockUpdateFlags;
+
+        for (int cx = -chunkRadius; cx <= chunkRadius; cx++) {
+            for (int cz = -chunkRadius; cz <= chunkRadius; cz++) {
                 Chunk srcChunkRaw;
                 try {
                     srcChunkRaw = srcWorld.getChunk(cx, cz);
@@ -239,7 +305,6 @@ public class ToymakerHammerItem extends Item {
 
                 if (!(srcChunkRaw instanceof WorldChunk srcChunk)) continue;
 
-                // 跳过全空 chunk
                 boolean hasBlocks = false;
                 ChunkSection[] srcSections = srcChunk.getSectionArray();
                 for (ChunkSection section : srcSections) {
@@ -250,7 +315,6 @@ public class ToymakerHammerItem extends Item {
                 }
                 if (!hasBlocks) continue;
 
-                // 确保目标 chunk 存在
                 Chunk dstChunkRaw = dstWorld.getChunk(cx, cz);
                 if (!(dstChunkRaw instanceof WorldChunk)) continue;
 
@@ -272,8 +336,9 @@ public class ToymakerHammerItem extends Item {
                                 if (state.getBlock() instanceof ExteriorBlock) continue;
 
                                 BlockPos pos = new BlockPos(baseX + x, sectionBaseY + y, baseZ + z);
-                                dstWorld.setBlockState(pos, state, 2 | 16);
+                                dstWorld.setBlockState(pos, state, blockUpdateFlags);
 
+                                // 方块实体：固定复制
                                 BlockEntity srcBe = srcWorld.getBlockEntity(pos);
                                 if (srcBe != null) {
                                     NbtCompound nbt = srcBe.createNbtWithIdentifyingData();
@@ -294,10 +359,10 @@ public class ToymakerHammerItem extends Item {
             }
         }
 
-        // 实体搜索范围同步扩大到 384×384
+        int searchRadius = chunkRadius * 16;
         Box searchBox = new Box(
-                -384, dstWorld.getBottomY(), -384,
-                384, dstWorld.getTopY(), 384
+                -searchRadius, dstWorld.getBottomY(), -searchRadius,
+                searchRadius, dstWorld.getTopY(), searchRadius
         );
 
         for (Entity entity : srcWorld.getEntitiesByClass(Entity.class, searchBox,
