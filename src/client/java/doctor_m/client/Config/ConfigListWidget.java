@@ -19,6 +19,11 @@ public class ConfigListWidget extends ElementListWidget<ConfigEntry> {
         return Math.min(360, this.width - 40);
     }
 
+    /** 外部清空列表用（clearEntries 是 protected，外部包无法直接调用） */
+    public void clearAllEntries() {
+        super.clearEntries();
+    }
+
     /** ★ 强制滚动条贴最右侧。方法名是 getScrollbarPositionX（1.20.1 映射）。 */
     @Override
     protected int getScrollbarPositionX() {

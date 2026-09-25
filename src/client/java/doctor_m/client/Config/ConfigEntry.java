@@ -1,5 +1,6 @@
 package doctor_m.client.Config;
 
+import doctor_m.config.ConfigGroups;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
@@ -20,15 +21,41 @@ import java.util.function.DoubleConsumer;
 
 public abstract class ConfigEntry extends ElementListWidget.Entry<ConfigEntry> {
 
+    // ---- 颜色常量 ----
+    protected static final int COLOR_MODIFIED_BAR = 0xFFFFAA33;   // 修改指示条：橙黄
+    protected static final int COLOR_ROW_ODD      = 0x1CFFFFFF;   // 偶数行背景
+    protected static final int COLOR_ROW_EVEN     = 0x10FFFFFF;   // 奇数行背景
+    protected static final int COLOR_ROW_HOVER    = 0x38FFFFFF;   // 悬停背景
+    protected static final int COLOR_HEADER_BG    = 0x30FFAA33;   // 分组标题背景
+    protected static final int COLOR_HEADER_BAR   = 0xFFFFAA33;   // 分组标题左侧条
+    protected static final int COLOR_HEADER_TEXT  = 0xFFFFE0A0;   // 分组标题文字
+
     protected final String fieldName;
     protected final String nameKey;
     protected final String nameFallback;
+    protected final String category;
     protected final List<ClickableWidget> widgets = new ArrayList<>();
 
-    protected ConfigEntry(String fieldName, String nameFallback) {
+    protected ConfigEntry(String fieldName, String nameFallback, String category) {
         this.fieldName = fieldName;
         this.nameKey = "gui.doctor_m.config." + fieldName;
         this.nameFallback = nameFallback;
+        this.category = category;
+    }
+
+    public String getCategory() { return category; }
+
+    public String getDisplayName() {
+        if (isTranslated()) return I18n.translate(nameKey);
+        return nameFallback;
+    }
+
+    public abstract boolean isModified();
+
+    public abstract void resetToDefault();
+
+    public boolean handleScroll(double mouseX, double mouseY, double amount) {
+        return false;
     }
 
     @Override
@@ -49,15 +76,26 @@ public abstract class ConfigEntry extends ElementListWidget.Entry<ConfigEntry> {
         return Text.literal(nameFallback + " ⚠").formatted(Formatting.YELLOW);
     }
 
-    public abstract void resetToDefault();
+    protected void drawRowBackground(DrawContext ctx, int x, int y, int width, int height,
+                                     int index, boolean hovered, boolean modified) {
+        int padX = 8;
+        int padY = 1;
+        int x0 = x - padX;
+        int x1 = x + width + padX;
+        int y0 = y - padY;
+        int y1 = y + height + padY;
 
-    protected void drawRowBackground(DrawContext ctx, int x, int y,
-                                     int width, int height,
-                                     int index, boolean hovered) {
-        if (hovered) {
-            ctx.fill(x - 6, y - 2, x + width + 6, y + height + 2, 0x30FFFFFF);
-        } else if (index % 2 == 0) {
-            ctx.fill(x - 6, y - 2, x + width + 6, y + height + 2, 0x18FFFFFF);
+        int bg = hovered
+                ? COLOR_ROW_HOVER
+                : (index % 2 == 0 ? COLOR_ROW_ODD : COLOR_ROW_EVEN);
+        ctx.fill(x0, y0, x1, y1, bg);
+
+        // 顶部极淡高光，卡片边缘感
+        ctx.fill(x0, y0, x1, y0 + 1, 0x10FFFFFF);
+
+        // 修改过的项左侧橙条
+        if (modified) {
+            ctx.fill(x0, y0, x0 + 3, y1, COLOR_MODIFIED_BAR);
         }
     }
 
@@ -66,11 +104,57 @@ public abstract class ConfigEntry extends ElementListWidget.Entry<ConfigEntry> {
                 label(), x, y + 6, 0xFFFFFF);
     }
 
+    /** 重置按钮：使用更清晰的字符，并给 tooltip。 */
     protected static ButtonWidget createResetButton(Runnable onClick) {
-        return ButtonWidget.builder(Text.literal("↻"), b -> onClick.run())
+        return ButtonWidget.builder(Text.literal("↺"), b -> onClick.run())
                 .dimensions(0, 0, 20, 20)
                 .tooltip(Tooltip.of(Text.translatable("gui.doctor_m.config.reset.tooltip")))
                 .build();
+    }
+
+    // ================================================================
+    // 分组标题（不可交互）
+    // ================================================================
+    public static class HeaderEntry extends ConfigEntry {
+        private static final String SEP = "____header____";
+
+        public HeaderEntry(String categoryId) {
+            super(SEP + categoryId, categoryId, categoryId);
+        }
+
+        @Override public boolean isModified() { return false; }
+        @Override public void resetToDefault() {}
+
+        private Text displayText() {
+            String key = ConfigGroups.LANG_PREFIX + category;
+            String translated = I18n.translate(key);
+            if (translated.equals(key)) {
+                return Text.literal(category).formatted(Formatting.YELLOW);
+            }
+            return Text.literal(translated);
+        }
+
+        @Override
+        public void render(DrawContext ctx, int index, int y, int x,
+                           int entryWidth, int entryHeight,
+                           int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            int padX = 8;
+            int x0 = x - padX;
+            int x1 = x + entryWidth + padX;
+            int y0 = y - 1;
+            int y1 = y + entryHeight + 1;
+
+            // 分组标题背景色块
+            ctx.fill(x0, y0, x1, y1, COLOR_HEADER_BG);
+
+            // 左侧加粗橙条（视觉上明显区分于字段行）
+            ctx.fill(x0, y0, x0 + 4, y1, COLOR_HEADER_BAR);
+
+            // 标题文字（加粗橙黄色）
+            ctx.drawTextWithShadow(MinecraftClient.getInstance().textRenderer,
+                    displayText().copy().formatted(Formatting.BOLD),
+                    x + 2, y + (entryHeight - 8) / 2, COLOR_HEADER_TEXT);
+        }
     }
 
     // ================================================================
@@ -83,10 +167,10 @@ public abstract class ConfigEntry extends ElementListWidget.Entry<ConfigEntry> {
         private final ButtonWidget resetButton;
         private final Consumer<Boolean> setter;
 
-        public BoolEntry(String fieldName, String nameFallback,
+        public BoolEntry(String fieldName, String nameFallback, String category,
                          boolean currentValue, boolean defaultValue,
                          Consumer<Boolean> setter) {
-            super(fieldName, nameFallback);
+            super(fieldName, nameFallback, category);
             this.defaultValue = defaultValue;
             this.value = currentValue;
             this.setter = setter;
@@ -109,6 +193,8 @@ public abstract class ConfigEntry extends ElementListWidget.Entry<ConfigEntry> {
                     : Text.translatable("gui.doctor_m.config.value.off").formatted(Formatting.RED);
         }
 
+        @Override public boolean isModified() { return value != defaultValue; }
+
         @Override
         public void resetToDefault() {
             if (this.value != this.defaultValue) {
@@ -122,10 +208,9 @@ public abstract class ConfigEntry extends ElementListWidget.Entry<ConfigEntry> {
         public void render(DrawContext ctx, int index, int y, int x,
                            int entryWidth, int entryHeight,
                            int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            drawRowBackground(ctx, x, y, entryWidth, entryHeight, index, hovered);
+            drawRowBackground(ctx, x, y, entryWidth, entryHeight, index, hovered, isModified());
             drawLabel(ctx, x, y);
 
-            // 行内布局：[label ...] [开关][重置]
             resetButton.setPosition(x + entryWidth - 24, y);
             button.setPosition(x + entryWidth - 108, y);
 
@@ -145,11 +230,11 @@ public abstract class ConfigEntry extends ElementListWidget.Entry<ConfigEntry> {
         private final boolean integer;
         private final DoubleConsumer setter;
 
-        public NumberEntry(String fieldName, String nameFallback,
+        public NumberEntry(String fieldName, String nameFallback, String category,
                            double currentValue, double defaultValue,
                            double min, double max, double step,
                            boolean integer, DoubleConsumer setter) {
-            super(fieldName, nameFallback);
+            super(fieldName, nameFallback, category);
             this.defaultValue = defaultValue;
             this.value = currentValue;
             this.min = min;
@@ -161,7 +246,12 @@ public abstract class ConfigEntry extends ElementListWidget.Entry<ConfigEntry> {
             this.left = ButtonWidget.builder(Text.literal("◀"), b -> adjust(-step))
                     .dimensions(0, 0, 20, 20).build();
             this.display = ButtonWidget.builder(valueText(), b -> {})
-                    .dimensions(0, 0, 80, 20).build();
+                    .dimensions(0, 0, 80, 20)
+                    .tooltip(Tooltip.of(Text.literal(
+                            fieldName + "\n"
+                                    + "min=" + fmt(min) + "  max=" + fmt(max) + "  step=" + fmt(step)
+                                    + "\n" + I18n.translate("gui.doctor_m.config.scroll_hint"))))
+                    .build();
             this.right = ButtonWidget.builder(Text.literal("▶"), b -> adjust(step))
                     .dimensions(0, 0, 20, 20).build();
             this.resetButton = createResetButton(this::resetToDefault);
@@ -172,11 +262,14 @@ public abstract class ConfigEntry extends ElementListWidget.Entry<ConfigEntry> {
             widgets.add(resetButton);
         }
 
+        private String fmt(double v) {
+            if (integer) return String.valueOf((long) v);
+            if (v == Math.floor(v) && Math.abs(v) < 1e9) return String.valueOf((long) v);
+            return String.format("%.2f", v);
+        }
+
         private Text valueText() {
-            String s = integer
-                    ? String.valueOf((long) value)
-                    : String.format("%.2f", value);
-            return Text.literal(s);
+            return Text.literal(fmt(value));
         }
 
         private void adjust(double rawDelta) {
@@ -200,8 +293,22 @@ public abstract class ConfigEntry extends ElementListWidget.Entry<ConfigEntry> {
         }
 
         @Override
+        public boolean isModified() {
+            return integer
+                    ? (long) value != (long) defaultValue
+                    : Math.abs(value - defaultValue) > 1e-9;
+        }
+
+        @Override
+        public boolean handleScroll(double mouseX, double mouseY, double amount) {
+            if (!display.isMouseOver(mouseX, mouseY)) return false;
+            adjust(amount > 0 ? step : -step);
+            return true;
+        }
+
+        @Override
         public void resetToDefault() {
-            if (this.value != this.defaultValue) {
+            if (isModified()) {
                 this.value = this.defaultValue;
                 this.display.setMessage(valueText());
                 this.setter.accept(this.value);
@@ -212,10 +319,9 @@ public abstract class ConfigEntry extends ElementListWidget.Entry<ConfigEntry> {
         public void render(DrawContext ctx, int index, int y, int x,
                            int entryWidth, int entryHeight,
                            int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            drawRowBackground(ctx, x, y, entryWidth, entryHeight, index, hovered);
+            drawRowBackground(ctx, x, y, entryWidth, entryHeight, index, hovered, isModified());
             drawLabel(ctx, x, y);
 
-            // 行内布局：[label ...] [◀][数值][▶][重置]
             int rightEdge = x + entryWidth;
             resetButton.setPosition(rightEdge - 24, y);
             right.setPosition(rightEdge - 48, y);

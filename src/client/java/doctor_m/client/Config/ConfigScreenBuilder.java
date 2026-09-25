@@ -1,5 +1,7 @@
 package doctor_m.client.Config;
 
+import doctor_m.config.ConfigGroup;
+import doctor_m.config.ConfigGroups;
 import doctor_m.config.ModConfig;
 import net.minecraft.client.gui.screen.Screen;
 
@@ -11,14 +13,18 @@ public class ConfigScreenBuilder {
     public static DOCTORMConfigScreen build(Screen parent, ModConfig config) {
         DOCTORMConfigScreen screen = new DOCTORMConfigScreen(parent);
 
-        // ★ 创建默认实例，作为"重置"目标
+        // 默认实例，作为"重置"目标
         ModConfig defaults = new ModConfig();
 
         for (Field field : ModConfig.class.getDeclaredFields()) {
             if (Modifier.isStatic(field.getModifiers())) continue;
             if (field.isSynthetic()) continue;
 
-            ConfigEntry entry = buildEntry(field, config, defaults);
+            // ★ 直接读注解，不再靠字段名前缀猜
+            ConfigGroup ann = field.getAnnotation(ConfigGroup.class);
+            String category = (ann != null) ? ann.value() : ConfigGroups.MISC;
+
+            ConfigEntry entry = buildEntry(field, config, defaults, category);
             if (entry != null) {
                 screen.addEntry(entry);
             }
@@ -27,7 +33,8 @@ public class ConfigScreenBuilder {
         return screen;
     }
 
-    private static ConfigEntry buildEntry(Field field, ModConfig config, ModConfig defaults) {
+    private static ConfigEntry buildEntry(Field field, ModConfig config,
+                                          ModConfig defaults, String category) {
         try {
             field.setAccessible(true);
             Object currentValue = field.get(config);
@@ -40,18 +47,18 @@ public class ConfigScreenBuilder {
 
             // 布尔
             if (type == boolean.class || type == Boolean.class) {
-                return new ConfigEntry.BoolEntry(fieldName, fallback,
+                return new ConfigEntry.BoolEntry(fieldName, fallback, category,
                         (boolean) currentValue, (boolean) defaultValue,
                         v -> write(field, config, v));
             }
 
-            // 整数
+            // 整数（含 long / short / byte）
             if (type == int.class || type == long.class
                     || type == short.class || type == byte.class) {
                 long cur = ((Number) currentValue).longValue();
                 long def = ((Number) defaultValue).longValue();
                 long step = pickIntStep(fieldName, cur);
-                return new ConfigEntry.NumberEntry(fieldName, fallback,
+                return new ConfigEntry.NumberEntry(fieldName, fallback, category,
                         cur, def, Long.MIN_VALUE / 4, Long.MAX_VALUE / 4, step, true,
                         d -> write(field, config, (long) d));
             }
@@ -61,7 +68,7 @@ public class ConfigScreenBuilder {
                 double cur = ((Number) currentValue).doubleValue();
                 double def = ((Number) defaultValue).doubleValue();
                 double step = pickDoubleStep(fieldName, cur);
-                return new ConfigEntry.NumberEntry(fieldName, fallback,
+                return new ConfigEntry.NumberEntry(fieldName, fallback, category,
                         cur, def, -1e9, 1e9, step, false,
                         d -> write(field, config, d));
             }
