@@ -84,9 +84,9 @@ public class ModConfig {
 
     //SAR
     @ConfigGroup(ConfigGroups.SAR)
-    public int stcsMinEnergyCost = 1;                                // 格挡最低能量消耗
+    public int sarMinEnergyCost = 1;                                // 格挡最低能量消耗
     @ConfigGroup(ConfigGroups.SAR)
-    public double stcsAoeRadius = 3.0;                               // SAR 范围伤害半径
+    public double sarAoeRadius = 3.0;                               // SAR 范围伤害半径
 
     //塔迪斯自毁
     @ConfigGroup(ConfigGroups.SELF_DESTRUCT)
