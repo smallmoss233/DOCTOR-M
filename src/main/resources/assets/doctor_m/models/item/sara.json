@@ -3,8 +3,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"1": "doctor_m:item/stca",
-		"particle": "doctor_m:item/stca"
+		"1": "doctor_m:item/sara",
+		"particle": "doctor_m:item/sara"
 	},
 	"elements": [
 		{

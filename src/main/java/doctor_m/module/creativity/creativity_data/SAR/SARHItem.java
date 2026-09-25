@@ -1,4 +1,4 @@
-package doctor_m.module.creativity.creativity_data.STCS;
+package doctor_m.module.creativity.creativity_data.SAR;
 
 import doctor_m.module.EmissiveItem;
 import doctor_m.util.creativity.DynamicColorHelper;
@@ -16,16 +16,16 @@ import net.minecraft.util.Rarity;
 import java.awt.*;
 import java.util.List;
 
-public class STCHItem extends STCS implements EmissiveItem {
+public class SARHItem extends SAR implements EmissiveItem {
 
-    public STCHItem() {
+    public SARHItem() {
         super(new Item.Settings().rarity(Rarity.EPIC),
-                "STC-07H",
+                "SAR-07H",
                 30f,
                 1.2f,
                 10000,
                 0.90f,
-                "message.doctor_m.stch.description");
+                "message.doctor_m.sarh.description");
     }
 
     @Override
@@ -37,20 +37,20 @@ public class STCHItem extends STCS implements EmissiveItem {
     public void onSkillPressed(ServerPlayerEntity player, ItemStack stack) {
         int cd = getSkillCooldown(stack);
         if (cd > 0) return;
-        if (getEnergy(stack) < STCH_SKILL_COST) {
-            player.sendMessage(Text.translatable("message.doctor_m.stcs.skill_low_energy")
+        if (getEnergy(stack) < SARH_SKILL_COST) {
+            player.sendMessage(Text.translatable("message.doctor_m.sar.skill_low_energy")
                     .formatted(Formatting.RED), true);
             return;
         }
 
-        setEnergy(stack, getEnergy(stack) - STCH_SKILL_COST);
+        setEnergy(stack, getEnergy(stack) - SARH_SKILL_COST);
 
-        var box = player.getBoundingBox().expand(STCH_SKILL_RADIUS);
+        var box = player.getBoundingBox().expand(SARH_SKILL_RADIUS);
         player.getServerWorld().getEntitiesByClass(LivingEntity.class, box, e -> e != player)
                 .forEach(entity -> {
                     entity.hurtTime = 0;
                     entity.timeUntilRegen = 0;
-                    entity.damage(player.getDamageSources().playerAttack(player), STCH_SKILL_DAMAGE);
+                    entity.damage(player.getDamageSources().playerAttack(player), SARH_SKILL_DAMAGE);
 
                     entity.getWorld().addParticle(
                             ParticleTypes.SWEEP_ATTACK,
@@ -64,8 +64,8 @@ public class STCHItem extends STCS implements EmissiveItem {
 
         for (int i = 0; i < 36; i++) {
             double angle = Math.toRadians(i * 10);
-            double x = player.getX() + Math.cos(angle) * STCH_SKILL_RADIUS;
-            double z = player.getZ() + Math.sin(angle) * STCH_SKILL_RADIUS;
+            double x = player.getX() + Math.cos(angle) * SARH_SKILL_RADIUS;
+            double z = player.getZ() + Math.sin(angle) * SARH_SKILL_RADIUS;
             player.getServerWorld().spawnParticles(
                     ParticleTypes.SWEEP_ATTACK,
                     x, player.getY() + 0.5, z,
@@ -75,7 +75,7 @@ public class STCHItem extends STCS implements EmissiveItem {
         player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS, 1.0f, 1.0f);
 
-        int finalCd = STCH_SKILL_COOLDOWN;
+        int finalCd = SARH_SKILL_COOLDOWN;
         if (isCoreActive(stack)) finalCd -= 40;
         setSkillCooldown(stack, finalCd);
     }

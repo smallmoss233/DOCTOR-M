@@ -1,4 +1,4 @@
-package doctor_m.module.creativity.creativity_data.STCS;
+package doctor_m.module.creativity.creativity_data.SAR;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class STCS extends Item implements EmissiveItem {
+public abstract class SAR extends Item implements EmissiveItem {
 
-    public static final String STCS_TAG = "STCS";
+    public static final String SAR_TAG = "SAR";
     public static final String ENERGY_KEY = "energy";
     public static final String MAX_ENERGY_BASE_KEY = "max_energy_base";
     public static final String CORE_ACTIVE_KEY = "core_active";
@@ -45,19 +45,19 @@ public abstract class STCS extends Item implements EmissiveItem {
     public static final int BLOCK_ENERGY_COST = 80;
     public static final int DEFAULT_CORE_COOLDOWN_SEC = 240;
 
-    public static final float STCH_SKILL_DAMAGE = 120f;
-    public static final double STCH_SKILL_RADIUS = 6.0;
-    public static final int STCH_SKILL_COST = 2000;
-    public static final int STCH_SKILL_COOLDOWN = 15 * 20;
+    public static final float SARH_SKILL_DAMAGE = 120f;
+    public static final double SARH_SKILL_RADIUS = 6.0;
+    public static final int SARH_SKILL_COST = 2000;
+    public static final int SARH_SKILL_COOLDOWN = 15 * 20;
 
-    public static final double STCA_SKILL_RADIUS = 8.0;
-    public static final float STCA_SKILL_DAMAGE = 12f;
-    public static final int STCA_SKILL_COST = 400;
-    public static final int STCA_SKILL_COOLDOWN = 20 * 20;
+    public static final double SARA_SKILL_RADIUS = 8.0;
+    public static final float SARA_SKILL_DAMAGE = 12f;
+    public static final int SARA_SKILL_COST = 400;
+    public static final int SARA_SKILL_COOLDOWN = 20 * 20;
 
-    public static final double STCL_SKILL_DASH = 6.0;
-    public static final int STCL_SKILL_COST = 200;
-    public static final int STCL_SKILL_COOLDOWN = 1 * 20;
+    public static final double SARL_SKILL_DASH = 6.0;
+    public static final int SARL_SKILL_COST = 200;
+    public static final int SARL_SKILL_COOLDOWN = 1 * 20;
 
     private static final UUID CORE_DAMAGE_UUID = UUID.fromString("11111111-1111-1111-1111-111111111111");
     private static final UUID CORE_SPEED_UUID = UUID.fromString("22222222-2222-2222-2222-222222222222");
@@ -69,7 +69,7 @@ public abstract class STCS extends Item implements EmissiveItem {
     protected final float blockDamageReduction;
     protected final String descriptionKey;
 
-    public STCS(Settings settings, String variantId, float baseDamage, float baseAttackSpeed,
+    public SAR(Settings settings, String variantId, float baseDamage, float baseAttackSpeed,
                     int maxEnergy, float blockDamageReduction, String descriptionKey) {
         super(settings.maxCount(1));
         this.variantId = variantId;
@@ -82,12 +82,12 @@ public abstract class STCS extends Item implements EmissiveItem {
 
     // ==================== NBT Management ====================
 
-    public NbtCompound getOrCreateSTCSNbt(ItemStack stack) {
+    public NbtCompound getOrCreateSARNbt(ItemStack stack) {
         NbtCompound root = stack.getOrCreateNbt();
-        if (!root.contains(STCS_TAG, NbtElement.COMPOUND_TYPE)) {
-            root.put(STCS_TAG, createDefaultNbt());
+        if (!root.contains(SAR_TAG, NbtElement.COMPOUND_TYPE)) {
+            root.put(SAR_TAG, createDefaultNbt());
         }
-        return root.getCompound(STCS_TAG);
+        return root.getCompound(SAR_TAG);
     }
 
     private NbtCompound createDefaultNbt() {
@@ -110,11 +110,11 @@ public abstract class STCS extends Item implements EmissiveItem {
     // ==================== Quick NBT Accessors ====================
 
     public int getEnergy(ItemStack stack) {
-        return getOrCreateSTCSNbt(stack).getInt(ENERGY_KEY);
+        return getOrCreateSARNbt(stack).getInt(ENERGY_KEY);
     }
 
     public void setEnergy(ItemStack stack, int value) {
-        getOrCreateSTCSNbt(stack).putInt(ENERGY_KEY, Math.min(Math.max(value, 0), getMaxEnergy(stack)));
+        getOrCreateSARNbt(stack).putInt(ENERGY_KEY, Math.min(Math.max(value, 0), getMaxEnergy(stack)));
     }
 
     public void addEnergy(ItemStack stack, int amount) {
@@ -122,7 +122,7 @@ public abstract class STCS extends Item implements EmissiveItem {
     }
 
     public int getMaxEnergy(ItemStack stack) {
-        return getOrCreateSTCSNbt(stack).getInt(MAX_ENERGY_BASE_KEY);
+        return getOrCreateSARNbt(stack).getInt(MAX_ENERGY_BASE_KEY);
     }
 
     public float getEnergyCostPerDamage() {
@@ -130,31 +130,31 @@ public abstract class STCS extends Item implements EmissiveItem {
     }
 
     public boolean isCoreActive(ItemStack stack) {
-        return getOrCreateSTCSNbt(stack).getBoolean(CORE_ACTIVE_KEY);
+        return getOrCreateSARNbt(stack).getBoolean(CORE_ACTIVE_KEY);
     }
 
     public void setCoreActive(ItemStack stack, boolean active) {
-        getOrCreateSTCSNbt(stack).putBoolean(CORE_ACTIVE_KEY, active);
+        getOrCreateSARNbt(stack).putBoolean(CORE_ACTIVE_KEY, active);
     }
 
     public int getCoreCooldown(ItemStack stack) {
-        return getOrCreateSTCSNbt(stack).getInt(CORE_COOLDOWN_KEY);
+        return getOrCreateSARNbt(stack).getInt(CORE_COOLDOWN_KEY);
     }
 
     public void setCoreCooldown(ItemStack stack, int ticks) {
-        getOrCreateSTCSNbt(stack).putInt(CORE_COOLDOWN_KEY, Math.max(ticks, 0));
+        getOrCreateSARNbt(stack).putInt(CORE_COOLDOWN_KEY, Math.max(ticks, 0));
     }
 
     public int getMaxCoreCooldownTicks(ItemStack stack) {
-        return getOrCreateSTCSNbt(stack).getInt(CORE_MAX_COOLDOWN_KEY);
+        return getOrCreateSARNbt(stack).getInt(CORE_MAX_COOLDOWN_KEY);
     }
 
     public int getSkillCooldown(ItemStack stack) {
-        return getOrCreateSTCSNbt(stack).getInt(SKILL_COOLDOWN_KEY);
+        return getOrCreateSARNbt(stack).getInt(SKILL_COOLDOWN_KEY);
     }
 
     public void setSkillCooldown(ItemStack stack, int ticks) {
-        getOrCreateSTCSNbt(stack).putInt(SKILL_COOLDOWN_KEY, Math.max(ticks, 0));
+        getOrCreateSARNbt(stack).putInt(SKILL_COOLDOWN_KEY, Math.max(ticks, 0));
     }
 
     public float getBlockDamageReduction() {
@@ -174,7 +174,7 @@ public abstract class STCS extends Item implements EmissiveItem {
                 EntityAttributes.GENERIC_ATTACK_DAMAGE,
                 new EntityAttributeModifier(
                         ATTACK_DAMAGE_MODIFIER_ID,
-                        "tooltip.name.doctor_m.stcs.weapon_modifier",
+                        "tooltip.name.doctor_m.sar.weapon_modifier",
                         baseDamage - 1.0f,
                         EntityAttributeModifier.Operation.ADDITION
                 )
@@ -183,7 +183,7 @@ public abstract class STCS extends Item implements EmissiveItem {
                 EntityAttributes.GENERIC_ATTACK_SPEED,
                 new EntityAttributeModifier(
                         ATTACK_SPEED_MODIFIER_ID,
-                        "tooltip.name.doctor_m.stcs.weapon_modifier",
+                        "tooltip.name.doctor_m.sar.weapon_modifier",
                         baseAttackSpeed - 4.0f,
                         EntityAttributeModifier.Operation.ADDITION
                 )
@@ -198,7 +198,7 @@ public abstract class STCS extends Item implements EmissiveItem {
         if (damageAttr != null && damageAttr.getModifier(CORE_DAMAGE_UUID) == null) {
             damageAttr.addPersistentModifier(new EntityAttributeModifier(
                     CORE_DAMAGE_UUID,
-                    "tooltip.name.doctor_m.stcs.core_damage",
+                    "tooltip.name.doctor_m.sar.core_damage",
                     6.0,
                     EntityAttributeModifier.Operation.ADDITION
             ));
@@ -207,7 +207,7 @@ public abstract class STCS extends Item implements EmissiveItem {
         if (speedAttr != null && speedAttr.getModifier(CORE_SPEED_UUID) == null) {
             speedAttr.addPersistentModifier(new EntityAttributeModifier(
                     CORE_SPEED_UUID,
-                    "tooltip.name.doctor_m.stcs.core_speed",
+                    "tooltip.name.doctor_m.sar.core_speed",
                     0.2,
                     EntityAttributeModifier.Operation.MULTIPLY_BASE
             ));
@@ -240,7 +240,7 @@ public abstract class STCS extends Item implements EmissiveItem {
         } else {
             int minEnergy = CORE_ENERGY_COST * 40;
             if (getEnergy(stack) < minEnergy) {
-                player.sendMessage(Text.translatable("message.doctor_m.stcs.core_low_energy")
+                player.sendMessage(Text.translatable("message.doctor_m.sar.core_low_energy")
                         .formatted(Formatting.RED), true);
                 return;
             }
@@ -317,27 +317,27 @@ public abstract class STCS extends Item implements EmissiveItem {
 
         Text coreText;
         if (isCoreActive(stack)) {
-            coreText = Text.translatable("message.doctor_m.stcs.core.active");
+            coreText = Text.translatable("message.doctor_m.sar.core.active");
         } else if (coreCd > 0) {
-            coreText = Text.translatable("message.doctor_m.stcs.core.cooldown", coreCd / 20);
+            coreText = Text.translatable("message.doctor_m.sar.core.cooldown", coreCd / 20);
         } else {
-            coreText = Text.translatable("message.doctor_m.stcs.core.ready");
+            coreText = Text.translatable("message.doctor_m.sar.core.ready");
         }
 
         Text skillText;
         if (skillCd > 0) {
-            skillText = Text.translatable("message.doctor_m.stcs.skill.cooldown", skillCd / 20);
+            skillText = Text.translatable("message.doctor_m.sar.skill.cooldown", skillCd / 20);
         } else {
-            skillText = Text.translatable("message.doctor_m.stcs.skill.ready");
+            skillText = Text.translatable("message.doctor_m.sar.skill.ready");
         }
 
-        Text blockText = isBlocking ? Text.translatable("message.doctor_m.stcs.blocking") : Text.literal("");
+        Text blockText = isBlocking ? Text.translatable("message.doctor_m.sar.blocking") : Text.literal("");
 
         Text message = Text.literal("")
-                .append(Text.translatable("message.doctor_m.stcs.prefix"))
+                .append(Text.translatable("message.doctor_m.sar.prefix"))
                 .append(Text.literal(variantId + " "))
                 .append(Text.literal(bar + " "))
-                .append(Text.translatable("message.doctor_m.stcs.energy_format", energy, maxE))
+                .append(Text.translatable("message.doctor_m.sar.energy_format", energy, maxE))
                 .append(Text.literal("  "))
                 .append(coreText)
                 .append(Text.literal("  "))
@@ -367,23 +367,23 @@ public abstract class STCS extends Item implements EmissiveItem {
 
     @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
-        tooltip.add(Text.translatable("tooltip.doctor_m.stcs.title", variantId));
+        tooltip.add(Text.translatable("tooltip.doctor_m.sar.title", variantId));
         tooltip.add(Text.literal(""));
         tooltip.add(Text.translatable(descriptionKey).formatted(Formatting.GRAY));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("tooltip.doctor_m.stcs.damage", (int) baseDamage));
-        tooltip.add(Text.translatable("tooltip.doctor_m.stcs.attack_speed", baseAttackSpeed));
-        tooltip.add(Text.translatable("tooltip.doctor_m.stcs.max_energy", maxEnergy));
-        tooltip.add(Text.translatable("tooltip.doctor_m.stcs.block_reduction", (int)(blockDamageReduction * 100)));
+        tooltip.add(Text.translatable("tooltip.doctor_m.sar.damage", (int) baseDamage));
+        tooltip.add(Text.translatable("tooltip.doctor_m.sar.attack_speed", baseAttackSpeed));
+        tooltip.add(Text.translatable("tooltip.doctor_m.sar.max_energy", maxEnergy));
+        tooltip.add(Text.translatable("tooltip.doctor_m.sar.block_reduction", (int)(blockDamageReduction * 100)));
 
-        NbtCompound modules = getOrCreateSTCSNbt(stack).getCompound(MODULES_KEY);
+        NbtCompound modules = getOrCreateSARNbt(stack).getCompound(MODULES_KEY);
         String kit = modules.getString(KIT_MODULE_KEY);
-        if (!kit.isEmpty()) tooltip.add(Text.translatable("tooltip.doctor_m.stcs.kit", kit));
+        if (!kit.isEmpty()) tooltip.add(Text.translatable("tooltip.doctor_m.sar.kit", kit));
         String special = modules.getString(SPECIAL_MODULE_KEY);
-        if (!special.isEmpty()) tooltip.add(Text.translatable("tooltip.doctor_m.stcs.special", special));
+        if (!special.isEmpty()) tooltip.add(Text.translatable("tooltip.doctor_m.sar.special", special));
 
         ShiftTooltipInvoker.addShiftTooltip(tooltip,
-                Text.translatable("message.doctor_m.stcs." + variantId.toLowerCase().replace("-", "_") + "_detail")
+                Text.translatable("message.doctor_m.sar." + variantId.toLowerCase().replace("-", "_") + "_detail")
         );
         tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
         super.appendTooltip(stack, world, tooltip, context);
@@ -392,23 +392,23 @@ public abstract class STCS extends Item implements EmissiveItem {
     // ==================== Module Interface ====================
 
     public String getKitModule(ItemStack stack) {
-        return getOrCreateSTCSNbt(stack).getCompound(MODULES_KEY).getString(KIT_MODULE_KEY);
+        return getOrCreateSARNbt(stack).getCompound(MODULES_KEY).getString(KIT_MODULE_KEY);
     }
 
     public void setKitModule(ItemStack stack, String id) {
-        getOrCreateSTCSNbt(stack).getCompound(MODULES_KEY).putString(KIT_MODULE_KEY, id);
+        getOrCreateSARNbt(stack).getCompound(MODULES_KEY).putString(KIT_MODULE_KEY, id);
     }
 
     public String getSpecialModule(ItemStack stack) {
-        return getOrCreateSTCSNbt(stack).getCompound(MODULES_KEY).getString(SPECIAL_MODULE_KEY);
+        return getOrCreateSARNbt(stack).getCompound(MODULES_KEY).getString(SPECIAL_MODULE_KEY);
     }
 
     public void setSpecialModule(ItemStack stack, String id) {
-        getOrCreateSTCSNbt(stack).getCompound(MODULES_KEY).putString(SPECIAL_MODULE_KEY, id);
+        getOrCreateSARNbt(stack).getCompound(MODULES_KEY).putString(SPECIAL_MODULE_KEY, id);
     }
 
     public List<String> getRegularModules(ItemStack stack) {
-        NbtList list = getOrCreateSTCSNbt(stack).getCompound(MODULES_KEY)
+        NbtList list = getOrCreateSARNbt(stack).getCompound(MODULES_KEY)
                 .getList(REGULAR_MODULES_KEY, NbtElement.STRING_TYPE);
         List<String> result = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
@@ -418,7 +418,7 @@ public abstract class STCS extends Item implements EmissiveItem {
     }
 
     public boolean addRegularModule(ItemStack stack, String id) {
-        NbtCompound modules = getOrCreateSTCSNbt(stack).getCompound(MODULES_KEY);
+        NbtCompound modules = getOrCreateSARNbt(stack).getCompound(MODULES_KEY);
         NbtList list = modules.getList(REGULAR_MODULES_KEY, NbtElement.STRING_TYPE);
         if (list.size() >= 4) return false;
         NbtList newList = new NbtList();

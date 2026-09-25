@@ -8,7 +8,7 @@ import doctor_m.block.data_block.EyeOfHarmonyObeliskBlock;
 import doctor_m.client.Accessory.AccessoryKeyRegistry;
 import doctor_m.client.Accessory.AccessoryPassiveButton;
 import doctor_m.client.Accessory.handler.KeytoTimeKeyHandler;
-import doctor_m.client.Accessory.handler.STCSKeyHandler;
+import doctor_m.client.Accessory.handler.SARKeyHandler;
 import doctor_m.client.module.ToyotaSpinningRotor.ToyotaSpinningRotorRenderer;
 import doctor_m.client.render.Shield.ForceFieldClientRenderer;
 import doctor_m.client.render.Shield.ShieldNetworkingClient;
@@ -33,7 +33,6 @@ import doctor_m.network.INVERTSCREENPACKETNetwork;
 import doctor_m.util.VMClientScreenOpener;
 import mosslib.client.bedrock.block.MossBedrockReloader;
 import mosslib.client.bedrock.block.MossBedrockRenderer;
-import mosslib.client.bedrock.entity.MossBedrockEntityRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -110,7 +109,7 @@ public class DOCTORMClient implements ClientModInitializer {
 
     private void registerKeybinds() {
         AccessoryPassiveButton.register();
-        AccessoryKeyRegistry.register(new STCSKeyHandler());
+        AccessoryKeyRegistry.register(new SARKeyHandler());
         AccessoryKeyRegistry.register(new KeytoTimeKeyHandler());
     }
 

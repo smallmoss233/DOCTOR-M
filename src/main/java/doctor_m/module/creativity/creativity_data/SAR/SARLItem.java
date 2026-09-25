@@ -1,4 +1,4 @@
-package doctor_m.module.creativity.creativity_data.STCS;
+package doctor_m.module.creativity.creativity_data.SAR;
 
 import doctor_m.module.EmissiveItem;
 import doctor_m.network.INVERTSCREENPACKETNetwork;
@@ -19,16 +19,16 @@ import net.minecraft.world.RaycastContext;
 import java.awt.*;
 import java.util.List;
 
-public class STCLItem extends STCS implements EmissiveItem {
+public class SARLItem extends SAR implements EmissiveItem {
 
-    public STCLItem() {
+    public SARLItem() {
         super(new Item.Settings().rarity(Rarity.EPIC),
-                "STC-09L",
+                "SAR-09L",
                 20f,
                 2.8f,
                 10000,
                 0.80f,
-                "message.doctor_m.stcl.description");
+                "message.doctor_m.sarl.description");
     }
 
     @Override
@@ -40,17 +40,17 @@ public class STCLItem extends STCS implements EmissiveItem {
     public void onSkillPressed(ServerPlayerEntity player, ItemStack stack) {
         int cd = getSkillCooldown(stack);
         if (cd > 0) return;
-        if (getEnergy(stack) < STCL_SKILL_COST) {
-            player.sendMessage(Text.translatable("message.doctor_m.stcs.skill_low_energy")
+        if (getEnergy(stack) < SARL_SKILL_COST) {
+            player.sendMessage(Text.translatable("message.doctor_m.sar.skill_low_energy")
                     .formatted(Formatting.RED), true);
             return;
         }
 
-        setEnergy(stack, getEnergy(stack) - STCL_SKILL_COST);
+        setEnergy(stack, getEnergy(stack) - SARL_SKILL_COST);
 
         Vec3d eyePos = player.getPos().add(0.0, player.getStandingEyeHeight(), 0.0);
         Vec3d look = player.getRotationVec(1.0f);
-        Vec3d end = eyePos.add(look.multiply(STCL_SKILL_DASH));
+        Vec3d end = eyePos.add(look.multiply(SARL_SKILL_DASH));
 
         var result = player.getWorld().raycast(new RaycastContext(
                 eyePos, end,
@@ -102,7 +102,7 @@ public class STCLItem extends STCS implements EmissiveItem {
         player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0f, 1.0f);
 
-        int finalCd = STCL_SKILL_COOLDOWN;
+        int finalCd = SARL_SKILL_COOLDOWN;
         if (isCoreActive(stack)) finalCd -= 20;
         finalCd = Math.max(finalCd, 0);
         setSkillCooldown(stack, finalCd);
