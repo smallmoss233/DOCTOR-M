@@ -42,6 +42,22 @@ public class TardisUtilMixin {
     private static void doctor_m$stpTeleportWithDoorOffset(
             ServerWorld world, Entity entity, DirectedBlockPos directed, CallbackInfo ci) {
 
+        // ★ 关键修复：world 可能为 null（TARDIS 未落地 / 外部维度未加载）
+        //   如果这里不拦截，原版方法一样会 NPE，所以必须 cancel 防止崩服。
+        if (world == null) {
+            STP.LOGGER.warn("[DOCTOR-M] STP: target world is null for entity {}, cancelling teleport",
+                    entity != null ? entity.getName().getString() : "null");
+            ci.cancel();
+            return;
+        }
+
+        // ★ directed 也可能为 null（防御性检查）
+        if (directed == null || directed.getPos() == null) {
+            STP.LOGGER.warn("[DOCTOR-M] STP: directed/directed.pos is null, cancelling");
+            ci.cancel();
+            return;
+        }
+
         if (!(entity instanceof ServerPlayerEntity player)) return;
         if (player.getWorld() == world) return;
 
@@ -103,10 +119,28 @@ public class TardisUtilMixin {
     private static void doctor_m$stpTeleportToInteriorPosition(
             ServerTardis tardis, Entity entity, BlockPos pos, CallbackInfo ci) {
 
+        // ★ 修复：tardis 本身可能为 null
+        if (tardis == null) {
+            STP.LOGGER.warn("[DOCTOR-M] STP (interior): tardis is null, cancelling");
+            ci.cancel();
+            return;
+        }
+
+        // ★ 修复：pos 也可能为 null
+        if (pos == null) {
+            STP.LOGGER.warn("[DOCTOR-M] STP (interior): pos is null, cancelling");
+            ci.cancel();
+            return;
+        }
+
         if (!(entity instanceof ServerPlayerEntity player)) return;
 
         ServerWorld targetWorld = tardis.world();
-        if (targetWorld == null) return;
+        if (targetWorld == null) {
+            STP.LOGGER.warn("[DOCTOR-M] STP (interior): tardis interior world is null, cancelling");
+            ci.cancel();
+            return;
+        }
         if (player.getWorld() == targetWorld) return;
 
         if (TardisEvents.ENTER_TARDIS.invoker().onEnter(tardis, entity)
