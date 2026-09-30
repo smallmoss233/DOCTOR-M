@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "doctor_m:graveyard",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 987654321,
+    "spacing": 40,
+    "separation": 30
+  }
+}
