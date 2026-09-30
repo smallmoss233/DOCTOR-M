@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "doctor_m:block/doll_ice_moon_492" },
+    "facing=south": { "model": "doctor_m:block/doll_ice_moon_492", "y": 180 },
+    "facing=east":  { "model": "doctor_m:block/doll_ice_moon_492", "y": 90 },
+    "facing=west":  { "model": "doctor_m:block/doll_ice_moon_492", "y": 270 }
+  }
+}

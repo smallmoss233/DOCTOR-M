@@ -73,7 +73,7 @@ public class DOCTORMClient implements ClientModInitializer {
             DOLL_JIN_MARY,
             DOLL_SMALLMOSS_OLD,
             DOLL_TC020,
-            DOLL_ASDJDFK,
+            DOLL_ICE_MOON_492,
             DOLL_SIGEERTE,
             DOLL_TSINAFS_BCIM,
             DOLL_ASNIT_PNQING,

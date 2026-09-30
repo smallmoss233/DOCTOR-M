@@ -31,7 +31,7 @@ public class ModBlocks {
     public static final Block DOLL_JIN_MARY = new DollBlock(dollSettings());
     public static final Block DOLL_SMALLMOSS_OLD = new DollBlock(dollSettings());
     public static final Block DOLL_TC020 = new DollBlock(dollSettings());
-    public static final Block DOLL_ASDJDFK = new DollBlock(dollSettings());
+    public static final Block DOLL_ICE_MOON_492 = new DollBlock(dollSettings());
     public static final Block DOLL_SIGEERTE = new DollBlock(dollSettings());
     public static final Block DOLL_TSINAFS_BCIM = new DollBlock(dollSettings());
     public static final Block DOLL_ASNIT_PNQING = new DollBlock(dollSettings());

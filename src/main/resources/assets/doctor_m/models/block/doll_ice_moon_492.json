@@ -1,0 +1,7 @@
+{
+  "parent": "doctor_m:block/doll_jin_mary",
+  "textures": {
+    "3": "doctor_m:block/doll_ice_moon_492",
+    "particle": "minecraft:block/light_blue_wool"
+  }
+}
