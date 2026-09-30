@@ -1,0 +1,22 @@
+{
+  "name": "doctor_m:the_ark",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 4,
+      "element": {
+        "location": "doctor_m:the_ark/the_ark",
+        "processors": "minecraft:empty",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:single_pool_element"
+      },
+      "weight": 6,
+      "element": {
+        "location": "doctor_m:the_ark/the_ark_damage",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

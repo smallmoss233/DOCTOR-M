@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "doctor_m:titan_plains",
+    "doctor_m:titan_methane_lakes",
+    "doctor_m:titan_dunes"
+  ]
+}

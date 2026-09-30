@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "doctor_m:the_ark",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 187633,
+    "spacing": 4096,
+    "separation": 3000
+  }
+}
