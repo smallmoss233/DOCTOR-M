@@ -3,18 +3,29 @@
   "fallback": "minecraft:empty",
   "elements": [
     {
-      "weight": 4,
+      "weight": 10,
       "element": {
         "location": "doctor_m:the_ark/the_ark",
         "processors": "minecraft:empty",
         "projection": "terrain_matching",
         "element_type": "minecraft:single_pool_element"
-      },
-      "weight": 6,
+      }
+    },
+    {
+      "weight": 10,
       "element": {
         "location": "doctor_m:the_ark/the_ark_damage",
         "processors": "minecraft:empty",
-        "projection": "rigid",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "doctor_m:the_ark/the_ark_wreck",
+        "processors": "minecraft:empty",
+        "projection": "terrain_matching",
         "element_type": "minecraft:single_pool_element"
       }
     }
