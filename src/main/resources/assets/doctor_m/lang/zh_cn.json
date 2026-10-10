@@ -673,5 +673,6 @@
   "console.doctor_m.bloodiness": "血腥",
 
   "exterior.doctor_m.madness": "恶疯",
-  "exterior.doctor_m.evereyebox": "永恒之眼警亭"
+  "exterior.doctor_m.evereyebox": "永恒之眼警亭",
+  "exterior.doctor_m.rift_box" : "时隙"
 }

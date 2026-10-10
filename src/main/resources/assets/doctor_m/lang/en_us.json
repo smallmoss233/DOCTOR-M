@@ -673,5 +673,6 @@
   "console.doctor_m.bloodiness": "Bloodiness",
 
   "exterior.doctor_m.madness": "Madness",
-  "exterior.doctor_m.evereyebox": "Evereye Police Box"
+  "exterior.doctor_m.evereyebox": "Evereye Police Box",
+  "exterior.doctor_m.rift_box" : "The Rift"
 }
