@@ -95,7 +95,7 @@
     {
       "input": "ait:blueprint",
       "inputCount": 1,
-      "output": "doctor_m:stca",
+      "output": "doctor_m:sara",
       "outputCount": 1,
       "maxUses": 1
     },

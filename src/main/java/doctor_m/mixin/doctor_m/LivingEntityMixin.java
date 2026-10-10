@@ -200,7 +200,7 @@ public class LivingEntityMixin {
         }
     }
 
-    // ========== STCS 剑封锁 ==========
+    // ========== SAR 剑封锁 ==========
 
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
     private void doctor_m$sarBlock(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {

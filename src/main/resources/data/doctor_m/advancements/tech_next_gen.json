@@ -2,7 +2,7 @@
   "parent": "doctor_m:root",
   "display": {
     "icon": {
-      "item": "doctor_m:stca"
+      "item": "doctor_m:sara"
     },
     "title": {
       "translate": "advancements.doctor_m.tech_next_gen.title"
@@ -16,32 +16,32 @@
     "hidden": false
   },
   "criteria": {
-    "got_stch": {
+    "got_sarh": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
-          { "items": ["doctor_m:stch"] }
+          { "items": ["doctor_m:sarh"] }
         ]
       }
     },
-    "got_stca": {
+    "got_sara": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
-          { "items": ["doctor_m:stca"] }
+          { "items": ["doctor_m:sara"] }
         ]
       }
     },
-    "got_stcl": {
+    "got_sarl": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
-          { "items": ["doctor_m:stcl"] }
+          { "items": ["doctor_m:sarl"] }
         ]
       }
     }
   },
   "requirements": [
-    ["got_stch", "got_stca", "got_stcl"]
+    ["got_sarh", "got_sara", "got_sarl"]
   ]
 }
