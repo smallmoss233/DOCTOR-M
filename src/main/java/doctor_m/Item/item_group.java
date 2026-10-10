@@ -49,7 +49,7 @@ public static void registerItems() {
                                 entries.add(REGENERATION_MODULE);
                                 entries.add(DOLL_JIN_MARY);
                                 entries.add(DOLL_SMALLMOSS_OLD);
-                                entries.add(DOLL_TC020);
+                                entries.add(DOLL_ICARWAS);
                                 entries.add(DOLL_ICE_MOON_492);
                                 entries.add(DOLL_SIGEERTE);
                                 entries.add(DOLL_TSINAFS_BCIM);

@@ -65,7 +65,7 @@ public class ItemMixin {
         else if (item == ModBlocks.DOLL_TSINAFS_BCIM.asItem()) {
             tooltip.add(t("message.tooltip.doctor_m.doll_tsinafs_bcim"));
         }
-        else if (item == ModBlocks.DOLL_TC020.asItem()) {
+        else if (item == ModBlocks.DOLL_ICARWAS.asItem()) {
             tooltip.add(t("message.tooltip.doctor_m.doll_tc020"));
         }
         else if (item == ModBlocks.DOLL_ICE_MOON_492.asItem()) {

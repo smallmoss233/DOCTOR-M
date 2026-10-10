@@ -72,7 +72,7 @@ public class DOCTORMClient implements ClientModInitializer {
     private static final Block[] DOLL_BLOCKS = {
             DOLL_JIN_MARY,
             DOLL_SMALLMOSS_OLD,
-            DOLL_TC020,
+            DOLL_ICARWAS,
             DOLL_ICE_MOON_492,
             DOLL_SIGEERTE,
             DOLL_TSINAFS_BCIM,
