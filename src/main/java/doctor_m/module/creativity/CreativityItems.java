@@ -17,7 +17,7 @@ public class CreativityItems {
             new Item.Settings().maxCount(1).rarity(Rarity.EPIC)
     );
 
-    // STCS系列武器
+    // SAR系列武器
     public static final Item SARA = new SARAItem();
     public static final Item SARH = new SARHItem();
     public static final Item SARL = new SARLItem();
