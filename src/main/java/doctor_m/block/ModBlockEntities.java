@@ -25,6 +25,8 @@ public class ModBlockEntities {
 
     public static final BlockEntityType<CoffeeMachineBlockEntity> COFFEE_MACHINE =
             FabricBlockEntityTypeBuilder.create(CoffeeMachineBlockEntity::new, ModBlocks.COFFEE_MACHINE).build();
+    public static final BlockEntityType<SarWorkBenchBlockEntity> SAR_WORKBENCH_BLOCK_ENTITY =
+            FabricBlockEntityTypeBuilder.create(SarWorkBenchBlockEntity::new, ModBlocks.SAR_WORKBENCH).build();
 
     public static void register() {
         AutoRegister.blockEntities(ModBlockEntities.class, DOCTORM.MOD_ID);

@@ -27,8 +27,10 @@ import doctor_m.client.render.EmissiveBlockEntityRenderer;
 import doctor_m.client.render.EyeOfHarmonyObeliskBlockEntityRenderer;
 import doctor_m.client.render.TrinketRenderer.SCTrinketRenderer;
 import doctor_m.client.render.TrinketRenderer.VMTrinketRenderer;
+import doctor_m.client.screen.SarWorkbenchScreen;
 import doctor_m.client.util.id.PlayerTitleCache;
 import doctor_m.entities.Entities;
+import doctor_m.menu.ModMenus;
 import doctor_m.network.INVERTSCREENPACKETNetwork;
 import doctor_m.util.VMClientScreenOpener;
 import mosslib.client.bedrock.block.MossBedrockReloader;
@@ -46,6 +48,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderLayer;
@@ -101,6 +104,7 @@ public class DOCTORMClient implements ClientModInitializer {
         registerScreenOpeners();
         ConfigOpenHandler.register();
         MossBedrockReloader.register();
+        HandledScreens.register(ModMenus.SAR_WORKBENCH_MENU, SarWorkbenchScreen::new);
         BlockEntityRendererFactories.register(
                 ModBlockEntities.COFFEE_MACHINE,
                 MossBedrockRenderer::new

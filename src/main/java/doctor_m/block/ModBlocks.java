@@ -20,6 +20,9 @@ public class ModBlocks {
     public static final Block EYE_OF_HARMONY_OBELISK = new EyeOfHarmonyObeliskBlock(
             FabricBlockSettings.copyOf(Blocks.OBSIDIAN).requiresTool().nonOpaque());
 
+    public static final Block SAR_WORKBENCH = new SarWorkBenchBlock(
+            FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).requiresTool().nonOpaque());
+
     /** 结构零件，不生成物品 */
     @AutoRegister.NoItem
     public static final Block EYE_OF_HARMONY_PART = new EyeOfHarmonyPartBlock(

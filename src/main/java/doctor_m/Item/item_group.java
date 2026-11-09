@@ -58,6 +58,7 @@ public static void registerItems() {
                                 entries.add(DOLL_KILIN_MUS);
                                 entries.add(DOLL_JOGGEST);
                                 entries.add(DOLL_NX_SEEKER);
+                                entries.add(SAR_WORKBENCH);
                             })
                             .build());
         }

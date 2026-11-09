@@ -40,6 +40,7 @@ public class DOCTORM implements ModInitializer {
         ModBlocks.register();
         ModBlockEntities.register();
         Entities.register();
+        doctor_m.menu.ModMenus.register();
 
         //物品
         AutoRegister.items(items.class, MOD_ID);
