@@ -224,6 +224,8 @@
   "gui.doctor_m.title.label": "Title:",
   "gui.doctor_m.title.placeholder": "Enter title...",
   "gui.doctor_m.title.save": "Save Title",
+  "gui.doctor_m.sar_workbench.materials": "Materials",
+  "gui.doctor_m.sar_workbench.craft": "Confirm Fabricating",
 
   "title.doctor_m.apprentice_reaper": "§cApprentice Reaper",
 
@@ -269,6 +271,7 @@
   "block.doctor_m.doll_kilin_mus": "Kilin_Mus Doll",
   "block.doctor_m.doll_joggest": "Joggest Doll",
   "block.doctor_m.doll_nx_seeker": "NX-Seeker Doll",
+  "block.doctor_m.sar_workbench": "A.T.C.L Fabricate Terminal",
 
   "entity.doctor_m.marian_jin": "Marian.Jin",
   "entity.doctor_m.103_tardis.name.default": "Type 103 TARDIS",
