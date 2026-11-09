@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AAA",
+    "ABA",
+    "CCC"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:iron_ingot"
+    },
+    "A": {
+      "item": "minecraft:lava_buket"
+    },
+    "C": {
+      "item": "diamond"
+    }
+  },
+  "result": {
+    "item": "doctor_m:sar_workbench",
+    "count": 1
+  }
+}

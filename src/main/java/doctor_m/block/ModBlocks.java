@@ -21,7 +21,7 @@ public class ModBlocks {
             FabricBlockSettings.copyOf(Blocks.OBSIDIAN).requiresTool().nonOpaque());
 
     public static final Block SAR_WORKBENCH = new SarWorkBenchBlock(
-            FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).requiresTool().nonOpaque());
+            FabricBlockSettings.copyOf(Blocks.CRAFTING_TABLE).nonOpaque());
 
     /** 结构零件，不生成物品 */
     @AutoRegister.NoItem
