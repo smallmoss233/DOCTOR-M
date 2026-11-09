@@ -224,6 +224,8 @@
   "gui.doctor_m.title.label": "称号：",
   "gui.doctor_m.title.placeholder": "输入称号...",
   "gui.doctor_m.title.save": "保存称号",
+  "gui.doctor_m.sar_workbench.craft":"确认制造",
+  "gui.doctor_m.sar_workbench.materials": "材料",
 
   "title.doctor_m.apprentice_reaper": "§c见习死神",
 
