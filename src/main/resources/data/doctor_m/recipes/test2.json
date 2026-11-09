@@ -1,0 +1,19 @@
+{
+  "type": "doctor_m:assembly",
+  "inputs": [
+    { "item": "minecraft:dirt" },
+    { "item": "minecraft:stone" },
+    { "item": "minecraft:cobblestone" },
+    { "item": "minecraft:oak_planks" },
+    { "item": "minecraft:iron_ingot" },
+    { "item": "minecraft:gold_ingot" },
+    { "item": "minecraft:diamond" },
+    { "item": "minecraft:apple" },
+    { "item": "minecraft:egg" },
+    { "item": "minecraft:gunpowder" }
+  ],
+  "output": {
+    "item": "minecraft:stone",
+    "count": 1
+  }
+}
