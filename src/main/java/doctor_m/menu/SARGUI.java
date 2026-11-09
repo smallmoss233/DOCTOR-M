@@ -8,6 +8,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
 
 import java.util.List;
 
@@ -19,6 +20,15 @@ public class SARGUI extends ScreenHandler {
 
     public SARGUI(int syncId, PlayerInventory playerInventory, Inventory inventory) {
         super(ModMenus.SAR_WORKBENCH_MENU, syncId);
+
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 9; ++j) {
+                this.addSlot(new Slot(playerInventory, j + i * 9 + 9, -9999, -9999));
+            }
+        }
+        for (int k = 0; k < 9; ++k) {
+            this.addSlot(new Slot(playerInventory, k, -9999, -9999));
+        }
     }
 
     @Override

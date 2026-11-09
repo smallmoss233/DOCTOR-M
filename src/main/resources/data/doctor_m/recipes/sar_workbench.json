@@ -6,11 +6,11 @@
     "CCC"
   ],
   "key": {
-    "#": {
+    "A": {
       "item": "minecraft:iron_ingot"
     },
-    "A": {
-      "item": "minecraft:lava_buket"
+    "B": {
+      "item": "minecraft:lava_bucket"
     },
     "C": {
       "item": "diamond"

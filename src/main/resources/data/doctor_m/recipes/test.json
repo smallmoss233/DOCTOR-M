@@ -2,18 +2,16 @@
   "type": "doctor_m:assembly",
   "inputs": [
     { "item": "minecraft:dirt" },
-    { "item": "minecraft:stone" },
     { "item": "minecraft:cobblestone" },
-    { "item": "minecraft:oak_planks" },
+    { "item": "minecraft:oak_log" },
     { "item": "minecraft:iron_ingot" },
     { "item": "minecraft:gold_ingot" },
-    { "item": "minecraft:diamond" },
-    { "item": "minecraft:apple" },
-    { "item": "minecraft:egg" },
-    { "item": "minecraft:gunpowder" }
+    { "item": "minecraft:redstone" },
+    { "item": "minecraft:lapis_lazuli" },
+    { "item": "minecraft:diamond" }
   ],
   "output": {
-    "item": "minecraft:nether_star",
+    "item": "minecraft:diamond_block",
     "count": 1
   }
 }

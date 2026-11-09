@@ -1,0 +1,10 @@
+{
+  "type": "doctor_m:assembly",
+  "inputs": [
+    { "item": "minecraft:diamond_ore" }
+  ],
+  "output": {
+    "item": "minecraft:diamond",
+    "count": 4
+  }
+}

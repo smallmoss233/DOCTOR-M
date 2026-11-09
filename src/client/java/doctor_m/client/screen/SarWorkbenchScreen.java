@@ -89,7 +89,7 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
 
         Text outputName = currentRecipe.getOutput().getName();
         int nameWidth = this.textRenderer.getWidth(outputName);
-        int drawX = x + 80 - (nameWidth > 125 ? 125 : nameWidth) / 2;
+        int drawX = x + 80 - Math.min(nameWidth, 125) / 2;
         drawAutoScaledText(context, outputName, drawX, y + 120, 125, COLOR_HIGHLIGHT, false);
 
         String pageText = (selectedIndex + 1) + " / " + recipeList.size();
@@ -109,7 +109,7 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
             if (stacks.length > 0) {
                 ItemStack inputStack = stacks[0];
 
-                boolean hasEnough = this.client.player != null && this.client.player.getInventory().contains(inputStack);
+                boolean hasEnough = this.client != null && this.client.player != null && this.client.player.getInventory().contains(inputStack);
                 int textColor = hasEnough ? COLOR_TEXT : 0xFFCC0000;
 
                 context.drawItem(inputStack, x + 165, materialY);
