@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "doctor_m:block/sar_workbench"
+    }
+  }
+}
