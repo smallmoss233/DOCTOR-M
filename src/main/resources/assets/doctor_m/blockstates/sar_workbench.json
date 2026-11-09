@@ -1,7 +1,8 @@
 {
   "variants": {
-    "": {
-      "model": "doctor_m:block/sar_workbench"
-    }
+    "facing=north": { "model": "doctor_m:block/sar_workbench" },
+    "facing=south": { "model": "doctor_m:block/sar_workbench", "y": 180 },
+    "facing=east":  { "model": "doctor_m:block/sar_workbench", "y": 90 },
+    "facing=west":  { "model": "doctor_m:block/sar_workbench", "y": 270 }
   }
 }
