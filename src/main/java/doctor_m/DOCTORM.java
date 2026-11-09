@@ -2,6 +2,7 @@ package doctor_m;
 
 import doctor_m.Item.item_group;
 import doctor_m.Item.items;
+import doctor_m.recipe.ModRecipes;
 import mosslib.api.AutoRegister;
 import doctor_m.api.ModSounds;
 import doctor_m.block.ModBlockEntities;
@@ -40,7 +41,6 @@ public class DOCTORM implements ModInitializer {
         ModBlocks.register();
         ModBlockEntities.register();
         Entities.register();
-        doctor_m.menu.ModMenus.register();
 
         //物品
         AutoRegister.items(items.class, MOD_ID);
@@ -69,6 +69,8 @@ public class DOCTORM implements ModInitializer {
         //杂项
         ModSounds.init();
         TardisTypeLoader.init();
+        doctor_m.menu.ModMenus.register();
+        ModRecipes.register();
 
         //命令与配置
         CommandRegistrationCallback.EVENT.register(DOCTORMCommand::register);

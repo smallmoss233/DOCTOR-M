@@ -11,16 +11,12 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 
-// 注意类名和文件名保持一致
 public class SarWorkBenchBlockEntity extends BlockEntity implements Inventory {
     private final DefaultedList<ItemStack> items = DefaultedList.ofSize(10, ItemStack.EMPTY);
 
     public SarWorkBenchBlockEntity(BlockPos pos, BlockState state) {
-        // 这里必须用你在 ModBlockEntities 里注册的名字 SAR_WORKBENCH
         super(ModBlockEntities.SAR_WORKBENCH_BLOCK_ENTITY, pos, state);
     }
-
-    // ======= 下面是原版 Inventory 接口要求的 9 个方法 =======
 
     @Override
     public int size() {
@@ -74,7 +70,6 @@ public class SarWorkBenchBlockEntity extends BlockEntity implements Inventory {
         items.clear();
     }
 
-    // ======= 下面是 NBT 的读写（原版接口不需要，但 BlockEntity 需要重写） =======
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);

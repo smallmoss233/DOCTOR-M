@@ -1,0 +1,11 @@
+{
+  "type": "doctor_m:assembly",
+  "inputs": [
+    { "item": "minecraft:dirt" },
+    { "item": "minecraft:apple" }
+  ],
+  "output": {
+    "item": "minecraft:diamond_sword",
+    "count": 1
+  }
+}
