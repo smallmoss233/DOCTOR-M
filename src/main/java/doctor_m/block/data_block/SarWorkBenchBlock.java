@@ -33,7 +33,7 @@ public class SarWorkBenchBlock extends Block implements BlockEntityProvider {
         if (blockEntity instanceof SarWorkBenchBlockEntity workbenchEntity) {
             return new SimpleNamedScreenHandlerFactory(
                     (syncId, inv, player) -> new SARGUI(syncId, inv, workbenchEntity),
-                    Text.translatable("block.doctor_m.workbench")
+                    Text.translatable("block.doctor_m.sar_workbench")
             );
         }
         return null;
