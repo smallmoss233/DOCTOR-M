@@ -57,7 +57,7 @@ import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
-
+import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import java.lang.reflect.Method;
 
 import static doctor_m.Item.items.FORCE_FIELD_SHIELD;
@@ -108,6 +108,7 @@ public class DOCTORMClient implements ClientModInitializer {
         BlockEntityRendererFactories.register(
                 ModBlockEntities.COFFEE_MACHINE,
                 MossBedrockRenderer::new
+
         );
     }
 
@@ -177,6 +178,7 @@ public class DOCTORMClient implements ClientModInitializer {
     private void registerEntityRenderers() {
         EntityRendererRegistry.register(Entities.TYPE_103_TARDIS, Type103Renderer::new);
         EntityRendererRegistry.register(Entities.MARIAN_JIN, MarianJinRenderer::new);  //K动画后记得换成MossBedrockEntityRenderer
+        EntityRendererRegistry.register(Entities.ATCL_POWER_CORE, FlyingItemEntityRenderer::new);
     }
 
     private void registerNetworking() {

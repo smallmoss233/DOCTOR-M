@@ -2,6 +2,7 @@ package doctor_m.entities;
 
 import doctor_m.DOCTORM;
 import mosslib.api.AutoRegister;
+import doctor_m.entities.data.ATCLPowerCoreEntity; // 新增导入
 import doctor_m.entities.data.Entity103Tardis;
 import doctor_m.entities.data.Marian_Jin;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
@@ -33,6 +34,11 @@ public class Entities {
                     .dimensions(EntityDimensions.fixed(0.6f, 1.8f))
                     .build();
 
+    public static final EntityType<ATCLPowerCoreEntity> ATCL_POWER_CORE =
+            FabricEntityTypeBuilder.<ATCLPowerCoreEntity>create(SpawnGroup.MISC, ATCLPowerCoreEntity::new)
+                    .dimensions(EntityDimensions.fixed(0.25f, 0.25f))
+                    .build();
+
     private static final RegistryKey<World> TRENZALORE_DIM = RegistryKey.of(
             RegistryKeys.WORLD, new Identifier("doctor_m", "trenzalore")
     );
@@ -47,6 +53,7 @@ public class Entities {
     private static void registerAttributes() {
         FabricDefaultAttributeRegistry.register(TYPE_103_TARDIS, Entity103Tardis.createMobAttributes());
         FabricDefaultAttributeRegistry.register(MARIAN_JIN, Marian_Jin.createMobAttributes());
+        // 投掷物不需要注册属性
     }
 
     private static void registerSpawns() {
