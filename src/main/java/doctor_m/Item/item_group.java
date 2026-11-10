@@ -7,6 +7,8 @@ import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import javax.swing.text.html.parser.Entity;
+
 import static doctor_m.Item.items.*;
 import static doctor_m.block.ModBlocks.*;
 import static doctor_m.module.creativity.CreativityItems.*;
@@ -64,6 +66,7 @@ public static void registerItems() {
                                 entries.add(ATCL_DAMAGE_UP);
                                 entries.add(ATCL_CONSTRUCTION_MODIFIED_MODEL);
                                 entries.add(ATCL_HIGH_LAND_MODEL);
+                                entries.add(ATCL_COOLING_MODIFIED_MODEL);
                             })
                             .build());
         }

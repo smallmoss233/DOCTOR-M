@@ -2,10 +2,7 @@ package doctor_m.module.creativity;
 
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
-import doctor_m.module.creativity.creativity_data.SAR.atcl_models.ATCLConstructionModifiedModel;
-import doctor_m.module.creativity.creativity_data.SAR.atcl_models.ATCLDamageUpModel;
-import doctor_m.module.creativity.creativity_data.SAR.atcl_models.ATCLHighLandModel;
-import doctor_m.module.creativity.creativity_data.SAR.atcl_models.ATCLPowerReModel;
+import doctor_m.module.creativity.creativity_data.SAR.atcl_models.*;
 import doctor_m.module.creativity.creativity_data.SAR.SARAItem;
 import doctor_m.module.creativity.creativity_data.SAR.SARHItem;
 import doctor_m.module.creativity.creativity_data.SAR.SARLItem;
@@ -31,6 +28,7 @@ public class CreativityItems {
     public static final Item ATCL_DAMAGE_UP = new ATCLDamageUpModel(new Item.Settings().maxCount(16).rarity(net.minecraft.util.Rarity.EPIC));
     public static final Item ATCL_CONSTRUCTION_MODIFIED_MODEL = new ATCLConstructionModifiedModel(new Item.Settings().maxCount(16).rarity(Rarity.EPIC));
     public static final Item ATCL_HIGH_LAND_MODEL = new ATCLHighLandModel(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
+    public static final Item ATCL_COOLING_MODIFIED_MODEL = new ATCLCoolingModifiedModel(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
 
     public static void registerAbilities() {
         ModConfig config = ConfigManager.getConfig();

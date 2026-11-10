@@ -60,6 +60,8 @@ public abstract class SAR extends Item implements EmissiveItem {
 
     private static final UUID CORE_DAMAGE_UUID = UUID.fromString("11111111-1111-1111-1111-111111111111");
     private static final UUID CORE_SPEED_UUID = UUID.fromString("22222222-2222-2222-2222-222222222222");
+    private static final UUID ATCL_DAMAGE_UUID = UUID.fromString("44444444-4444-4444-4444-444444444444");
+    private static final UUID ATCL_ATTACK_SPEED_UUID = UUID.fromString("55555555-5555-5555-5555-555555555555");
 
     protected final String variantId;
     protected final float baseDamage;
@@ -69,7 +71,7 @@ public abstract class SAR extends Item implements EmissiveItem {
     protected final String descriptionKey;
 
     public SAR(Settings settings, String variantId, float baseDamage, float baseAttackSpeed,
-                    int maxEnergy, float blockDamageReduction, String descriptionKey) {
+               int maxEnergy, float blockDamageReduction, String descriptionKey) {
         super(settings.maxCount(1));
         this.variantId = variantId;
         this.baseDamage = baseDamage;
@@ -148,6 +150,14 @@ public abstract class SAR extends Item implements EmissiveItem {
         return getOrCreateSARNbt(stack).getInt(CORE_MAX_COOLDOWN_KEY);
     }
 
+    public int getCurrentCoreCooldown(ItemStack stack) {
+        String specialModule = getOrCreateSARNbt(stack).getString("atcl_special_module");
+        if (specialModule.equals("doctor_m:atcl_cooling_modified_model")) {
+            return 600; // 30秒
+        }
+        return getMaxCoreCooldownTicks(stack);
+    }
+
     public int getSkillCooldown(ItemStack stack) {
         return getOrCreateSARNbt(stack).getInt(SKILL_COOLDOWN_KEY);
     }
@@ -224,38 +234,14 @@ public abstract class SAR extends Item implements EmissiveItem {
         }
     }
 
-    // ==================== Skill and Core Activation ====================
-
-    public void onSkillPressed(ServerPlayerEntity player, ItemStack stack) {
-        // 由子类实现
-    }
-
-    public void onCorePressed(ServerPlayerEntity player, ItemStack stack) {
-        if (getCoreCooldown(stack) > 0) return;
-        if (isCoreActive(stack)) {
-            setCoreActive(stack, false);
-            setCoreCooldown(stack, getMaxCoreCooldownTicks(stack));
-            removeCoreAttributes(player);
-        } else {
-            int minEnergy = CORE_ENERGY_COST * 40;
-            if (getEnergy(stack) < minEnergy) {
-                player.sendMessage(Text.translatable("message.doctor_m.sar.core_low_energy")
-                        .formatted(Formatting.RED), true);
-                return;
-            }
-            setCoreActive(stack, true);
-            applyCoreAttributes(player);
-        }
-    }
-
-    private static final UUID ATCL_DAMAGE_UUID = UUID.fromString("44444444-4444-4444-4444-444444444444");
+    // ==================== ATCL Attributes ====================
 
     public void applyAtclDamageAttribute(ServerPlayerEntity player, int extraDamage) {
         var attr = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE);
         if (attr != null) {
             EntityAttributeModifier mod = attr.getModifier(ATCL_DAMAGE_UUID);
             if (extraDamage > 0) {
-                if (mod == null || mod.getValue() != extraDamage) {
+                if (mod == null || Math.abs(mod.getValue() - extraDamage) > 0.001) {
                     if (mod != null) attr.removeModifier(ATCL_DAMAGE_UUID);
                     attr.addPersistentModifier(new EntityAttributeModifier(
                             ATCL_DAMAGE_UUID,
@@ -277,6 +263,56 @@ public abstract class SAR extends Item implements EmissiveItem {
         }
     }
 
+    public void applyAtclAttackSpeedAttribute(ServerPlayerEntity player, double extraSpeed) {
+        var attr = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
+        if (attr != null) {
+            EntityAttributeModifier mod = attr.getModifier(ATCL_ATTACK_SPEED_UUID);
+            if (extraSpeed > 0) {
+                if (mod == null || Math.abs(mod.getValue() - extraSpeed) > 0.001) {
+                    if (mod != null) attr.removeModifier(ATCL_ATTACK_SPEED_UUID);
+                    attr.addPersistentModifier(new EntityAttributeModifier(
+                            ATCL_ATTACK_SPEED_UUID,
+                            "atcl_speed_up",
+                            extraSpeed,
+                            EntityAttributeModifier.Operation.ADDITION
+                    ));
+                }
+            } else {
+                if (mod != null) attr.removeModifier(ATCL_ATTACK_SPEED_UUID);
+            }
+        }
+    }
+
+    public void removeAtclAttackSpeedAttribute(ServerPlayerEntity player) {
+        var attr = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
+        if (attr != null) {
+            attr.removeModifier(ATCL_ATTACK_SPEED_UUID);
+        }
+    }
+
+    // ==================== Skill and Core Activation ====================
+
+    public void onSkillPressed(ServerPlayerEntity player, ItemStack stack) {
+        // 由子类实现
+    }
+
+    public void onCorePressed(ServerPlayerEntity player, ItemStack stack) {
+        if (getCoreCooldown(stack) > 0) return;
+        if (isCoreActive(stack)) {
+            setCoreActive(stack, false);
+            setCoreCooldown(stack, getCurrentCoreCooldown(stack));
+            removeCoreAttributes(player);
+        } else {
+            int minEnergy = CORE_ENERGY_COST * 40;
+            if (getEnergy(stack) < minEnergy) {
+                player.sendMessage(Text.translatable("message.doctor_m.sar.core_low_energy")
+                        .formatted(Formatting.RED), true);
+                return;
+            }
+            setCoreActive(stack, true);
+            applyCoreAttributes(player);
+        }
+    }
 
     // ==================== Inventory Tick ====================
 
@@ -285,11 +321,11 @@ public abstract class SAR extends Item implements EmissiveItem {
         if (world.isClient()) return;
         if (!(entity instanceof ServerPlayerEntity player)) return;
 
-        boolean isHeld = selected || slot == 40; // 40 = offhand
+        boolean isHeld = selected || slot == 40;
         if (!isHeld) {
             if (isCoreActive(stack)) {
                 setCoreActive(stack, false);
-                setCoreCooldown(stack, getMaxCoreCooldownTicks(stack));
+                setCoreCooldown(stack, getCurrentCoreCooldown(stack)); // 修复：这里也用当前冷却时间
                 removeCoreAttributes(player);
             }
             removeAtclDamageAttribute(player);
@@ -301,11 +337,13 @@ public abstract class SAR extends Item implements EmissiveItem {
                 (player.getMainHandStack() == stack || player.getOffHandStack() == stack);
 
         updateActionBar(player, stack, isBlocking);
+
         int atclDamage = getOrCreateSARNbt(stack).getInt("atcl_extra_damage");
         double atclSpeed = getOrCreateSARNbt(stack).getDouble("atcl_extra_speed");
+
         if (selected) {
             applyAtclDamageAttribute(player, atclDamage);
-            applyAtclAttackSpeedAttribute(player,atclSpeed);
+            applyAtclAttackSpeedAttribute(player, atclSpeed);
         } else if (slot == 40) {
             removeAtclDamageAttribute(player);
             removeAtclAttackSpeedAttribute(player);
@@ -331,7 +369,7 @@ public abstract class SAR extends Item implements EmissiveItem {
             int cost = CORE_ENERGY_COST * 20;
             if (getEnergy(stack) < cost) {
                 setCoreActive(stack, false);
-                setCoreCooldown(stack, getMaxCoreCooldownTicks(stack));
+                setCoreCooldown(stack, getCurrentCoreCooldown(stack));
                 removeCoreAttributes(player);
             } else {
                 addEnergy(stack, -cost);
@@ -405,35 +443,6 @@ public abstract class SAR extends Item implements EmissiveItem {
         }
     }
 
-    private static final UUID ATCL_ATTACK_SPEED_UUID = UUID.fromString("55555555-5555-5555-5555-555555555555");
-
-    public void applyAtclAttackSpeedAttribute(ServerPlayerEntity player, double extraSpeed) {
-        var attr = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
-        if (attr != null) {
-            EntityAttributeModifier mod = attr.getModifier(ATCL_ATTACK_SPEED_UUID);
-            if (extraSpeed > 0) {
-                if (mod == null || mod.getValue() != extraSpeed) {
-                    if (mod != null) attr.removeModifier(ATCL_ATTACK_SPEED_UUID);
-                    attr.addPersistentModifier(new EntityAttributeModifier(
-                            ATCL_ATTACK_SPEED_UUID,
-                            "atcl_speed_up",
-                            extraSpeed,
-                            EntityAttributeModifier.Operation.ADDITION
-                    ));
-                }
-            } else {
-                if (mod != null) attr.removeModifier(ATCL_ATTACK_SPEED_UUID);
-            }
-        }
-    }
-
-    public void removeAtclAttackSpeedAttribute(ServerPlayerEntity player) {
-        var attr = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
-        if (attr != null) {
-            attr.removeModifier(ATCL_ATTACK_SPEED_UUID);
-        }
-    }
-
     // ==================== Tooltip ====================
 
     @Override
@@ -500,16 +509,19 @@ public abstract class SAR extends Item implements EmissiveItem {
         modules.put(REGULAR_MODULES_KEY, newList);
         return true;
     }
+
     public static void registerKillEvents() {
         net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents.AFTER_DEATH.register((entity, damageSource) -> {
             if (damageSource.getAttacker() instanceof ServerPlayerEntity player) {
                 ItemStack stack = player.getMainHandStack();
                 if (stack.getItem() instanceof SAR sar) {
-                    // 读取第五槽存的模块 ID
                     String specialModule = sar.getOrCreateSARNbt(stack).getString("atcl_special_module");
 
                     if (specialModule.equals("doctor_m:atcl_high_land_model") && sar.isCoreActive(stack)) {
+                        int energyBefore = sar.getEnergy(stack);
                         sar.addEnergy(stack, 80);
+                        int energyAfter = sar.getEnergy(stack);
+
                         player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(),
                                 net.minecraft.sound.SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,
                                 net.minecraft.sound.SoundCategory.PLAYERS, 1.0f, 1.5f);
