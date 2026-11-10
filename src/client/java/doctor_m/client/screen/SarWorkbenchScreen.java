@@ -19,15 +19,12 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
     private int selectedIndex = 0;
     private double scrollAmount = 0.0;
 
-    private static final int COLOR_BG = 0xE6E6E6E6;
-    private static final int COLOR_PANEL = 0xFFCCCCCC;
-    private static final int COLOR_PANEL_DARK = 0xFFA0A0A0;
-    private static final int COLOR_BORDER = 0xFF5A5A5A;
-    private static final int COLOR_HIGHLIGHT = 0xFF00FFFF;
-    private static final int COLOR_TEXT = 0xFF333333;
-    private static final int COLOR_TEXT_DIM = 0xFF666666;
-    private static final int COLOR_SCROLL_BAR_BG = 0x55000000;
-    private static final int COLOR_SCROLL_BAR_FG = 0xFF00FFFF;
+    private static final int COLOR_BORDER = 0xFF111111;
+    private static final int COLOR_HIGHLIGHT = 0xFF00BFFF;
+    private static final int COLOR_TEXT = 0xFF000000;
+    private static final int COLOR_TEXT_DIM = 0xFF444444;
+    private static final int COLOR_SCROLL_BAR_BG = 0x66000000;
+    private static final int COLOR_SCROLL_BAR_FG = 0xFF00BFFF;
 
     private int btnX, btnY, btnW, btnH;
     private int prevX, prevY, prevW, prevH;
@@ -50,8 +47,8 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
         int leftX = (this.width - this.backgroundWidth) / 2;
         int topY = (this.height - this.backgroundHeight) / 2;
 
-        prevX = leftX + 165; prevY = topY + 15; prevW = 20; prevH = 20;
-        nextX = leftX + 270; nextY = topY + 15; nextW = 20; nextH = 20;
+        prevX = leftX + 170; prevY = topY + 15; prevW = 20; prevH = 20;
+        nextX = leftX + 280; nextY = topY + 15; nextW = 20; nextH = 20;
         btnX = leftX + 185;  btnY = topY + 140; btnW = 100; btnH = 20;
     }
 
@@ -65,14 +62,16 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
         int x = (this.width - this.backgroundWidth) / 2;
         int y = (this.height - this.backgroundHeight) / 2;
 
-        context.fill(x, y, x + backgroundWidth, y + backgroundHeight, COLOR_BG);
+        context.fillGradient(x, y, x + backgroundWidth, y + backgroundHeight, 0xFFEEEEEE, 0xFFA0A0A0);
         context.drawBorder(x, y, backgroundWidth, backgroundHeight, COLOR_BORDER);
 
-        context.fill(x + 10, y + 10, x + 150, y + 170, COLOR_PANEL_DARK);
+        context.fillGradient(x + 10, y + 10, x + 150, y + 170, 0xFFEEEEEE, 0xFFA0A0A0);
         context.drawBorder(x + 10, y + 10, 140, 160, COLOR_BORDER);
 
-        context.fill(x + 160, y + 10, x + 310, y + 170, COLOR_PANEL);
+        context.fillGradient(x + 160, y + 10, x + 310, y + 170, 0xFFEEEEEE, 0xFFA0A0A0);
         context.drawBorder(x + 160, y + 10, 150, 160, COLOR_BORDER);
+
+        drawFloatingCubes(context, x + 280, y + 15);
 
         if (recipeList.isEmpty() || selectedIndex >= recipeList.size()) {
             drawAutoScaledText(context, Text.translatable("gui.doctor_m.sar_workbench.no_recipes"), x + 170, y + 90, 140, COLOR_TEXT_DIM, false);
@@ -90,10 +89,10 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
         Text outputName = currentRecipe.getOutput().getName();
         int nameWidth = this.textRenderer.getWidth(outputName);
         int drawX = x + 80 - Math.min(nameWidth, 125) / 2;
-        drawAutoScaledText(context, outputName, drawX, y + 120, 125, COLOR_HIGHLIGHT, false);
+        drawAutoScaledText(context, outputName, drawX, y + 120, 125, 0xFF00FFFF, false);
 
         String pageText = (selectedIndex + 1) + " / " + recipeList.size();
-        context.drawText(this.textRenderer, pageText, x + 227 - this.textRenderer.getWidth(pageText) / 2, y + 21, COLOR_TEXT, false);
+        context.drawText(this.textRenderer, pageText, x + 235 - this.textRenderer.getWidth(pageText) / 2, y + 21, COLOR_TEXT, true);
 
         drawAutoScaledText(context, Text.translatable("gui.doctor_m.sar_workbench.materials"), x + 165, y + 50, 140, COLOR_TEXT_DIM, false);
 
@@ -101,7 +100,7 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
         int listBottom = y + 135;
         int listHeight = listBottom - listTop;
 
-        context.enableScissor(x + 160, listTop, x + 300, listBottom);
+        context.enableScissor(x + 160, listTop, x + 270, listBottom);
 
         int materialY = listTop - (int) scrollAmount;
         List<Ingredient> inputs = currentRecipe.getInputs();
@@ -126,12 +125,12 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
                 }
 
                 boolean hasEnough = playerHas >= reqCount;
-                int textColor = hasEnough ? COLOR_TEXT : 0xFFCC0000;
+                int textColor = hasEnough ? COLOR_TEXT : 0xFFE50000;
 
                 context.drawItem(inputStack, x + 165, materialY);
 
                 Text reqText = Text.literal(inputStack.getName().getString() + " x" + reqCount);
-                drawAutoScaledText(context, reqText, x + 185, materialY + 4, 100, textColor, false);
+                drawAutoScaledText(context, reqText, x + 185, materialY + 4, 80, textColor, false);
 
                 materialY += 20;
             }
@@ -141,7 +140,7 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
 
         int totalHeight = inputs.size() * 20;
         if (totalHeight > listHeight) {
-            int scrollBarX = x + 302;
+            int scrollBarX = x + 299;
             int scrollBarWidth = 4;
 
             context.fill(scrollBarX, listTop, scrollBarX + scrollBarWidth, listBottom, COLOR_SCROLL_BAR_BG);
@@ -161,10 +160,37 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
         drawCustomButton(context, btnX, btnY, btnW, btnH, Text.translatable("gui.doctor_m.sar_workbench.craft"), mouseX, mouseY);
     }
 
+    private void drawFloatingCubes(DrawContext context, int x, int y) {
+        long currentTime = System.currentTimeMillis();
+        float time = (currentTime % 3000L) / 3000.0F;
+
+        float sin1 = (float) Math.sin(time * Math.PI * 2);
+        float sin2 = (float) Math.sin(time * Math.PI * 2 + Math.PI);
+
+        int centerY = y + 75;
+        int amplitude = 55;
+
+        int y1 = centerY + (int) (sin1 * amplitude);
+        int y2 = centerY + (int) (sin2 * amplitude);
+
+        int size = 6;
+
+        drawMiniCube(context, x + 4, y1, size);
+        drawMiniCube(context, x + 16, y2, size);
+    }
+
+    private void drawMiniCube(DrawContext context, int x, int y, int size) {
+        context.fillGradient(x, y, x + size, y + size, 0xFFB0B0B0, 0xFF707070);
+        context.fill(x, y, x + size, y + 1, 0xFFE0E0E0);
+        context.fill(x, y, x + 1, y + size, 0xFFE0E0E0);
+        context.fill(x, y + size - 1, x + size, y + size, 0xFF333333);
+        context.fill(x + size - 1, y, x + size, y + size, 0xFF333333);
+    }
+
     private void drawCustomButton(DrawContext context, int x, int y, int w, int h, Text text, int mouseX, int mouseY) {
         boolean hovered = mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
 
-        int bgColor = hovered ? 0xFFD0D0D0 : 0xFFB0B0B0;
+        int bgColor = hovered ? 0xFFFFFFFF : 0xFFC4C4C4;
         context.fill(x, y, x + w, y + h, bgColor);
 
         int borderColor = hovered ? COLOR_HIGHLIGHT : COLOR_BORDER;
@@ -182,7 +208,7 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
         context.getMatrices().push();
         context.getMatrices().translate(x + (w - textWidth) / 2.0F, y + (h - 8) / 2.0F + 1, 0);
         context.getMatrices().scale(scale, scale, 1.0F);
-        context.drawText(this.textRenderer, text, 0, 0, textColor, false);
+        context.drawText(this.textRenderer, text, 0, 0, textColor, true);
         context.getMatrices().pop();
     }
 
@@ -193,10 +219,10 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
             context.getMatrices().push();
             context.getMatrices().translate(x, y, 0);
             context.getMatrices().scale(scale, scale, 1.0F);
-            context.drawText(this.textRenderer, text, 0, 0, color, shadow);
+            context.drawText(this.textRenderer, text, 0, 0, color, true);
             context.getMatrices().pop();
         } else {
-            context.drawText(this.textRenderer, text, x, y, color, shadow);
+            context.drawText(this.textRenderer, text, x, y, color, true);
         }
     }
 
@@ -231,7 +257,7 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
         int listTop = y + 65;
         int listBottom = y + 135;
 
-        if (mouseX >= x + 160 && mouseX <= x + 310 && mouseY >= listTop && mouseY <= listBottom) {
+        if (mouseX >= x + 160 && mouseX <= x + 295 && mouseY >= listTop && mouseY <= listBottom) {
             if (!recipeList.isEmpty() && selectedIndex < recipeList.size()) {
                 AssemblyRecipe currentRecipe = recipeList.get(selectedIndex);
                 int totalHeight = currentRecipe.getInputs().size() * 20;

@@ -10,6 +10,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
 
+import java.util.List;
+
 public class ATCLPowerCoreEntity extends ThrownItemEntity {
     private float charge = 0.5F;
 
@@ -41,8 +43,14 @@ public class ATCLPowerCoreEntity extends ThrownItemEntity {
         World world = this.getWorld();
         if (world.isClient()) return;
 
-        float power = 1.0F + charge * 4.0F;
-        world.createExplosion(this, this.getX(), this.getY(), this.getZ(), power, false, World.ExplosionSourceType.TNT);
+        world.createExplosion(this, this.getX(), this.getY(), this.getZ(), 4.0F, false, World.ExplosionSourceType.BLOCK);
+
+        List<LivingEntity> entities = world.getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(4.0), e -> true);
+
+        for (LivingEntity entity : entities) {
+            entity.damage(world.getDamageSources().explosion(this, this.getOwner()), 40.0F);
+        }
+
         this.discard();
     }
 }
