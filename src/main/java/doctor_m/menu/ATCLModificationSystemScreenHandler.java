@@ -49,7 +49,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
         }
 
-        // 槽位 0：核心
+        // 槽位 0：能量上限
         this.addSlot(new Slot(inventory, 0, 105, 40) {
             @Override
             public boolean canInsert(ItemStack stack) {
