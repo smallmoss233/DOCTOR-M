@@ -1,4 +1,4 @@
-package doctor_m.module.creativity.creativity_data.SAR;
+package doctor_m.module.creativity.creativity_data.SAR.atcl_models;
 
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;

@@ -145,7 +145,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             nbt.putInt(SAR.MAX_ENERGY_BASE_KEY, 10000 + (coreCount * 5000));
 
             int reCount = this.inventory.getStack(1).getCount();
-            nbt.putInt("atcl_extra_regen", reCount * 20);
+            nbt.putInt("atcl_extra_regen", reCount * 25);
 
             if (sar.getEnergy(mainHand) > sar.getMaxEnergy(mainHand)) {
                 sar.setEnergy(mainHand, sar.getMaxEnergy(mainHand));
