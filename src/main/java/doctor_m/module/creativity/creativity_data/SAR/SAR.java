@@ -281,7 +281,8 @@ public abstract class SAR extends Item implements EmissiveItem {
         if (coreCd > 0) setCoreCooldown(stack, Math.max(coreCd - 20, 0));
 
         if (!isCoreActive(stack) && !isBlocking) {
-            addEnergy(stack, BASE_ENERGY_REGEN * 20);
+            int extraRegen = getOrCreateSARNbt(stack).getInt("atcl_extra_regen");
+            addEnergy(stack, (BASE_ENERGY_REGEN + extraRegen) * 20);
         }
 
         if (selected && isCoreActive(stack)) {

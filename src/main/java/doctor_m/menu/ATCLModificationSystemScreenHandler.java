@@ -14,20 +14,12 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.Identifier;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class ATCLModificationSystemScreenHandler extends ScreenHandler {
     private final Inventory inventory;
     private final PlayerEntity player;
 
     private static final Identifier CORE_ID = new Identifier("doctor_m", "atcl_power_core");
-    private static final Set<Identifier> SLOT_0_ALLOWED = new HashSet<>();
-    private static final Set<Identifier> SLOT_1_4_ALLOWED = new HashSet<>();
-
-    static {
-        SLOT_0_ALLOWED.add(CORE_ID);
-    }
+    private static final Identifier RE_ID = new Identifier("doctor_m", "atcl_power_re");
 
     public ATCLModificationSystemScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, new SimpleInventory(5));
@@ -51,30 +43,43 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
         }
 
-        // 0号核心槽位
+        // 槽位 0：核心槽位
         this.addSlot(new Slot(inventory, 0, 105, 40) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return SLOT_0_ALLOWED.contains(Registries.ITEM.getId(stack.getItem()));
+                return Registries.ITEM.getId(stack.getItem()).equals(CORE_ID);
             }
 
             @Override
             public int getMaxItemCount() {
-                return 6;
+                return 10;
             }
         });
 
-        // 1-4 号槽位（一字排开，间距 20）
-        for (int i = 1; i < 5; i++) {
+        // 槽位 1：二号槽 (能量恢复模块)
+        this.addSlot(new Slot(inventory, 1, 125, 40) {
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return Registries.ITEM.getId(stack.getItem()).equals(RE_ID);
+            }
+
+            @Override
+            public int getMaxItemCount() {
+                return 4;
+            }
+        });
+
+        // 槽位 2, 3, 4：暂未开放
+        for (int i = 2; i < 5; i++) {
             this.addSlot(new Slot(inventory, i, 105 + i * 20, 40) {
                 @Override
                 public boolean canInsert(ItemStack stack) {
-                    return SLOT_1_4_ALLOWED.contains(Registries.ITEM.getId(stack.getItem()));
+                    return false;
                 }
             });
         }
 
-        // 玩家背包 (居中，宽度 210)
+        // 玩家背包
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++) {
                 this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 24 + j * 18, 108 + i * 18));
@@ -138,6 +143,9 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
 
             int coreCount = this.inventory.getStack(0).getCount();
             nbt.putInt(SAR.MAX_ENERGY_BASE_KEY, 10000 + (coreCount * 5000));
+
+            int reCount = this.inventory.getStack(1).getCount();
+            nbt.putInt("atcl_extra_regen", reCount * 10);
 
             if (sar.getEnergy(mainHand) > sar.getMaxEnergy(mainHand)) {
                 sar.setEnergy(mainHand, sar.getMaxEnergy(mainHand));

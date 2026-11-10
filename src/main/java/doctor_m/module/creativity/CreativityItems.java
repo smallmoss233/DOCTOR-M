@@ -2,6 +2,7 @@ package doctor_m.module.creativity;
 
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
+import doctor_m.module.creativity.creativity_data.SAR.ATCLPowerReModel;
 import doctor_m.module.creativity.creativity_data.SAR.SARAItem;
 import doctor_m.module.creativity.creativity_data.SAR.SARHItem;
 import doctor_m.module.creativity.creativity_data.SAR.SARLItem;
@@ -21,6 +22,9 @@ public class CreativityItems {
     public static final Item SARA = new SARAItem();
     public static final Item SARH = new SARHItem();
     public static final Item SARL = new SARLItem();
+
+    //A.T.C.L模块
+    public static final Item ATCL_POWER_RE = new ATCLPowerReModel(new Item.Settings().maxCount(16).rarity(net.minecraft.util.Rarity.EPIC));
 
     public static void registerAbilities() {
         ModConfig config = ConfigManager.getConfig();

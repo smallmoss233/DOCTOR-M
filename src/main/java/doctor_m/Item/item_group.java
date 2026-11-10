@@ -60,6 +60,7 @@ public static void registerItems() {
                                 entries.add(DOLL_NX_SEEKER);
                                 entries.add(SAR_WORKBENCH);
                                 entries.add(ATCL_POWER_CORE);
+                                entries.add(ATCL_POWER_RE);
                             })
                             .build());
         }
