@@ -226,7 +226,8 @@
   "gui.doctor_m.title.save": "Save Title",
   "gui.doctor_m.sar_workbench.materials": "Materials",
   "gui.doctor_m.sar_workbench.craft": "Confirm Fabricating",
-
+  "gui.doctor_m.sar_workbench.no_recipes": "No Recipes",
+  
   "title.doctor_m.apprentice_reaper": "§cApprentice Reaper",
 
   "itemGroup.doctor_m": "DOCTOR M",

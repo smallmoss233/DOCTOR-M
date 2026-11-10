@@ -272,6 +272,7 @@
   "block.doctor_m.doll_joggest": "慢跑者的玩偶",
   "block.doctor_m.doll_nx_seeker": "NX-Seeker的玩偶",
   "block.doctor_m.sar_workbench": "A.T.C.L合成终端",
+  "gui.doctor_m.sar_workbench.no_recipes": "无可用配方",
 
   "entity.doctor_m.marian_jin": "玛丽安.谨",
   "entity.doctor_m.103_tardis.name.default": "103型塔迪斯",

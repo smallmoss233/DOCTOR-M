@@ -226,7 +226,7 @@
   "gui.doctor_m.title.save": "儲存稱號",
   "gui.doctor_m.sar_workbench.craft":"確認製造",
   "gui.doctor_m.sar_workbench.materials": "材料",
-
+  "gui.doctor_m.sar_workbench.no_recipes": "無可用配方",
   "title.doctor_m.apprentice_reaper": "§c見習死神",
 
   "itemGroup.doctor_m": "DOCTOR M",
