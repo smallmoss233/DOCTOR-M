@@ -46,6 +46,7 @@ public class DOCTORM implements ModInitializer {
         AutoRegister.items(items.class, MOD_ID);
         AutoRegister.items(CreativityItems.class, MOD_ID);
         item_group.registerItems();
+        doctor_m.network.SARSwitchNetwork.registerServer();
 
         //网络通道
         KeytoTimeTeleportNetwork.register();

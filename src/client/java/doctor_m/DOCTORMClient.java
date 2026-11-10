@@ -59,7 +59,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import java.lang.reflect.Method;
-
+import doctor_m.client.network.SARSwitchClient;
 import static doctor_m.Item.items.FORCE_FIELD_SHIELD;
 import static doctor_m.block.ModBlocks.*;
 
@@ -104,6 +104,7 @@ public class DOCTORMClient implements ClientModInitializer {
         registerScreenOpeners();
         ConfigOpenHandler.register();
         MossBedrockReloader.register();
+        SARSwitchClient.register();
         HandledScreens.register(ModMenus.SAR_WORKBENCH_MENU, SarWorkbenchScreen::new);
         BlockEntityRendererFactories.register(
                 ModBlockEntities.COFFEE_MACHINE,

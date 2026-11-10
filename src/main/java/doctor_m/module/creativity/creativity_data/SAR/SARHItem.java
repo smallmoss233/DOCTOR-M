@@ -1,6 +1,7 @@
 package doctor_m.module.creativity.creativity_data.SAR;
 
 import doctor_m.module.EmissiveItem;
+import doctor_m.module.creativity.CreativityItems;
 import doctor_m.util.creativity.DynamicColorHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
@@ -16,7 +17,7 @@ import net.minecraft.util.Rarity;
 import java.awt.*;
 import java.util.List;
 
-public class SARHItem extends SAR implements EmissiveItem {
+public class SARHItem extends SAR implements EmissiveItem, SwitchableItem {
 
     public SARHItem() {
         super(new Item.Settings().rarity(Rarity.EPIC),
@@ -89,5 +90,19 @@ public class SARHItem extends SAR implements EmissiveItem {
                 new Color(255, 165, 0)
         );
         return DynamicColorHelper.applyColorCycle(baseName, colors, 15000);
+    }
+
+    @Override
+    public ItemStack onSwitchI(ServerPlayerEntity player, ItemStack stack) {
+        return null;
+    }
+
+    @Override
+    public ItemStack onSwitchU(ServerPlayerEntity player, ItemStack stack) {
+        ItemStack newStack = new ItemStack(CreativityItems.SARA);
+        if (stack.hasNbt()) {
+            newStack.setNbt(stack.getNbt().copy());
+        }
+        return newStack;
     }
 }
