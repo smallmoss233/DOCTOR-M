@@ -293,6 +293,7 @@ public abstract class SAR extends Item implements EmissiveItem {
                 removeCoreAttributes(player);
             }
             removeAtclDamageAttribute(player);
+            removeAtclAttackSpeedAttribute(player);
             return;
         }
 
@@ -301,10 +302,13 @@ public abstract class SAR extends Item implements EmissiveItem {
 
         updateActionBar(player, stack, isBlocking);
         int atclDamage = getOrCreateSARNbt(stack).getInt("atcl_extra_damage");
+        double atclSpeed = getOrCreateSARNbt(stack).getDouble("atcl_extra_speed");
         if (selected) {
             applyAtclDamageAttribute(player, atclDamage);
+            applyAtclAttackSpeedAttribute(player,atclSpeed);
         } else if (slot == 40) {
             removeAtclDamageAttribute(player);
+            removeAtclAttackSpeedAttribute(player);
         }
 
         if (isCoreActive(stack)) {
@@ -398,6 +402,35 @@ public abstract class SAR extends Item implements EmissiveItem {
                     player.getX(), player.getY() + 1.5, player.getZ(),
                     1, 0.2, 0.2, 0.2, 0.01
             );
+        }
+    }
+
+    private static final UUID ATCL_ATTACK_SPEED_UUID = UUID.fromString("55555555-5555-5555-5555-555555555555");
+
+    public void applyAtclAttackSpeedAttribute(ServerPlayerEntity player, double extraSpeed) {
+        var attr = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
+        if (attr != null) {
+            EntityAttributeModifier mod = attr.getModifier(ATCL_ATTACK_SPEED_UUID);
+            if (extraSpeed > 0) {
+                if (mod == null || mod.getValue() != extraSpeed) {
+                    if (mod != null) attr.removeModifier(ATCL_ATTACK_SPEED_UUID);
+                    attr.addPersistentModifier(new EntityAttributeModifier(
+                            ATCL_ATTACK_SPEED_UUID,
+                            "atcl_speed_up",
+                            extraSpeed,
+                            EntityAttributeModifier.Operation.ADDITION
+                    ));
+                }
+            } else {
+                if (mod != null) attr.removeModifier(ATCL_ATTACK_SPEED_UUID);
+            }
+        }
+    }
+
+    public void removeAtclAttackSpeedAttribute(ServerPlayerEntity player) {
+        var attr = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
+        if (attr != null) {
+            attr.removeModifier(ATCL_ATTACK_SPEED_UUID);
         }
     }
 

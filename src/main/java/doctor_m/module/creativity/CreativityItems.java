@@ -2,6 +2,7 @@ package doctor_m.module.creativity;
 
 import doctor_m.config.ConfigManager;
 import doctor_m.config.ModConfig;
+import doctor_m.module.creativity.creativity_data.SAR.atcl_models.ATCLConstructionModifiedModel;
 import doctor_m.module.creativity.creativity_data.SAR.atcl_models.ATCLDamageUpModel;
 import doctor_m.module.creativity.creativity_data.SAR.atcl_models.ATCLPowerReModel;
 import doctor_m.module.creativity.creativity_data.SAR.SARAItem;
@@ -27,6 +28,7 @@ public class CreativityItems {
     //A.T.C.L模块
     public static final Item ATCL_POWER_RE = new ATCLPowerReModel(new Item.Settings().maxCount(16).rarity(net.minecraft.util.Rarity.EPIC));
     public static final Item ATCL_DAMAGE_UP = new ATCLDamageUpModel(new Item.Settings().maxCount(16).rarity(net.minecraft.util.Rarity.EPIC));
+    public static final Item ATCLC_ONSTRUCTION_MODIFIED_MODEL = new ATCLConstructionModifiedModel(new Item.Settings().maxCount(16).rarity(Rarity.EPIC));
 
     public static void registerAbilities() {
         ModConfig config = ConfigManager.getConfig();

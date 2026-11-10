@@ -21,6 +21,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
     private static final Identifier CORE_ID = new Identifier("doctor_m", "atcl_power_core");
     private static final Identifier RE_ID = new Identifier("doctor_m", "atcl_power_re");
     private static final Identifier DAMAGE_ID = new Identifier("doctor_m", "atcl_damage_up");
+    private static final Identifier SPEED_ID = new Identifier("doctor_m", "atclc_onstruction_modified_model");
 
     public ATCLModificationSystemScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, new SimpleInventory(5));
@@ -52,7 +53,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
             @Override
             public int getMaxItemCount() {
-                return 6;
+                return 10;
             }
         });
 
@@ -80,15 +81,25 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
         });
 
-        // 槽位 3, 4：暂未开放
-        for (int i = 3; i < 5; i++) {
-            this.addSlot(new Slot(inventory, i, 105 + i * 20, 40) {
-                @Override
-                public boolean canInsert(ItemStack stack) {
-                    return false;
-                }
-            });
-        }
+        // 槽位 3：四号槽 (攻速)
+        this.addSlot(new Slot(inventory, 3, 165, 40) {
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return Registries.ITEM.getId(stack.getItem()).equals(SPEED_ID);
+            }
+            @Override
+            public int getMaxItemCount() {
+                return 4;
+            }
+        });
+
+        // 槽位 4：暂未开放
+        this.addSlot(new Slot(inventory, 4, 185, 40) {
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return false;
+            }
+        });
 
         // 玩家背包
         for (int i = 0; i < 3; i++) {
@@ -163,6 +174,10 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             // 槽位 2 伤害加成
             int damageCount = this.inventory.getStack(2).getCount();
             nbt.putInt("atcl_extra_damage", damageCount * 4);
+
+            // 槽位 3 攻速加成
+            int speedCount = this.inventory.getStack(3).getCount();
+            nbt.putDouble("atcl_extra_speed", speedCount * 0.6);
 
             if (sar.getEnergy(mainHand) > sar.getMaxEnergy(mainHand)) {
                 sar.setEnergy(mainHand, sar.getMaxEnergy(mainHand));
