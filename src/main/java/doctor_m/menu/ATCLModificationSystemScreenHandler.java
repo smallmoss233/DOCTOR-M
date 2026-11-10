@@ -14,10 +14,20 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.Identifier;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class ATCLModificationSystemScreenHandler extends ScreenHandler {
     private final Inventory inventory;
     private final PlayerEntity player;
-    private final Identifier CORE_ID = new Identifier("doctor_m", "atcl_power_core");
+
+    private static final Identifier CORE_ID = new Identifier("doctor_m", "atcl_power_core");
+    private static final Set<Identifier> SLOT_0_ALLOWED = new HashSet<>();
+    private static final Set<Identifier> SLOT_1_4_ALLOWED = new HashSet<>();
+
+    static {
+        SLOT_0_ALLOWED.add(CORE_ID);
+    }
 
     public ATCLModificationSystemScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, new SimpleInventory(5));
@@ -30,20 +40,22 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
         this.player = playerInventory.player;
         inventory.onOpen(this.player);
 
-        // 从武器 NBT 中读取已存储的核心，并放入槽位 0
         ItemStack mainHand = this.player.getMainHandStack();
         if (mainHand.getItem() instanceof SAR sar) {
             NbtCompound nbt = sar.getOrCreateSARNbt(mainHand);
-            if (nbt.contains("atcl_core_0", NbtElement.COMPOUND_TYPE)) {
-                this.inventory.setStack(0, ItemStack.fromNbt(nbt.getCompound("atcl_core_0")));
+            for (int i = 0; i < 5; i++) {
+                String key = "atcl_module_" + i;
+                if (nbt.contains(key, NbtElement.COMPOUND_TYPE)) {
+                    this.inventory.setStack(i, ItemStack.fromNbt(nbt.getCompound(key)));
+                }
             }
         }
 
-        // 0号主槽位 (强制合并，限制 6 个)
-        this.addSlot(new Slot(inventory, 0, 137, 24) {
+        // 0号核心槽位
+        this.addSlot(new Slot(inventory, 0, 105, 40) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return Registries.ITEM.getId(stack.getItem()).equals(CORE_ID);
+                return SLOT_0_ALLOWED.contains(Registries.ITEM.getId(stack.getItem()));
             }
 
             @Override
@@ -52,32 +64,29 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
         });
 
-        // 1-4 号副槽位 (完全禁止放入任何物品)
+        // 1-4 号槽位（一字排开，间距 20）
         for (int i = 1; i < 5; i++) {
-            int sx = 122 + ((i - 1) % 2) * 36;
-            int sy = 58 + ((i - 1) / 2) * 22;
-            this.addSlot(new Slot(inventory, i, sx, sy) {
+            this.addSlot(new Slot(inventory, i, 105 + i * 20, 40) {
                 @Override
                 public boolean canInsert(ItemStack stack) {
-                    return false;
+                    return SLOT_1_4_ALLOWED.contains(Registries.ITEM.getId(stack.getItem()));
                 }
             });
         }
 
-        // 玩家背包
+        // 玩家背包 (居中，宽度 210)
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++) {
-                this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 108 + i * 18));
+                this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 24 + j * 18, 108 + i * 18));
             }
         }
         for (int i = 0; i < 9; i++) {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 166));
+            this.addSlot(new Slot(playerInventory, i, 24 + i * 18, 166));
         }
     }
 
     @Override
     public void onSlotClick(int slotIndex, int button, SlotActionType actionType, PlayerEntity player) {
-        // 拦截 0 号槽位，无视 NBT 强制合并
         if (slotIndex == 0) {
             ItemStack cursor = this.getCursorStack();
             ItemStack slotStack = this.slots.get(0).getStack();
@@ -90,7 +99,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
                         if (slotStack.isEmpty()) {
                             ItemStack newStack = cursor.copy();
                             newStack.setCount(moveCount);
-                            newStack.setNbt(null); // 清除 NBT 确保完美堆叠
+                            newStack.setNbt(null);
                             this.slots.get(0).setStack(newStack);
                         } else {
                             slotStack.setCount(slotStack.getCount() + moveCount);
@@ -114,20 +123,21 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
         ItemStack mainHand = this.player.getMainHandStack();
         if (mainHand.getItem() instanceof SAR sar) {
             NbtCompound nbt = sar.getOrCreateSARNbt(mainHand);
-            ItemStack coreStack = this.inventory.getStack(0);
 
-            // 实时将物品存入武器 NBT，实现持久化
-            if (!coreStack.isEmpty()) {
-                NbtCompound cNbt = new NbtCompound();
-                coreStack.writeNbt(cNbt);
-                nbt.put("atcl_core_0", cNbt);
-            } else {
-                nbt.remove("atcl_core_0");
+            for (int i = 0; i < 5; i++) {
+                String key = "atcl_module_" + i;
+                ItemStack stack = this.inventory.getStack(i);
+                if (!stack.isEmpty()) {
+                    NbtCompound cNbt = new NbtCompound();
+                    stack.writeNbt(cNbt);
+                    nbt.put(key, cNbt);
+                } else {
+                    nbt.remove(key);
+                }
             }
 
-            // 计算能量上限
-            int count = coreStack.getCount();
-            nbt.putInt(SAR.MAX_ENERGY_BASE_KEY, 10000 + (count * 5000));
+            int coreCount = this.inventory.getStack(0).getCount();
+            nbt.putInt(SAR.MAX_ENERGY_BASE_KEY, 10000 + (coreCount * 5000));
 
             if (sar.getEnergy(mainHand) > sar.getMaxEnergy(mainHand)) {
                 sar.setEnergy(mainHand, sar.getMaxEnergy(mainHand));
@@ -139,7 +149,6 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
     @Override
     public void onClosed(PlayerEntity player) {
         super.onClosed(player);
-        // 检查主手是否还是武器。如果是，数据已在 updateWeaponStats 存好；如果不是，退还物品。
         if (player.getMainHandStack().getItem() instanceof SAR) {
             updateWeaponStats();
         } else {

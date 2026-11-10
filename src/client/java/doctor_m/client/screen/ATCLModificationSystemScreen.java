@@ -13,7 +13,7 @@ public class ATCLModificationSystemScreen extends HandledScreen<ATCLModification
 
     public ATCLModificationSystemScreen(ATCLModificationSystemScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
-        this.backgroundWidth = 200;
+        this.backgroundWidth = 210;
         this.backgroundHeight = 200;
         this.titleX = 9999;
         this.playerInventoryTitleY = 9999;
@@ -42,7 +42,6 @@ public class ATCLModificationSystemScreen extends HandledScreen<ATCLModification
         if (!mainHand.isEmpty()) {
             context.drawItem(mainHand, x + 42, y + 30);
 
-            // 处理名字过长截断
             String nameStr = mainHand.getName().getString();
             if (textRenderer.getWidth(nameStr) > 80) {
                 nameStr = textRenderer.trimToWidth(nameStr, 74) + "...";
@@ -57,19 +56,15 @@ public class ATCLModificationSystemScreen extends HandledScreen<ATCLModification
         }
 
         // ================= 右侧改装槽位面板 =================
-        context.fill(x + 100, y + 6, x + 194, y + 98, 0xFF404040);
-        context.drawBorder(x + 100, y + 6, 94, 92, 0xFF000000);
+        context.fill(x + 100, y + 6, x + 206, y + 98, 0xFF404040);
+        context.drawBorder(x + 100, y + 6, 106, 92, 0xFF000000);
         context.drawText(textRenderer, "MODULES", x + 104, y + 10, 0xFF00FFFF, false);
-        context.fill(x + 102, y + 22, x + 192, y + 23, 0xFF000000);
+        context.fill(x + 102, y + 22, x + 204, y + 23, 0xFF000000);
 
-        // 主槽位底框 (高亮)
-        context.fill(x + 136, y + 23, x + 156, y + 43, 0xFF222222);
-        context.drawBorder(x + 136, y + 23, 20, 20, 0xFF00FFFF);
-
-        // 副槽位底框 (2x2)
-        for (int i = 1; i < 5; i++) {
-            int sx = x + 121 + ((i - 1) % 2) * 36;
-            int sy = y + 57 + ((i - 1) / 2) * 22;
+        // 绘制 5 个横向排列的槽位底框
+        for (int i = 0; i < 5; i++) {
+            int sx = x + 105 + i * 20;
+            int sy = y + 40;
             context.fill(sx - 1, sy - 1, sx + 17, sy + 17, 0xFF222222);
             context.drawBorder(sx - 1, sy - 1, 18, 18, 0xFF555555);
         }
@@ -77,7 +72,24 @@ public class ATCLModificationSystemScreen extends HandledScreen<ATCLModification
         // ================= 底部背包区域 =================
         context.fill(x + 4, y + 100, x + this.backgroundWidth - 4, y + 195, 0xFF3A3A3A);
         context.drawBorder(x + 4, y + 100, this.backgroundWidth - 8, 95, 0xFF000000);
-        context.drawText(textRenderer, Text.translatable("container.inventory").formatted(Formatting.GRAY), x + 8, y + 101, 0xFFFFFF, false);
+
+        // 删除了这里绘制“物品栏”文字的代码
+
+        // 绘制背包格子 (3x9 和 1x9 快捷栏)
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 9; j++) {
+                int bx = x + 24 + j * 18;
+                int by = y + 108 + i * 18;
+                context.fill(bx - 1, by - 1, bx + 17, by + 17, 0xFF222222);
+                context.drawBorder(bx - 1, by - 1, 18, 18, 0xFF555555);
+            }
+        }
+        for (int j = 0; j < 9; j++) {
+            int bx = x + 24 + j * 18;
+            int by = y + 166;
+            context.fill(bx - 1, by - 1, bx + 17, by + 17, 0xFF222222);
+            context.drawBorder(bx - 1, by - 1, 18, 18, 0xFF555555);
+        }
     }
 
     @Override
