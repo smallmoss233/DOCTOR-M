@@ -16,7 +16,7 @@ public class ATCLConstructionModifiedModel extends Item {
 
     @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
-        tooltip.add(Text.translatable("tooltip.doctor_m.atcl_damage_up.desc").formatted(Formatting.GRAY));
+        tooltip.add(Text.translatable("tooltip.doctor_m.atcl_construction_modified_model.desc").formatted(Formatting.GRAY));
         super.appendTooltip(stack, world, tooltip, context);
     }
 }

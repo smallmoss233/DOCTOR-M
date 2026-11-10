@@ -23,6 +23,10 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
     private static final Identifier DAMAGE_ID = new Identifier("doctor_m", "atcl_damage_up");
     private static final Identifier SPEED_ID = new Identifier("doctor_m", "atclc_onstruction_modified_model");
 
+    // 第五槽的两个专属模块
+    private static final Identifier COOLING_ID = new Identifier("doctor_m", "atcl_cooling_modified_model");
+    private static final Identifier HIGHLAND_ID = new Identifier("doctor_m", "atcl_high_land_model");
+
     public ATCLModificationSystemScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, new SimpleInventory(5));
     }
@@ -53,11 +57,11 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
             @Override
             public int getMaxItemCount() {
-                return 10;
+                return 6;
             }
         });
 
-        // 槽位 1：二号槽 (恢复)
+        // 槽位 1：恢复
         this.addSlot(new Slot(inventory, 1, 125, 40) {
             @Override
             public boolean canInsert(ItemStack stack) {
@@ -69,7 +73,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
         });
 
-        // 槽位 2：三号槽 (伤害)
+        // 槽位 2：伤害
         this.addSlot(new Slot(inventory, 2, 145, 40) {
             @Override
             public boolean canInsert(ItemStack stack) {
@@ -81,7 +85,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
         });
 
-        // 槽位 3：四号槽 (攻速)
+        // 槽位 3：攻速
         this.addSlot(new Slot(inventory, 3, 165, 40) {
             @Override
             public boolean canInsert(ItemStack stack) {
@@ -93,11 +97,16 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
         });
 
-        // 槽位 4：暂未开放
+        // 槽位 4：五号槽 (冷却/高地 二选一，不可堆叠)
         this.addSlot(new Slot(inventory, 4, 185, 40) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return false;
+                Identifier id = Registries.ITEM.getId(stack.getItem());
+                return id.equals(COOLING_ID) || id.equals(HIGHLAND_ID);
+            }
+            @Override
+            public int getMaxItemCount() {
+                return 1;
             }
         });
 
@@ -178,6 +187,14 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             // 槽位 3 攻速加成
             int speedCount = this.inventory.getStack(3).getCount();
             nbt.putDouble("atcl_extra_speed", speedCount * 0.6);
+
+            // 槽位 4 特殊模块标记 (记录放入的是冷却还是高地，为后续应用效果做准备)
+            ItemStack specialStack = this.inventory.getStack(4);
+            if (specialStack.isEmpty()) {
+                nbt.remove("atcl_special_module");
+            } else {
+                nbt.putString("atcl_special_module", Registries.ITEM.getId(specialStack.getItem()).toString());
+            }
 
             if (sar.getEnergy(mainHand) > sar.getMaxEnergy(mainHand)) {
                 sar.setEnergy(mainHand, sar.getMaxEnergy(mainHand));

@@ -28,7 +28,7 @@ public class CreativityItems {
     //A.T.C.L模块
     public static final Item ATCL_POWER_RE = new ATCLPowerReModel(new Item.Settings().maxCount(16).rarity(net.minecraft.util.Rarity.EPIC));
     public static final Item ATCL_DAMAGE_UP = new ATCLDamageUpModel(new Item.Settings().maxCount(16).rarity(net.minecraft.util.Rarity.EPIC));
-    public static final Item ATCLC_ONSTRUCTION_MODIFIED_MODEL = new ATCLConstructionModifiedModel(new Item.Settings().maxCount(16).rarity(Rarity.EPIC));
+    public static final Item ATCL_CONSTRUCTION_MODIFIED_MODEL = new ATCLConstructionModifiedModel(new Item.Settings().maxCount(16).rarity(Rarity.EPIC));
 
     public static void registerAbilities() {
         ModConfig config = ConfigManager.getConfig();
