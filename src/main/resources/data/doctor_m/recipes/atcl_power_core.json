@@ -3,7 +3,8 @@
   "inputs": [
     { "item": "minecraft:gold_ingot", "count": 2 },
     { "item": "minecraft:water_bucket", "count": 1 },
-    { "item": "minecraft:iron_ingot", "count": 2 }
+    { "item": "minecraft:iron_ingot", "count": 2 },
+    {"item": "minecraft:glass","count": "2"}
   ],
   "output": {
     "item": "doctor_m:atcl_power_core",
