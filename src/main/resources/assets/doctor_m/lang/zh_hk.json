@@ -532,7 +532,7 @@
 
   "hud.doctor_m.environment.oxygenated": "有氧，可脫下太空衣",
   "hud.doctor_m.environment.deoxygenated": "無氧，不可脫下太空衣",
-
+  "message.doctor_m.atcl.require_sar": "無法開啟操作介面，需要SAR系列武器。",
   "message.doctor_m.tip.not.done": "§c[此項目未完成！]",
   "message.doctor_m.oxygen_tank.no_suit": "§c請先穿上太空衣胸甲！",
   "message.doctor_m.oxygen_tank.empty": "§c氧氣瓶已空！",

@@ -534,6 +534,7 @@
   "hud.doctor_m.environment.oxygenated": "有氧，可脱下宇航服",
   "hud.doctor_m.environment.deoxygenated": "无氧，不可脱下宇航服",
 
+  "message.doctor_m.atcl.require_sar": "无法打开操作界面，需要SAR系列武器.",
   "message.doctor_m.tip.not.done": "§c[此项目未完成！]",
   "message.doctor_m.oxygen_tank.no_suit": "§c请先穿上宇航服胸甲！",
   "message.doctor_m.oxygen_tank.empty": "§c氧气瓶已空！",

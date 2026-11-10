@@ -534,6 +534,7 @@
   "hud.doctor_m.environment.oxygenated": "Oxygenated, can take off spacesuit",
   "hud.doctor_m.environment.deoxygenated": "Deoxygenated, cannot take off spacesuit",
 
+  "message.doctor_m.atcl.require_sar": "Cannot open interface. SAR weapon required.",
   "message.doctor_m.tip.not.done": "§c[This feature is not yet complete!]",
   "message.doctor_m.oxygen_tank.no_suit": "§cPlease equip the spacesuit chestplate first!",
   "message.doctor_m.oxygen_tank.empty": "§cOxygen tank is empty!",

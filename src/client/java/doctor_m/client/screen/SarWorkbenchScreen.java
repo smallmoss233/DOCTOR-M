@@ -92,7 +92,7 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
         drawAutoScaledText(context, outputName, drawX, y + 120, 125, 0xFF00FFFF);
 
         String pageText = (selectedIndex + 1) + " / " + recipeList.size();
-        context.drawText(this.textRenderer, pageText, x + 235 - this.textRenderer.getWidth(pageText) / 2, y + 21, COLOR_TEXT, true);
+        context.drawText(this.textRenderer, pageText, x + 235 - this.textRenderer.getWidth(pageText) / 2, y + 21, COLOR_TEXT, false);
 
         drawAutoScaledText(context, Text.translatable("gui.doctor_m.sar_workbench.materials"), x + 165, y + 50, 140, COLOR_TEXT_DIM);
 
@@ -208,7 +208,7 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
         context.getMatrices().push();
         context.getMatrices().translate(x + (w - textWidth) / 2.0F, y + (h - 8) / 2.0F + 1, 0);
         context.getMatrices().scale(scale, scale, 1.0F);
-        context.drawText(this.textRenderer, text, 0, 0, textColor, true);
+        context.drawText(this.textRenderer, text, 0, 0, textColor, false);
         context.getMatrices().pop();
     }
 
@@ -219,10 +219,10 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
             context.getMatrices().push();
             context.getMatrices().translate(x, y, 0);
             context.getMatrices().scale(scale, scale, 1.0F);
-            context.drawText(this.textRenderer, text, 0, 0, color, true);
+            context.drawText(this.textRenderer, text, 0, 0, color, false);
             context.getMatrices().pop();
         } else {
-            context.drawText(this.textRenderer, text, x, y, color, true);
+            context.drawText(this.textRenderer, text, x, y, color, false);
         }
     }
 
