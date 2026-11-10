@@ -21,7 +21,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
     private static final Identifier CORE_ID = new Identifier("doctor_m", "atcl_power_core");
     private static final Identifier RE_ID = new Identifier("doctor_m", "atcl_power_re");
     private static final Identifier DAMAGE_ID = new Identifier("doctor_m", "atcl_damage_up");
-    private static final Identifier SPEED_ID = new Identifier("doctor_m", "atclc_onstruction_modified_model");
+    private static final Identifier SPEED_ID = new Identifier("doctor_m", "atcl_construction_modified_model");
 
     // 第五槽的两个专属模块
     private static final Identifier COOLING_ID = new Identifier("doctor_m", "atcl_cooling_modified_model");
@@ -57,7 +57,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
             @Override
             public int getMaxItemCount() {
-                return 6;
+                return 10;
             }
         });
 

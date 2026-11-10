@@ -500,4 +500,26 @@ public abstract class SAR extends Item implements EmissiveItem {
         modules.put(REGULAR_MODULES_KEY, newList);
         return true;
     }
+    public static void registerKillEvents() {
+        net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents.AFTER_DEATH.register((entity, damageSource) -> {
+            if (damageSource.getAttacker() instanceof ServerPlayerEntity player) {
+                ItemStack stack = player.getMainHandStack();
+                if (stack.getItem() instanceof SAR sar) {
+                    // 读取第五槽存的模块 ID
+                    String specialModule = sar.getOrCreateSARNbt(stack).getString("atcl_special_module");
+
+                    if (specialModule.equals("doctor_m:atcl_high_land_model") && sar.isCoreActive(stack)) {
+                        sar.addEnergy(stack, 80);
+                        player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(),
+                                net.minecraft.sound.SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,
+                                net.minecraft.sound.SoundCategory.PLAYERS, 1.0f, 1.5f);
+                        player.getWorld().addParticle(
+                                net.minecraft.particle.ParticleTypes.ENCHANT,
+                                entity.getX(), entity.getY() + 1.0, entity.getZ(),
+                                0.0, 0.5, 0.0);
+                    }
+                }
+            }
+        });
+    }
 }

@@ -63,6 +63,7 @@ public static void registerItems() {
                                 entries.add(ATCL_POWER_RE);
                                 entries.add(ATCL_DAMAGE_UP);
                                 entries.add(ATCL_CONSTRUCTION_MODIFIED_MODEL);
+                                entries.add(ATCL_HIGH_LAND_MODEL);
                             })
                             .build());
         }

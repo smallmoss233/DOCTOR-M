@@ -66,6 +66,8 @@ public class DOCTORM implements ModInitializer {
         PocketWatchFunction.register();
         GemDeathSaveHandler.register();
         GemTickHandler.register();
+        doctor_m.module.creativity.creativity_data.SAR.SAR.registerKillEvents();
+
 
         //杂项
         ModSounds.init();
