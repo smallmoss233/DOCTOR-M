@@ -227,7 +227,13 @@
   "gui.doctor_m.sar_workbench.materials": "Materials",
   "gui.doctor_m.sar_workbench.craft": "Confirm Fabricating",
   "gui.doctor_m.sar_workbench.no_recipes": "No Recipes",
-  
+  "gui.doctor_m.atcl.terminal": "A.T.C.L Modification System",
+  "gui.doctor_m.atcl.modules": "Modules",
+  "gui.doctor_m.atcl.max_energy": "Energy Cap Bonus: %d",
+  "gui.doctor_m.atcl.extra_speed": "Attack Speed Bonus: +%s",
+  "gui.doctor_m.atcl.extra_regen": "Energy Recovery Bonus: +%d/s",
+  "gui.doctor_m.atcl.no_weapon": "No Weapon",
+
   "title.doctor_m.apprentice_reaper": "§cApprentice Reaper",
 
   "itemGroup.doctor_m": "DOCTOR M",
@@ -256,6 +262,11 @@
   "item.doctor_m.toymaker_hammer": "Toymaker's Hammer",
   "item.doctor_m.seal_of_the_high_council": "Seal of The High Council",
   "item.doctor_m.atcl_power_core": "A.T.C.L Power Core",
+  "item.doctor_m.atcl_power_re": "A.T.C.L Energy Recovery Efficiency Optimization Module",
+  "item.doctor_m.atcl_damage_up": "A.T.C.L Damage Enhancement Module",
+  "item.doctor_m.atcl_construction_modified_model": "A.T.C.L Weapon Structural Optimization Module",
+  "item.doctor_m.atcl_high_land_model": "A.T.C.L High Land Model",
+  "item.doctor_m.atcl_cooling_modified_model": "A.T.C.L Weapon Cooling System Optimization Module",
 
   "block.doctor_m.oxygen_charger": "Oxygen Recharger",
   "block.doctor_m.underwater_oxygen_generator": "Underwater Oxygen Generator",
@@ -394,6 +405,12 @@
   "key.doctor_m.passive_b": "Toggle Passive B",
   "category.doctor_m": "DOCTOR M",
 
+  "tooltip.doctor_m.atcl_power_core.desc": "A.T.C.L equipment universal energy core,which can be used for equipment manufacturing and equipment modification.",
+  "tooltip.doctor_m.atcl_power_re.desc": "The universal module of A.T.C.L equipment optimizes energy transmission efficiency and reduces losses, achieving the goal of accelerating energy recovery.",
+  "tooltip.doctor_m.atcl_damage_up.desc": "A.T.C.L Weapon Universal Module, which increases the upper limit of weapon heating temperature to achieve a more lethal effect。",
+  "tooltip.doctor_m.atcl_construction_modified_model.desc": "A.T.C.L Weapon Universal Module, optimizes the energy structure and scheduling of weapons, and increases the power of the power system to accelerate the attack speed.",
+  "tooltip.doctor_m.atcl_high_land_model.desc": "The SAR series weapon universal module under A.T.C.L. enables users to restore weapon energy by killing creatures in the sword core state.",
+  "tooltip.doctor_m.atcl_cooling_modified_model.desc": "The SAR series weapon universal module under A.T.C.L. improves the weapon cooling system, reducing the cooling time after the sword core is depleted.",
   "tooltip.doctor_m.hold_shift": "Hold Shift for Details",
   "tooltip.doctor_m.oxygen": "§bOxygen: %.1f / %.0fL",
   "tooltip.doctor_m.vacuum_consuming": "You are eating in a vacuum!",

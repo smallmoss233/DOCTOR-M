@@ -226,6 +226,12 @@
   "gui.doctor_m.title.save": "保存称号",
   "gui.doctor_m.sar_workbench.craft":"确认制造",
   "gui.doctor_m.sar_workbench.materials": "材料",
+  "gui.doctor_m.atcl.terminal": "A.T.C.L 改装系统",
+  "gui.doctor_m.atcl.modules": "模块",
+  "gui.doctor_m.atcl.max_energy": "能量上限加成: %d",
+  "gui.doctor_m.atcl.extra_speed": "攻速加成: +%s",
+  "gui.doctor_m.atcl.extra_regen": "回能加成: +%d/s",
+  "gui.doctor_m.atcl.no_weapon": "未检测到武器",
 
   "title.doctor_m.apprentice_reaper": "§c见习死神",
 
@@ -255,6 +261,11 @@
   "item.doctor_m.toymaker_hammer": "玩具匠的锤子",
   "item.doctor_m.seal_of_the_high_council": "至高议会勋章",
   "item.doctor_m.atcl_power_core": "A.T.C.L 能量核心",
+  "item.doctor_m.atcl_power_re": "A.T.C.L 能量恢复提升模块",
+  "item.doctor_m.atcl_damage_up": "A.T.C.L 杀伤性提升模块",
+  "item.doctor_m.atcl_construction_modified_model": "A.T.C.L 武器结构优化模块",
+  "item.doctor_m.atcl_high_land_model": "A.T.C.L ”高地“模块",
+  "item.doctor_m.atcl_cooling_modified_model": "A.T.C.L 武器冷却系统优化模块",
 
   "block.doctor_m.oxygen_charger": "氧气补充机",
   "block.doctor_m.underwater_oxygen_generator": "水下制氧机",
@@ -394,6 +405,12 @@
   "key.doctor_m.passive_b": "功能键B",
   "category.doctor_m": "DOCTOR M",
 
+  "tooltip.doctor_m.atcl_power_core.desc": "A.T.C.L设备通用能量核心，可用于设备制造和改装。",
+  "tooltip.doctor_m.atcl_power_re.desc": "A.T.C.L设备通用模块，优化能量传输效率、减少消耗实现加速能量恢复的效果。",
+  "tooltip.doctor_m.atcl_damage_up.desc": "A.T.C.L武器通用模块，通过提升武器加热温度上限，实现提高杀伤能力的效果。",
+  "tooltip.doctor_m.atcl_construction_modified_model.desc": "A.T.C.L武器通用模块，优化能源结构与调配，提高动力系统功率以提高攻击速度。",
+  "tooltip.doctor_m.atcl_high_land_model.desc": "A.T.C.L旗下SAR系列武器通用模块，允许用户在剑核心状态下通过击杀生物恢复能量。",
+  "tooltip.doctor_m.atcl_cooling_modified_model.desc": "A.T.C.L旗下SAR系列武器通用模块，改善武器冷却系统，减少剑核心结束后的冷却时间",
   "tooltip.doctor_m.hold_shift": "按住 Shift 查看详情",
   "tooltip.doctor_m.oxygen": "§b氧气：%.1f / %.0fL",
   "tooltip.doctor_m.vacuum_consuming": "你正在真空下吃东西！",
