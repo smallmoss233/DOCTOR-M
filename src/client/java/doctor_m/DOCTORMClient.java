@@ -105,6 +105,8 @@ public class DOCTORMClient implements ClientModInitializer {
         ConfigOpenHandler.register();
         MossBedrockReloader.register();
         SARSwitchClient.register();
+        doctor_m.client.screen.ModClientScreens.register();
+        doctor_m.client.network.ATCLModificationSystemKeyClient.register();
         HandledScreens.register(ModMenus.SAR_WORKBENCH_MENU, SarWorkbenchScreen::new);
         BlockEntityRendererFactories.register(
                 ModBlockEntities.COFFEE_MACHINE,

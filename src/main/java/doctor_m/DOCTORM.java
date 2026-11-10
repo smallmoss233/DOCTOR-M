@@ -72,6 +72,8 @@ public class DOCTORM implements ModInitializer {
         TardisTypeLoader.init();
         doctor_m.menu.ModMenus.register();
         ModRecipes.register();
+        doctor_m.menu.ModMenus.register();
+        doctor_m.network.ATCLModificationSystemNetwork.registerServer();
 
         //命令与配置
         CommandRegistrationCallback.EVENT.register(DOCTORMCommand::register);

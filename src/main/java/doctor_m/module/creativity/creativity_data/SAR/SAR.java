@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.UUID;
 
 public abstract class SAR extends Item implements EmissiveItem {
-
     public static final String SAR_TAG = "SAR";
     public static final String ENERGY_KEY = "energy";
     public static final String MAX_ENERGY_BASE_KEY = "max_energy_base";
