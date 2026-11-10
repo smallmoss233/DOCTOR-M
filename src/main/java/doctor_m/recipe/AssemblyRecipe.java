@@ -17,20 +17,33 @@ import java.util.List;
 public class AssemblyRecipe implements Recipe<Inventory> {
     private final Identifier id;
     private final List<Ingredient> inputs;
+    private final List<Integer> inputCounts;
     private final ItemStack output;
 
-    public AssemblyRecipe(Identifier id, List<Ingredient> inputs, ItemStack output) {
+    public AssemblyRecipe(Identifier id, List<Ingredient> inputs, List<Integer> inputCounts, ItemStack output) {
         this.id = id;
         this.inputs = inputs;
+        this.inputCounts = inputCounts;
         this.output = output;
     }
 
     public List<Ingredient> getInputs() { return inputs; }
+    public List<Integer> getInputCounts() { return inputCounts; }
     public ItemStack getOutput() { return output; }
 
     public boolean canCraft(PlayerEntity player) {
-        for (Ingredient ingredient : inputs) {
-            if (!player.getInventory().contains(ingredient.getMatchingStacks()[0])) return false;
+        for (int i = 0; i < inputs.size(); i++) {
+            Ingredient ingredient = inputs.get(i);
+            int required = inputCounts.get(i);
+            int playerHas = 0;
+
+            for (int j = 0; j < player.getInventory().size(); j++) {
+                ItemStack stack = player.getInventory().getStack(j);
+                if (ingredient.test(stack)) {
+                    playerHas += stack.getCount();
+                }
+            }
+            if (playerHas < required) return false;
         }
         return true;
     }
@@ -38,10 +51,12 @@ public class AssemblyRecipe implements Recipe<Inventory> {
     public void craft(PlayerEntity player) {
         if (!canCraft(player)) return;
 
-        for (Ingredient ingredient : inputs) {
-            int requiredCount = ingredient.getMatchingStacks()[0].getCount();
-            for (int i = 0; i < player.getInventory().size() && requiredCount > 0; i++) {
-                ItemStack stack = player.getInventory().getStack(i);
+        for (int i = 0; i < inputs.size(); i++) {
+            Ingredient ingredient = inputs.get(i);
+            int requiredCount = inputCounts.get(i);
+
+            for (int j = 0; j < player.getInventory().size() && requiredCount > 0; j++) {
+                ItemStack stack = player.getInventory().getStack(j);
                 if (ingredient.test(stack)) {
                     int remove = Math.min(stack.getCount(), requiredCount);
                     stack.decrement(remove);

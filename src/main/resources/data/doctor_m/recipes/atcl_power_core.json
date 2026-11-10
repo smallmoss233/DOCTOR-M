@@ -1,0 +1,12 @@
+{
+  "type": "doctor_m:assembly",
+  "inputs": [
+    { "item": "minecraft:gold_ingot", "count": 2 },
+    { "item": "minecraft:potion", "count": 1 },
+    { "item": "minecraft:iron_ingot", "count": 2 }
+  ],
+  "output": {
+    "item": "doctor_m:atcl_power_core",
+    "count": 1
+  }
+}

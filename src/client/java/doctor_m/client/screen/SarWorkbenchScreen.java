@@ -104,17 +104,33 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
         context.enableScissor(x + 160, listTop, x + 300, listBottom);
 
         int materialY = listTop - (int) scrollAmount;
-        for (Ingredient ingredient : currentRecipe.getInputs()) {
+        List<Ingredient> inputs = currentRecipe.getInputs();
+        List<Integer> counts = currentRecipe.getInputCounts();
+
+        for (int i = 0; i < inputs.size(); i++) {
+            Ingredient ingredient = inputs.get(i);
+            int reqCount = counts.get(i);
+
             ItemStack[] stacks = ingredient.getMatchingStacks();
             if (stacks.length > 0) {
                 ItemStack inputStack = stacks[0];
 
-                boolean hasEnough = this.client != null && this.client.player != null && this.client.player.getInventory().contains(inputStack);
+                int playerHas = 0;
+                if (this.client != null && this.client.player != null) {
+                    for (int j = 0; j < this.client.player.getInventory().size(); j++) {
+                        ItemStack stackInInv = this.client.player.getInventory().getStack(j);
+                        if (ingredient.test(stackInInv)) {
+                            playerHas += stackInInv.getCount();
+                        }
+                    }
+                }
+
+                boolean hasEnough = playerHas >= reqCount;
                 int textColor = hasEnough ? COLOR_TEXT : 0xFFCC0000;
 
                 context.drawItem(inputStack, x + 165, materialY);
 
-                Text reqText = Text.literal(inputStack.getName().getString() + " x" + inputStack.getCount());
+                Text reqText = Text.literal(inputStack.getName().getString() + " x" + reqCount);
                 drawAutoScaledText(context, reqText, x + 185, materialY + 4, 100, textColor, false);
 
                 materialY += 20;
@@ -123,7 +139,7 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
 
         context.disableScissor();
 
-        int totalHeight = currentRecipe.getInputs().size() * 20;
+        int totalHeight = inputs.size() * 20;
         if (totalHeight > listHeight) {
             int scrollBarX = x + 302;
             int scrollBarWidth = 4;
