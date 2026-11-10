@@ -61,6 +61,7 @@ public static void registerItems() {
                                 entries.add(SAR_WORKBENCH);
                                 entries.add(ATCL_POWER_CORE);
                                 entries.add(ATCL_POWER_RE);
+                                entries.add(ATCL_DAMAGE_UP);
                             })
                             .build());
         }

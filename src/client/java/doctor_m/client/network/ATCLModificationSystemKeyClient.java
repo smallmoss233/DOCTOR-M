@@ -10,19 +10,19 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 public class ATCLModificationSystemKeyClient {
-    private static KeyBinding keyZ;
+    private static KeyBinding keyM;
 
     public static void register() {
-        keyZ = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        keyM = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.doctor_m.open_atcl_modification_system",
                 InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_Z,
+                GLFW.GLFW_KEY_M,
                 "category.doctor_m"
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null) return;
-            while (keyZ.wasPressed()) {
+            while (keyM.wasPressed()) {
                 ClientPlayNetworking.send(ATCLModificationSystemNetwork.ID, PacketByteBufs.empty());
             }
         });

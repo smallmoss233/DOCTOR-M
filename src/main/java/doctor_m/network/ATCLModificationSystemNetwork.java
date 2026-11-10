@@ -15,12 +15,13 @@ public class ATCLModificationSystemNetwork {
         ServerPlayNetworking.registerGlobalReceiver(ID, (server, player, handler, buf, responseSender) -> {
             server.execute(() -> {
                 if (!(player.getMainHandStack().getItem() instanceof SAR)) {
-                    player.sendMessage(Text.literal("主手必须持有 SAR 系列武器才能打开改装系统").formatted(Formatting.RED), true);
+                    // 改成了读取翻译键
+                    player.sendMessage(Text.translatable("message.doctor_m.atcl.require_sar").formatted(Formatting.RED), true);
                     return;
                 }
                 player.openHandledScreen(new SimpleNamedScreenHandlerFactory(
                         (syncId, inv, p) -> new ATCLModificationSystemScreenHandler(syncId, inv),
-                        Text.literal("ATCL Modification System")
+                        Text.translatable("gui.doctor_m.atcl_modification_system")
                 ));
             });
         });

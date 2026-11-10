@@ -20,6 +20,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
 
     private static final Identifier CORE_ID = new Identifier("doctor_m", "atcl_power_core");
     private static final Identifier RE_ID = new Identifier("doctor_m", "atcl_power_re");
+    private static final Identifier DAMAGE_ID = new Identifier("doctor_m", "atcl_damage_up");
 
     public ATCLModificationSystemScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, new SimpleInventory(5));
@@ -43,34 +44,44 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
         }
 
-        // 槽位 0：核心槽位
+        // 槽位 0：核心
         this.addSlot(new Slot(inventory, 0, 105, 40) {
             @Override
             public boolean canInsert(ItemStack stack) {
                 return Registries.ITEM.getId(stack.getItem()).equals(CORE_ID);
             }
-
             @Override
             public int getMaxItemCount() {
-                return 10;
+                return 6;
             }
         });
 
-        // 槽位 1：二号槽 (能量恢复模块)
+        // 槽位 1：二号槽 (恢复)
         this.addSlot(new Slot(inventory, 1, 125, 40) {
             @Override
             public boolean canInsert(ItemStack stack) {
                 return Registries.ITEM.getId(stack.getItem()).equals(RE_ID);
             }
-
             @Override
             public int getMaxItemCount() {
                 return 4;
             }
         });
 
-        // 槽位 2, 3, 4：暂未开放
-        for (int i = 2; i < 5; i++) {
+        // 槽位 2：三号槽 (伤害)
+        this.addSlot(new Slot(inventory, 2, 145, 40) {
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return Registries.ITEM.getId(stack.getItem()).equals(DAMAGE_ID);
+            }
+            @Override
+            public int getMaxItemCount() {
+                return 2;
+            }
+        });
+
+        // 槽位 3, 4：暂未开放
+        for (int i = 3; i < 5; i++) {
             this.addSlot(new Slot(inventory, i, 105 + i * 20, 40) {
                 @Override
                 public boolean canInsert(ItemStack stack) {
@@ -141,11 +152,17 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
                 }
             }
 
+            // 槽位 0 核心加成
             int coreCount = this.inventory.getStack(0).getCount();
             nbt.putInt(SAR.MAX_ENERGY_BASE_KEY, 10000 + (coreCount * 5000));
 
+            // 槽位 1 回能加成
             int reCount = this.inventory.getStack(1).getCount();
-            nbt.putInt("atcl_extra_regen", reCount * 25);
+            nbt.putInt("atcl_extra_regen", reCount * 40);
+
+            // 槽位 2 伤害加成
+            int damageCount = this.inventory.getStack(2).getCount();
+            nbt.putInt("atcl_extra_damage", damageCount * 4);
 
             if (sar.getEnergy(mainHand) > sar.getMaxEnergy(mainHand)) {
                 sar.setEnergy(mainHand, sar.getMaxEnergy(mainHand));

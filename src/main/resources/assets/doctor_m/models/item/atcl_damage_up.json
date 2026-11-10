@@ -1,0 +1,75 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"texture_size": [8, 8],
+	"textures": {
+		"0": "doctor_m:item/atcl_damage_up",
+		"particle": "doctor_m:item/atcl_damage_up"
+	},
+	"elements": [
+		{
+			"from": [7.2, 0.4, 7.2],
+			"to": [8.8, 0.96, 8.8],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7.2, 0.4, 7.2]},
+			"faces": {
+				"north": {"uv": [12, 4, 15, 5], "texture": "#0"},
+				"east": {"uv": [12, 6, 15, 7], "texture": "#0"},
+				"south": {"uv": [8, 12, 11, 13], "texture": "#0"},
+				"west": {"uv": [12, 8, 15, 9], "texture": "#0"},
+				"up": {"uv": [8, 0, 11, 3], "texture": "#0"},
+				"down": {"uv": [8, 4, 11, 7], "texture": "#0"}
+			}
+		},
+		{
+			"from": [7.2, 3.04, 7.2],
+			"to": [8.8, 3.6, 8.8],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7.2, 3.04, 7.2]},
+			"faces": {
+				"north": {"uv": [12, 10, 15, 11], "texture": "#0"},
+				"east": {"uv": [12, 12, 15, 13], "texture": "#0"},
+				"south": {"uv": [8, 14, 11, 15], "texture": "#0"},
+				"west": {"uv": [12, 14, 15, 15], "texture": "#0"},
+				"up": {"uv": [8, 8, 11, 11], "texture": "#0"},
+				"down": {"uv": [0, 12, 3, 15], "texture": "#0"}
+			}
+		},
+		{
+			"from": [7.28, 0.96, 7.28],
+			"to": [8.72, 3.12, 8.72],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7.2, 0.96, 7.2]},
+			"faces": {
+				"north": {"uv": [0, 0, 3, 4.5], "texture": "#0"},
+				"east": {"uv": [4, 0, 7, 4.5], "texture": "#0"},
+				"south": {"uv": [0, 6, 3, 10.5], "texture": "#0"},
+				"west": {"uv": [4, 6, 7, 10.5], "texture": "#0"},
+				"up": {"uv": [12, 0, 15, 3], "texture": "#0"},
+				"down": {"uv": [4, 12, 7, 15], "texture": "#0"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"translation": [0, 7.5, 1]
+		},
+		"firstperson_righthand": {
+			"rotation": [-35.25, 0, 0],
+			"translation": [-1, 9.25, 0]
+		},
+		"firstperson_lefthand": {
+			"translation": [0, 8.75, 0]
+		},
+		"gui": {
+			"translation": [0, 14.75, 0],
+			"scale": [2.5, 2.5, 2.5]
+		}
+	},
+	"groups": [
+		{
+			"name": "model",
+			"origin": [8, 8, 8],
+			"scope": 0,
+			"color": 0,
+			"children": [0, 1, 2]
+		}
+	]
+}

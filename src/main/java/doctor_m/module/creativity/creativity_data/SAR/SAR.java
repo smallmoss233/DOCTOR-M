@@ -248,6 +248,36 @@ public abstract class SAR extends Item implements EmissiveItem {
         }
     }
 
+    private static final UUID ATCL_DAMAGE_UUID = UUID.fromString("44444444-4444-4444-4444-444444444444");
+
+    public void applyAtclDamageAttribute(ServerPlayerEntity player, int extraDamage) {
+        var attr = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+        if (attr != null) {
+            EntityAttributeModifier mod = attr.getModifier(ATCL_DAMAGE_UUID);
+            if (extraDamage > 0) {
+                if (mod == null || mod.getValue() != extraDamage) {
+                    if (mod != null) attr.removeModifier(ATCL_DAMAGE_UUID);
+                    attr.addPersistentModifier(new EntityAttributeModifier(
+                            ATCL_DAMAGE_UUID,
+                            "atcl_damage_up",
+                            extraDamage,
+                            EntityAttributeModifier.Operation.ADDITION
+                    ));
+                }
+            } else {
+                if (mod != null) attr.removeModifier(ATCL_DAMAGE_UUID);
+            }
+        }
+    }
+
+    public void removeAtclDamageAttribute(ServerPlayerEntity player) {
+        var attr = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+        if (attr != null) {
+            attr.removeModifier(ATCL_DAMAGE_UUID);
+        }
+    }
+
+
     // ==================== Inventory Tick ====================
 
     @Override
@@ -262,6 +292,7 @@ public abstract class SAR extends Item implements EmissiveItem {
                 setCoreCooldown(stack, getMaxCoreCooldownTicks(stack));
                 removeCoreAttributes(player);
             }
+            removeAtclDamageAttribute(player);
             return;
         }
 
@@ -269,6 +300,13 @@ public abstract class SAR extends Item implements EmissiveItem {
                 (player.getMainHandStack() == stack || player.getOffHandStack() == stack);
 
         updateActionBar(player, stack, isBlocking);
+        int atclDamage = getOrCreateSARNbt(stack).getInt("atcl_extra_damage");
+        if (selected) {
+            applyAtclDamageAttribute(player, atclDamage);
+        } else if (slot == 40) {
+            removeAtclDamageAttribute(player);
+        }
+
         if (isCoreActive(stack)) {
             spawnCoreParticles(player);
         }
