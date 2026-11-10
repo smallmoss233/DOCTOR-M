@@ -1,0 +1,13 @@
+{
+  "type": "doctor_m:assembly",
+  "inputs": [
+    {"item": "minecraft:netherite_ingot","count": "2"},
+    {"item": "minecraft:iron_ingot","count": "4"},
+    {"item": "doctor_m:atcl_power_core","count": "2"},
+    {"item": "minecraft:redstone","count": "8"}
+  ],
+  "output": {
+    "item": "doctor_m:sarl",
+    "count":"1"
+  }
+}

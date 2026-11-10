@@ -54,7 +54,7 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
 
     @Override
     protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
-        drawAutoScaledText(context, this.title, 15, 15, 125, COLOR_TEXT, false);
+        drawAutoScaledText(context, this.title, 15, 15, 125, COLOR_TEXT);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
         drawFloatingCubes(context, x + 280, y + 15);
 
         if (recipeList.isEmpty() || selectedIndex >= recipeList.size()) {
-            drawAutoScaledText(context, Text.translatable("gui.doctor_m.sar_workbench.no_recipes"), x + 170, y + 90, 140, COLOR_TEXT_DIM, false);
+            drawAutoScaledText(context, Text.translatable("gui.doctor_m.sar_workbench.no_recipes"), x + 170, y + 90, 140, COLOR_TEXT_DIM);
             return;
         }
 
@@ -89,12 +89,12 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
         Text outputName = currentRecipe.getOutput().getName();
         int nameWidth = this.textRenderer.getWidth(outputName);
         int drawX = x + 80 - Math.min(nameWidth, 125) / 2;
-        drawAutoScaledText(context, outputName, drawX, y + 120, 125, 0xFF00FFFF, false);
+        drawAutoScaledText(context, outputName, drawX, y + 120, 125, 0xFF00FFFF);
 
         String pageText = (selectedIndex + 1) + " / " + recipeList.size();
         context.drawText(this.textRenderer, pageText, x + 235 - this.textRenderer.getWidth(pageText) / 2, y + 21, COLOR_TEXT, true);
 
-        drawAutoScaledText(context, Text.translatable("gui.doctor_m.sar_workbench.materials"), x + 165, y + 50, 140, COLOR_TEXT_DIM, false);
+        drawAutoScaledText(context, Text.translatable("gui.doctor_m.sar_workbench.materials"), x + 165, y + 50, 140, COLOR_TEXT_DIM);
 
         int listTop = y + 65;
         int listBottom = y + 135;
@@ -130,7 +130,7 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
                 context.drawItem(inputStack, x + 165, materialY);
 
                 Text reqText = Text.literal(inputStack.getName().getString() + " x" + reqCount);
-                drawAutoScaledText(context, reqText, x + 185, materialY + 4, 80, textColor, false);
+                drawAutoScaledText(context, reqText, x + 185, materialY + 4, 80, textColor);
 
                 materialY += 20;
             }
@@ -212,7 +212,7 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
         context.getMatrices().pop();
     }
 
-    private void drawAutoScaledText(DrawContext context, Text text, int x, int y, int maxWidth, int color, boolean shadow) {
+    private void drawAutoScaledText(DrawContext context, Text text, int x, int y, int maxWidth, int color) {
         int width = this.textRenderer.getWidth(text);
         if (width > maxWidth) {
             float scale = (float) maxWidth / width;
@@ -241,7 +241,10 @@ public class SarWorkbenchScreen extends HandledScreen<SARGUI> {
             }
             if (mouseX >= btnX && mouseX <= btnX + btnW && mouseY >= btnY && mouseY <= btnY + btnH) {
                 if (this.client != null && this.client.interactionManager != null) {
-                    this.client.interactionManager.clickButton(this.handler.syncId, this.selectedIndex);
+                    if (!recipeList.isEmpty() && selectedIndex >= 0 && selectedIndex < recipeList.size()) {
+                        int recipeHash = recipeList.get(selectedIndex).getId().toString().hashCode();
+                        this.client.interactionManager.clickButton(this.handler.syncId, recipeHash);
+                    }
                 }
                 return true;
             }

@@ -32,7 +32,9 @@ public class SARGUI extends ScreenHandler {
     }
 
     @Override
-    public boolean canUse(PlayerEntity player) { return true; }
+    public boolean canUse(PlayerEntity player) {
+        return true;
+    }
 
     @Override
     public ItemStack quickMove(PlayerEntity player, int invSlot) {
@@ -45,11 +47,13 @@ public class SARGUI extends ScreenHandler {
 
         List<AssemblyRecipe> recipes = player.getWorld().getRecipeManager().listAllOfType(ModRecipes.ASSEMBLY_TYPE);
 
-        if (id >= 0 && id < recipes.size()) {
-            AssemblyRecipe recipe = recipes.get(id);
-            if (recipe.canCraft(player)) {
-                recipe.craft(player);
-                return true;
+        for (AssemblyRecipe recipe : recipes) {
+            if (recipe.getId().toString().hashCode() == id) {
+                if (recipe.canCraft(player)) {
+                    recipe.craft(player);
+                    return true;
+                }
+                break;
             }
         }
         return false;
