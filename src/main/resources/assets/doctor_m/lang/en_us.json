@@ -398,7 +398,9 @@
   "doctor_m.dialog.common.trade.insufficient": "§c§oThe quantity you have isn't enough...",
   "doctor_m.dialog.common.trade.success": "§f[%s] §r§aDeal!",
   "doctor_m.dialog.common.trade.hint.sneak": "§7§oHold the required amount and §e§lSneak + Right-click§r§7 to confirm the trade.",
-
+  "key.doctor_m.sar_switch_i": "Toggle Passive I",
+  "key.doctor_m.sar_switch_u": "Toggle Passive U",
+  "key.doctor_m.open_atcl_modification_system": "Toggle Passive M",
   "key.doctor_m.mode.on": "§aOn",
   "key.doctor_m.mode.off": "§cOff",
   "key.doctor_m.passive_a": "Toggle Passive A",

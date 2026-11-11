@@ -1,0 +1,14 @@
+{
+  "type": "doctor_m:assembly",
+  "inputs": [
+    { "item": "minecraft:gold_ingot", "count": 1 },
+    { "item": "minecraft:iron_ingot", "count": 2 },
+    {"item": "minecraft:copper_ingot","count": 1},
+    {"item": "minecraft:redstone","count": 4},
+    {"item": "minecraft:diamond","count":1}
+  ],
+  "output": {
+    "item": "doctor_m:atcl_damage_up",
+    "count": 1
+  }
+}

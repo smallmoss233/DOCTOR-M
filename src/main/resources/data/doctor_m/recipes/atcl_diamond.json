@@ -1,7 +1,7 @@
 {
   "type": "doctor_m:assembly",
   "inputs": [
-    { "item": "minecraft:diamond_ore" }
+    { "tag": "minecraft:diamond_ores" }
   ],
   "output": {
     "item": "minecraft:diamond",

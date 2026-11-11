@@ -398,6 +398,9 @@
   "doctor_m.dialog.common.trade.success": "§f[%s] §r§a成交！",
   "doctor_m.dialog.common.trade.hint.sneak": "§7§o手持對應數量的物品 §e§l蹲下右鍵§r§7 確認交易",
 
+  "key.doctor_m.sar_switch_i": "功能鍵I",
+  "key.doctor_m.sar_switch_u": "功能鍵U",
+  "key.doctor_m.open_atcl_modification_system": "功能鍵M",
   "key.doctor_m.mode.on": "§a開啟",
   "key.doctor_m.mode.off": "§c關閉",
   "key.doctor_m.passive_a": "功能鍵A",

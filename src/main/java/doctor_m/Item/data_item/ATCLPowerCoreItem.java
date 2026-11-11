@@ -52,7 +52,6 @@ public class ATCLPowerCoreItem extends Item {
 
         if (!world.isClient) {
             ATCLPowerCoreEntity projectile = new ATCLPowerCoreEntity(world, player, stack.copy());
-            projectile.setCharge(charge);
             projectile.setVelocity(player, player.getPitch(), player.getYaw(), 0.0F, 0.5F + charge * 1.5F, 1.0F);
             world.spawnEntity(projectile);
             world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.PLAYERS, 1.0F, 1.0F);

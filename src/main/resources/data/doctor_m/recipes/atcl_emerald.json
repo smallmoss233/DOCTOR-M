@@ -1,0 +1,10 @@
+{
+  "type": "doctor_m:assembly",
+  "inputs": [
+    { "tag": "minecraft:emerald_ores" }
+  ],
+  "output": {
+    "item": "minecraft:emerald",
+    "count": 4
+  }
+}

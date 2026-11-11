@@ -1,0 +1,13 @@
+{
+  "type": "doctor_m:assembly",
+  "inputs": [
+    { "item": "minecraft:iron_ingot", "count": 2},
+    {"item": "minecraft:copper_ingot","count": 2},
+    {"item": "minecraft:redstone","count": 8},
+    {"item": "minecraft:slime_ball","count":4}
+  ],
+  "output": {
+    "item": "doctor_m:atcl_construction_modified_model",
+    "count": 1
+  }
+}

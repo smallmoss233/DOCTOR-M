@@ -1,0 +1,14 @@
+{
+  "type": "doctor_m:assembly",
+  "inputs": [
+    { "item": "minecraft:gold_ingot", "count": 1 },
+    { "item": "minecraft:iron_ingot", "count": 1 },
+    {"item": "minecraft:copper_ingot","count": 2},
+    {"item": "minecraft:redstone","count": 1},
+    {"item": "minecraft:slime_ball","count":2}
+  ],
+  "output": {
+    "item": "doctor_m:atcl_power_re",
+    "count": 1
+  }
+}

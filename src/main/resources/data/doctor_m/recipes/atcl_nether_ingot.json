@@ -1,0 +1,11 @@
+{
+  "type": "doctor_m:assembly",
+  "inputs": [
+    { "item": "minecraft:gold_ingot", "count": 2 },
+    { "item": "minecraft:netherite_scrap", "count": 2 }
+  ],
+  "output": {
+    "item": "minecraft:netherite_ingot",
+    "count": 1
+  }
+}

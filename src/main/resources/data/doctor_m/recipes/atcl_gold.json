@@ -1,0 +1,10 @@
+{
+  "type": "doctor_m:assembly",
+  "inputs": [
+    { "tag": "minecraft:gold_ores" }
+  ],
+  "output": {
+    "item": "minecraft:gold_ingot",
+    "count": 4
+  }
+}

@@ -69,7 +69,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
             @Override
             public int getMaxItemCount() {
-                return 4;
+                return 6;
             }
         });
 
@@ -129,7 +129,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
 
             if (!cursor.isEmpty() && Registries.ITEM.getId(cursor.getItem()).equals(CORE_ID)) {
                 if (slotStack.isEmpty() || Registries.ITEM.getId(slotStack.getItem()).equals(CORE_ID)) {
-                    int space = 6 - slotStack.getCount();
+                    int space = 10 - slotStack.getCount();
                     if (space > 0) {
                         int moveCount = Math.min(cursor.getCount(), space);
                         if (slotStack.isEmpty()) {
