@@ -1,5 +1,5 @@
 {
-  "icon": "trinkets:gui/slots/chest",
+  "icon":"minecraft:item/totem_of_undying",
   "order": 10,
   "amount": 1
 }

@@ -14,7 +14,7 @@ public class ATCLModificationSystemKeyClient {
 
     public static void register() {
         keyM = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.doctor_m.open_atcl_modification_system",
+                "key.doctor_m.passive_m",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_M,
                 "category.doctor_m"

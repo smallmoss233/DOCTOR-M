@@ -16,13 +16,13 @@ public class SARSwitchClient {
 
     public static void register() {
         keyI = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.doctor_m.sar_switch_i",
+                "key.doctor_m.passive_i",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_I,
                 "category.doctor_m"
         ));
         keyU = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.doctor_m.sar_switch_u",
+                "key.doctor_m.passive_u",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_U,
                 "category.doctor_m"
