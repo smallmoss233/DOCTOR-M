@@ -34,6 +34,7 @@ public class items {
     public static final Item TOYMAKER_HAMMER = new ToymakerHammerItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
     public static final Item SEAL_OF_THE_HIGH_COUNCIL = new Item(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
     public static final Item ATCL_POWER_CORE = new ATCLPowerCoreItem(new Item.Settings().maxCount(16).rarity(Rarity.EPIC));
+    public static final Item BREATHING_MACHINE = new BreathingMachineItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
 
     //去物质枪和拉斯隆之钥
     public static final Item DE_MAT_GUN = new DeMatGunItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC));
