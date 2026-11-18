@@ -9,29 +9,31 @@ import doctor_m.client.Accessory.AccessoryKeyRegistry;
 import doctor_m.client.Accessory.AccessoryPassiveButton;
 import doctor_m.client.Accessory.handler.KeytoTimeKeyHandler;
 import doctor_m.client.Accessory.handler.SARKeyHandler;
-import doctor_m.client.module.ToyotaSpinningRotor.ToyotaSpinningRotorRenderer;
-import doctor_m.client.render.Shield.ForceFieldClientRenderer;
-import doctor_m.client.render.Shield.ShieldNetworkingClient;
-import doctor_m.client.render.Shield.ShieldOverlay;
 import doctor_m.client.dimension.TitanDimensionEffects;
 import doctor_m.client.entity.MarianJinRenderer;
 import doctor_m.client.entity.Type103Renderer;
 import doctor_m.client.gui.EyeOfHarmonyObeliskScreen;
 import doctor_m.client.gui.PocketWatchHudOverlay;
 import doctor_m.client.gui.VortexManipulatorScreen;
+import doctor_m.client.module.ToyotaSpinningRotor.ToyotaSpinningRotorRenderer;
 import doctor_m.client.network.AITMixinClientNetworking;
 import doctor_m.client.network.ConfigOpenHandler;
 import doctor_m.client.network.DeMatGunClientNetwork;
 import doctor_m.client.network.KeytoTimeTeleportClient;
 import doctor_m.client.render.EmissiveBlockEntityRenderer;
 import doctor_m.client.render.EyeOfHarmonyObeliskBlockEntityRenderer;
+import doctor_m.client.render.Shield.ForceFieldClientRenderer;
+import doctor_m.client.render.Shield.ShieldNetworkingClient;
+import doctor_m.client.render.Shield.ShieldOverlay;
 import doctor_m.client.render.TrinketRenderer.SCTrinketRenderer;
 import doctor_m.client.render.TrinketRenderer.VMTrinketRenderer;
 import doctor_m.client.screen.SarWorkbenchScreen;
 import doctor_m.client.util.id.PlayerTitleCache;
 import doctor_m.entities.Entities;
+import doctor_m.handler.JumpKitHandler;
 import doctor_m.menu.ModMenus;
 import doctor_m.network.INVERTSCREENPACKETNetwork;
+import doctor_m.network.JumpNetwork;
 import doctor_m.util.VMClientScreenOpener;
 import mosslib.client.bedrock.block.MossBedrockReloader;
 import mosslib.client.bedrock.block.MossBedrockRenderer;
@@ -45,6 +47,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
@@ -53,13 +56,14 @@ import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
+import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
-import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
+
 import java.lang.reflect.Method;
-import doctor_m.client.network.SARSwitchClient;
+
 import static doctor_m.Item.items.FORCE_FIELD_SHIELD;
 import static doctor_m.block.ModBlocks.*;
 
@@ -71,22 +75,12 @@ public class DOCTORMClient implements ClientModInitializer {
     public static final EntityModelLayer PLAYER_SLIM_LAYER =
             new EntityModelLayer(new Identifier("minecraft", "player_slim"), "main");
 
-    /** 需要以 cutout 层渲染的玩偶方块 */
     private static final Block[] DOLL_BLOCKS = {
-            DOLL_JIN_MARY,
-            DOLL_SMALLMOSS_OLD,
-            DOLL_ICARWAS,
-            DOLL_ICE_MOON_492,
-            DOLL_SIGEERTE,
-            DOLL_TSINAFS_BCIM,
-            DOLL_ASNIT_PNQING,
-            DOLL_TIANX,
-            DOLL_KILIN_MUS,
-            DOLL_JOGGEST,
-            DOLL_NX_SEEKER
+            DOLL_JIN_MARY, DOLL_SMALLMOSS_OLD, DOLL_ICARWAS, DOLL_ICE_MOON_492,
+            DOLL_SIGEERTE, DOLL_TSINAFS_BCIM, DOLL_ASNIT_PNQING, DOLL_TIANX,
+            DOLL_KILIN_MUS, DOLL_JOGGEST, DOLL_NX_SEEKER
     };
 
-    /** 反色效果的剩余 tick 数，由 client tick 递减 */
     private static int invertRemainingTicks = 0;
     private static boolean invertActive = false;
 
@@ -104,14 +98,13 @@ public class DOCTORMClient implements ClientModInitializer {
         registerScreenOpeners();
         ConfigOpenHandler.register();
         MossBedrockReloader.register();
-        SARSwitchClient.register();
+        doctor_m.client.network.SARSwitchClient.register();
         doctor_m.client.screen.ModClientScreens.register();
         doctor_m.client.network.ATCLModificationSystemKeyClient.register();
         HandledScreens.register(ModMenus.SAR_WORKBENCH_MENU, SarWorkbenchScreen::new);
         BlockEntityRendererFactories.register(
                 ModBlockEntities.COFFEE_MACHINE,
                 MossBedrockRenderer::new
-
         );
     }
 
@@ -149,7 +142,6 @@ public class DOCTORMClient implements ClientModInitializer {
         );
     }
 
-    //方块实体相关
     private void registerBlockEntityRenderers() {
         BlockEntityRendererFactories.register(
                 ModBlockEntities.EYE_OF_HARMONY_OBELISK,
@@ -180,7 +172,7 @@ public class DOCTORMClient implements ClientModInitializer {
 
     private void registerEntityRenderers() {
         EntityRendererRegistry.register(Entities.TYPE_103_TARDIS, Type103Renderer::new);
-        EntityRendererRegistry.register(Entities.MARIAN_JIN, MarianJinRenderer::new);  //K动画后记得换成MossBedrockEntityRenderer
+        EntityRendererRegistry.register(Entities.MARIAN_JIN, MarianJinRenderer::new);
         EntityRendererRegistry.register(Entities.ATCL_POWER_CORE, FlyingItemEntityRenderer::new);
     }
 
@@ -203,6 +195,17 @@ public class DOCTORMClient implements ClientModInitializer {
     }
 
     private void registerClientTicks() {
+        ClientTickEvents.START_CLIENT_TICK.register(client -> {
+            PlayerEntity player = client.player;
+            if (player == null) return;
+
+            if (client.options.jumpKey.wasPressed()) {
+                if (!player.isOnGround() && !player.isTouchingWater() && !player.isInLava() && JumpKitHandler.hasJumpKitClient(player)) {
+                    ClientPlayNetworking.send(JumpNetwork.ID, PacketByteBufs.empty());
+                }
+            }
+        });
+
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             tickInvertEffect(client);
 
@@ -210,11 +213,12 @@ public class DOCTORMClient implements ClientModInitializer {
             if (player == null) return;
 
             ItemStack stack = player.getMainHandStack();
-            if (!(stack.getItem() instanceof DeMatGunItem gun)) return;
-            if (!player.getItemCooldownManager().isCoolingDown(gun)
-                    && client.options.attackKey.isPressed()) {
-                boolean isAds = client.options.useKey.isPressed();
-                DeMatGunClientNetwork.sendShootPacket(isAds);
+            if (stack.getItem() instanceof DeMatGunItem gun) {
+                if (!player.getItemCooldownManager().isCoolingDown(gun)
+                        && client.options.attackKey.isPressed()) {
+                    boolean isAds = client.options.useKey.isPressed();
+                    DeMatGunClientNetwork.sendShootPacket(isAds);
+                }
             }
         });
     }
@@ -227,9 +231,6 @@ public class DOCTORMClient implements ClientModInitializer {
                 MinecraftClient.getInstance().setScreen(new VortexManipulatorScreen(player, stack));
     }
 
-    // ==================== 反色效果 ====================
-
-    /** 启动反色效果，持续 duration 个 tick。 */
     private static void startInvertEffect(MinecraftClient client, int durationTicks) {
         GameRenderer gameRenderer = client.gameRenderer;
 
@@ -247,7 +248,6 @@ public class DOCTORMClient implements ClientModInitializer {
         invertActive = true;
     }
 
-    /** 每个客户端 tick 递减倒计时，归零时关闭反色效果。 */
     private static void tickInvertEffect(MinecraftClient client) {
         if (!invertActive) return;
         if (--invertRemainingTicks > 0) return;

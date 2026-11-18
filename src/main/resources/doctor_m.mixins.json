@@ -35,7 +35,6 @@
     "doctor_m.LivingEntityMixin",
     "doctor_m.MobEntityMixin",
     "doctor_m.PlanetRegistryMixin",
-    "doctor_m.PlayerEntityMixin",
     "doctor_m.SonicPortControlMixin",
     "doctor_m.TelepathicControlMixin",
     "sonic_mode.InteractionSonicModeMixin",

@@ -68,6 +68,7 @@ public static void registerItems() {
                                 entries.add(ATCL_HIGH_LAND_MODEL);
                                 entries.add(ATCL_COOLING_MODIFIED_MODEL);
                                 entries.add(BREATHING_MACHINE);
+                                entries.add(JUMP_KIT);
                             })
                             .build());
         }

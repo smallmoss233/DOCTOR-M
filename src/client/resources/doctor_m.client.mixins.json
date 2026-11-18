@@ -1,25 +1,25 @@
 {
-	"required": true,
-	"package": "doctor_m.client.mixin",
-	"compatibilityLevel": "JAVA_17",
-	"client": [
-      "ait.MixinShieldsModel",
-      "ait.MixinSpaceSuitOverlay",
-      "doctor_m.AbstractClientPlayerEntityMixin",
-      "doctor_m.ItemRendererMixin",
-      "doctor_m.MixinTitleScreenBackground",
-      "doctor_m.ParticleManagerMixin",
-      "doctor_m.ScytheFirstPersonMixin",
-      "doctor_m.SonicSettingsScreenMixin",
-      "stp.ClientPlayNetworkHandlerAccessor",
-      "stp.ClientWorldInvoker",
-      "stp.MinecraftClientMixin",
-      "stp.WorldRendererMixin",
-      "title.ChatHudMixin",
-      "title.LivingEntityRendererMixin",
-      "title.PlayerListHudMixin"
-    ],
-	"injectors": {
-		"defaultRequire": 1
-	}
+  "required": true,
+  "package": "doctor_m.client.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "ait.MixinShieldsModel",
+    "ait.MixinSpaceSuitOverlay",
+    "doctor_m.AbstractClientPlayerEntityMixin",
+    "doctor_m.ItemRendererMixin",
+    "doctor_m.MixinTitleScreenBackground",
+    "doctor_m.ParticleManagerMixin",
+    "doctor_m.ScytheFirstPersonMixin",
+    "doctor_m.SonicSettingsScreenMixin",
+    "stp.ClientPlayNetworkHandlerAccessor",
+    "stp.ClientWorldInvoker",
+    "stp.MinecraftClientMixin",
+    "stp.WorldRendererMixin",
+    "title.ChatHudMixin",
+    "title.LivingEntityRendererMixin",
+    "title.PlayerListHudMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

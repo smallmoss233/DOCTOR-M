@@ -77,6 +77,8 @@ public class DOCTORM implements ModInitializer {
         ModRecipes.register();
         doctor_m.menu.ModMenus.register();
         doctor_m.network.ATCLModificationSystemNetwork.registerServer();
+        doctor_m.handler.JumpKitHandler.register();
+        doctor_m.network.JumpNetwork.registerServer();
 
         //命令与配置
         CommandRegistrationCallback.EVENT.register(DOCTORMCommand::register);
