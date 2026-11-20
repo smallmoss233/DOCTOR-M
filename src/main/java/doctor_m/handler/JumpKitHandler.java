@@ -29,8 +29,8 @@ public class JumpKitHandler {
     private static final UUID SLIDE_SPEED_UUID = UUID.fromString("11111111-2222-3333-4444-555555555555");
 
     public static final class Config {
-        public static double slideSpeedBonus = 0.12;
-        public static int slideDurationTicks = 100;
+        public static double slideSpeedBonus = 1.0;
+        public static int slideDurationTicks =10;
         public static int wallClingMaxTicks = 400;
         public static int wallJumpCooldownTicks = 15;
         public static int wallClingGraceTicks = 5;
@@ -53,6 +53,7 @@ public class JumpKitHandler {
         public boolean isWallClinging = false;
         public boolean isSliding = false;
         public boolean jumpedDuringSlide = false;
+        public boolean slideLocked = false;
         public long lastJumpTime = 0;
 
         public Vec3d activeWallNormal = null;
@@ -111,15 +112,29 @@ public class JumpKitHandler {
     }
 
     private static void handleSlide(ServerPlayerEntity player, KitState state) {
+        if (!player.isSneaking()) {
+            state.slideLocked = false;
+        }
+
         if (player.isSneaking() && player.isOnGround() && player.isSprinting()
-                && !state.isSliding && state.slideTicks <= 0) {
+                && !state.isSliding && state.slideTicks <= 0 && !state.slideLocked) {
             state.isSliding = true;
             state.slideTicks = Config.slideDurationTicks;
             state.jumpedDuringSlide = false;
         }
 
         if (state.isSliding) {
-            if (!player.isSneaking() || state.slideTicks <= 0) {
+            if (state.slideTicks <= 0) {
+                state.isSliding = false;
+                state.slideTicks = 0;
+                state.jumpedDuringSlide = false;
+                state.slideLocked = true;
+                EntityAttributeInstance speedAttr = player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+                if (speedAttr != null) speedAttr.removeModifier(SLIDE_SPEED_UUID);
+                return;
+            }
+
+            if (!player.isSneaking()) {
                 state.isSliding = false;
                 state.slideTicks = 0;
                 state.jumpedDuringSlide = false;
@@ -131,11 +146,11 @@ public class JumpKitHandler {
             if (!player.isOnGround()) {
                 state.jumpedDuringSlide = true;
             }
-
             if (state.jumpedDuringSlide && player.isOnGround()) {
                 state.isSliding = false;
                 state.slideTicks = 0;
                 state.jumpedDuringSlide = false;
+                state.slideLocked = true;
                 EntityAttributeInstance speedAttr = player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
                 if (speedAttr != null) speedAttr.removeModifier(SLIDE_SPEED_UUID);
                 return;
@@ -147,19 +162,27 @@ public class JumpKitHandler {
                 player.setPose(EntityPose.SWIMMING);
             }
 
-            double speedBonus = Config.slideSpeedBonus
-                    * (state.slideTicks / (double) Math.max(1, Config.slideDurationTicks));
+            double progress = state.slideTicks / (double) Math.max(1, Config.slideDurationTicks);
+            double speedBonus = Config.slideSpeedBonus * (progress * progress);
+
             EntityAttributeInstance speedAttr = player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
             if (speedAttr != null) {
                 if (speedAttr.getModifier(SLIDE_SPEED_UUID) != null) {
                     speedAttr.removeModifier(SLIDE_SPEED_UUID);
                 }
+
+                double multiplier = ((1.0 + speedBonus) / 0.3) - 1.0;
+
                 speedAttr.addTemporaryModifier(new EntityAttributeModifier(
-                        SLIDE_SPEED_UUID, "slide_speed", speedBonus,
-                        EntityAttributeModifier.Operation.ADDITION));
+                        SLIDE_SPEED_UUID, "slide_speed", multiplier,
+                        EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
             }
         } else if (player.getPose() == EntityPose.SWIMMING && !player.isSwimming()) {
-            player.setPose(EntityPose.STANDING);
+            if (player.isSneaking()) {
+                player.setPose(EntityPose.CROUCHING);
+            } else {
+                player.setPose(EntityPose.STANDING);
+            }
         }
     }
 
@@ -374,6 +397,7 @@ public class JumpKitHandler {
         state.isSliding = false;
         state.isWallClinging = false;
         state.jumpedDuringSlide = false;
+        state.slideLocked = false;
         state.slideTicks = 0;
         state.wallClingTicks = 0;
         state.wallClingGraceTicks = 0;

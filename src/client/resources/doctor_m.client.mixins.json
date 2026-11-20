@@ -3,6 +3,7 @@
   "package": "doctor_m.client.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "doctor_m.PlayerEntityEyeHeightMixin",
     "ait.MixinShieldsModel",
     "ait.MixinSpaceSuitOverlay",
     "doctor_m.AbstractClientPlayerEntityMixin",

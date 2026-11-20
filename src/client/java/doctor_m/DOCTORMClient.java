@@ -84,6 +84,9 @@ public class DOCTORMClient implements ClientModInitializer {
     private static int invertRemainingTicks = 0;
     private static boolean invertActive = false;
 
+    // 【新增】滑铲状态
+    public static boolean isSliding = false;
+
     @Override
     public void onInitializeClient() {
         registerKeybinds();
@@ -190,6 +193,15 @@ public class DOCTORMClient implements ClientModInitializer {
                 (client, handler, buf, responseSender) -> {
                     int duration = buf.readInt();
                     client.execute(() -> startInvertEffect(client, duration));
+                }
+        );
+
+        // 【新增】滑铲状态接收器
+        ClientPlayNetworking.registerGlobalReceiver(
+                JumpNetwork.SLIDING_ID,
+                (client, handler, buf, responseSender) -> {
+                    boolean sliding = buf.readBoolean();
+                    client.execute(() -> isSliding = sliding);
                 }
         );
     }
