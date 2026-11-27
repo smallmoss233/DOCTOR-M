@@ -8,6 +8,7 @@ import doctor_m.block.data_block.EyeOfHarmonyObeliskBlock;
 import doctor_m.client.Accessory.AccessoryKeyRegistry;
 import doctor_m.client.Accessory.AccessoryPassiveButton;
 import doctor_m.client.Accessory.handler.KeytoTimeKeyHandler;
+import doctor_m.client.Accessory.handler.SARKeyHandler;
 import doctor_m.client.dimension.TitanDimensionEffects;
 import doctor_m.client.entity.MarianJinRenderer;
 import doctor_m.client.entity.Type103Renderer;
@@ -122,6 +123,7 @@ public class DOCTORMClient implements ClientModInitializer {
 
     private void registerKeybinds() {
         AccessoryPassiveButton.register();
+        AccessoryKeyRegistry.register(new SARKeyHandler());
         AccessoryKeyRegistry.register(new KeytoTimeKeyHandler());
         KeyBindingHelper.registerKeyBinding(SWITCH_WEAPON_KEY);
     }
