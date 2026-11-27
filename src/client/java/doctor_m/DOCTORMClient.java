@@ -8,7 +8,6 @@ import doctor_m.block.data_block.EyeOfHarmonyObeliskBlock;
 import doctor_m.client.Accessory.AccessoryKeyRegistry;
 import doctor_m.client.Accessory.AccessoryPassiveButton;
 import doctor_m.client.Accessory.handler.KeytoTimeKeyHandler;
-import doctor_m.client.Accessory.handler.SARKeyHandler;
 import doctor_m.client.dimension.TitanDimensionEffects;
 import doctor_m.client.entity.MarianJinRenderer;
 import doctor_m.client.entity.Type103Renderer;
@@ -28,6 +27,7 @@ import doctor_m.client.render.Shield.ShieldOverlay;
 import doctor_m.client.render.TrinketRenderer.SCTrinketRenderer;
 import doctor_m.client.render.TrinketRenderer.VMTrinketRenderer;
 import doctor_m.client.screen.SarWorkbenchScreen;
+import doctor_m.client.screen.WeaponSwitchScreen;
 import doctor_m.client.util.id.PlayerTitleCache;
 import doctor_m.entities.Entities;
 import doctor_m.handler.JumpKitHandler;
@@ -42,6 +42,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
@@ -53,14 +54,17 @@ import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import org.lwjgl.glfw.GLFW;
 
 import java.lang.reflect.Method;
 
@@ -84,8 +88,14 @@ public class DOCTORMClient implements ClientModInitializer {
     private static int invertRemainingTicks = 0;
     private static boolean invertActive = false;
 
-    // 【新增】滑铲状态
     public static boolean isSliding = false;
+
+    public static final KeyBinding SWITCH_WEAPON_KEY = new KeyBinding(
+            "key.doctor_m.switch_weapon",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_I,
+            "category.doctor_m"
+    );
 
     @Override
     public void onInitializeClient() {
@@ -101,7 +111,6 @@ public class DOCTORMClient implements ClientModInitializer {
         registerScreenOpeners();
         ConfigOpenHandler.register();
         MossBedrockReloader.register();
-        doctor_m.client.network.SARSwitchClient.register();
         doctor_m.client.screen.ModClientScreens.register();
         doctor_m.client.network.ATCLModificationSystemKeyClient.register();
         HandledScreens.register(ModMenus.SAR_WORKBENCH_MENU, SarWorkbenchScreen::new);
@@ -113,8 +122,8 @@ public class DOCTORMClient implements ClientModInitializer {
 
     private void registerKeybinds() {
         AccessoryPassiveButton.register();
-        AccessoryKeyRegistry.register(new SARKeyHandler());
         AccessoryKeyRegistry.register(new KeytoTimeKeyHandler());
+        KeyBindingHelper.registerKeyBinding(SWITCH_WEAPON_KEY);
     }
 
     private void registerItemModels() {
@@ -196,7 +205,6 @@ public class DOCTORMClient implements ClientModInitializer {
                 }
         );
 
-        // 【新增】滑铲状态接收器
         ClientPlayNetworking.registerGlobalReceiver(
                 JumpNetwork.SLIDING_ID,
                 (client, handler, buf, responseSender) -> {
@@ -215,6 +223,10 @@ public class DOCTORMClient implements ClientModInitializer {
                 if (!player.isOnGround() && !player.isTouchingWater() && !player.isInLava() && JumpKitHandler.hasJumpKitClient(player)) {
                     ClientPlayNetworking.send(JumpNetwork.ID, PacketByteBufs.empty());
                 }
+            }
+
+            if (SWITCH_WEAPON_KEY.wasPressed() && client.currentScreen == null) {
+                client.setScreen(new WeaponSwitchScreen());
             }
         });
 

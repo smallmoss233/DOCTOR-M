@@ -46,7 +46,6 @@ public class DOCTORM implements ModInitializer {
         AutoRegister.items(items.class, MOD_ID);
         AutoRegister.items(CreativityItems.class, MOD_ID);
         item_group.registerItems();
-        doctor_m.network.SARSwitchNetwork.registerServer();
         doctor_m.handler.BreathingMachineHandler.register();
 
         //网络通道
@@ -57,6 +56,7 @@ public class DOCTORM implements ModInitializer {
         TitleNetwork.register();
         UpdateObeliskPacket.registerServerReceiver();
         SARNetworking.register();
+        SwitchWeaponNetwork.registerServer();
 
         //事件与处理器
         ShieldDamageHandler.register();

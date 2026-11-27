@@ -81,8 +81,6 @@ public abstract class SAR extends Item implements EmissiveItem {
         this.descriptionKey = descriptionKey;
     }
 
-    // ==================== NBT Management ====================
-
     public NbtCompound getOrCreateSARNbt(ItemStack stack) {
         NbtCompound root = stack.getOrCreateNbt();
         if (!root.contains(SAR_TAG, NbtElement.COMPOUND_TYPE)) {
@@ -107,8 +105,6 @@ public abstract class SAR extends Item implements EmissiveItem {
         nbt.put(MODULES_KEY, modules);
         return nbt;
     }
-
-    // ==================== Quick NBT Accessors ====================
 
     public int getEnergy(ItemStack stack) {
         return getOrCreateSARNbt(stack).getInt(ENERGY_KEY);
@@ -153,7 +149,7 @@ public abstract class SAR extends Item implements EmissiveItem {
     public int getCurrentCoreCooldown(ItemStack stack) {
         String specialModule = getOrCreateSARNbt(stack).getString("atcl_special_module");
         if (specialModule.equals("doctor_m:atcl_cooling_modified_model")) {
-            return 600; // 30秒
+            return 600;
         }
         return getMaxCoreCooldownTicks(stack);
     }
@@ -169,8 +165,6 @@ public abstract class SAR extends Item implements EmissiveItem {
     public float getBlockDamageReduction() {
         return this.blockDamageReduction;
     }
-
-    // ==================== Attribute Modifiers ====================
 
     @Override
     public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
@@ -199,8 +193,6 @@ public abstract class SAR extends Item implements EmissiveItem {
         );
         return builder.build();
     }
-
-    // ==================== Core Attributes ====================
 
     public void applyCoreAttributes(ServerPlayerEntity player) {
         var damageAttr = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE);
@@ -233,8 +225,6 @@ public abstract class SAR extends Item implements EmissiveItem {
             speedAttr.removeModifier(CORE_SPEED_UUID);
         }
     }
-
-    // ==================== ATCL Attributes ====================
 
     public void applyAtclDamageAttribute(ServerPlayerEntity player, int extraDamage) {
         var attr = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE);
@@ -290,10 +280,12 @@ public abstract class SAR extends Item implements EmissiveItem {
         }
     }
 
-    // ==================== Skill and Core Activation ====================
-
     public void onSkillPressed(ServerPlayerEntity player, ItemStack stack) {
-        // 由子类实现
+    }
+
+    // 【已修改】添加了 ServerPlayerEntity player 参数
+    public ItemStack getSwitchedItem(ServerPlayerEntity player, ItemStack currentStack, int sector) {
+        return ItemStack.EMPTY;
     }
 
     public void onCorePressed(ServerPlayerEntity player, ItemStack stack) {
@@ -314,8 +306,6 @@ public abstract class SAR extends Item implements EmissiveItem {
         }
     }
 
-    // ==================== Inventory Tick ====================
-
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if (world.isClient()) return;
@@ -325,7 +315,7 @@ public abstract class SAR extends Item implements EmissiveItem {
         if (!isHeld) {
             if (isCoreActive(stack)) {
                 setCoreActive(stack, false);
-                setCoreCooldown(stack, getCurrentCoreCooldown(stack)); // 修复：这里也用当前冷却时间
+                setCoreCooldown(stack, getCurrentCoreCooldown(stack));
                 removeCoreAttributes(player);
             }
             removeAtclDamageAttribute(player);
@@ -379,8 +369,6 @@ public abstract class SAR extends Item implements EmissiveItem {
             removeCoreAttributes(player);
         }
     }
-
-    // ==================== UI ====================
 
     private void updateActionBar(ServerPlayerEntity player, ItemStack stack, boolean isBlocking) {
         int energy = getEnergy(stack);
@@ -443,8 +431,6 @@ public abstract class SAR extends Item implements EmissiveItem {
         }
     }
 
-    // ==================== Tooltip ====================
-
     @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         tooltip.add(Text.translatable("tooltip.doctor_m.sar.title", variantId));
@@ -468,8 +454,6 @@ public abstract class SAR extends Item implements EmissiveItem {
         tooltip.add(Text.translatable("message.doctor_m.tip.not.done"));
         super.appendTooltip(stack, world, tooltip, context);
     }
-
-    // ==================== Module Interface ====================
 
     public String getKitModule(ItemStack stack) {
         return getOrCreateSARNbt(stack).getCompound(MODULES_KEY).getString(KIT_MODULE_KEY);

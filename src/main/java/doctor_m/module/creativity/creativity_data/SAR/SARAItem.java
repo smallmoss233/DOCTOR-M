@@ -1,6 +1,7 @@
 package doctor_m.module.creativity.creativity_data.SAR;
 
 import doctor_m.module.EmissiveItem;
+import doctor_m.module.creativity.CreativityItems;
 import doctor_m.util.creativity.DynamicColorHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
@@ -74,6 +75,22 @@ public class SARAItem extends SAR implements EmissiveItem {
         int finalCd = SARA_SKILL_COOLDOWN;
         if (isCoreActive(stack)) finalCd -= 40;
         setSkillCooldown(stack, finalCd);
+    }
+
+    @Override
+    public ItemStack getSwitchedItem(ServerPlayerEntity player, ItemStack currentStack, int sector) {
+        if (sector == 0) {
+            ItemStack newStack = new ItemStack(CreativityItems.SARH);
+            if (currentStack.hasNbt()) newStack.setNbt(currentStack.getNbt().copy());
+            return newStack;
+        } else if (sector == 1) {
+            return currentStack;
+        } else if (sector == 2) {
+            ItemStack newStack = new ItemStack(CreativityItems.SARL);
+            if (currentStack.hasNbt()) newStack.setNbt(currentStack.getNbt().copy());
+            return newStack;
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override

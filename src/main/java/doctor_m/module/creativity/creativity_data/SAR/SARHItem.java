@@ -93,6 +93,20 @@ public class SARHItem extends SAR implements EmissiveItem, SwitchableItem {
     }
 
     @Override
+    public ItemStack getSwitchedItem(ServerPlayerEntity player, ItemStack currentStack, int sector) {
+        if (sector == 0) {
+            return currentStack;
+        } else if (sector == 1) {
+            return onSwitchU(player, currentStack);
+        } else if (sector == 2) {
+            ItemStack newStack = new ItemStack(CreativityItems.SARL);
+            if (currentStack.hasNbt()) newStack.setNbt(currentStack.getNbt().copy());
+            return newStack;
+        }
+        return ItemStack.EMPTY;
+    }
+
+    @Override
     public ItemStack onSwitchI(ServerPlayerEntity player, ItemStack stack) {
         return null;
     }
