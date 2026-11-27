@@ -6,6 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
@@ -18,8 +19,11 @@ public class BreathingMachineItem extends Item {
     public static final String ACTIVE_KEY = "active";
     public static final String ENERGY_KEY = "energy";
     public static final String TIME_LEFT_KEY = "time_left";
-    public static final int MAX_TIME = 3600; // 3分钟
-    public static final int MAX_ENERGY = 180; // 3分钟，每秒扣1点
+    public static final int MAX_TIME = 3600;
+    public static final int MAX_ENERGY = 180;
+    public static final int FOOD_COST = 1;
+    public static final int ENERGY_PER_USE = 5;
+    public static final int MIN_FOOD = 7;
 
     public BreathingMachineItem(Settings settings) {
         super(settings);
@@ -31,25 +35,12 @@ public class BreathingMachineItem extends Item {
         NbtCompound nbt = stack.getOrCreateNbt();
 
         if (nbt.getBoolean(ACTIVE_KEY)) {
-            if (!world.isClient && user instanceof net.minecraft.server.network.ServerPlayerEntity serverPlayer) {
-                // 提前手动结束，触发必死
+            if (!world.isClient && user instanceof ServerPlayerEntity serverPlayer) {
                 BreathingMachineHandler.triggerFatalEffect(serverPlayer, stack, false);
             }
             return TypedActionResult.success(stack);
         }
-         else {
-            // 未激活状态，右键充电（假设每次右键用红石充能，你可以改成其他逻辑）
-            if (!world.isClient) {
-                int currentEnergy = nbt.getInt(ENERGY_KEY);
-                if (currentEnergy < MAX_ENERGY) {
-                    if (user.getOffHandStack().isOf(net.minecraft.item.Items.REDSTONE) || user.getMainHandStack().isOf(net.minecraft.item.Items.REDSTONE)) {
-                        // 如果有红石，就充满（你可以改成消耗红石）
-                        nbt.putInt(ENERGY_KEY, MAX_ENERGY);
-                    }
-                }
-            }
-            return TypedActionResult.success(stack);
-        }
+        return TypedActionResult.success(stack);
     }
 
     @Override

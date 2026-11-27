@@ -23,7 +23,6 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
     private static final Identifier DAMAGE_ID = new Identifier("doctor_m", "atcl_damage_up");
     private static final Identifier SPEED_ID = new Identifier("doctor_m", "atcl_construction_modified_model");
 
-    // 第五槽的两个专属模块
     private static final Identifier COOLING_ID = new Identifier("doctor_m", "atcl_cooling_modified_model");
     private static final Identifier HIGHLAND_ID = new Identifier("doctor_m", "atcl_high_land_model");
 
@@ -49,8 +48,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
         }
 
-        // 槽位 0：能量上限
-        this.addSlot(new Slot(inventory, 0, 105, 40) {
+        this.addSlot(new Slot(inventory, 0, 61, 40) {
             @Override
             public boolean canInsert(ItemStack stack) {
                 return Registries.ITEM.getId(stack.getItem()).equals(CORE_ID);
@@ -61,8 +59,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
         });
 
-        // 槽位 1：恢复
-        this.addSlot(new Slot(inventory, 1, 125, 40) {
+        this.addSlot(new Slot(inventory, 1, 126, 40) {
             @Override
             public boolean canInsert(ItemStack stack) {
                 return Registries.ITEM.getId(stack.getItem()).equals(RE_ID);
@@ -73,8 +70,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
         });
 
-        // 槽位 2：伤害
-        this.addSlot(new Slot(inventory, 2, 145, 40) {
+        this.addSlot(new Slot(inventory, 2, 191, 40) {
             @Override
             public boolean canInsert(ItemStack stack) {
                 return Registries.ITEM.getId(stack.getItem()).equals(DAMAGE_ID);
@@ -85,8 +81,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
         });
 
-        // 槽位 3：攻速
-        this.addSlot(new Slot(inventory, 3, 165, 40) {
+        this.addSlot(new Slot(inventory, 3, 256, 40) {
             @Override
             public boolean canInsert(ItemStack stack) {
                 return Registries.ITEM.getId(stack.getItem()).equals(SPEED_ID);
@@ -97,8 +92,7 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
         });
 
-        // 槽位 4：五号槽 (冷却/高地 二选一，不可堆叠)
-        this.addSlot(new Slot(inventory, 4, 185, 40) {
+        this.addSlot(new Slot(inventory, 4, 321, 40) {
             @Override
             public boolean canInsert(ItemStack stack) {
                 Identifier id = Registries.ITEM.getId(stack.getItem());
@@ -110,14 +104,13 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
             }
         });
 
-        // 玩家背包
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++) {
-                this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 24 + j * 18, 108 + i * 18));
+                this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 205 + j * 18, 100 + i * 18));
             }
         }
         for (int i = 0; i < 9; i++) {
-            this.addSlot(new Slot(playerInventory, i, 24 + i * 18, 166));
+            this.addSlot(new Slot(playerInventory, i, 205 + i * 18, 164));
         }
     }
 
@@ -172,23 +165,18 @@ public class ATCLModificationSystemScreenHandler extends ScreenHandler {
                 }
             }
 
-            // 槽位 0 核心加成
             int coreCount = this.inventory.getStack(0).getCount();
             nbt.putInt(SAR.MAX_ENERGY_BASE_KEY, 10000 + (coreCount * 5000));
 
-            // 槽位 1 回能加成
             int reCount = this.inventory.getStack(1).getCount();
             nbt.putInt("atcl_extra_regen", reCount * 40);
 
-            // 槽位 2 伤害加成
             int damageCount = this.inventory.getStack(2).getCount();
             nbt.putInt("atcl_extra_damage", damageCount * 4);
 
-            // 槽位 3 攻速加成
             int speedCount = this.inventory.getStack(3).getCount();
             nbt.putDouble("atcl_extra_speed", speedCount * 0.6);
 
-            // 槽位 4 特殊模块标记 (记录放入的是冷却还是高地，为后续应用效果做准备)
             ItemStack specialStack = this.inventory.getStack(4);
             if (specialStack.isEmpty()) {
                 nbt.remove("atcl_special_module");

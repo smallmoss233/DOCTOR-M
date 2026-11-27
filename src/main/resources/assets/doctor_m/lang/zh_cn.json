@@ -228,9 +228,11 @@
   "gui.doctor_m.sar_workbench.materials": "材料",
   "gui.doctor_m.atcl.terminal": "A.T.C.L 改装系统",
   "gui.doctor_m.atcl.modules": "模块",
-  "gui.doctor_m.atcl.max_energy": "能量上限加成: %d",
+  "gui.doctor_m.atcl.max_energy": "能量上限: %d",
   "gui.doctor_m.atcl.extra_speed": "攻速加成: +%s",
   "gui.doctor_m.atcl.extra_regen": "回能加成: +%d/s",
+  "gui.doctor_m.atcl.extra_damage": "伤害加成: %d",
+
   "gui.doctor_m.atcl.no_weapon": "未检测到武器",
 
   "title.doctor_m.apprentice_reaper": "§c见习死神",

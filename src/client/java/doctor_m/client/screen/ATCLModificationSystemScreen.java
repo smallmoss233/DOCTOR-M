@@ -11,140 +11,115 @@ import net.minecraft.text.Text;
 public class ATCLModificationSystemScreen extends HandledScreen<ATCLModificationSystemScreenHandler> {
 
     private static final int COLOR_BORDER = 0xFF111111;
-    private static final int COLOR_HIGHLIGHT = 0xFF00BFFF;
-    private static final int COLOR_TEXT = 0xFF000000;
 
     public ATCLModificationSystemScreen(ATCLModificationSystemScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
-        this.backgroundWidth = 210;
-        this.backgroundHeight = 200;
+        this.backgroundWidth = 400;
+        this.backgroundHeight = 260;
         this.titleX = 9999;
         this.playerInventoryTitleY = 9999;
     }
 
     @Override
-    protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-        int x = (this.width - this.backgroundWidth) / 2;
-        int y = (this.height - this.backgroundHeight) / 2;
+    protected void init() {
+        super.init();
+        this.x = (this.width - this.backgroundWidth) / 2;
+        this.y = (this.height - this.backgroundHeight) / 2;
+    }
 
-        // 主背景
+    @Override
+    protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
+        int x = this.x;
+        int y = this.y;
+
         context.fillGradient(x, y, x + this.backgroundWidth, y + this.backgroundHeight, 0xFFEEEEEE, 0xFFA0A0A0);
         context.drawBorder(x, y, this.backgroundWidth, this.backgroundHeight, COLOR_BORDER);
 
-        // ================= 左侧终端面板 =================
-        context.fillGradient(x + 6, y + 6, x + 94, y + 98, 0xFFEEEEEE, 0xFFA0A0A0);
-        context.drawBorder(x + 6, y + 6, 88, 92, COLOR_BORDER);
-        context.fill(x + 8, y + 22, x + 92, y + 23, COLOR_BORDER);
+        for (int i = 0; i < 5; i++) {
+            int sx = x + 61 + i * 65;
+            int sy = y + 40;
 
-        String titleStr = Text.translatable("gui.doctor_m.atcl.terminal").getString();
-        context.drawText(this.textRenderer, titleStr, x + 12, y + 10, COLOR_HIGHLIGHT, false);
+            context.fill(sx - 1, sy - 1, sx + 17, sy + 17, 0xFF888888);
+            context.drawBorder(sx - 1, sy - 1, 18, 18, COLOR_BORDER);
+
+            if (mouseX >= sx - 1 && mouseX <= sx + 17 && mouseY >= sy - 1 && mouseY <= sy + 17) {
+                context.drawBorder(sx - 2, sy - 2, 20, 20, 0xFF00BFFF);
+            }
+        }
 
         ItemStack mainHand = ItemStack.EMPTY;
         if (this.client != null && this.client.player != null) {
             mainHand = this.client.player.getMainHandStack();
         }
 
+        int iconCenterX = x + 85;
+        int iconCenterY = y + 140;
+
         if (!mainHand.isEmpty()) {
-            context.drawItem(mainHand, x + 42, y + 25);
+            context.getMatrices().push();
+            context.getMatrices().translate(iconCenterX, iconCenterY, 0);
+            context.getMatrices().scale(3.5f, 3.5f, 1.0f);
+            context.drawItem(mainHand, -8, -8);
+            context.getMatrices().pop();
 
             String nameStr = mainHand.getName().getString();
-            if (this.textRenderer.getWidth(nameStr) > 110) {
-                nameStr = this.textRenderer.trimToWidth(nameStr, 105) + "...";
+            if (this.textRenderer.getWidth(nameStr) > 120) {
+                nameStr = this.textRenderer.trimToWidth(nameStr, 115) + "...";
             }
-            context.getMatrices().push();
-            context.getMatrices().translate(x + 50, y + 46, 0);
-            context.getMatrices().scale(0.75f, 0.75f, 1.0f);
             int nameWidth = this.textRenderer.getWidth(nameStr);
-            context.drawText(this.textRenderer, nameStr, -nameWidth / 2, 0, COLOR_TEXT, false);
-            context.getMatrices().pop();
+            context.drawText(this.textRenderer, nameStr, iconCenterX - nameWidth / 2, y + 180, 0xFF00BFFF, false);
 
             if (mainHand.getItem() instanceof SAR sar) {
                 int maxE = sar.getMaxEnergy(mainHand);
-                String eStr = Text.translatable("gui.doctor_m.atcl.max_energy", maxE).getString();
-                context.drawText(this.textRenderer, eStr, x + 50 - this.textRenderer.getWidth(eStr) / 2, y + 60, 0xFF009900, false);
-
                 double extraSpeed = sar.getOrCreateSARNbt(mainHand).getDouble("atcl_extra_speed");
-                String sStr = Text.translatable("gui.doctor_m.atcl.extra_speed", String.format("%.1f", extraSpeed)).getString();
-                context.drawText(this.textRenderer, sStr, x + 50 - this.textRenderer.getWidth(sStr) / 2, y + 72, 0xFF0055AA, false);
-
                 int extraRegen = sar.getOrCreateSARNbt(mainHand).getInt("atcl_extra_regen");
-                String rStr = Text.translatable("gui.doctor_m.atcl.extra_regen", extraRegen * 20).getString();
-                context.drawText(this.textRenderer, rStr, x + 50 - this.textRenderer.getWidth(rStr) / 2, y + 84, 0xFFAA00AA, false);
+                int extraDamage = sar.getOrCreateSARNbt(mainHand).getInt("atcl_extra_damage");
+
+                Text energyText = Text.translatable("gui.doctor_m.atcl.max_energy", maxE);
+                Text regenText = Text.translatable("gui.doctor_m.atcl.extra_regen", extraRegen * 20);
+                Text damageText = Text.translatable("gui.doctor_m.atcl.extra_damage", extraDamage);
+                Text speedText = Text.translatable("gui.doctor_m.atcl.extra_speed", String.format("%.1f", extraSpeed));
+
+                drawCenteredScaledText(context, energyText, x + 70 + 65 * 0, y + 64, 0xFF009900);
+                drawCenteredScaledText(context, regenText, x + 70 + 65 * 1, y + 64, 0xFFAA00AA);
+                drawCenteredScaledText(context, damageText, x + 70 + 65 * 2, y + 64, 0xFFFF0000);
+                drawCenteredScaledText(context, speedText, x + 70 + 65 * 3, y + 64, 0xFF0055AA);
             }
         } else {
             String noWeapon = Text.translatable("gui.doctor_m.atcl.no_weapon").getString();
-            context.drawText(this.textRenderer, noWeapon, x + 50 - this.textRenderer.getWidth(noWeapon) / 2, y + 50, 0xFFE50000, false);
+            int nameWidth = this.textRenderer.getWidth(noWeapon);
+            context.drawText(this.textRenderer, noWeapon, iconCenterX - nameWidth / 2, y + 180, 0xFFE50000, false);
         }
 
-        // ================= 右侧改装槽位面板 =================
-        context.fillGradient(x + 100, y + 6, x + 206, y + 98, 0xFFEEEEEE, 0xFFA0A0A0);
-        context.drawBorder(x + 100, y + 6, 106, 92, COLOR_BORDER);
-        context.fill(x + 102, y + 22, x + 204, y + 23, COLOR_BORDER);
+        int invX = x + 205;
+        int invY = y + 100;
 
-        String modTitle = Text.translatable("gui.doctor_m.atcl.modules").getString();
-        context.drawText(this.textRenderer, modTitle, x + 106, y + 10, COLOR_HIGHLIGHT, false);
-
-        // 绘制槽位底框 (修正：y + 40 对齐 Handler 里的槽位坐标)
-        for (int i = 0; i < 5; i++) {
-            int sx = x + 105 + i * 20;
-            int sy = y + 40;
-            context.fill(sx - 1, sy - 1, sx + 17, sy + 17, 0xFF888888);
-            context.drawBorder(sx - 1, sy - 1, 18, 18, COLOR_BORDER);
-            if (mouseX >= sx - 1 && mouseX <= sx + 17 && mouseY >= sy - 1 && mouseY <= sy + 17) {
-                context.drawBorder(sx - 2, sy - 2, 20, 20, COLOR_HIGHLIGHT);
-            }
-        }
-
-        // ================= 红框区域：横向移动的方块 =================
-        drawFloatingCubes(context, x, y);
-
-        // ================= 底部背包区域 =================
-        context.fillGradient(x + 4, y + 100, x + this.backgroundWidth - 4, y + 195, 0xFFEEEEEE, 0xFFA0A0A0);
-        context.drawBorder(x + 4, y + 100, this.backgroundWidth - 8, 95, COLOR_BORDER);
+        context.fillGradient(invX - 10, invY - 10, invX + 172, invY + 88, 0xFFEEEEEE, 0xFFA0A0A0);
+        context.drawBorder(invX - 10, invY - 10, 182, 98, COLOR_BORDER);
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++) {
-                int bx = x + 24 + j * 18;
-                int by = y + 108 + i * 18;
-                context.fill(bx - 1, by - 1, bx + 17, by + 17, 0xFF888888);
-                context.drawBorder(bx - 1, by - 1, 18, 18, COLOR_BORDER);
+                int bx = invX + j * 18;
+                int by = invY + i * 18;
+                context.fill(bx, by, bx + 18, by + 18, 0xFF888888);
+                context.drawBorder(bx, by, 18, 18, COLOR_BORDER);
             }
         }
         for (int j = 0; j < 9; j++) {
-            int bx = x + 24 + j * 18;
-            int by = y + 166;
-            context.fill(bx - 1, by - 1, bx + 17, by + 17, 0xFF888888);
-            context.drawBorder(bx - 1, by - 1, 18, 18, COLOR_BORDER);
+            int bx = invX + j * 18;
+            int by = invY + 64;
+            context.fill(bx, by, bx + 18, by + 18, 0xFF888888);
+            context.drawBorder(bx, by, 18, 18, COLOR_BORDER);
         }
     }
 
-    private void drawFloatingCubes(DrawContext context, int x, int y) {
-        long currentTime = System.currentTimeMillis();
-        float time = (currentTime % 3000L) / 3000.0F;
-
-        float sin1 = (float) Math.sin(time * Math.PI * 2);
-        float sin2 = (float) Math.sin(time * Math.PI * 2 + Math.PI);
-
-        // 严格限制在右侧面板的 X 轴内部 (x+108 到 x+192 之间)
-        int minX = x + 108;
-        int maxX = x + 192;
-
-        int x1 = minX + (int) ((maxX - minX) * (sin1 + 1) / 2);
-        int x2 = minX + (int) ((maxX - minX) * (sin2 + 1) / 2);
-
-        int centerY = y + 75;
-        int size = 6;
-
-        drawMiniCube(context, x1, centerY - 4, size);
-        drawMiniCube(context, x2, centerY + 4, size);
-    }
-
-    private void drawMiniCube(DrawContext context, int x, int y, int size) {
-        context.fillGradient(x, y, x + size, y + size, 0xFFB0B0B0, 0xFF707070);
-        context.fill(x, y, x + size, y + 1, 0xFFE0E0E0);
-        context.fill(x, y, x + 1, y + size, 0xFFE0E0E0);
-        context.fill(x, y + size - 1, x + size, y + size, 0xFF333333);
-        context.fill(x + size - 1, y, x + size, y + size, 0xFF333333);
+    private void drawCenteredScaledText(DrawContext context, Text text, int centerX, int y, int color) {
+        context.getMatrices().push();
+        context.getMatrices().translate(centerX, y, 0);
+        context.getMatrices().scale(0.75f, 0.75f, 1.0f);
+        int width = this.textRenderer.getWidth(text);
+        context.drawText(this.textRenderer, text, -width / 2, 0, color, false);
+        context.getMatrices().pop();
     }
 
     @Override

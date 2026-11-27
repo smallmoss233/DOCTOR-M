@@ -81,6 +81,15 @@ public class BreathingMachineHandler {
                             triggerFatalEffect(player, machine, true);
                         }
                     }
+                } else {
+                    if (player.age % 20 == 0) {
+                        int energy = nbt.getInt(BreathingMachineItem.ENERGY_KEY);
+                        if (energy < BreathingMachineItem.MAX_ENERGY && player.getHungerManager().getFoodLevel() >= BreathingMachineItem.MIN_FOOD) {
+                            int newEnergy = Math.min(energy + BreathingMachineItem.ENERGY_PER_USE, BreathingMachineItem.MAX_ENERGY);
+                            nbt.putInt(BreathingMachineItem.ENERGY_KEY, newEnergy);
+                            player.getHungerManager().setFoodLevel(player.getHungerManager().getFoodLevel() - BreathingMachineItem.FOOD_COST);
+                        }
+                    }
                 }
             }
         });
